@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Dependencies\glad\src\glad.c">
-      <Filter>src\Internal</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\glad\src\glad.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -17,9 +17,6 @@
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{bb91753b-df13-4159-808b-0f89c0809e68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Internal">
-      <UniqueIdentifier>{1ef5c5e9-f693-49f1-8edc-9490a650c360}</UniqueIdentifier>
     </Filter>
     <Filter Include="res">
       <UniqueIdentifier>{e6e48f37-a2b0-4938-80d4-714251a48154}</UniqueIdentifier>
