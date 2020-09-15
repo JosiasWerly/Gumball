@@ -4,7 +4,7 @@
     <ClCompile Include="Dependencies\glad\src\glad.c">
       <Filter>src\Internal</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="src\Source.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
