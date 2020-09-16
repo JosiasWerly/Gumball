@@ -10,7 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="defaultShader.shader">
+    <None Include="res\shaders\defaultShader.shader">
       <Filter>res</Filter>
     </None>
   </ItemGroup>
@@ -23,7 +23,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Gumball.h">
+    <ClInclude Include="src\Gumball.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
