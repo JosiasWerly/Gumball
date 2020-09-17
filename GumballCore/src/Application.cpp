@@ -1,5 +1,5 @@
 
-#include "Gumball.h"
+#include "Renderer.h"
 
 
 
@@ -67,21 +67,21 @@ static int createShader(const string& vertexShader, const string& fragmentShader
     return p;
 }
 static int loadShaderFromFile(string filePath) {
-    auto shaderCode = loadShaderCode("res/shaders/defaultShader.shader");    
+    auto shaderCode = loadShaderCode(filePath);
     return createShader(shaderCode.vertex, shaderCode.fragment);
 }
 
 
 
 int main() {
-    Window w;
-    w.setup("gumball", 800, 600);
+    Renderer r;
+    r.setup("gumball", 800, 600);
     auto a = new debugDraw, b = new debugDraw;
-    w.drawcalls.insert(a);
-    w.drawcalls.insert(b);
+    r.drawcalls.insert(a);
+    r.drawcalls.insert(b);
 
     a->setup(
-        loadShaderFromFile("res/shaders/defaultShader.shader"), 
+        loadShaderFromFile("res/shaders/blue.shader"), 
         {
             -.1,  -.1,
             .1,  -.1,
@@ -94,7 +94,7 @@ int main() {
         }
     );
     b->setup(
-        loadShaderFromFile("res/shaders/defaultShader.shader"),
+        loadShaderFromFile("res/shaders/red.shader"),
         {
             -.4,  -.2,
             -.4,  -.0,
@@ -115,9 +115,9 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     //
     while (true){
-        w.clear();       
-        w.draw();
-        w.swap();
+        r.clear();       
+        r.draw();
+        r.swap();
     }
 
     

@@ -172,14 +172,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\glad\src\glad.c" />
-    <ClCompile Include="src\Source.cpp" />
+    <ClCompile Include="src\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="res\shaders\blue.shader" />
     <None Include="res\shaders\defaultShader.shader" />
+    <None Include="res\shaders\red.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Gumball.h" />
+    <ClInclude Include="src\Renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
