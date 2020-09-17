@@ -4,84 +4,16 @@
 
 
 
-#include <fstream>
-#include <sstream>
-struct ShaderSource{
-    string vertex, fragment;
-};
-static ShaderSource loadShaderCode(string filePath) {
-    ifstream fileStream(filePath);
-    string line;
-    bool a = false;
-    ShaderSource out;
-    string outString[2];
-    enum eShaderType {
-        none = -1, vertex, fragment
-    } eShType;
-    while (getline(fileStream, line)) {
-        if (line.find("#shader vertex") != string::npos)
-            eShType = eShaderType::vertex;
-        else if (line.find("#shader fragment") != string::npos)
-            eShType = eShaderType::fragment;
-        else if(line.find("//") == string::npos)
-            outString[eShType] += line + "\n";
-    }
-    return { outString[eShaderType::vertex], outString[eShaderType::fragment] };
-}
-static int compileShader(unsigned int ShaderType, const string& code) {
-    unsigned int id = glCreateShader(ShaderType);
-    const char* src = code.c_str();
-    glShaderSource(id, 1, &src, 0);
-    glCompileShader(id);
-
-    int result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-    if (result == GL_FALSE) {
-        int length;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char* msg = (char*)alloca(length * sizeof(char));
-        glGetShaderInfoLog(id, length, &length, msg);
-
-        cout << (ShaderType == GL_VERTEX_SHADER ? "vert" : "frag") << " shader failed to compile =(" << endl;
-        return 0;
-    }
-    return id;
-}
-static int createShader(const string& vertexShader, const string& fragmentShader) {
-    unsigned int 
-        p = glCreateProgram(),
-        vs = compileShader(GL_VERTEX_SHADER, vertexShader),
-        fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-    glAttachShader(p, vs);
-    glAttachShader(p, fs);
-    glLinkProgram(p);
-    glValidateProgram(p); //???
-
-    int valid;
-    glGetProgramiv(p, GL_LINK_STATUS, &valid);
-    if (!valid)
-        cout << "program shader error" << endl;
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-    return p;
-}
-static int loadShaderFromFile(string filePath) {
-    auto shaderCode = loadShaderCode(filePath);
-    return createShader(shaderCode.vertex, shaderCode.fragment);
-}
-
-
-
 int main() {
     Renderer r;
     r.setup("gumball", 800, 600);
     auto a = new debugDraw, b = new debugDraw;
     r.drawcalls.insert(a);
     r.drawcalls.insert(b);
-
+    auto cs = new Shader("res/shaders/defaultShader.shader");
+    cs->push<UniformParam<float, 4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
     a->setup(
-        loadShaderFromFile("res/shaders/blue.shader"), 
+        cs,
         {
             -.1,  -.1,
             .1,  -.1,
@@ -94,7 +26,7 @@ int main() {
         }
     );
     b->setup(
-        loadShaderFromFile("res/shaders/red.shader"),
+        new Shader("res/shaders/red.shader"),
         {
             -.4,  -.2,
             -.4,  -.0,
@@ -105,7 +37,7 @@ int main() {
             0, 1, 2,
             2, 3, 0
         }
-        );
+    );
 
 
     //clear all the bind/selectionStack
@@ -113,14 +45,17 @@ int main() {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-    //
-    while (true){
+
+    while (!glfwWindowShouldClose(r.window)){
         r.clear();       
         r.draw();
         r.swap();
     }
 
-    
+    r.drawcalls.clear();
+    delete a, b;
+
+    glfwTerminate();
     return 0;
 }
 
