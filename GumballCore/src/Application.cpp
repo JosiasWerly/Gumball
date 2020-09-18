@@ -2,18 +2,22 @@
 #include "Renderer.h"
 
 
-
-
 int main() {
+
     Renderer r;
     r.setup("gumball", 800, 600);
     auto a = new debugDraw, b = new debugDraw;
     r.drawcalls.insert(a);
     r.drawcalls.insert(b);
+    
     auto cs = new Shader("res/shaders/defaultShader.shader");
-    cs->push<UniformParam<float, 4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
+    cs->push<UniformParam<float, 4>>("uColor", { 0.f, 0.f, 1.f, 0.f });
+
+    auto bfLayout = new VertexBufferLayout;
+    bfLayout->push<float>(2);
     a->setup(
         cs,
+        *bfLayout,
         {
             -.1,  -.1,
             .1,  -.1,
@@ -27,6 +31,7 @@ int main() {
     );
     b->setup(
         new Shader("res/shaders/red.shader"),
+        *bfLayout,
         {
             -.4,  -.2,
             -.4,  -.0,

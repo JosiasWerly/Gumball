@@ -224,36 +224,107 @@ public:
 };
 class VertexBuffer{
 public:
-    unsigned int rendererID;
+    unsigned int bufferID;
     VertexBuffer(const void* data, unsigned int size) {
-        glDCall(glGenBuffers(1, &rendererID));
-        glDCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
+        glDCall(glGenBuffers(1, &bufferID));
+        glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
         glDCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
     }
     ~VertexBuffer() {
-        glDCall(glDeleteBuffers(1, &rendererID));
+        glDCall(glDeleteBuffers(1, &bufferID));
     }
     void bind() const{
-        glDCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID));
+        glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
     }
     void unbind() const{
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
+
+struct VertexBufferElement {
+    unsigned int type, count;
+    unsigned char normalized;
+
+    static unsigned int getSizeType(const unsigned int type) {
+        switch (type) {
+        case GL_FLOAT:  return 4;
+        case GL_INT:    return 4;
+        case GL_BYTE:   return 1;
+        }
+        __debugbreak();
+        return -1;
+    }
+};
+class VertexBufferLayout {
+public:
+    int stride;
+    vector<VertexBufferElement> elements;
+
+    int getStride() const {
+        return stride;
+    }    
+    const vector<VertexBufferElement>& getElements() {
+        return elements;
+    }
+    template<typename T>void push(unsigned int) {}
+
+    template<>void push<float>(unsigned int count) {
+        elements.push_back({ GL_FLOAT, count, false });
+        stride += VertexBufferElement::getSizeType(GL_FLOAT) * count;
+    }    
+    template<>void push<int>(unsigned int count) {
+        elements.push_back({ GL_INT, count, false });
+        stride += VertexBufferElement::getSizeType(GL_INT) * count;
+    }
+    template<>void push<char>(unsigned int count) {
+        elements.push_back({ GL_BYTE, count, false });
+        stride += VertexBufferElement::getSizeType(GL_BYTE) * count;
+    }
+};
+
+class VertexArray {
+public:
+    unsigned int bufferId;
+    VertexArray() {
+        glGenVertexArrays(1, &bufferId);
+    }
+    ~VertexArray() {
+        glDeleteVertexArrays(1, &bufferId);
+    }
+    void bind() {
+        glBindVertexArray(bufferId);
+    }
+    void unbind() {
+        glBindVertexArray(0);
+    }
+    void addBuffer(const VertexBuffer &vb, const VertexBufferLayout& layout) {
+        bind();
+        vb.bind();
+        const auto& elements = layout.elements;
+        unsigned int offset = 0;
+        for (unsigned int i = 0; i < elements.size(); i++){
+            const auto& element = elements[i];
+            glDCall(glEnableVertexAttribArray(i));
+            glDCall(glVertexAttribPointer(i, element.count, element.type, 
+                element.normalized, layout.getStride(), (const void*)offset));
+            offset += element.count;
+        }
+    }
+};
 class IndexBuffer {
 public:
-    unsigned int rendererID, count;
+    unsigned int bufferID, count;
     IndexBuffer(unsigned int *indices, unsigned int count) :
         count(count){
-        glDCall(glGenBuffers(1, &rendererID));
-        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID));
+        glDCall(glGenBuffers(1, &bufferID));
+        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
         glDCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW));
     }
     ~IndexBuffer() {
-        glDCall(glDeleteBuffers(1, &rendererID));
+        glDCall(glDeleteBuffers(1, &bufferID));
     }
     void bind() const {
-        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID));
+        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
     }
     void unbind() const {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -263,31 +334,30 @@ public:
     }
 };
 
-
 class debugDraw : public iDrawCall {
 public:
     VertexBuffer* vbo;
     IndexBuffer* ibe;
+    VertexArray* vba;
     Shader* shader;
-    unsigned int vba;
 
 
 
-    void setup(Shader* shader, vector<float> data, vector<unsigned int> index) {
+    void setup(Shader* shader, VertexBufferLayout layout, vector<float> data, vector<unsigned int> index) {
         this->shader = shader;
-        glGenVertexArrays(1, &vba);
-        glBindVertexArray(vba);
-        
+        vba = new VertexArray;
+        vba->bind();
         vbo = new VertexBuffer(data.data(), data.size() * sizeof(float));
+        vba->addBuffer(*vbo, layout);
         
-        glDCall(glEnableVertexAttribArray(0));
-        glDCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
+        //glDCall(glEnableVertexAttribArray(0));
+        //glVertexAttribPointer()
+        //glDCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
         ibe = new IndexBuffer(index.data(), index.size());
     }
     void draw() {
         shader->bind();
-        //glDCall(glUniform4f(glGetUniformLocation(shader, "uColor"), 1, 0, 0, 1));
-        glBindVertexArray(vba);
+        vba->bind();
         glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr));
     }
     void terminate() {
