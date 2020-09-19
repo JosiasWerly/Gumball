@@ -90,12 +90,16 @@ class ShaderParameter{
 public:
     unsigned int paramLocation;
     ShaderParameter(){}
-    virtual void call() = 0;
+    virtual void upload() = 0;
+    virtual void download() = 0;
 };
 template<class T, int>class UniformParam : 
     public ShaderParameter{
 public:
-    void call() {
+    void upload() {
+        __debugbreak();
+    }
+    void download() {
         __debugbreak();
     }
 };
@@ -107,8 +111,11 @@ public:
     UniformParam(T a, T b, T c, T d) :
         a(a), b(b), c(c), d(d){
     }
-    void call() {
+    void upload() {
         glUniform4f(paramLocation, a, b, c, d);
+    }
+    void download() {
+        //glGetActiveAttrib()
     }
 };
 template<class T>class UniformParam<T,3> :
@@ -119,7 +126,7 @@ public:
     UniformParam(T a, T b, T c) :
         a(a), b(b), c(c){
     }
-    void call() {
+    void upload() {
         glUniform3f(paramLocation, a, b, c);
     }
 };
@@ -206,7 +213,7 @@ public:
         }
         parameters.clear();
     }
-    template<class T>void push(string name, T data) {        
+    template<class T>void push(string name, T data) {
         T* param = new T;
         *param = data;
         param->paramLocation = glGetUniformLocation(shaderProgram, name.c_str());
@@ -215,7 +222,7 @@ public:
     void bind() {
         glDCall(glUseProgram(shaderProgram));
         for (auto &k : parameters){
-            k.second->call();
+            k.second->upload();
         }
     }
     void unBind() {
