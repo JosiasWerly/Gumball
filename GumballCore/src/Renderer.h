@@ -87,6 +87,7 @@ public:
 class ShaderParameter{
 public:
     unsigned int paramLocation;
+    unsigned int paramType;
     ShaderParameter(){
     }
     virtual void upload() = 0;
@@ -123,7 +124,30 @@ public:
         glUniform3f(paramLocation, a, b, c);
     }
 };
-
+template<class T>class UniformParam<T,2> :
+    public ShaderParameter {
+public:
+    T a, b;
+    UniformParam() {}
+    UniformParam(T a, T b) :
+        a(a), b(b){
+    }
+    void upload() {
+        glUniform2f(paramLocation, a, b);
+    }
+};
+template<class T>class UniformParam<T,1> :
+    public ShaderParameter {
+public:
+    T a;
+    UniformParam() {}
+    UniformParam(T a) :
+        a(a){
+    }
+    void upload() {
+        glUniform1f(paramLocation, a);
+    }
+};
 
 
 class ShaderHelper{
@@ -193,20 +217,11 @@ public:
         auto shaderCode = loadShaderCode(filePath);
         return buildShader(shaderCode.vertex, shaderCode.fragment);
     }
-    static map<string, ShaderParameter*> getActiveParameters(const unsigned int shaderProgram) {
-        map<string, ShaderParameter*> out;
-        int typeCount;
-        const unsigned int bufSize = 16; //?
-        unsigned int type;
-        int length, size, paramLocation;
-        char name[bufSize];
-        //GL_ACTIVE_UNIFORMS
-        glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &typeCount);
-        for (int i = 0; i < typeCount; i++) {
-            glGetActiveAttrib(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
-            paramLocation = glGetUniformLocation(shaderProgram, name);
-            ShaderParameter* shParam = nullptr;
-            switch (type) {
+    
+    //this is a prototype, for retrieving the uniform parameters from shaders
+    static ShaderParameter* reflectUniformParam(unsigned int paramLocation, GLenum type) {
+        ShaderParameter* shParam = nullptr;
+        switch (type) {
             case GL_FLOAT_VEC4:
                 shParam = new UniformParam<float, 4>(1, 1, 1, 1);
                 shParam->paramLocation = paramLocation;
@@ -215,7 +230,29 @@ public:
                 shParam = new UniformParam<float, 3>(1, 1, 1);
                 shParam->paramLocation = paramLocation;
                 break;
-            }
+            case GL_FLOAT_VEC2:
+                shParam = new UniformParam<float, 2>(1, 1);
+                shParam->paramLocation = paramLocation;
+                break;
+            case GL_FLOAT:
+                shParam = new UniformParam<float, 1>(1);
+                shParam->paramLocation = paramLocation;
+                break;
+        }
+        return shParam;
+    }
+    static map<string, ShaderParameter*> getActiveUniforms(const unsigned int shaderProgram) {
+        map<string, ShaderParameter*> out;
+        int typeCount;
+        const unsigned int bufSize = 16; //?
+        unsigned int type;
+        int length, size, paramLocation;
+        char name[bufSize];        
+        glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &typeCount);//GL_ACTIVE_UNIFORMS
+        for (int i = 0; i < typeCount; i++) {
+            glGetActiveUniform(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
+            paramLocation = glGetUniformLocation(shaderProgram, name);
+            ShaderParameter* shParam = reflectUniformParam(paramLocation, type);
             if (shParam)
                 out[name] = shParam;
         }
@@ -242,13 +279,13 @@ public:
     void compile(string file){
         shaderProgram = ShaderHelper::loadShaderFromFile(file);
         clearParameters();
-        parameters = ShaderHelper::getActiveParameters(shaderProgram);
+        parameters = ShaderHelper::getActiveUniforms(shaderProgram);
     }
     
     template<class T>bool setParam(string name, T data) {
         auto it = parameters.find(name);
         if (it != parameters.end()) {
-            *it->second = data;
+            *((T*)it->second) = data;
             return true;
         }
         return false;

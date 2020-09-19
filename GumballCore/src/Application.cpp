@@ -9,7 +9,7 @@ int main() {
     
     auto cs = new Shader();
     cs->compile("res/shaders/defaultShader.shader");
-    cs->setParam<UniformParam<float, 4>>("uColor", { 0.f, 0.f, 1.f, 0.f });
+    cs->setParam<UniformParam<float, 4>>("uColor", { 2.f, 3.f, 1.f, 0.f });
     auto v = cs->getParam<UniformParam<float, 4>>("uColor");
     auto bfLayout = new VertexBufferLayout;
     bfLayout->push<float>(2);

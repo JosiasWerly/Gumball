@@ -9,7 +9,7 @@ void main() {
 #shader fragment
 #version 330 core
 uniform vec4 uColor;
+uniform vec2 uParam;
 void main() {
-    
     gl_FragColor = uColor;
 };
