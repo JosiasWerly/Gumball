@@ -1,18 +1,16 @@
 
 #include "Renderer.h"
-
-
 int main() {
-
     Renderer r;
     r.setup("gumball", 800, 600);
     auto a = new debugDraw, b = new debugDraw;
     r.drawcalls.insert(a);
     r.drawcalls.insert(b);
     
-    auto cs = new Shader("res/shaders/defaultShader.shader");
-    cs->push<UniformParam<float, 4>>("uColor", { 0.f, 0.f, 1.f, 0.f });
-
+    auto cs = new Shader();
+    cs->compile("res/shaders/defaultShader.shader");
+    cs->setParam<UniformParam<float, 4>>("uColor", { 0.f, 0.f, 1.f, 0.f });
+    auto v = cs->getParam<UniformParam<float, 4>>("uColor");
     auto bfLayout = new VertexBufferLayout;
     bfLayout->push<float>(2);
     a->setup(
@@ -30,7 +28,7 @@ int main() {
         }
     );
     b->setup(
-        new Shader("res/shaders/red.shader"),
+        cs,
         *bfLayout,
         {
             -.4,  -.2,
@@ -43,7 +41,6 @@ int main() {
             2, 3, 0
         }
     );
-
 
     //clear all the bind/selectionStack
     glUseProgram(0);

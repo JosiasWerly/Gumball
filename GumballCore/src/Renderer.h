@@ -1,5 +1,3 @@
-
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -92,15 +90,12 @@ public:
     ShaderParameter(){
     }
     virtual void upload() = 0;
-    virtual void download() = 0;
+
 };
 template<class T, int>class UniformParam : 
     public ShaderParameter{
 public:
     void upload() {
-        __debugbreak();
-    }
-    void download() {
         __debugbreak();
     }
 };
@@ -114,9 +109,6 @@ public:
     }
     void upload() {
         glUniform4f(paramLocation, a, b, c, d);
-    }
-    void download() {
-        //glGetActiveAttrib()
     }
 };
 template<class T>class UniformParam<T,3> :
@@ -134,8 +126,8 @@ public:
 
 
 
-
-class Shader {
+class ShaderHelper{
+    ShaderHelper(const ShaderHelper&) = delete;
 public:
     struct ShaderSource {
         string vertex, fragment;
@@ -201,39 +193,71 @@ public:
         auto shaderCode = loadShaderCode(filePath);
         return buildShader(shaderCode.vertex, shaderCode.fragment);
     }
-
+    static map<string, ShaderParameter*> getActiveParameters(const unsigned int shaderProgram) {
+        map<string, ShaderParameter*> out;
+        int typeCount;
+        const unsigned int bufSize = 16; //?
+        unsigned int type;
+        int length, size, paramLocation;
+        char name[bufSize];
+        //GL_ACTIVE_UNIFORMS
+        glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &typeCount);
+        for (int i = 0; i < typeCount; i++) {
+            glGetActiveAttrib(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
+            paramLocation = glGetUniformLocation(shaderProgram, name);
+            ShaderParameter* shParam = nullptr;
+            switch (type) {
+            case GL_FLOAT_VEC4:
+                shParam = new UniformParam<float, 4>(1, 1, 1, 1);
+                shParam->paramLocation = paramLocation;
+                break;
+            case GL_FLOAT_VEC3:
+                shParam = new UniformParam<float, 3>(1, 1, 1);
+                shParam->paramLocation = paramLocation;
+                break;
+            }
+            if (shParam)
+                out[name] = shParam;
+        }
+        return out;
+    }
+};
+class Shader {
+public:
     unsigned int shaderProgram;
     map<string, ShaderParameter*> parameters;
-    //https://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
-public:
-    Shader(string file) {
-        shaderProgram = loadShaderFromFile(file);
-
-        int count;
-        glGetProgramiv(shaderProgram, GL_ACTIVE_ATTRIBUTES, &count);
-        printf("Active Attributes: %d\n", count);
-
-        for (int i = 0; i < count; i++){
-            const unsigned int bufSize = 16;
-            unsigned int type;
-            int length, size;            
-            char name[bufSize];
-            glGetActiveAttrib(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
-            printf("Attribute #%d Type: %u Name: %s\n", i, type, name);
-        }
-    }
-    ~Shader() {
-        glDeleteProgram(shaderProgram);
-        for (auto& k : parameters) {
+    void clearParameters() {
+        for (auto& k : parameters)
             delete k.second;
-        }
         parameters.clear();
     }
-    template<class T>void push(string name, T data) {
-        T* param = new T;
-        *param = data;
-        param->paramLocation = glGetUniformLocation(shaderProgram, name.c_str());
-        parameters[name] = param;
+public:
+    Shader() {
+    }
+    ~Shader() {
+        if (shaderProgram)
+            glDeleteProgram(shaderProgram);
+        clearParameters();
+    }
+    void compile(string file){
+        shaderProgram = ShaderHelper::loadShaderFromFile(file);
+        clearParameters();
+        parameters = ShaderHelper::getActiveParameters(shaderProgram);
+    }
+    
+    template<class T>bool setParam(string name, T data) {
+        auto it = parameters.find(name);
+        if (it != parameters.end()) {
+            *it->second = data;
+            return true;
+        }
+        return false;
+    }
+    template<class T>const T* getParam(string name) {
+        auto it = parameters.find(name);
+        if (it != parameters.end())
+            return dynamic_cast<T*>(it->second);
+        return nullptr;
     }
     void bind() {
         glDCall(glUseProgram(shaderProgram));
@@ -244,6 +268,9 @@ public:
     void unBind() {
         glUseProgram(0);
     }
+
+
+    
 };
 class VertexBuffer{
 public:
