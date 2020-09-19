@@ -89,7 +89,8 @@ public:
 class ShaderParameter{
 public:
     unsigned int paramLocation;
-    ShaderParameter(){}
+    ShaderParameter(){
+    }
     virtual void upload() = 0;
     virtual void download() = 0;
 };
@@ -203,8 +204,23 @@ public:
 
     unsigned int shaderProgram;
     map<string, ShaderParameter*> parameters;
+    //https://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
+public:
     Shader(string file) {
         shaderProgram = loadShaderFromFile(file);
+
+        int count;
+        glGetProgramiv(shaderProgram, GL_ACTIVE_ATTRIBUTES, &count);
+        printf("Active Attributes: %d\n", count);
+
+        for (int i = 0; i < count; i++){
+            const unsigned int bufSize = 16;
+            unsigned int type;
+            int length, size;            
+            char name[bufSize];
+            glGetActiveAttrib(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
+            printf("Attribute #%d Type: %u Name: %s\n", i, type, name);
+        }
     }
     ~Shader() {
         glDeleteProgram(shaderProgram);
