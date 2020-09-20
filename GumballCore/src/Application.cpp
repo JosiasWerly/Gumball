@@ -7,14 +7,18 @@ int main() {
     r.drawcalls.insert(a);
     r.drawcalls.insert(b);
     
-    auto cs = new Shader();
-    cs->compile("res/shaders/defaultShader.shader");
-    cs->setParam<UniformParam<float, 4>>("uColor", { 2.f, 3.f, 1.f, 0.f });
-    auto v = cs->getParam<UniformParam<float, 4>>("uColor");
+    auto &sy = ShaderSystem::getInstance();
+    sy.newShaderFromFile("res/shaders/defaultShader.shader");
+    sy.newShaderFromFile("res/shaders/red.shader");
+    sy.newShaderFromFile("res/shaders/blue.shader");
+    
+    Shader def("defaultShader");
+    def.setParam<UniformParam<float, 4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
+    auto v = def.getParam<UniformParam<float, 4>>("uColor");
     auto bfLayout = new VertexBufferLayout;
     bfLayout->push<float>(2);
     a->setup(
-        cs,
+        &def,
         *bfLayout,
         {
             -.1,  -.1,
@@ -28,7 +32,7 @@ int main() {
         }
     );
     b->setup(
-        cs,
+        &def,
         *bfLayout,
         {
             -.4,  -.2,

@@ -6,6 +6,7 @@
 
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <filesystem>
 #include <set>
 #include <vector>
 #include <array>
@@ -91,7 +92,6 @@ public:
     ShaderParameter(){
     }
     virtual void upload() = 0;
-
 };
 template<class T, int>class UniformParam : 
     public ShaderParameter{
@@ -149,14 +149,13 @@ public:
     }
 };
 
-
 class ShaderHelper{
     ShaderHelper(const ShaderHelper&) = delete;
 public:
     struct ShaderSource {
         string vertex, fragment;
     };
-    static ShaderSource loadShaderCode(string filePath) {
+    static ShaderSource loadShaderCodeFromFile(string filePath) {
         ifstream fileStream(filePath);
         string line;
         bool a = false;
@@ -171,7 +170,7 @@ public:
             else if (line.find("#shader fragment") != string::npos)
                 eShType = eShaderType::fragment;
             else if (line.find("//") == string::npos)
-                outString[eShType] += line + "\n";
+            outString[eShType] += line + "\n";
         }
         return { outString[eShaderType::vertex], outString[eShaderType::fragment] };
     }
@@ -203,7 +202,7 @@ public:
         glAttachShader(p, vs);
         glAttachShader(p, fs);
         glLinkProgram(p);
-        glValidateProgram(p); //???
+        glValidateProgram(p);
 
         int valid;
         glGetProgramiv(p, GL_LINK_STATUS, &valid);
@@ -213,31 +212,30 @@ public:
         glDeleteShader(fs);
         return p;
     }
-    static int loadShaderFromFile(string filePath) {
-        auto shaderCode = loadShaderCode(filePath);
+    static int buildShaderFile(string filePath) {
+        auto shaderCode = loadShaderCodeFromFile(filePath);
         return buildShader(shaderCode.vertex, shaderCode.fragment);
     }
     
-    //this is a prototype, for retrieving the uniform parameters from shaders
     static ShaderParameter* reflectUniformParam(unsigned int paramLocation, GLenum type) {
         ShaderParameter* shParam = nullptr;
         switch (type) {
-            case GL_FLOAT_VEC4:
-                shParam = new UniformParam<float, 4>(1, 1, 1, 1);
-                shParam->paramLocation = paramLocation;
-                break;
-            case GL_FLOAT_VEC3:
-                shParam = new UniformParam<float, 3>(1, 1, 1);
-                shParam->paramLocation = paramLocation;
-                break;
-            case GL_FLOAT_VEC2:
-                shParam = new UniformParam<float, 2>(1, 1);
-                shParam->paramLocation = paramLocation;
-                break;
-            case GL_FLOAT:
-                shParam = new UniformParam<float, 1>(1);
-                shParam->paramLocation = paramLocation;
-                break;
+        case GL_FLOAT_VEC4:
+            shParam = new UniformParam<float, 4>(1, 1, 1, 1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_FLOAT_VEC3:
+            shParam = new UniformParam<float, 3>(1, 1, 1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_FLOAT_VEC2:
+            shParam = new UniformParam<float, 2>(1, 1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_FLOAT:
+            shParam = new UniformParam<float, 1>(1);
+            shParam->paramLocation = paramLocation;
+            break;
         }
         return shParam;
     }
@@ -247,7 +245,7 @@ public:
         const unsigned int bufSize = 16; //?
         unsigned int type;
         int length, size, paramLocation;
-        char name[bufSize];        
+        char name[bufSize];
         glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &typeCount);//GL_ACTIVE_UNIFORMS
         for (int i = 0; i < typeCount; i++) {
             glGetActiveUniform(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
@@ -259,56 +257,89 @@ public:
         return out;
     }
 };
-class Shader {
+struct ShaderReference {
+    const string name;
+    const unsigned int programId;
+};
+class Shader{
+    typedef map<string, ShaderParameter*> Uniforms;
+protected:
+    const ShaderReference shaderRef;
 public:
-    unsigned int shaderProgram;
-    map<string, ShaderParameter*> parameters;
-    void clearParameters() {
-        for (auto& k : parameters)
-            delete k.second;
-        parameters.clear();
+    Uniforms uniforms;
+    Shader(string name);
+    void updateParams() {
+        uniforms = ShaderHelper::getActiveUniforms(shaderRef.programId);
     }
-public:
-    Shader() {
-    }
-    ~Shader() {
-        if (shaderProgram)
-            glDeleteProgram(shaderProgram);
-        clearParameters();
-    }
-    void compile(string file){
-        shaderProgram = ShaderHelper::loadShaderFromFile(file);
-        clearParameters();
-        parameters = ShaderHelper::getActiveUniforms(shaderProgram);
-    }
-    
-    template<class T>bool setParam(string name, T data) {
-        auto it = parameters.find(name);
-        if (it != parameters.end()) {
+    template<class T>void setParam(string name, T data) {
+        auto it = uniforms.find(name);
+        if (it != uniforms.end())
             *((T*)it->second) = data;
-            return true;
-        }
-        return false;
     }
     template<class T>const T* getParam(string name) {
-        auto it = parameters.find(name);
-        if (it != parameters.end())
+        auto it = uniforms.find(name);
+        if (it != uniforms.end())
             return dynamic_cast<T*>(it->second);
         return nullptr;
     }
     void bind() {
-        glDCall(glUseProgram(shaderProgram));
-        for (auto &k : parameters){
+        glDCall(glUseProgram(shaderRef.programId));
+        for (auto& k : uniforms)
             k.second->upload();
-        }
     }
     void unBind() {
         glUseProgram(0);
     }
-
-
-    
 };
+class ShaderSystem{
+private:
+    map<string, ShaderReference> loadedShaders;
+
+    ShaderSystem() {}
+    ShaderSystem(ShaderSystem const&) = delete;
+    void operator=(ShaderSystem const&) = delete;
+    virtual ~ShaderSystem() {}
+public:
+    static ShaderSystem& getInstance() {
+        static ShaderSystem inst;
+        return inst;
+    }
+    void newShaderFromFile(string filePath) {
+        string fName = std::filesystem::path(filePath).filename().string();
+        fName = fName.substr(0, fName.find_last_of("."));
+        auto shaderCode = ShaderHelper::loadShaderCodeFromFile(filePath);
+        newShader(fName, shaderCode.vertex, shaderCode.fragment);
+    }
+    void newShader(string name, string vertex, string fragment) {
+        if (loadedShaders.find(name) == loadedShaders.end()) {
+            unsigned int shaderProgram = ShaderHelper::buildShader(vertex, fragment);
+            loadedShaders.insert(pair<string, ShaderReference>(name, {name, shaderProgram}));
+        }
+    }
+    void deleteShader(string data) {
+        ShaderReference sh = (*loadedShaders.find(data)).second;
+        glDeleteProgram(sh.programId);
+        loadedShaders.erase(data);
+    }
+    void clearAllShaders() {
+        for (auto k : loadedShaders)
+            glDeleteProgram(k.second.programId);
+        loadedShaders.clear();
+    }
+    ShaderReference getShaderReference(string name) {
+        return (*loadedShaders.find(name)).second;
+    }
+};
+Shader::Shader(string name) : 
+        shaderRef(ShaderSystem::getInstance().getShaderReference(name)){
+    updateParams();
+}
+
+
+
+
+
+
 class VertexBuffer{
 public:
     unsigned int bufferID;
@@ -428,18 +459,12 @@ public:
     VertexArray* vba;
     Shader* shader;
 
-
-
     void setup(Shader* shader, VertexBufferLayout layout, vector<float> data, vector<unsigned int> index) {
         this->shader = shader;
         vba = new VertexArray;
         vba->bind();
         vbo = new VertexBuffer(data.data(), data.size() * sizeof(float));
-        vba->addBuffer(*vbo, layout);
-        
-        //glDCall(glEnableVertexAttribArray(0));
-        //glVertexAttribPointer()
-        //glDCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
+        vba->addBuffer(*vbo, layout);        
         ibe = new IndexBuffer(index.data(), index.size());
     }
     void draw() {
@@ -453,3 +478,56 @@ public:
         if (shader) delete shader;
     }
 };
+
+
+
+
+
+
+//class Shader {
+//public:
+//    unsigned int shaderProgram;
+//    map<string, ShaderParameter*> parameters;
+//    void clearParameters() {
+//        for (auto& k : parameters)
+//            delete k.second;
+//        parameters.clear();
+//    }
+//public:
+//    Shader() {
+//    }
+//    ~Shader() {
+//        if (shaderProgram)
+//            glDeleteProgram(shaderProgram);
+//        clearParameters();
+//    }
+//    void compile(string file){
+//        shaderProgram = ShaderHelper::loadShaderFromFile(file);
+//        clearParameters();
+//        parameters = ShaderHelper::getActiveUniforms(shaderProgram);
+//    }
+//    
+//    template<class T>bool setParam(string name, T data) {
+//        auto it = parameters.find(name);
+//        if (it != parameters.end()) {
+//            *((T*)it->second) = data;
+//            return true;
+//        }
+//        return false;
+//    }
+//    template<class T>const T* getParam(string name) {
+//        auto it = parameters.find(name);
+//        if (it != parameters.end())
+//            return dynamic_cast<T*>(it->second);
+//        return nullptr;
+//    }
+//    void bind() {
+//        glDCall(glUseProgram(shaderProgram));
+//        for (auto& k : uniforms) {
+//            k.second->upload();
+//        }
+//    }
+//    void unBind() {
+//        glUseProgram(0);
+//    }
+//};
