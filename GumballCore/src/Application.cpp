@@ -1,6 +1,84 @@
 
 #include "Renderer.h"
+#include "Patterns.hpp"
+
+
+
+
+class iAssetInstance {
+public:
+
+};
+
+template<typename tType> class iAssetSystem{
+private:
+    typedef map<string, iAssetInstance*> TAssets;
+    typedef pair<string, iAssetInstance*> aPair;
+    typedef TAssets::iterator aIt;
+    TAssets assets;
+public:
+    bool contains(string name) {
+        return assets.find(name) != assets.end();
+    }
+    bool contains(string name, aIt &it) {
+        it = assets.find(name);
+        return  it != assets.end();
+    }
+
+    bool load(string name, tType&& other) {
+        if (!contains(name)) {
+            assets.insert(aPair(name, new tType(other)));
+            return true;
+        }
+        return false;
+    }
+    bool unload(string name, tType&&other) {
+        aIt it;
+        if (contains(name, it)) {
+            delete (*it).second;
+            assets.erase(it);
+            return true;
+        }
+        return false;
+    }
+};
+
+class BufferAsset : 
+    public iAssetInstance{
+public:
+    char* data;
+    BufferAsset() {
+    }
+};
+
+
+
+class BufferInstance : 
+    public BufferAsset {
+    BufferInstance(){
+    }
+};
 int main() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     Renderer r;
     r.setup("gumball", 800, 600);
     auto a = new debugDraw, b = new debugDraw;
@@ -64,75 +142,3 @@ int main() {
     glfwTerminate();
     return 0;
 }
-
-
-//int main() {
-//    Window w;
-//    w.setup("gumball", 800, 600);
-//    auto d = new debugDraw;
-//    w.drawcalls.insert(d);
-//
-//    float vertices[] = {
-//        -.5,  -.5,
-//        .5,  -.5,
-//        .5, .5,
-//        -.5,  .5
-//    };
-//    unsigned int vIndex[] = {
-//        0, 1, 2,
-//        2, 3, 0
-//    };
-//
-//    auto shaderCode = loadShaderCode("res/shaders/defaultShader.shader");
-//    unsigned int shader = createShader(shaderCode.vertex, shaderCode.fragment);
-//
-//
-//    //bus of data
-//    unsigned int va = 0;
-//    glGenVertexArrays(1, &va);
-//    glBindVertexArray(va);
-//
-//
-//    // bus of data to send
-//    unsigned int vb = 0;
-//    glGenBuffers(1, &vb);
-//    glBindBuffer(GL_ARRAY_BUFFER, vb);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);//size of the data to send
-//
-//    glEnableVertexAttribArray(0);
-//    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);//bind this vbo to vao
-//
-//    unsigned int ve = 0;
-//    glGenBuffers(1, &ve);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ve);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vIndex), vIndex, GL_STATIC_DRAW); //??
-//
-//
-//    //clear all the bind/selectionStack
-//    glUseProgram(0);
-//    glBindVertexArray(0);
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//    //
-//    while (true) {
-//        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT);
-//
-//
-//        glUseProgram(shader);
-//        glUniform4f(glGetUniformLocation(shader, "uColor"), .0, 0.1, 0.2, 1);
-//        glBindVertexArray(va);
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ve);
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-//        //endDrawCall
-//
-//        w.clear();
-//
-//    }
-//
-//    glDeleteVertexArrays(1, &va);
-//    glDeleteBuffers(1, &ve);
-//    glDeleteBuffers(1, &vb);
-//    glDeleteProgram(shader);
-//    return 0;
-//}

@@ -31,7 +31,9 @@ static bool GLLogCall(const char* fnx, const char* file, int line) {
     return true;
 }
 
+namespace gbLib {
 
+};
 
 
 
@@ -350,8 +352,6 @@ Shader::Shader(string name) :
 
 
 
-
-
 class VertexBuffer{
 public:
     unsigned int bufferID;
@@ -462,6 +462,8 @@ public:
         return count;
     }
 };
+
+
 class debugDraw : public iDrawCall {
 public:
     VertexBuffer* vbo;

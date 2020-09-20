@@ -176,6 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\glad\src\glad.c" />
+    <ClCompile Include="..\Dependencies\ImageLoader\scr\stb_image.cpp" />
     <ClCompile Include="src\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -185,8 +186,13 @@
     <None Include="res\shaders\red.shader" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
     <ClInclude Include="src\Gumball.h" />
+    <ClInclude Include="src\Patterns.hpp" />
     <ClInclude Include="src\Renderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
