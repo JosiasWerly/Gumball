@@ -82,14 +82,26 @@ public:
     }
 };
 
+
+//ShaderSystem
 #include <fstream>
 #include <sstream>
-
-class ShaderParameter{
+struct ShaderParameterValues{
+    unsigned int paramLocation;
+    unsigned int paramType;
+};
+class ShaderParameter {
 public:
     unsigned int paramLocation;
     unsigned int paramType;
-    ShaderParameter(){
+    ShaderParameter() {
+    }
+    ShaderParameter(ShaderParameter& other) {
+        this->paramLocation = other.paramLocation;
+        this->paramType = other.paramType;
+    }
+    void operator=(ShaderParameter const& other){
+        //trick from mr.Joe
     }
     virtual void upload() = 0;
 };
@@ -334,7 +346,7 @@ Shader::Shader(string name) :
         shaderRef(ShaderSystem::getInstance().getShaderReference(name)){
     updateParams();
 }
-
+//end of the ShaderSystem
 
 
 
@@ -358,7 +370,6 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
-
 struct VertexBufferElement {
     unsigned int type, count;
     unsigned char normalized;
@@ -451,7 +462,6 @@ public:
         return count;
     }
 };
-
 class debugDraw : public iDrawCall {
 public:
     VertexBuffer* vbo;
@@ -478,56 +488,3 @@ public:
         if (shader) delete shader;
     }
 };
-
-
-
-
-
-
-//class Shader {
-//public:
-//    unsigned int shaderProgram;
-//    map<string, ShaderParameter*> parameters;
-//    void clearParameters() {
-//        for (auto& k : parameters)
-//            delete k.second;
-//        parameters.clear();
-//    }
-//public:
-//    Shader() {
-//    }
-//    ~Shader() {
-//        if (shaderProgram)
-//            glDeleteProgram(shaderProgram);
-//        clearParameters();
-//    }
-//    void compile(string file){
-//        shaderProgram = ShaderHelper::loadShaderFromFile(file);
-//        clearParameters();
-//        parameters = ShaderHelper::getActiveUniforms(shaderProgram);
-//    }
-//    
-//    template<class T>bool setParam(string name, T data) {
-//        auto it = parameters.find(name);
-//        if (it != parameters.end()) {
-//            *((T*)it->second) = data;
-//            return true;
-//        }
-//        return false;
-//    }
-//    template<class T>const T* getParam(string name) {
-//        auto it = parameters.find(name);
-//        if (it != parameters.end())
-//            return dynamic_cast<T*>(it->second);
-//        return nullptr;
-//    }
-//    void bind() {
-//        glDCall(glUseProgram(shaderProgram));
-//        for (auto& k : uniforms) {
-//            k.second->upload();
-//        }
-//    }
-//    void unBind() {
-//        glUseProgram(0);
-//    }
-//};

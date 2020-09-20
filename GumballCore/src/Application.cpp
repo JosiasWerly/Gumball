@@ -12,13 +12,13 @@ int main() {
     sy.newShaderFromFile("res/shaders/red.shader");
     sy.newShaderFromFile("res/shaders/blue.shader");
     
-    Shader def("defaultShader");
-    def.setParam<UniformParam<float, 4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
-    auto v = def.getParam<UniformParam<float, 4>>("uColor");
+    Shader sA("defaultShader"), sB("defaultShader");
+    sA.setParam<UniformParam<float, 4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
+    sB.setParam<UniformParam<float, 4>>("uColor", { 1.f, 0.f, 0.f, 0.f });
     auto bfLayout = new VertexBufferLayout;
     bfLayout->push<float>(2);
     a->setup(
-        &def,
+        &sA,
         *bfLayout,
         {
             -.1,  -.1,
@@ -29,10 +29,10 @@ int main() {
         { 
             0, 1, 2,
             2, 3, 0 
-        }
+        }  
     );
     b->setup(
-        &def,
+        &sB,
         *bfLayout,
         {
             -.4,  -.2,
@@ -57,7 +57,7 @@ int main() {
         r.draw();
         r.swap();
     }
-
+    sy.clearAllShaders();
     r.drawcalls.clear();
     delete a, b;
 
