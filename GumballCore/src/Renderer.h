@@ -337,36 +337,7 @@ struct ShaderReference {
     const string name;
     const unsigned int programId;
 };
-class Shader{
-    typedef map<string, ShaderParameter*> Uniforms;
-protected:
-    const ShaderReference& shaderRef;
-public:
-    Uniforms uniforms;
-    Shader(string name);
-    void updateParams() {
-        uniforms = ShaderHelper::getActiveUniforms(shaderRef.programId);
-    }
-    template<class T>void setParam(string name, T data) {
-        auto it = uniforms.find(name);
-        if (it != uniforms.end())
-            *((T*)it->second) = data;
-    }
-    template<class T>const T* getParam(string name) {
-        auto it = uniforms.find(name);
-        if (it != uniforms.end())
-            return dynamic_cast<T*>(it->second);
-        return nullptr;
-    }
-    void bind() {
-        glDCall(glUseProgram(shaderRef.programId));
-        for (auto& k : uniforms)
-            k.second->upload();
-    }
-    void unBind() {
-        glUseProgram(0);
-    }
-};
+
 class ShaderSystem : 
     public Singleton<ShaderSystem> {
 private:
@@ -402,10 +373,39 @@ public:
         return *loadedShaders.get(name);
     }
 };
-Shader::Shader(string name) : 
-    shaderRef(ShaderSystem::instance().getShaderReference(name)) {
-    updateParams();
-}
+class Shader {
+    typedef map<string, ShaderParameter*> Uniforms;
+protected:
+    const ShaderReference& shaderRef;
+public:
+    Uniforms uniforms;
+    Shader(string name) :
+        shaderRef(ShaderSystem::instance().getShaderReference(name)){
+        updateParams();
+    }
+    void updateParams() {
+        uniforms = ShaderHelper::getActiveUniforms(shaderRef.programId);
+    }
+    template<class T>void setParam(string name, T data) {
+        auto it = uniforms.find(name);
+        if (it != uniforms.end())
+            *((T*)it->second) = data;
+    }
+    template<class T>const T* getParam(string name) {
+        auto it = uniforms.find(name);
+        if (it != uniforms.end())
+            return dynamic_cast<T*>(it->second);
+        return nullptr;
+    }
+    void bind() {
+        glDCall(glUseProgram(shaderRef.programId));
+        for (auto& k : uniforms)
+            k.second->upload();
+    }
+    void unBind() {
+        glUseProgram(0);
+    }
+};
 
 #include "stb_image.h"
 struct TextureReference{
