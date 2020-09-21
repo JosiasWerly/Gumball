@@ -25,13 +25,18 @@ public:
 	}
 };
 
-template<class TValue>class iAssetSystem {
-protected:
+template<class TValue> 
+class AssetSystem {
+public:
     typedef pair<string, TValue*> pAsset;
     typename typedef map<string, TValue*>::iterator it;
 
+protected:
     map<string, TValue*> assets;
 public:
+    map<string, TValue*>& getAssets() {
+        return assets;
+    }
     bool contain(string name) {
         return assets.find(name) != assets.end();
     }

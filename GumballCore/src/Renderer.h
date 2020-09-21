@@ -303,9 +303,10 @@ public:
 class ShaderSystem : 
     public Singleton<ShaderSystem> {
 private:
-    map<string, ShaderReference> loadedShaders;
+    AssetSystem<ShaderReference> loadedShaders;
 public:
-    ShaderSystem() {}
+    ShaderSystem() {
+    }
     void newShaderFromFile(string filePath) {
         string fName = std::filesystem::path(filePath).filename().string();
         fName = fName.substr(0, fName.find_last_of("."));
@@ -313,23 +314,25 @@ public:
         newShader(fName, shaderCode.vertex, shaderCode.fragment);
     }
     void newShader(string name, string vertex, string fragment) {
-        if (loadedShaders.find(name) == loadedShaders.end()) {
+        if (!loadedShaders.contain(name)) {
             unsigned int shaderProgram = ShaderHelper::buildShader(vertex, fragment);
-            loadedShaders.insert(pair<string, ShaderReference>(name, {name, shaderProgram}));
+            loadedShaders.push(name, { name, shaderProgram });
         }
     }
-    void deleteShader(string data) {
-        ShaderReference sh = (*loadedShaders.find(data)).second;
-        glDeleteProgram(sh.programId);
-        loadedShaders.erase(data);
+    void deleteShader(string name) {
+        AssetSystem<ShaderReference>::it i;
+        loadedShaders.contain(name, i);
+        glDeleteProgram(i->second->programId);
+        loadedShaders.pop(name);
     }
     void clearAllShaders() {
-        for (auto k : loadedShaders)
-            glDeleteProgram(k.second.programId);
+        auto assets = loadedShaders.getAssets();
+        for (auto k : assets)
+            glDeleteProgram(k.second->programId);
         loadedShaders.clear();
     }
     ShaderReference getShaderReference(string name) {
-        return (*loadedShaders.find(name)).second;
+        return *loadedShaders.get(name);
     }
 };
 Shader::Shader(string name) : 
@@ -398,7 +401,6 @@ public:
         stride += VertexBufferElement::getSizeType(GL_BYTE) * count;
     }
 };
-
 class VertexArray {
 public:
     unsigned int bufferId;
