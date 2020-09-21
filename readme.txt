@@ -13,8 +13,7 @@ Gumball heading Rules:
 -contain a default editorUI, the hooks for bind an UIEditor must be public(sdk) so anyone can create his own editor;
 -the workflow cannot be too strange or wierd in base what we have now in the market(ue4, unity);
 -the programmer must have all the access, thus exploring the morphology of code and experimenting. DON'T BE RELIGIOUS, make some multiple inheritance, functionPointers, get the memory by force. 
-
-
+-all core files inline (.hpp or .h) because c++ linker are annoying, engine core build should generate a library.
 
 Be awesome:
 "dont let good ideias spoil good work"-Bjarne Stroustrup.
