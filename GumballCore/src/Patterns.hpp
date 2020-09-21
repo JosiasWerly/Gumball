@@ -32,7 +32,6 @@ class AssetSystem {
 public:
     typedef pair<string, TValue*> pAsset;
     typename typedef map<string, TValue*>::iterator it;
-
 protected:
     map<string, TValue*> assets;
 public:

@@ -6,9 +6,7 @@
 
 #include <GLFW/glfw3.h>
 #include "Patterns.hpp"
-
 using namespace std;
-
 #define glAssert(fnx) if (!(fnx)) __debugbreak();
 #define glDCall(fnx)\
 GLClearError();\
@@ -27,7 +25,10 @@ static bool GLLogCall(const char* fnx, const char* file, int line) {
 }
 
 namespace gbLib {
-
+    string getNameOfFilePath(string path) {
+        string fName = std::filesystem::path(path).filename().string();
+        return fName.substr(0, fName.find_last_of("."));
+    }
 };
 
 
@@ -171,6 +172,59 @@ public:
     }
 };
 
+template<>class UniformParam<int, 4> :
+    public ShaderParameter {
+public:
+    int a, b, c, d;
+    UniformParam() {}
+    UniformParam(int a, int b, int c, int d) :
+        a(a), b(b), c(c), d(d) {
+    }
+    void upload() {
+        glUniform4i(paramLocation, a, b, c, d);
+    }
+};
+template<>class UniformParam<int, 3> :
+    public ShaderParameter {
+public:
+    int a, b, c;
+    UniformParam() {}
+    UniformParam(int a, int b, int c) :
+        a(a), b(b), c(c) {
+    }
+    void upload() {
+        glUniform3f(paramLocation, a, b, c);
+    }
+};
+template<>class UniformParam<int, 2> :
+    public ShaderParameter {
+public:
+    int a, b;
+    UniformParam() {}
+    UniformParam(int a, int b) :
+        a(a), b(b) {
+    }
+    void upload() {
+        glUniform2f(paramLocation, a, b);
+    }
+};
+template<>class UniformParam<int, 1> :
+    public ShaderParameter {
+public:
+    int a;
+    UniformParam() {}
+    UniformParam(int a) :
+        a(a) {
+    }
+    void upload() {
+        glUniform1f(paramLocation, a);
+    }
+};
+
+
+
+
+
 class ShaderHelper {
     ShaderHelper(const ShaderHelper&) = delete;
 public:
@@ -286,7 +340,7 @@ struct ShaderReference {
 class Shader{
     typedef map<string, ShaderParameter*> Uniforms;
 protected:
-    const ShaderReference shaderRef;
+    const ShaderReference& shaderRef;
 public:
     Uniforms uniforms;
     Shader(string name);
@@ -318,21 +372,21 @@ class ShaderSystem :
 private:
     AssetSystem<ShaderReference> loadedShaders;
 public:
-    ShaderSystem() {
-    }
-    void newShaderFromFile(string filePath) {
-        string fName = std::filesystem::path(filePath).filename().string();
-        fName = fName.substr(0, fName.find_last_of("."));
+    void loadShaderFromFile(string filePath) {
+        /*string fName = std::filesystem::path(filePath).filename().string();
+        fName = fName.substr(0, fName.find_last_of("."));*/
+
+        string fName = gbLib::getNameOfFilePath(filePath);
         auto shaderCode = ShaderHelper::loadShaderCodeFromFile(filePath);
-        newShader(fName, shaderCode.vertex, shaderCode.fragment);
+        loadShader(fName, shaderCode.vertex, shaderCode.fragment);
     }
-    void newShader(string name, string vertex, string fragment) {
+    void loadShader(string name, string vertex, string fragment) {
         if (!loadedShaders.contain(name)) {
             unsigned int shaderProgram = ShaderHelper::buildShader(vertex, fragment);
             loadedShaders.push(name, { name, shaderProgram });
         }
     }
-    void deleteShader(string name) {
+    void unloadShader(string name) {
         AssetSystem<ShaderReference>::it i;
         loadedShaders.contain(name, i);
         glDeleteProgram(i->second->programId);
@@ -352,7 +406,58 @@ Shader::Shader(string name) :
     shaderRef(ShaderSystem::instance().getShaderReference(name)) {
     updateParams();
 }
-//end of the ShaderSystem
+
+#include "stb_image.h"
+struct TextureReference{
+    const unsigned int glBufferId;
+    const unsigned char* memoryBuffer;
+    const int width, height;
+};
+class TextureSystem : 
+    public Singleton<TextureSystem> {
+    AssetSystem<TextureReference> loadedTextures;
+public:
+    void loadTexture(string filePath) {
+        stbi_convert_iphone_png_to_rgb(1);
+        int x, y, channels;
+        unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
+
+        unsigned int bufferId = 0;
+        
+        glDCall(glGenTextures(1, &bufferId));
+        glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
+        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+        glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
+        glDCall(glBindTexture(GL_TEXTURE_2D, 0));
+        loadedTextures.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
+    }
+    void unloadTexture(string name) {
+        auto s = loadedTextures.get(name);
+        glDeleteTextures(1, &s->glBufferId);
+        delete s->memoryBuffer;
+        loadedTextures.pop(name);
+    }
+    const TextureReference& getTextureReference(string name) {
+        return *loadedTextures.get(name);
+    }
+};
+class Texture {
+    const TextureReference& textureData;
+public:
+    Texture(string name) :
+        textureData(TextureSystem::instance().getTextureReference(name)) {
+    }
+    void bind(char slot = 0) {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, textureData.glBufferId);
+    }
+    void unbind() {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+};
 
 
 
