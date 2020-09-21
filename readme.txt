@@ -16,7 +16,7 @@ Gumball heading Rules:
 
 
 
-be awesome:
+Be awesome:
 "dont let good ideias spoil good work"-Bjarne Stroustrup.
 "[...] value is not equal to work hour [...]"-StarShip troopers.
 
