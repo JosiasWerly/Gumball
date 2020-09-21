@@ -14,8 +14,10 @@ using namespace std;
 template<typename T>
 class Singleton {
 protected:
-	Singleton() {}
-	~Singleton() {}
+	Singleton() {
+    }
+	~Singleton() {
+    }
 	Singleton(Singleton& other) = delete;
 	void operator=(Singleton& other) = delete;
 public:

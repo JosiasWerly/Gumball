@@ -77,6 +77,19 @@ public:
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    template<typename T>T* newDrawCall() {
+        T* out = new T;
+        drawcalls.insert((iDrawCall*)out);
+        return out;
+    }
+    void delDrawCall(iDrawCall* drawCall) {
+        auto i = drawcalls.find(drawCall);
+        if (i != drawcalls.end()) {
+            delete (*i);
+            drawcalls.erase(i);
+        }
+    }
 };
 
 
@@ -452,7 +465,6 @@ public:
         return count;
     }
 };
-
 
 class debugDraw : public iDrawCall {
 public:

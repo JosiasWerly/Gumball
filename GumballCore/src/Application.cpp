@@ -5,9 +5,9 @@
 int main() {
     Renderer r;
     r.setup("gumball", 800, 600);
-    auto a = new debugDraw, b = new debugDraw;
-    r.drawcalls.insert(a);
-    r.drawcalls.insert(b);
+    auto 
+        a = r.newDrawCall<debugDraw>(), 
+        b = r.newDrawCall<debugDraw>();
     
     auto &sy = ShaderSystem::instance();
     sy.newShaderFromFile("res/shaders/defaultShader.shader");
