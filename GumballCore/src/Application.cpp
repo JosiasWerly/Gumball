@@ -2,90 +2,14 @@
 #include "Renderer.h"
 #include "Patterns.hpp"
 
-
-
-
-class iAssetInstance {
-public:
-
-};
-
-template<typename tType> class iAssetSystem{
-private:
-    typedef map<string, iAssetInstance*> TAssets;
-    typedef pair<string, iAssetInstance*> aPair;
-    typedef TAssets::iterator aIt;
-    TAssets assets;
-public:
-    bool contains(string name) {
-        return assets.find(name) != assets.end();
-    }
-    bool contains(string name, aIt &it) {
-        it = assets.find(name);
-        return  it != assets.end();
-    }
-
-    bool load(string name, tType&& other) {
-        if (!contains(name)) {
-            assets.insert(aPair(name, new tType(other)));
-            return true;
-        }
-        return false;
-    }
-    bool unload(string name, tType&&other) {
-        aIt it;
-        if (contains(name, it)) {
-            delete (*it).second;
-            assets.erase(it);
-            return true;
-        }
-        return false;
-    }
-};
-
-class BufferAsset : 
-    public iAssetInstance{
-public:
-    char* data;
-    BufferAsset() {
-    }
-};
-
-
-
-class BufferInstance : 
-    public BufferAsset {
-    BufferInstance(){
-    }
-};
 int main() {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     Renderer r;
     r.setup("gumball", 800, 600);
     auto a = new debugDraw, b = new debugDraw;
     r.drawcalls.insert(a);
     r.drawcalls.insert(b);
     
-    auto &sy = ShaderSystem::getInstance();
+    auto &sy = ShaderSystem::instance();
     sy.newShaderFromFile("res/shaders/defaultShader.shader");
     sy.newShaderFromFile("res/shaders/red.shader");
     sy.newShaderFromFile("res/shaders/blue.shader");

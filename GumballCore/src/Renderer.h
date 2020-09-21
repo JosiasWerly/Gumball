@@ -5,13 +5,8 @@
 #define GLFW_INCLUDE_NONE
 
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <filesystem>
-#include <set>
-#include <vector>
-#include <array>
-#include <list>
-#include <map>
+#include "Patterns.hpp"
+
 using namespace std;
 
 #define glAssert(fnx) if (!(fnx)) __debugbreak();
@@ -163,7 +158,7 @@ public:
     }
 };
 
-class ShaderHelper{
+class ShaderHelper {
     ShaderHelper(const ShaderHelper&) = delete;
 public:
     struct ShaderSource {
@@ -305,19 +300,12 @@ public:
         glUseProgram(0);
     }
 };
-class ShaderSystem{
+class ShaderSystem : 
+    public Singleton<ShaderSystem> {
 private:
     map<string, ShaderReference> loadedShaders;
-
-    ShaderSystem() {}
-    ShaderSystem(ShaderSystem const&) = delete;
-    void operator=(ShaderSystem const&) = delete;
-    virtual ~ShaderSystem() {}
 public:
-    static ShaderSystem& getInstance() {
-        static ShaderSystem inst;
-        return inst;
-    }
+    ShaderSystem() {}
     void newShaderFromFile(string filePath) {
         string fName = std::filesystem::path(filePath).filename().string();
         fName = fName.substr(0, fName.find_last_of("."));
@@ -345,7 +333,7 @@ public:
     }
 };
 Shader::Shader(string name) : 
-        shaderRef(ShaderSystem::getInstance().getShaderReference(name)){
+    shaderRef(ShaderSystem::instance().getShaderReference(name)) {
     updateParams();
 }
 //end of the ShaderSystem

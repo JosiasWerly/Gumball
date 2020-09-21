@@ -2,6 +2,14 @@
 #ifndef _patterns
 #define _patterns
 
+#include <iostream>
+#include <filesystem>
+#include <set>
+#include <vector>
+#include <array>
+#include <list>
+#include <map>
+using namespace std;
 
 template<typename T>
 class Singleton {
@@ -17,4 +25,46 @@ public:
 	}
 };
 
+template<class TValue>class iAssetSystem {
+protected:
+    typedef pair<string, TValue*> pAsset;
+    typename typedef map<string, TValue*>::iterator it;
+
+    map<string, TValue*> assets;
+public:
+    bool contain(string name) {
+        return assets.find(name) != assets.end();
+    }
+    bool contain(string name, it& out) {
+        out = assets.find(name);
+        return  out != assets.end();
+    }
+
+    TValue* push(string name, const TValue&& init) {
+        if (!contain(name)) {
+            TValue* newVal = new TValue(init);
+            assets.insert({ name, newVal });
+            return newVal;
+        }
+        return nullptr;
+    }
+    virtual bool pop(string name) {
+        it i;
+        if (contain(name, i)) {
+            assets.erase(i);
+            return true;
+        }
+        return false;
+    }
+    virtual void clear() {
+        for (pAsset i : assets)
+            delete i.second;
+        assets.clear();
+    }
+    virtual const TValue* get(string name) {
+        it i;
+        contain(name, i);
+        return (*i).second;
+    }
+};
 #endif // !_patterns
