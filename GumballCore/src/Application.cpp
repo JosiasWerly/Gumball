@@ -12,41 +12,45 @@ int main() {
     sy.loadShaderFromFile("res/shaders/defaultShader.shader");
     sy.loadShaderFromFile("res/shaders/red.shader");
     sy.loadShaderFromFile("res/shaders/blue.shader");    
+    st.loadTexture("res/textures/test.png");
     st.loadTexture("res/textures/gumball.png");
+    st.loadTexture("res/textures/grid.png");
 
-    
-    auto a = r.newDrawCall<debugDraw>(), 
-        b = r.newDrawCall<debugDraw>();
-    
-
-    
-    
-
-    Shader sA("defaultShader"), sB("defaultShader");
-    sA.setParam<UniformParam<float,4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
-    sA.setParam <UniformParam<int,1>>("uTexture", 0);
-    sB.setParam<UniformParam<float,4>>("uColor", { 1.f, 0.f, 0.f, 0.f });
-    
-    auto bfLayout = new VertexBufferLayout;
-    bfLayout->push<float>(2);
-    bfLayout->push<float>(2);
-    a->setup(
-        &sA,
-        *bfLayout,
-        {
-            -.1, -.1,   0, 0,
-             .1, -.1,   1, 0,
-             .1, .1,    1, 1,
-            -.1, .1,    0, 1
-        },
-        { 
-            0, 1, 2,
-            2, 3, 0 
-        }  
+	auto DrawCallA = r.newDrawCall<debugDraw>();
+	auto bfLayoutA = new VertexBufferLayout;
+	Texture tA("test");
+	Shader sA("defaultShader");
+    tA.bind();
+	bfLayoutA->push<float>(2);
+	bfLayoutA->push<float>(2);
+	sA.setParam<UniformParam<float, 4>>("uColor", { 0.f, 1.f, 0.f, 0.f });
+	sA.setParam <UniformParam<int, 1>>("uTexture", 0);
+	DrawCallA->setup(
+		&sA,
+		*bfLayoutA,
+		{
+			-.1, -.1,   0, 0,
+			 .1, -.1,   1, 0,
+			 .1, .1,    1, 1,
+			-.1, .1,    0, 1
+		},
+		{
+			0, 1, 2,
+			2, 3, 0
+		}
     );
-    b->setup(
+	DrawCallA->text = &tA;
+    
+
+    auto DrawCallB = r.newDrawCall<debugDraw>();
+    auto bfLayoutB = new VertexBufferLayout;
+    Shader sB("red");
+    
+    sB.setParam<UniformParam<float,4>>("uColor", { 1.f, 0.f, 0.f, 0.f });
+    bfLayoutB->push<float>(2);
+    DrawCallB->setup(
         &sB,
-        *bfLayout,
+        *bfLayoutB,
         {
             -.4,  -.2,
             -.4,  -.0,
@@ -72,8 +76,6 @@ int main() {
     }
     sy.clearAllShaders();
     r.drawcalls.clear();
-    delete a, b;
-
     glfwTerminate();
     return 0;
 }

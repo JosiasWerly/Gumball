@@ -421,14 +421,21 @@ public:
         stbi_convert_iphone_png_to_rgb(1);
         int x, y, channels;
         unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
-        unsigned int bufferId = 0;        
+        unsigned int bufferId = 0;
+
+        if (!imageBuffer)
+            cout << "image not loaded" << endl;
         glDCall(glGenTextures(1, &bufferId));
         glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
+        //filtering
         glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-        glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
+        
+        //wrapping
+        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+        
+        glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
         glDCall(glBindTexture(GL_TEXTURE_2D, 0));
         loadedTextures.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
     }
@@ -575,11 +582,8 @@ public:
     IndexBuffer* ibe;
     VertexArray* vba;
     Shader* shader;
-    Texture text;
-    
-    debugDraw() : 
-        text("gumball") {
-    }
+    Texture *text;
+
     void setup(Shader* shader, VertexBufferLayout layout, vector<float> data, vector<unsigned int> index) {
         this->shader = shader;
         vba = new VertexArray;
@@ -592,8 +596,11 @@ public:
     void draw() {
         shader->bind();
         vba->bind();
-        text.bind();
+        if(text)
+            text->bind();
         glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr));
+        if (text)
+            text->unbind();
     }
     void terminate() {
         if (vbo) delete vbo;
