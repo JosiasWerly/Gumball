@@ -193,7 +193,7 @@ public:
         a(a), b(b), c(c) {
     }
     void upload() {
-        glUniform3f(paramLocation, a, b, c);
+        glUniform3i(paramLocation, a, b, c);
     }
 };
 template<>class UniformParam<int, 2> :
@@ -205,7 +205,7 @@ public:
         a(a), b(b) {
     }
     void upload() {
-        glUniform2f(paramLocation, a, b);
+        glUniform2i(paramLocation, a, b);
     }
 };
 template<>class UniformParam<int, 1> :
@@ -217,7 +217,7 @@ public:
         a(a) {
     }
     void upload() {
-        glUniform1f(paramLocation, a);
+        glUniform1i(paramLocation, a);
     }
 };
 
@@ -253,8 +253,8 @@ public:
     static int compileShader(unsigned int ShaderType, const string& code) {
         unsigned int id = glCreateShader(ShaderType);
         const char* src = code.c_str();
-        glShaderSource(id, 1, &src, 0);
-        glCompileShader(id);
+        glDCall(glShaderSource(id, 1, &src, 0));
+        glDCall(glCompileShader(id));
 
         int result;
         glGetShaderiv(id, GL_COMPILE_STATUS, &result);
@@ -264,7 +264,7 @@ public:
             char* msg = (char*)alloca(length * sizeof(char));
             glGetShaderInfoLog(id, length, &length, msg);
 
-            cout << (ShaderType == GL_VERTEX_SHADER ? "vert" : "frag") << " shader failed to compile =(" << endl;
+            cout << (ShaderType == GL_VERTEX_SHADER ? "vert" : "frag") << msg << endl;
             return 0;
         }
         return id;
@@ -369,7 +369,7 @@ public:
             glDeleteProgram(k.second->programId);
         loadedShaders.clear();
     }
-    ShaderReference getShaderReference(string name) {
+    ShaderReference const& getShaderReference(string name) {
         return *loadedShaders.get(name);
     }
 };
@@ -421,9 +421,7 @@ public:
         stbi_convert_iphone_png_to_rgb(1);
         int x, y, channels;
         unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
-
-        unsigned int bufferId = 0;
-        
+        unsigned int bufferId = 0;        
         glDCall(glGenTextures(1, &bufferId));
         glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
         glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
@@ -451,8 +449,8 @@ public:
         textureData(TextureSystem::instance().getTextureReference(name)) {
     }
     void bind(char slot = 0) {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, textureData.glBufferId);
+        glDCall(glActiveTexture(GL_TEXTURE0 + slot));
+        glDCall(glBindTexture(GL_TEXTURE_2D, textureData.glBufferId));
     }
     void unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -577,7 +575,11 @@ public:
     IndexBuffer* ibe;
     VertexArray* vba;
     Shader* shader;
-
+    Texture text;
+    
+    debugDraw() : 
+        text("gumball") {
+    }
     void setup(Shader* shader, VertexBufferLayout layout, vector<float> data, vector<unsigned int> index) {
         this->shader = shader;
         vba = new VertexArray;
@@ -585,10 +587,12 @@ public:
         vbo = new VertexBuffer(data.data(), data.size() * sizeof(float));
         vba->addBuffer(*vbo, layout);        
         ibe = new IndexBuffer(index.data(), index.size());
+        
     }
     void draw() {
         shader->bind();
         vba->bind();
+        text.bind();
         glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr));
     }
     void terminate() {

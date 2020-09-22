@@ -15,13 +15,10 @@ void main() {
 #version 330 core
 
 layout(location = 0) out vec4 color;
-
 in vec2 vTexture;
 uniform vec4 uColor;
-uniform Sampler2D uTexture;
-
-
+uniform sampler2D uTexture;
 void main() {
     vec4 texColor = texture(uTexture, vTexture);
-    color = texColor;
+    color = uColor;
 };
