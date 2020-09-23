@@ -14,13 +14,15 @@ int main() {
     sy.loadShaderFromFile("res/shaders/blue.shader");    
     st.loadTexture("res/textures/test.png");
     st.loadTexture("res/textures/gumball.png");
+    st.loadTexture("res/textures/gumbalA.png");
     st.loadTexture("res/textures/grid.png");
+    
 
 	auto DrawCallA = r.newDrawCall<debugDraw>();
-	Texture tA("grid");
+	Texture tA("gumbalA");
 	Shader sA("defaultShader");
     tA.bind();
-	sA.setParam<UniformParam<float, 4>>("uColor", { 1.f, 1.f, 1.f, 1.f });
+	sA.setParam<UniformParam<float, 4>>("uColor", { 1.f, 1.f, 1.f, 0.5f });
     sA.setParam<UniformParam<int, 1>>("uTexture", {0});
     DrawCallA->text = &tA;
 	

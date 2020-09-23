@@ -56,6 +56,7 @@ public:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //profile
         gladLoadGL();
+
         window = glfwCreateWindow(x, y, winName.c_str(), NULL, NULL);
         if (!window) {
             glfwTerminate();
@@ -64,6 +65,12 @@ public:
         glfwMakeContextCurrent(window);
         gladLoadGL();
         glViewport(0, 0, x, y);
+        
+        //textureAlpha
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //endTextureAlpha
+        
         glfwSwapInterval(1);
     }
     void draw() {
@@ -448,8 +455,8 @@ public:
             glDCall(glGenTextures(1, &bufferId));
             glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
             //filtering
-            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
             //wrapping
             glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
