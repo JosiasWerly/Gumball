@@ -312,6 +312,26 @@ public:
             shParam = new UniformParam<float, 1>(1);
             shParam->paramLocation = paramLocation;
             break;
+        case GL_INT_VEC4:
+            shParam = new UniformParam<int, 4>(1, 1, 1, 1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_INT_VEC3:
+            shParam = new UniformParam<int, 3>(1, 1, 1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_INT_VEC2:
+            shParam = new UniformParam<int, 2>(1, 1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_INT:
+            shParam = new UniformParam<int, 1>(1);
+            shParam->paramLocation = paramLocation;
+            break;
+        case GL_SAMPLER_2D:
+            shParam = new UniformParam<int, 1>(1);
+            shParam->paramLocation = paramLocation;
+            break;
         }
         return shParam;
     }
@@ -323,6 +343,7 @@ public:
         int length, size, paramLocation;
         char name[bufSize];
         glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &typeCount);//GL_ACTIVE_UNIFORMS
+        
         for (int i = 0; i < typeCount; i++) {
             glGetActiveUniform(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
             paramLocation = glGetUniformLocation(shaderProgram, name);
@@ -418,26 +439,27 @@ class TextureSystem :
     AssetSystem<TextureReference> loadedTextures;
 public:
     void loadTexture(string filePath) {
-        stbi_convert_iphone_png_to_rgb(1);
+        stbi_set_flip_vertically_on_load(true);
         int x, y, channels;
         unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
         unsigned int bufferId = 0;
 
-        if (!imageBuffer)
-            cout << "image not loaded" << endl;
-        glDCall(glGenTextures(1, &bufferId));
-        glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
-        //filtering
-        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        
-        //wrapping
-        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-        glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-        
-        glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
-        glDCall(glBindTexture(GL_TEXTURE_2D, 0));
-        loadedTextures.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
+        if (imageBuffer) {
+            glDCall(glGenTextures(1, &bufferId));
+            glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
+            //filtering
+            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+
+            //wrapping
+            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+            glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
+            glDCall(glBindTexture(GL_TEXTURE_2D, 0));
+            loadedTextures.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
+        }
+        else throw;
     }
     void unloadTexture(string name) {
         auto s = loadedTextures.get(name);
@@ -450,8 +472,8 @@ public:
     }
 };
 class Texture {
-    const TextureReference& textureData;
 public:
+    const TextureReference& textureData;
     Texture(string name) :
         textureData(TextureSystem::instance().getTextureReference(name)) {
     }
@@ -509,10 +531,10 @@ public:
     const vector<VertexBufferElement>& getElements() {
         return elements;
     }
+    
     template<typename T>void push(unsigned int) {}
-
     template<>void push<float>(unsigned int count) {
-        elements.push_back({ GL_FLOAT, count, false });
+        elements.push_back({ GL_FLOAT, count,false });
         stride += VertexBufferElement::getSizeType(GL_FLOAT) * count;
     }    
     template<>void push<int>(unsigned int count) {
@@ -549,7 +571,7 @@ public:
             glDCall(glEnableVertexAttribArray(i));
             glDCall(glVertexAttribPointer(i, element.count, element.type, 
                 element.normalized, layout.getStride(), (const void*)offset));
-            offset += element.count;
+            offset += element.count*element.getSizeType(element.type);
         }
     }
 };
@@ -578,9 +600,9 @@ public:
 
 class debugDraw : public iDrawCall {
 public:
+    VertexArray* vba;
     VertexBuffer* vbo;
     IndexBuffer* ibe;
-    VertexArray* vba;
     Shader* shader;
     Texture *text;
 
@@ -594,10 +616,11 @@ public:
         
     }
     void draw() {
-        shader->bind();
-        vba->bind();
-        if(text)
+        if (text)
             text->bind();
+        shader->bind();
+
+        vba->bind();
         glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr));
         if (text)
             text->unbind();
