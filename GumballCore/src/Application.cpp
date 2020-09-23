@@ -19,13 +19,13 @@ int main() {
     
 
 	auto DrawCallA = r.newDrawCall<debugDraw>();
-	Texture tA("gumbalA");
+	Texture tA("grid");
 	Shader sA("defaultShader");
     tA.bind();
 	sA.setParam<UniformParam<float, 4>>("uColor", { 1.f, 1.f, 1.f, 0.5f });
     sA.setParam<UniformParam<int, 1>>("uTexture", {0});
+    sA.setParam<UniformParam<glm::mat4, 1>>("mvp", r.projection);
     DrawCallA->text = &tA;
-	
     
     auto bfLayoutA = new VertexBufferLayout;
 	bfLayoutA->push<float>(2);
@@ -34,44 +34,48 @@ int main() {
 		&sA,
 		*bfLayoutA,
 		{
-			0, 0,      0, 0,
-			.9, 0,     1, 0,
-			.9, .9,    1, 1,
-			.0, .9,    0, 1
+			0, 0,        0, 0,
+			100, 0,      1, 0,
+            100, 100,    1, 1,
+			0, 100,      0, 1
 		},
 		{
 			0, 1, 2,
 			2, 3, 0
 		}
-    );
-	
-    
+    );	
+    /*{
+        0, 0, 0, 0,
+            0.5, 0, 1, 0,
+            0.5, 0.5, 1, 1,
+            0, 0.5, 0, 1
+    }*/
 
-    auto DrawCallB = r.newDrawCall<debugDraw>();
-    Shader sB("defaultShader");
-    Texture tB("gumball");
-    DrawCallB->text = &tB;
-    tB.bind();    
-    sB.setParam<UniformParam<float, 4>>("uColor", { 1.f, 1.f, 1.f, 1.f });
-    sB.setParam<UniformParam<int, 1>>("uTexture", { 0 });
-    
-    auto bfLayoutB = new VertexBufferLayout;
-    bfLayoutB->push<float>(2);
-    bfLayoutB->push<float>(2);
-    DrawCallB->setup(
-        &sB,
-        *bfLayoutB,
-        {
-            -.4,  -.2,  0, 0,
-            -.2,  -.2,  1, 0,
-            -.2,   .0,  1, 1,
-            -.4,  -.0,  0, 1
-        },
-        {
-            0, 1, 2,
-            2, 3, 0
-        }
-    );
+    //auto DrawCallB = r.newDrawCall<debugDraw>();
+    //Shader sB("defaultShader");
+    //Texture tB("gumball");
+    //DrawCallB->text = &tB;
+    //tB.bind();    
+    //sB.setParam<UniformParam<float, 4>>("uColor", { 1.f, 1.f, 1.f, 1.f });
+    //sB.setParam<UniformParam<int, 1>>("uTexture", { 0 });
+    //
+    //auto bfLayoutB = new VertexBufferLayout;
+    //bfLayoutB->push<float>(2);
+    //bfLayoutB->push<float>(2);
+    //DrawCallB->setup(
+    //    &sB,
+    //    *bfLayoutB,
+    //    {
+    //        -.4,  -.2,  0, 0,
+    //        -.2,  -.2,  1, 0,
+    //        -.2,   .0,  1, 1,
+    //        -.4,  -.0,  0, 1
+    //    },
+    //    {
+    //        0, 1, 2,
+    //        2, 3, 0
+    //    }
+    //);
 
     //clear all the bind/selectionStack
     glUseProgram(0);

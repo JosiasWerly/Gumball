@@ -42,6 +42,7 @@ class Renderer {
 public:
     int x, y;
     GLFWwindow* window;
+    glm::mat4 projection;
     set<iDrawCall*> drawcalls;
     ~Renderer() {
         glfwTerminate();
@@ -64,6 +65,12 @@ public:
         }
         glfwMakeContextCurrent(window);
         gladLoadGL();
+
+        float 
+            xRatio = 1.f/x,
+            yRatio = 1.f/y;
+
+        projection = glm::ortho(0.f, (float)x, 0.f, (float)y, -1.f, 1.f);
         glViewport(0, 0, x, y);
         
         //textureAlpha
@@ -227,6 +234,18 @@ public:
         glUniform1i(paramLocation, a);
     }
 };
+template<>class UniformParam<glm::mat4, 1 > :
+    public ShaderParameter {
+public:
+    glm::mat4 a;
+    UniformParam() {}
+    UniformParam(glm::mat4 a) :
+        a(a) {
+    }
+    void upload() {
+        glUniformMatrix4fv(paramLocation, 1, GL_FALSE, &a[0][0]);
+    }
+};
 
 
 
@@ -303,6 +322,10 @@ public:
     static ShaderParameter* reflectUniformParam(unsigned int paramLocation, GLenum type) {
         ShaderParameter* shParam = nullptr;
         switch (type) {
+        case GL_FLOAT_MAT4:
+            shParam = new UniformParam<glm::mat4, 1>(glm::mat4());
+            shParam->paramLocation = paramLocation;
+            break;
         case GL_FLOAT_VEC4:
             shParam = new UniformParam<float, 4>(1, 1, 1, 1);
             shParam->paramLocation = paramLocation;
