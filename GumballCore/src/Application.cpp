@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "Patterns.hpp"
 
+
+
 int main() {
     Renderer r;
     r.setup("gumball", 800, 600);
