@@ -388,13 +388,11 @@ struct ShaderReference {
     const string name;
     const unsigned int programId;
 };
-
 class ShaderSystem : 
+    public AssetFactory<ShaderReference>,
     public Singleton<ShaderSystem> {
-private:
-    AssetSystem<ShaderReference> loadedShaders;
 public:
-    void loadShaderFromFile(string filePath) {
+    void loadFromFile(string filePath) {
         /*string fName = std::filesystem::path(filePath).filename().string();
         fName = fName.substr(0, fName.find_last_of("."));*/
 
@@ -402,26 +400,23 @@ public:
         auto shaderCode = ShaderHelper::loadShaderCodeFromFile(filePath);
         loadShader(fName, shaderCode.vertex, shaderCode.fragment);
     }
-    void loadShader(string name, string vertex, string fragment) {
-        if (!loadedShaders.contain(name)) {
-            unsigned int shaderProgram = ShaderHelper::buildShader(vertex, fragment);
-            loadedShaders.push(name, { name, shaderProgram });
-        }
-    }
-    void unloadShader(string name) {
-        AssetSystem<ShaderReference>::it i;
-        loadedShaders.contain(name, i);
+    void unload(string name) {
+        AssetCollection<ShaderReference>::it i;
+        assets.contain(name, i);
         glDeleteProgram(i->second->programId);
-        loadedShaders.pop(name);
+        assets.pop(name);
     }
-    void clearAllShaders() {
-        auto assets = loadedShaders.getAssets();
-        for (auto k : assets)
+    void unloadAll() {        
+        auto assetsRef = assets.getAssets();
+        for (auto k : assetsRef)
             glDeleteProgram(k.second->programId);
-        loadedShaders.clear();
+        assets.clear();
     }
-    ShaderReference const& getShaderReference(string name) {
-        return *loadedShaders.get(name);
+    void loadShader(string name, string vertex, string fragment) {
+        if (!assets.contain(name)) {
+            unsigned int shaderProgram = ShaderHelper::buildShader(vertex, fragment);
+            assets.push(name, { name, shaderProgram });
+        }
     }
 };
 class Shader {
@@ -431,7 +426,7 @@ protected:
 public:
     Uniforms uniforms;
     Shader(string name) :
-        shaderRef(ShaderSystem::instance().getShaderReference(name)){
+        shaderRef(ShaderSystem::instance().getAsset(name)){
         updateParams();
     }
     void updateParams() {
@@ -465,10 +460,10 @@ struct TextureReference{
     const int width, height;
 };
 class TextureSystem : 
+    public AssetFactory<TextureReference>,
     public Singleton<TextureSystem> {
-    AssetSystem<TextureReference> loadedTextures;
 public:
-    void loadTexture(string filePath) {
+    void loadFromFile(string filePath) {
         stbi_set_flip_vertically_on_load(true);
         int x, y, channels;
         unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
@@ -487,25 +482,25 @@ public:
 
             glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
             glDCall(glBindTexture(GL_TEXTURE_2D, 0));
-            loadedTextures.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
+            assets.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
         }
         else throw;
     }
-    void unloadTexture(string name) {
-        auto s = loadedTextures.get(name);
+    void unload(string name) {
+        auto s = assets.get(name);
         glDeleteTextures(1, &s->glBufferId);
         delete s->memoryBuffer;
-        loadedTextures.pop(name);
+        assets.pop(name);
     }
-    const TextureReference& getTextureReference(string name) {
-        return *loadedTextures.get(name);
+    void unloadAll() {
+
     }
 };
 class Texture {
 public:
     const TextureReference& textureData;
     Texture(string name) :
-        textureData(TextureSystem::instance().getTextureReference(name)) {
+        textureData(TextureSystem::instance().getAsset(name)) {
     }
     void bind(char slot = 0) {
         glDCall(glActiveTexture(GL_TEXTURE0 + slot));

@@ -27,8 +27,8 @@ public:
 	}
 };
 
-template<class TValue> 
-class AssetSystem {
+template<typename TValue>
+class AssetCollection {
 public:
     typedef pair<string, TValue*> pAsset;
     typename typedef map<string, TValue*>::iterator it;
@@ -73,4 +73,27 @@ public:
         return (*i).second;
     }
 };
+
+
+class iAssetFactory {
+    virtual void loadFromFile(string filePath) = 0;
+    virtual void unload(string name) = 0;
+    virtual void unloadAll() = 0;
+};
+template<typename TAsset>
+class AssetFactory : 
+    public iAssetFactory {
+public:
+    AssetCollection<TAsset> assets;
+    virtual void loadFromFile(string filePath) {
+    }
+    virtual void unload(string name) {
+    }
+    virtual void unloadAll() {
+    }
+    const TAsset& getAsset(string name) {
+        return *assets.get(name);
+    }
+};
+
 #endif // !_patterns

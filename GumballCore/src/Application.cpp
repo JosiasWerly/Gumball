@@ -3,21 +3,28 @@
 #include "Patterns.hpp"
 
 
+namespace xp{
+    void test() {
+    }
+};
+
+
 
 int main() {
+    xp::test();
     Renderer r;
     r.setup("gumball", 800, 600);
 
     auto& sy = ShaderSystem::instance();
     auto& st = TextureSystem::instance();
 
-    sy.loadShaderFromFile("res/shaders/defaultShader.shader");
-    sy.loadShaderFromFile("res/shaders/red.shader");
-    sy.loadShaderFromFile("res/shaders/blue.shader");    
-    st.loadTexture("res/textures/test.png");
-    st.loadTexture("res/textures/gumball.png");
-    st.loadTexture("res/textures/gumbalA.png");
-    st.loadTexture("res/textures/grid.png");
+    sy.loadFromFile("res/shaders/defaultShader.shader");
+    sy.loadFromFile("res/shaders/red.shader");
+    sy.loadFromFile("res/shaders/blue.shader");    
+    st.loadFromFile("res/textures/test.png");
+    st.loadFromFile("res/textures/gumball.png");
+    st.loadFromFile("res/textures/gumbalA.png");
+    st.loadFromFile("res/textures/grid.png");
     
 
 	auto DrawCallA = r.newDrawCall<debugDraw>();
@@ -90,7 +97,7 @@ int main() {
         r.draw();
         r.swap();
     }
-    sy.clearAllShaders();
+    sy.unloadAll();
     r.drawcalls.clear();
     glfwTerminate();
     return 0;
