@@ -11,18 +11,38 @@ namespace xp {
     template<typename T> struct UniformData<T, 3> { T a, b, c; };
     template<typename T> struct UniformData<T, 4> { T a, b, c, d; };
 
-    template<typename T, const int n = 1>
-    class UniformParam{
+
+
+    struct ShaderParamBind {
+        unsigned int paramLocation;
+        unsigned int paramType;
+    };
+    class ShaderParameter {
+    public:
+        ShaderParamBind param;
+        ShaderParameter(ShaderParameter& other) {
+            this->param = other.param;
+        }
+        void operator=(ShaderParameter const& other) {
+            //trick from mr.Joe
+        }
+        virtual void upload() = 0;
+    };
+
+
+
+    template<typename T, const int n = 1> class UniformParam {
     public:
         virtual void setParamValue(const unsigned int& paramLocation) = 0;
     };
+    
     #define UniExpClass(t, exp)\
     template<> class UniformParam<t> { \
     public:\
         t value;\
         UniformParam(){}\
         UniformParam(t&& init) : value(init) {}\
-        void setParamValue(const unsigned int& paramLocation){exp;}};
+        void upload(const unsigned int& paramLocation){exp;}};
 
     #define UniExpPrimitive(t, n, exp) \
     template<> class UniformParam<t, n>{\
@@ -30,7 +50,7 @@ namespace xp {
             UniformData<t, n> value;\
             UniformParam(){}\
             UniformParam(const UniformData<t, n>&& init) : value(init) {}\
-            void setParamValue(const unsigned int& paramLocation){exp;}}
+            void upload(const unsigned int& paramLocation){exp;}}
 
     UniExpPrimitive(int, 1, glUniform1i(paramLocation, value.a));
     UniExpPrimitive(int, 2, glUniform2i(paramLocation, value.a, value.b));
@@ -40,11 +60,15 @@ namespace xp {
     UniExpPrimitive(float, 2, glUniform2f(paramLocation, value.a, value.b));
     UniExpPrimitive(float, 3, glUniform3f(paramLocation, value.a, value.b, value.c));
     UniExpPrimitive(float, 4, glUniform4f(paramLocation, value.a, value.b, value.c, value.d));
-    
+
     UniExpClass(glm::mat4, glUniformMatrix4fv(paramLocation, 1, GL_FALSE, &value[0][0]));
     #undef UniExpPrimitive
     #undef UniExpClass
 
+
+    
+
+    
 
     class ParamShaderHelper {
     public:
@@ -75,23 +99,6 @@ namespace xp {
             return out;
         }
     };
-
-    struct ShaderParamBind {
-        unsigned int paramLocation;
-        unsigned int paramType;
-    };
-    template<class t, const int n=0>
-    class ShaderParameter {
-    public:
-        ShaderParamBind shaderBind;
-        UniformParam<t, n> param;
-        ShaderParameter() {
-        }
-        void upload() {
-            param.setParamValue(shaderBind.paramLocation);
-        }
-    };
-
     void test() {
         UniformParam<float> s;
         auto p = UniformParam<float, 1>({ .2});
