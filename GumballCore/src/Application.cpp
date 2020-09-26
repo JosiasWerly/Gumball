@@ -3,8 +3,102 @@
 #include "Patterns.hpp"
 
 
-namespace xp{
+namespace xp {
+    
+    template<typename T, const int> struct UniformData {};
+    template<typename T> struct UniformData<T, 1> { T a; };
+    template<typename T> struct UniformData<T, 2> { T a, b; };
+    template<typename T> struct UniformData<T, 3> { T a, b, c; };
+    template<typename T> struct UniformData<T, 4> { T a, b, c, d; };
+
+    template<typename T, const int n = 1>
+    class UniformParam{
+    public:
+        virtual void setParamValue(const unsigned int& paramLocation) = 0;
+    };
+    #define UniExpClass(t, exp)\
+    template<> class UniformParam<t> { \
+    public:\
+        t value;\
+        UniformParam(){}\
+        UniformParam(t&& init) : value(init) {}\
+        void setParamValue(const unsigned int& paramLocation){exp;}};
+
+    #define UniExpPrimitive(t, n, exp) \
+    template<> class UniformParam<t, n>{\
+        public:\
+            UniformData<t, n> value;\
+            UniformParam(){}\
+            UniformParam(const UniformData<t, n>&& init) : value(init) {}\
+            void setParamValue(const unsigned int& paramLocation){exp;}}
+
+    UniExpPrimitive(int, 1, glUniform1i(paramLocation, value.a));
+    UniExpPrimitive(int, 2, glUniform2i(paramLocation, value.a, value.b));
+    UniExpPrimitive(int, 3, glUniform3i(paramLocation, value.a, value.b, value.c));
+    UniExpPrimitive(int, 4, glUniform4i(paramLocation, value.a, value.b, value.c, value.d));
+    UniExpPrimitive(float, 1, glUniform1f(paramLocation, value.a));
+    UniExpPrimitive(float, 2, glUniform2f(paramLocation, value.a, value.b));
+    UniExpPrimitive(float, 3, glUniform3f(paramLocation, value.a, value.b, value.c));
+    UniExpPrimitive(float, 4, glUniform4f(paramLocation, value.a, value.b, value.c, value.d));
+    
+    UniExpClass(glm::mat4, glUniformMatrix4fv(paramLocation, 1, GL_FALSE, &value[0][0]));
+    #undef UniExpPrimitive
+    #undef UniExpClass
+
+
+    class ParamShaderHelper {
+    public:
+        static ShaderParameter* reflectType(GLenum type) {
+            ShaderParameter* out = 0;
+            switch (type) {
+            case GL_FLOAT_MAT4:
+                break;
+            case GL_FLOAT_VEC4:
+                break;
+            case GL_FLOAT_VEC3:
+                break;
+            case GL_FLOAT_VEC2:
+                break;
+            case GL_FLOAT:
+                break;
+            case GL_INT_VEC4:
+                break;
+            case GL_INT_VEC3:
+                break;
+            case GL_INT_VEC2:
+                break;
+            case GL_INT:
+                break;
+            case GL_SAMPLER_2D:
+                break;
+            }
+            return out;
+        }
+    };
+
+    struct ShaderParamBind {
+        unsigned int paramLocation;
+        unsigned int paramType;
+    };
+    template<class t, const int n=0>
+    class ShaderParameter {
+    public:
+        ShaderParamBind shaderBind;
+        UniformParam<t, n> param;
+        ShaderParameter() {
+        }
+        void upload() {
+            param.setParamValue(shaderBind.paramLocation);
+        }
+    };
+
     void test() {
+        UniformParam<float> s;
+        auto p = UniformParam<float, 1>({ .2});
+        p.value = { 0.5f };
+        cout << endl;
+        //ShaderParameter* s = ParamTest<glm::vec1>(glm::vec1(0));
+        
     }
 };
 

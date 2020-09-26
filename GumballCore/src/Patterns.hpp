@@ -95,5 +95,4 @@ public:
         return *assets.get(name);
     }
 };
-
 #endif // !_patterns

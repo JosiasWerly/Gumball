@@ -47,6 +47,9 @@
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h">
       <Filter>src\dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />

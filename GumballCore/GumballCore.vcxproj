@@ -187,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
+    <ClInclude Include="Shader.hpp" />
     <ClInclude Include="src\Gumball.h" />
     <ClInclude Include="src\Patterns.hpp" />
     <ClInclude Include="src\Renderer.h" />

@@ -111,10 +111,6 @@ public:
 //ShaderSystem
 #include <fstream>
 #include <sstream>
-struct ShaderParameterValues{
-    unsigned int paramLocation;
-    unsigned int paramType;
-};
 class ShaderParameter {
 public:
     unsigned int paramLocation;
