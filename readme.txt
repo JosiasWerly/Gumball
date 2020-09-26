@@ -9,7 +9,7 @@ Gumball heading Rules:
 -support c++, lua, python, js and C#;
 -contain physics;
 -support for network;
--engineTime Scripts, runtime Scripts;
+-editorTime/engineTime Scripts, runtime Scripts;
 -contain a default editorUI, the hooks for bind an UIEditor must be public(sdk) so anyone can create his own editor;
 -the workflow cannot be too strange or wierd in base what we have now in the market(ue4, unity);
 -the programmer must have all the access, thus exploring the morphology of code and experimenting. DON'T BE RELIGIOUS, make some multiple inheritance, functionPointers, get the memory by force. 
