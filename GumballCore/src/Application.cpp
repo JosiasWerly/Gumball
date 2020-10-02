@@ -1,5 +1,5 @@
 
-#include "Renderer.h"
+#include "Renderer.hpp"
 #include "Patterns.hpp"
 
 
@@ -12,7 +12,7 @@ int main() {
 
     sy.loadFromFile("res/shaders/defaultShader.shader");
     sy.loadFromFile("res/shaders/red.shader");
-    sy.loadFromFile("res/shaders/blue.shader");    
+    sy.loadFromFile("res/shaders/blue.shader");
     st.loadFromFile("res/textures/test.png");
     st.loadFromFile("res/textures/gumball.png");
     st.loadFromFile("res/textures/gumbalA.png");

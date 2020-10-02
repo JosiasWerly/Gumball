@@ -35,19 +35,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Gumball.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\Patterns.hpp">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h">
       <Filter>src\dependencies</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.hpp">
+    <ClInclude Include="src\Shader.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Gumball.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -187,10 +187,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
-    <ClInclude Include="Shader.hpp" />
-    <ClInclude Include="src\Gumball.h" />
+    <ClInclude Include="src\Gumball.hpp" />
     <ClInclude Include="src\Patterns.hpp" />
-    <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\Renderer.hpp" />
+    <ClInclude Include="src\Shader.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
