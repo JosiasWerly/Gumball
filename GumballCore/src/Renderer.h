@@ -138,6 +138,9 @@ template<typename t, const int n = 0> class Uniform : public iShaderParam {
 public:
     UniformData<t, n> data;
     Uniform(UniformData<t, n>&& init) : data(init) {}
+    void operator=(UniformData<t, n>&& init) {
+        data = init;
+    }
     void push() {
     }
 };
@@ -339,11 +342,12 @@ public:
     void updateParams() {
 		uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderBind.programId);
 	}
-	template<class t>void setParam(string name, t data) {
-        //auto it = uniforms.find(name);
-		//if (it != uniforms.end())
-		//	*((t*)it->second) = data;
-	}
+
+    template<class T>T* getParam(string name) {
+        auto it = uniforms.find(name);
+        if (it != uniforms.end())
+            return dynamic_cast<T*>((it)->second);
+    }
 
 	void bind() {
 		glDCall(glUseProgram(shaderBind.programId));

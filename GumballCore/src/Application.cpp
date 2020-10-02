@@ -4,17 +4,11 @@
 
 
 namespace xp {
-    //class Shader {
-    //    typedef map<string, ShaderParameter*> Uniforms;
-    //protected:
-    //    const ShaderBind shaderBind;
-    //public:
-    //    Uniforms uniforms;
-    //    Shader(ShaderBind shaderRef) : shaderBind(shaderRef) {}
-    //};
 };
-
 int main() {
+
+
+
     Renderer r;
     r.setup("gumball", 800, 600);
 
@@ -29,15 +23,14 @@ int main() {
     st.loadFromFile("res/textures/gumbalA.png");
     st.loadFromFile("res/textures/grid.png");
     
+    
 
 	auto DrawCallA = r.newDrawCall<debugDraw>();
 	Texture tA("grid");
-	Shader sA("defaultShader");
     tA.bind();
-	//sA.setParam<Uniform<float, 4>>("uColor", );
-    //sA.setParam<Uniform<int, 1>>("uTexture", {0});
-    //sA.setParam<Uniform<glm::mat4, 1>>("mvp", r.projection);
-    DrawCallA->text = &tA;
+	Shader sA("defaultShader");
+    auto t = sA.getParam<Uniform<float, 4>>("mvp");
+    
     
     auto bfLayoutA = new VertexBufferLayout;
 	bfLayoutA->push<float>(2);
@@ -55,13 +48,7 @@ int main() {
 			0, 1, 2,
 			2, 3, 0
 		}
-    );	
-    /*{
-        0, 0, 0, 0,
-            0.5, 0, 1, 0,
-            0.5, 0.5, 1, 1,
-            0, 0.5, 0, 1
-    }*/
+    );
 
     //auto DrawCallB = r.newDrawCall<debugDraw>();
     //Shader sB("defaultShader");
