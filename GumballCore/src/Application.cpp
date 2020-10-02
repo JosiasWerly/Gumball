@@ -3,12 +3,7 @@
 #include "Patterns.hpp"
 
 
-namespace xp {
-};
 int main() {
-
-
-
     Renderer r;
     r.setup("gumball", 800, 600);
 
@@ -23,14 +18,13 @@ int main() {
     st.loadFromFile("res/textures/gumbalA.png");
     st.loadFromFile("res/textures/grid.png");
     
-    
 
 	auto DrawCallA = r.newDrawCall<debugDraw>();
 	Texture tA("grid");
     tA.bind();
 	Shader sA("defaultShader");
-    auto t = sA.getParam<Uniform<float, 4>>("mvp");
-    
+    sA.getParam("uColor")->value<Uniform<glm::fvec4>>().data = { 1, 1, 1, 1 };
+    sA.getParam("mvp")->value<Uniform<glm::mat4>>().data = r.projection;
     
     auto bfLayoutA = new VertexBufferLayout;
 	bfLayoutA->push<float>(2);

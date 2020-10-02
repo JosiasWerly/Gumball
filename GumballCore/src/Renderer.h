@@ -113,63 +113,80 @@ public:
 #include <sstream>
 
 
-struct ShaderBind {
-    const string name;
-    const unsigned int programId;
-};
+
+
+
 struct ShaderParamBind {
     unsigned int paramLocation;
     unsigned int paramType;
 };
-class iShaderParam {
+class iShaderParamPushMethod {
+public:
+    virtual void pushParam(const ShaderParamBind& param) = 0;
+};
+
+template<typename t> class Uniform : public iShaderParamPushMethod {
+public:
+    virtual void pushParam(const ShaderParamBind& param) = 0;
+};
+#define UniformDefaultExp(t, exp)\
+template<> class Uniform<t> : public iShaderParamPushMethod {public:\
+    t data = t();\
+    void operator=(t data) { this->data = data; }\
+    void pushParam(const ShaderParamBind& param) { exp; }}
+
+UniformDefaultExp(int, glUniform1iv(param.paramLocation, 1, &data));
+UniformDefaultExp(float, glUniform1fv(param.paramLocation, 1, &data));
+UniformDefaultExp(glm::mat4, glUniformMatrix4fv(param.paramLocation, 1, GL_FALSE, &data[0][0]));
+UniformDefaultExp(glm::fvec2, glUniform2fv(param.paramLocation, 1, glm::value_ptr(data)));
+UniformDefaultExp(glm::fvec3, glUniform3fv(param.paramLocation, 1, glm::value_ptr(data)));
+UniformDefaultExp(glm::fvec4, glUniform4fv(param.paramLocation, 1, glm::value_ptr(data)));
+UniformDefaultExp(glm::ivec2, glUniform2iv(param.paramLocation, 1, glm::value_ptr(data)));
+UniformDefaultExp(glm::ivec3, glUniform3iv(param.paramLocation, 1, glm::value_ptr(data)));
+UniformDefaultExp(glm::ivec4, glUniform4iv(param.paramLocation, 1, glm::value_ptr(data)));
+#undef UniformDefaultExp
+
+
+class ShaderParam {
+    iShaderParamPushMethod* method;
 public:
     ShaderParamBind param;
-    virtual void push() = 0;
-};
-
-
-template<typename T, const int> struct UniformData {};
-template<typename T> struct UniformData<T, 1> { T a; };
-template<typename T> struct UniformData<T, 2> { T a, b; };
-template<typename T> struct UniformData<T, 3> { T a, b, c; };
-template<typename T> struct UniformData<T, 4> { T a, b, c, d; };
-
-template<typename t, const int n = 0> class Uniform : public iShaderParam {
-public:
-    UniformData<t, n> data;
-    Uniform(UniformData<t, n>&& init) : data(init) {}
-    void operator=(UniformData<t, n>&& init) {
-        data = init;
+    void setMethod(iShaderParamPushMethod *newMethod) {
+        if (method) {
+            delete method;
+            method = nullptr;
+        }
+        method = newMethod;
     }
-    void push() {
+    template<class T>T& value() {
+        return *dynamic_cast<T*>(method);
     }
-};
-#define paramExp(t, n, exp)\
-    template<> class Uniform<t, n> : public iShaderParam{\
-    public:\
-        UniformData<t, n> data;\
-        Uniform(UniformData<t, n>&& init) : data(init){}\
-        void push() {exp;}}
-paramExp(float, 1, glUniform1f(param.paramLocation, data.a));
-paramExp(float, 2, glUniform2f(param.paramLocation, data.a, data.b));
-paramExp(float, 3, glUniform3f(param.paramLocation, data.a, data.b, data.c));
-paramExp(float, 4, glUniform4f(param.paramLocation, data.a, data.b, data.c, data.d));
-paramExp(int, 1, glUniform1i(param.paramLocation, data.a));
-paramExp(int, 2, glUniform2i(param.paramLocation, data.a, data.b));
-paramExp(int, 3, glUniform3i(param.paramLocation, data.a, data.b, data.c));
-paramExp(int, 4, glUniform4i(param.paramLocation, data.a, data.b, data.c, data.d));
+    virtual void bind() {
+        method->pushParam(param);
+    }
 
-template<> class Uniform<glm::mat4, 0> : public iShaderParam {
-public:
-    glm::mat4 data;
-    Uniform(glm::mat4&& init) :
-        data(init) {
-    }
-    void push() {
-        glUniformMatrix4fv(param.paramLocation, 1, GL_FALSE, &data[0][0]);
+    static iShaderParamPushMethod* reflectGLEnum(GLenum type) {
+        iShaderParamPushMethod* out = 0;
+        switch (type) {
+        case GL_FLOAT:          out = new Uniform<float>;       break;
+        case GL_INT:            out = new Uniform<int>;         break;
+        case GL_SAMPLER_2D:     out = new Uniform<int>;         break;
+        
+        
+        case GL_FLOAT_VEC2:     out = new Uniform<glm::fvec2>;      break;
+        case GL_FLOAT_VEC3:     out = new Uniform<glm::fvec3>;      break;
+        case GL_FLOAT_VEC4:     out = new Uniform<glm::fvec4>;      break;
+        case GL_INT_VEC4:       out = new Uniform<glm::ivec4>;      break;
+        case GL_INT_VEC3:       out = new Uniform<glm::ivec3>;      break;
+        case GL_INT_VEC2:       out = new Uniform<glm::ivec2>;      break;        
+        case GL_FLOAT_MAT4:     out = new Uniform<glm::mat4>;       break;
+        default:
+            cout << "reflectGLEnumError" << endl;
+            throw;
+        }
+        return out;
     }
 };
-
 class ShaderFunctionsLibrary {
     ShaderFunctionsLibrary(const ShaderFunctionsLibrary&) = delete;
 public:
@@ -238,44 +255,8 @@ public:
         return buildShader(shaderCode.vertex, shaderCode.fragment);
     }
     
-    static iShaderParam* reflectGLEnum(GLenum type) {
-        iShaderParam* out = 0;
-        switch (type) {
-        case GL_FLOAT_MAT4:
-            out = new Uniform<glm::mat4>(glm::mat4());
-            break;
-        case GL_FLOAT_VEC4:
-            out = new Uniform<float, 4>({ 0, 0, 0, 0 });
-            break;
-        case GL_FLOAT_VEC3:
-            out = new Uniform<float, 3>({ 0, 0, 0 });
-            break;
-        case GL_FLOAT_VEC2:
-            out = new Uniform<float, 2>({ 0, 0 });
-            break;
-        case GL_FLOAT:
-            out = new Uniform<float, 1>({ 0 });
-            break;
-        case GL_INT_VEC4:
-            out = new Uniform<int, 4>({ 0, 0, 0, 0 });
-            break;
-        case GL_INT_VEC3:
-            out = new Uniform<int, 3>({ 0, 0, 0 });
-            break;
-        case GL_INT_VEC2:
-            out = new Uniform<int, 2>({ 0, 0 });
-            break;
-        case GL_INT:
-            out = new Uniform<int, 1>({ 0 });
-            break;
-        case GL_SAMPLER_2D:
-            out = new Uniform<int, 1>({ 0 });
-            break;
-        }
-        return out;
-    }
-    static map<string, iShaderParam*> getActiveUniforms(const unsigned int shaderProgram) {
-        map<string, iShaderParam*> out;
+    static map<string, ShaderParam*> getActiveUniforms(const unsigned int shaderProgram) {
+        map<string, ShaderParam*> out;
         int typeCount;
         const unsigned int bufSize = 16; //?
         unsigned int type;
@@ -285,15 +266,20 @@ public:
         for (int i = 0; i < typeCount; i++) {
             glGetActiveUniform(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
             paramLocation = glGetUniformLocation(shaderProgram, name);
-            iShaderParam* shParam = reflectGLEnum(type);
-            if (shParam) {
-                shParam->param.paramLocation = paramLocation;
-                shParam->param.paramType = type;
-                out[name] = shParam;
-            }
+            ShaderParam* shParam = new ShaderParam;
+            shParam->param.paramLocation = paramLocation;
+            shParam->param.paramType = type;
+            shParam->setMethod(ShaderParam::reflectGLEnum(type));
+            out[name] = shParam;
         }
         return out;
     }
+};
+
+
+struct ShaderBind {
+    const string name;
+    const unsigned int programId;
 };
 class ShaderSystem : 
     public AssetFactory<ShaderBind>,
@@ -327,7 +313,7 @@ public:
     }
 };
 class Shader {
-	typedef map<string, iShaderParam*> Uniforms;
+	typedef map<string, ShaderParam*> Uniforms;
 protected:
 	const ShaderBind shaderBind;
 public:
@@ -343,55 +329,22 @@ public:
 		uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderBind.programId);
 	}
 
-    template<class T>T* getParam(string name) {
+    ShaderParam* getParam(string name) {
         auto it = uniforms.find(name);
         if (it != uniforms.end())
-            return dynamic_cast<T*>((it)->second);
+            return (it)->second;
+        return nullptr;
     }
 
 	void bind() {
 		glDCall(glUseProgram(shaderBind.programId));
 		for (auto& k : uniforms)
-			k.second->push();
+			k.second->bind();
 	}
 	void unBind() {
 		glUseProgram(0);
 	}
 };
-
-//class Shader {
-//    typedef map<string, ShaderParameter*> Uniforms;
-//protected:
-//    const ShaderReference& shaderRef;
-//public:
-//    Uniforms uniforms;
-//    Shader(string name) :
-//        shaderRef(ShaderSystem::instance().getAsset(name)){
-//        updateParams();
-//    }
-//    void updateParams() {
-//        uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderRef.programId);
-//    }
-//    template<class T>void setParam(string name, T data) {
-//        auto it = uniforms.find(name);
-//        if (it != uniforms.end())
-//            *((T*)it->second) = data;
-//    }
-//    template<class T>const T* getParam(string name) {
-//        auto it = uniforms.find(name);
-//        if (it != uniforms.end())
-//            return dynamic_cast<T*>(it->second);
-//        return nullptr;
-//    }
-//    void bind() {
-//        glDCall(glUseProgram(shaderRef.programId));
-//        for (auto& k : uniforms)
-//            k.second->upload();
-//    }
-//    void unBind() {
-//        glUseProgram(0);
-//    }
-//};
 
 #include "stb_image.h"
 struct TextureReference{
