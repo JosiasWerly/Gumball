@@ -258,8 +258,8 @@ public:
         vba = new VertexArray;
         vba->bind();
         vbo = new VertexBuffer(data.data(), data.size() * sizeof(float));
-        vba->addBuffer(*vbo, layout);        
         ibe = new IndexBuffer(index.data(), index.size());
+        vba->addBuffer(*vbo, layout);
         
     }
     void draw() {
@@ -267,8 +267,7 @@ public:
             text->bind();
         shader->bind();
 
-        vba->bind();
-        glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr));
+        vba->bind();    glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr)); //???
         if (text)
             text->unbind();
     }
