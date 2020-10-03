@@ -1,11 +1,11 @@
 #shader vertex
 #version 330 core
+in vec4 pos;
+in vec2 texCoord;
+out vec2 vTexture;
 
-layout(location = 0)in vec4 pos;
-layout(location = 1)in vec2 texCoord;
 uniform mat4 mvp;
 
-out vec2 vTexture;
 void main() {
     gl_Position = mvp * pos;
     vTexture = texCoord;
@@ -15,10 +15,12 @@ void main() {
 #shader fragment
 #version 330 core
 
-layout(location = 0) out vec4 color;
 in vec2 vTexture;
+out vec4 color;
+
 uniform vec4 uColor;
 uniform sampler2D uTexture;
+
 void main() {
     vec4 texColor = texture(uTexture, vTexture);
     color = texColor * uColor;
