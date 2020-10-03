@@ -181,7 +181,7 @@ public:
     
     template<typename T>void push(unsigned int) {}
     template<>void push<float>(unsigned int count) {
-        elements.push_back({ GL_FLOAT, count,false });
+        elements.push_back({ GL_FLOAT, count, false });
         stride += VertexBufferElement::getSizeType(GL_FLOAT) * count;
     }    
     template<>void push<int>(unsigned int count) {
