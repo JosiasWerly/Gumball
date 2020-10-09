@@ -3,32 +3,40 @@
 #include "Patterns.hpp"
 
 
-namespace exp {
-    #include <unordered_map>
-
-
-    struct VertexBufferElement{
-        unsigned int type, count;
-        unsigned char normalized;
-    };
-    class vLayout {
+namespace ep {
+    class VertexBuffer {
     public:
-        vector<VertexBufferElement> elements;
-        vLayout& operator<<(VertexBufferElement data) {
-            //elements.push_back(data);
-            return *this;
+        unsigned int bufferID;
+        VertexBuffer() {
+            glDCall(glGenBuffers(1, &bufferID));
+        }
+        ~VertexBuffer() {
+            glDCall(glDeleteBuffers(1, &bufferID));
+        }
+        void setData(const void* data, unsigned int size) {
+            glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
+            glDCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+        }
+        void bind() const {
+            glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
+        }
+        void unbind() const {
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
     };
     class DrawObject : public iDrawCall{
     public:
-        vLayout layout;
+        void(*fnx)(void);
         void draw() {
-
+            fnx(); 
         }
     };
     void test(Renderer &r) {
+        Shader sA("defaultShader");
+        sA.getParam("uColor")->value<Uniform<glm::fvec4>>().data = { 1, 1, 1, 1 };
+        sA.getParam("mvp")->value<Uniform<glm::mat4>>().data = r.projection;
+
         DrawObject* d = r.newDrawCall<DrawObject>();
-        d->layout << VertexBufferElement{0, 0, 0};
 
     }
 };
@@ -50,33 +58,34 @@ int main() {
     st.loadFromFile("res/textures/grid.png");
     
 
-    exp::test(r);
+    ep::test(r);
 
-    auto DrawCallA = r.newDrawCall<debugDraw>();
-	Texture tA("grid");
-    tA.bind();
-	Shader sA("defaultShader");
-    sA.getParam("uColor")->value<Uniform<glm::fvec4>>().data = { 1, 1, 1, 1 };
-    sA.getParam("mvp")->value<Uniform<glm::mat4>>().data = r.projection;
-    auto bfLayoutA = new VertexBufferLayout;
-	bfLayoutA->push<float>(2);
-    bfLayoutA->push<float>(2);
-	DrawCallA->setup(
-		&sA,
-		*bfLayoutA,
-		{
-			0, 0,        0, 0,
-			100, 0,      1, 0,
-            100, 100,    1, 1,
-			0, 100,      0, 1
-		},
-		{
-			0, 1, 2,
-			2, 3, 0
-		}
-    );
+	//auto DrawCallA = r.newDrawCall<debugDraw>();
+	//Texture tA("grid");
+	//tA.bind();
+	//Shader sA("defaultShader");
+	//sA.getParam("uColor")->value<Uniform<glm::fvec4>>().data = { 1, 1, 1, 1 };
+	//sA.getParam("mvp")->value<Uniform<glm::mat4>>().data = r.projection;
+	//auto bfLayoutA = new VertexBufferLayout;
+	//bfLayoutA->push<float>(2);
+	//bfLayoutA->push<float>(2);
+	//DrawCallA->setup(
+	//	&sA,
+	//	*bfLayoutA,
+	//	{
+	//		0, 0,        0, 0,
+	//		100, 0,      1, 0,
+	//		100, 100,    1, 1,
+	//		0, 100,      0, 1
+	//	},
+	//	{
+	//		0, 1, 2,
+	//		2, 3, 0
+	//	}
+	//	);
 
-    //clear all the bind/selectionStack
+
+	//clear all the bind/selectionStack
     glUseProgram(0);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
