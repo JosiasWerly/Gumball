@@ -5,9 +5,9 @@
 
 #include "stb_image.h"
 struct TextureReference {
-    const unsigned int glBufferId;
-    const unsigned char* memoryBuffer;
-    const int width, height;
+    unsigned int glBufferId;
+    unsigned char* memoryBuffer;
+    int width, height;
 };
 class TextureSystem :
     public AssetFactory<TextureReference>,
@@ -48,9 +48,14 @@ public:
 };
 class Texture {
 public:
-    const TextureReference& textureData;
-    Texture(string name) :
-        textureData(TextureSystem::instance().getAsset(name)) {
+    TextureReference textureData;
+    Texture() {
+    }
+    Texture(string name){
+        changeTexture(name);
+    }
+    void changeTexture(string name) {
+        textureData = TextureSystem::instance().getAsset(name);
     }
     void bind(char slot = 0) {
         glDCall(glActiveTexture(GL_TEXTURE0 + slot));

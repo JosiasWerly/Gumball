@@ -169,8 +169,8 @@ public:
 };
 
 struct ShaderBind {
-    const string name;
-    const unsigned int programId;
+    string name;
+    unsigned int programId;
 };
 class ShaderSystem :
     public AssetFactory<ShaderBind>,
@@ -203,20 +203,21 @@ public:
 class Shader {
     typedef map<string, ShaderParam*> Uniforms;
 protected:
-    const ShaderBind shaderBind;
+    ShaderBind shaderBind;
 public:
     Uniforms uniforms;
-    Shader(string name) :
-        shaderBind(ShaderSystem::instance().getAsset(name)) {
-        updateParams();
+    Shader(){
     }
-    Shader(ShaderBind shaderRef) :
-        shaderBind(shaderRef) {
+    Shader(string name){
+        changeShader(name);
+    }
+    void changeShader(string name) {
+        shaderBind = ShaderSystem::instance().getAsset(name);
+        updateParams();
     }
     void updateParams() {
         uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderBind.programId);
     }
-
     ShaderParam* getParam(string name) {
         auto it = uniforms.find(name);
         if (it != uniforms.end())
