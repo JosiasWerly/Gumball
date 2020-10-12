@@ -213,9 +213,9 @@ public:
     }
     void changeShader(string name) {
         shaderBind = ShaderSystem::instance().getAsset(name);
-        updateParams();
+        getShaderParams();
     }
-    void updateParams() {
+    void getShaderParams() {
         uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderBind.programId);
     }
     ShaderParam* getParam(string name) {

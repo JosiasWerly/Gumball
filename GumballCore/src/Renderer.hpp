@@ -102,8 +102,12 @@ public:
         float 
             xRatio = 1.f/x,
             yRatio = 1.f/y;
+        
+        projection = false ?//just for testing
+            glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
+            glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
 
-        projection = glm::ortho(0.f, (float)x, 0.f, (float)y, -1.f, 1.f);
+
         glViewport(0, 0, x, y);
         
         //textureAlpha
@@ -113,15 +117,16 @@ public:
         
         glfwSwapInterval(1);
     }
-    void draw() {
+    
+    void drawRender() {
         for (auto& d : drawcalls)
             d->draw();
     }
-    void clear() {
+    void clearRender() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
-    void swap() {
+    void swapBuffers() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -263,15 +268,28 @@ public:
 
     vector<float> vertex;
     vector<unsigned int> index;
+    float a = 0.1;
+    glm::vec3 cubePositions[10] = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
 
     DrawObject() {
         tx.changeTexture("grid");
         sa.changeShader("defaultShader");
         vertex = {
             0, 0,        0, 0,
-            100, 0,      1, 0,
-            100, 100,    1, 1,
-            0, 100,      0, 1
+            1, 0,      1, 0,
+            1, 1,    1, 1,
+            0, 1,      0, 1
         };
         index = {
             0, 1, 2,
@@ -289,9 +307,21 @@ public:
         va.unbind();
     }
     void draw() {
-        tx.bind();
         sa.bind();
         va.bind();
-        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+        tx.bind();
+        //glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+        
+        
+        a = a > 50 ? 1 : a + 0.1f;
+        for (int i = 1; i < 10; i++) {
+            auto mPos = glm::mat4(1.0f);
+            
+            mPos = glm::translate(mPos, cubePositions[i]);
+            mPos = glm::rotate(mPos, glm::radians(a *i), glm::vec3(1.f, 1.f, 0.f));
+            sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = mPos;
+            sa.bind();
+            glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+        }
     }
 };

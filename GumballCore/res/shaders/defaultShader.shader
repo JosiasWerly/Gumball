@@ -4,11 +4,13 @@ in vec4 pos;
 in vec2 texCoord;
 out vec2 vTexture;
 
-uniform mat4 mvp;
-
+//uniform mat4 uProj, uView, uModel;
+uniform mat4 uProj;
+uniform mat4 uView;
+uniform mat4 uModel;
 void main() {
-    gl_Position = mvp * pos;
     vTexture = texCoord;
+    gl_Position = uProj * uView * uModel * pos;
 };
 
 
