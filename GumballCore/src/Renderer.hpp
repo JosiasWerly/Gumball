@@ -126,41 +126,44 @@ public:
         glfwPollEvents();
     }
 
-    template<typename T>T* newDrawCall() {
-        T* out = new T;
-        drawcalls.insert((iDrawCall*)out);
-        return out;
+
+    Renderer& operator<<(iDrawCall* drawCall) {
+        drawcalls.insert(drawCall);
+        return *this;
     }
-    void delDrawCall(iDrawCall* drawCall) {
+    Renderer& operator>>(iDrawCall* drawCall) {
         auto i = drawcalls.find(drawCall);
-        if (i != drawcalls.end()) {
-            delete (*i);
+        if (i != drawcalls.end())
             drawcalls.erase(i);
-        }
     }
 };
 
-class VertexBuffer{
+class VertexBuffer {
 public:
     unsigned int bufferID;
-    VertexBuffer(const void* data, unsigned int size) {
+    VertexBuffer() {
         glDCall(glGenBuffers(1, &bufferID));
-        glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
-        glDCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
     }
     ~VertexBuffer() {
         glDCall(glDeleteBuffers(1, &bufferID));
     }
-    void bind() const{
+    void setData(const void* data, unsigned int size) {
+        glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
+        glDCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+    }
+    void bind() const {
         glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
     }
-    void unbind() const{
+    void unbind() const {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 };
-struct VertexBufferElement {
-    unsigned int type, count;
-    unsigned char normalized;
+class VertexBufferLayout {
+public:
+    struct VertexBufferElement {
+        unsigned int type, count;
+        unsigned char normalized;
+    };
 
     static unsigned int getSizeType(const unsigned int type) {
         switch (type) {
@@ -171,31 +174,28 @@ struct VertexBufferElement {
         __debugbreak();
         return -1;
     }
-};
-class VertexBufferLayout {
-public:
+
     int stride;
     vector<VertexBufferElement> elements;
 
     int getStride() const {
         return stride;
-    }    
+    }
     const vector<VertexBufferElement>& getElements() {
         return elements;
     }
-    
     template<typename T>void push(unsigned int) {}
     template<>void push<float>(unsigned int count) {
         elements.push_back({ GL_FLOAT, count, false });
-        stride += VertexBufferElement::getSizeType(GL_FLOAT) * count;
-    }    
+        stride += VertexBufferLayout::getSizeType(GL_FLOAT) * count;
+    }
     template<>void push<int>(unsigned int count) {
         elements.push_back({ GL_INT, count, false });
-        stride += VertexBufferElement::getSizeType(GL_INT) * count;
+        stride += VertexBufferLayout::getSizeType(GL_INT) * count;
     }
     template<>void push<char>(unsigned int count) {
         elements.push_back({ GL_BYTE, count, false });
-        stride += VertexBufferElement::getSizeType(GL_BYTE) * count;
+        stride += VertexBufferLayout::getSizeType(GL_BYTE) * count;
     }
 };
 class VertexArray {
@@ -213,31 +213,33 @@ public:
     void unbind() {
         glBindVertexArray(0);
     }
-    void addBuffer(const VertexBuffer &vb, const VertexBufferLayout& layout) {
+    void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
         bind();
         vb.bind();
         const auto& elements = layout.elements;
         unsigned int offset = 0;
-        for (unsigned int i = 0; i < elements.size(); i++){
+        for (unsigned int i = 0; i < elements.size(); i++) {
             const auto& element = elements[i];
             glDCall(glEnableVertexAttribArray(i));
-            glDCall(glVertexAttribPointer(i, element.count, element.type, 
+            glDCall(glVertexAttribPointer(i, element.count, element.type,
                 element.normalized, layout.getStride(), (const void*)offset));
-            offset += element.count*element.getSizeType(element.type);
+            offset += element.count * VertexBufferLayout::getSizeType(element.type);
         }
     }
 };
 class IndexBuffer {
 public:
     unsigned int bufferID, count;
-    IndexBuffer(unsigned int *indices, unsigned int count) :
-        count(count){
+    IndexBuffer() {
         glDCall(glGenBuffers(1, &bufferID));
-        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
-        glDCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW));
     }
     ~IndexBuffer() {
         glDCall(glDeleteBuffers(1, &bufferID));
+    }
+    void setData(unsigned int* indices, unsigned int count) {
+        this->count = count;
+        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
+        glDCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW));
     }
     void bind() const {
         glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
@@ -250,35 +252,46 @@ public:
     }
 };
 
-class debugDraw : public iDrawCall {
+class DrawObject : public iDrawCall {
 public:
-    VertexArray* vba;
-    VertexBuffer* vbo;
-    IndexBuffer* ibe;
-    Shader* shader;
-    Texture *text;
+    VertexBuffer vb;
+    VertexBufferLayout vl;
+    VertexArray va;
+    IndexBuffer ib;
+    Shader sa;
+    Texture tx;
 
-    void setup(Shader* shader, VertexBufferLayout layout, vector<float> data, vector<unsigned int> index) {
-        this->shader = shader;
-        vba = new VertexArray;
-        vba->bind();
-        vbo = new VertexBuffer(data.data(), data.size() * sizeof(float));
-        ibe = new IndexBuffer(index.data(), index.size());
-        vba->addBuffer(*vbo, layout);
-        
+    vector<float> vertex;
+    vector<unsigned int> index;
+
+    DrawObject() {
+        tx.changeTexture("grid");
+        sa.changeShader("defaultShader");
+        vertex = {
+            0, 0,        0, 0,
+            100, 0,      1, 0,
+            100, 100,    1, 1,
+            0, 100,      0, 1
+        };
+        index = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        tx.bind();
+        vl.push<float>(2);
+        vl.push<float>(2);
+
+        va.bind();
+        vb.setData(vertex.data(), vertex.size() * sizeof(float));
+        ib.setData(index.data(), index.size());
+        va.addBuffer(vb, vl);
+        va.unbind();
     }
     void draw() {
-        if (text)
-            text->bind();
-        shader->bind();
-
-        vba->bind();    glDCall(glDrawElements(GL_TRIANGLES, ibe->getCount(), GL_UNSIGNED_INT, nullptr)); //???
-        if (text)
-            text->unbind();
-    }
-    void terminate() {
-        if (vbo) delete vbo;
-        if (ibe) delete ibe;
-        if (shader) delete shader;
+        tx.bind();
+        sa.bind();
+        va.bind();
+        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
