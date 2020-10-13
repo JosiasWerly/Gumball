@@ -285,19 +285,82 @@ public:
     DrawObject() {
         tx.changeTexture("grid");
         sa.changeShader("defaultShader");
-        vertex = {
-            0, 0,        0, 0,
-            1, 0,      1, 0,
-            1, 1,    1, 1,
-            0, 1,      0, 1
-        };
-        index = {
+        //vertex = {
+        //    0, 0,        0, 0,
+        //    1, 0,      1, 0,
+        //    1, 1,    1, 1,
+        //    0, 1,      0, 1
+        //};
+        
+        /*index = {
             0, 1, 2,
             2, 3, 0
-        };
+        };*/
+		vertex = {
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		};
+
+
+        set<int> cached;
+        
+        for (size_t i = 0; i < vertex.size(); i+=5){
+            auto v = vertex[i]*2 + vertex[i + 1]*3 + vertex[i + 2] * 5;
+            auto itFound = cached.find(v);
+            if (itFound != cached.end())
+                index.push_back(std::distance(cached.begin(), itFound));
+            else {
+                index.push_back(cached.size());
+                cached.insert(v);
+
+            }
+        }
+
+
+
+
 
         tx.bind();
-        vl.push<float>(2);
+        vl.push<float>(3);
         vl.push<float>(2);
 
         va.bind();
@@ -310,9 +373,7 @@ public:
         sa.bind();
         va.bind();
         tx.bind();
-        //glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
-        
-        
+
         a = a > 50 ? 1 : a + 0.1f;
         for (int i = 1; i < 10; i++) {
             auto mPos = glm::mat4(1.0f);
