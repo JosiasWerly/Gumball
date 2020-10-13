@@ -340,25 +340,6 @@ public:
 			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 		};
 
-
-        set<int> cached;
-        
-        for (size_t i = 0; i < vertex.size(); i+=5){
-            auto v = vertex[i]*2 + vertex[i + 1]*3 + vertex[i + 2] * 5;
-            auto itFound = cached.find(v);
-            if (itFound != cached.end())
-                index.push_back(std::distance(cached.begin(), itFound));
-            else {
-                index.push_back(cached.size());
-                cached.insert(v);
-
-            }
-        }
-
-
-
-
-
         tx.bind();
         vl.push<float>(3);
         vl.push<float>(2);
