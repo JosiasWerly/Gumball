@@ -1,6 +1,15 @@
 #ifndef _vboIndexer
 #define _vboIndexer
 
+
+
+void gumballIndexer(
+	std::vector<glm::vec3>& in_vertices,
+	std::vector<glm::vec3>& out_vertices,
+	std::vector<unsigned short>& out_indices);
+
+
+
 void indexVBO(
 	std::vector<glm::vec3> & in_vertices,
 	std::vector<glm::vec2> & in_uvs,
