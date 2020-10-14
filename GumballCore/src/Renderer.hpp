@@ -261,7 +261,7 @@ public:
 #include "vboindexer.hpp"
 class DrawObject : public iDrawCall {
 public:
-    VertexBuffer vb, vbUv;
+    VertexBuffer vb;
     VertexBufferLayout vl;
     VertexArray va;
     IndexBuffer ib;
@@ -284,6 +284,7 @@ public:
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
+
     DrawObject() {
         tx.changeTexture("grid");
         sa.changeShader("defaultShader");
@@ -292,19 +293,22 @@ public:
             1, 0,      1, 0,
             1, 1,    1, 1,
             0, 1,      0, 1
-        };        
+        };
         index = {
             0, 1, 2,
             2, 3, 0
         };
+        
         tx.bind();
-        vl.push<float>(2);
-        vl.push<float>(2);
-
         va.bind();
+        
+        vl.push<float>(2);
+        vl.push<float>(2);
+        
         vb.setData(vertex.data(), vertex.size() * sizeof(float));
-        ib.setData(index.data(), index.size());
         va.addBuffer(vb, vl);
+        
+        ib.setData(index.data(), index.size());
         va.unbind();
     }
     void draw() {

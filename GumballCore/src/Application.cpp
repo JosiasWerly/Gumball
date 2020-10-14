@@ -47,3 +47,12 @@ int main() {
     glfwTerminate();
     return 0;
 }
+//WE NEED TO GO FORWARD:
+/*
+-base drawable (system for vba/vbo/layout/vertex)
+-lines
+-spheres
+-camera
+-lua
+-engine UI
+*/
