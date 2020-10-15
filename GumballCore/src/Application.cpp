@@ -52,7 +52,7 @@ int main() {
         r << &rec[i];
         rec[i].move(cubePositions[i]);
         rec[i].rotate({ 0, 0, 1 }, glm::radians(a * i));
-        rec[i].color({ i/10.f, 1, 1, 1 });
+        rec[i].color({ i/10.f, i / 10.f, i / 10.f, 1 });
     }
 
 
