@@ -24,8 +24,9 @@ int main() {
     
     
     DrawObject *d = new DrawObject;
+    
+    d->sa.bind();
     d->sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = { 1, 1, 1, 1 };
-
     d->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = r.projection;
     d->sa.getParam("uView")->value<Uniform<glm::mat4>>().data = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -3.0f));
     d->sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = glm::mat4(1.0f);

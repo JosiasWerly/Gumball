@@ -18,7 +18,7 @@ void main() {
 #version 330 core
 
 in vec2 vTexture;
-//out vec4 color;
+out vec4 color;
 
 uniform vec4 uColor;
 uniform sampler2D uTexture;
