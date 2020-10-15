@@ -1,14 +1,19 @@
 #shader vertex
 #version 330 core
-layout(location = 0)in vec4 pos;
+in vec4 pos;
+
+uniform mat4 uProj, uView, uModel;
 void main() {
-    gl_Position = pos;
+    gl_Position = uProj * uView * uModel * pos;
 };
 
 
 #shader fragment
 #version 330 core
+out vec4 color;
+
 uniform vec4 uColor;
-void main() {    
-    gl_FragColor = vec4(1, 0, 0, 1);
+
+void main() {
+    color =  uColor;
 };

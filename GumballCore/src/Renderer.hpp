@@ -67,18 +67,15 @@ public:
 };
 
 
-class iDrawCall {
-public:
-    virtual void draw(const class Renderer& renderer) = 0;
-};
-
 class ViewMode{
 public:
     enum class eProjectionMode{
         Ortho, Perspective, Custom
     };
     eProjectionMode eProjection;
-    glm::mat4 mView, mProjection;
+    glm::mat4 
+        mView = glm::mat4(1.0f),
+        mProjection = glm::mat4(1.0f);
 
     void setProjectionPerspective(float fovy, float aspect, float near = 0.1f, float far = 200.0f){
         mProjection = glm::perspective(fovy, aspect, near, far);
@@ -95,7 +92,10 @@ public:
        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
     }
 };
-
+class iDrawCall {
+public:
+    virtual void draw(const class Renderer& renderer) = 0;
+};
 class Renderer {
 public:
     int x, y;
@@ -202,7 +202,7 @@ public:
         return -1;
     }
 
-    int stride;
+    int stride = 0;
     vector<VertexBufferElement> elements;
 
     int getStride() const {
@@ -280,12 +280,72 @@ public:
 };
 
 
+class Rectangle : public iDrawCall{
+    VertexBuffer vb;
+    VertexBufferLayout vl;
+    VertexArray va;
+    IndexBuffer ib;
+    Shader sa;
+    glm::mat4 fMat = glm::mat4(1);
+public:
+    glm::fvec3 pos, rot;
+    glm::fvec4 c = { 1, 1, 1, 1 };
+
+    void color(glm::fvec4 color) {
+        this->c = color;
+    }
+
+    void move(glm::fvec3 pos) {
+        this->pos = pos;
+        fMat = glm::translate(fMat, pos);
+    }
+    void rotate(glm::fvec3 axis, float radians) {
+        fMat = glm::rotate(fMat, radians, axis);
+        //glm::extractEulerAngleXYZ();
+        //rot = glm::extra(fMat);
+    }
+
+    Rectangle(){
+        vector<float> vertex;
+        vector<unsigned int> index;
+
+        sa.changeShader("red");
+        vertex = {
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+        };
+        index = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        vl.push<float>(2);
+        va.bind();
+        vb.setData(vertex.data(), vertex.size() * sizeof(float));
+        ib.setData(index.data(), index.size());
+        va.addBuffer(vb, vl);
+        va.unbind();
+    }
+    void draw(const class Renderer& renderer) {
+        va.bind();
+        sa.bind();
+
+        sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = c;
+        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
+        sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
+        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
+        sa.uploadParams();
+        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+    }
+};
 
 
 
 class DrawObject : public iDrawCall {
 public:
-    VertexBuffer vb, vbUv;
+    VertexBuffer vb;
     VertexBufferLayout vl;
     VertexArray va;
     IndexBuffer ib;
