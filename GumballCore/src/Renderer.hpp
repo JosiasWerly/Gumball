@@ -67,6 +67,27 @@ public:
 };
 
 
+
+
+
+
+class ViewModel {
+public:
+    enum class eProjectionType {
+        Perspective, Ortho
+    };
+    eProjectionType eProjection;
+    glm::mat4 mView;
+
+    void setProjectionPerspective(float aspec, float fovy = 45.f, float near = .1f, float far = 200) {
+        eProjection = eProjectionType::Perspective;
+        mView = glm::perspective(glm::radians(fovy), aspec, near, far);
+    }
+    void setProjectionOrtho(float left, float right, float down, float top, float near = -.1f, float far = 100.f) {
+        eProjection = eProjectionType::Ortho;
+        mView = glm::ortho(left, right, down, top, near, far);
+    }
+};
 class iDrawCall {
 public:
     virtual void draw() = 0;
@@ -75,8 +96,9 @@ class Renderer {
 public:
     int x, y;
     GLFWwindow* window;
-    glm::mat4 projection;
+    ViewModel projection;
     set<iDrawCall*> drawcalls;
+    
     ~Renderer() {
         glfwTerminate();
     }
@@ -99,13 +121,10 @@ public:
         glfwMakeContextCurrent(window);
         gladLoadGL();
 
-        float 
-            xRatio = 1.f/x,
-            yRatio = 1.f/y;
-        
-        projection = false ?//just for testing
-            glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-            glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+        if (true)
+            projection.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
+        else
+            projection.setProjectionOrtho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f);
 
 
         glViewport(0, 0, x, y);
@@ -117,7 +136,6 @@ public:
         
         glfwSwapInterval(1);
     }
-    
     void drawRender() {
         for (auto& d : drawcalls)
             d->draw();
@@ -131,7 +149,6 @@ public:
         glfwPollEvents();
     }
 
-
     Renderer& operator<<(iDrawCall* drawCall) {
         drawcalls.insert(drawCall);
         return *this;
@@ -142,6 +159,8 @@ public:
             drawcalls.erase(i);
     }
 };
+
+
 
 class VertexBuffer {
 public:
@@ -289,10 +308,10 @@ public:
         tx.changeTexture("grid");
         sa.changeShader("defaultShader");
         vertex = {
-            0, 0,        0, 0,
-            1, 0,      1, 0,
+            0, 0,    0, 0,
+            1, 0,    1, 0,
             1, 1,    1, 1,
-            0, 1,      0, 1
+            0, 1,    0, 1
         };
         index = {
             0, 1, 2,
@@ -309,7 +328,14 @@ public:
         va.addBuffer(vb, vl);
         
         ib.setData(index.data(), index.size());
-        va.unbind();
+        va.unbind();  
+
+
+        sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = { 1, 1, 1, 1 };
+        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = r.projection;
+        sa.getParam("uView")->value<Uniform<glm::mat4>>().data = glm::translate(glm::mat4(1.0f), glm::vec3(0.f, 0.f, -3.0f));
+        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = glm::mat4(1.0f);
+
     }
     void draw() {
         sa.bind();
