@@ -224,11 +224,13 @@ public:
             return (it)->second;
         return nullptr;
     }
-
-    void bind() {
-        glDCall(glUseProgram(shaderBind.programId));
+    void uploadParams() {
         for (auto& k : uniforms)
             k.second->bind();
+    }
+    
+    void bind() {
+        glDCall(glUseProgram(shaderBind.programId));
     }
     void unBind() {
         glUseProgram(0);

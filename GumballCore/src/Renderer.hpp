@@ -69,13 +69,38 @@ public:
 
 class iDrawCall {
 public:
-    virtual void draw() = 0;
+    virtual void draw(const class Renderer& renderer) = 0;
 };
+
+class ViewMode{
+public:
+    enum class eProjectionMode{
+        Ortho, Perspective, Custom
+    };
+    eProjectionMode eProjection;
+    glm::mat4 mView, mProjection;
+
+    void setProjectionPerspective(float fovy, float aspect, float near = 0.1f, float far = 200.0f){
+        mProjection = glm::perspective(fovy, aspect, near, far);
+        eProjection = eProjectionMode::Perspective;
+    }
+    void setProjectionOrtho(){
+        //projection = false ?//just for testing
+       //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
+       //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+    }
+    void customProjection(){
+        //projection = false ?//just for testing
+       //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
+       //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+    }
+};
+
 class Renderer {
 public:
     int x, y;
     GLFWwindow* window;
-    glm::mat4 projection;
+    ViewMode viewMode;
     set<iDrawCall*> drawcalls;
     ~Renderer() {
         glfwTerminate();
@@ -99,13 +124,10 @@ public:
         glfwMakeContextCurrent(window);
         gladLoadGL();
 
-        float 
-            xRatio = 1.f/x,
-            yRatio = 1.f/y;
-        
-        projection = false ?//just for testing
-            glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-            glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+        viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
+        //projection = false ?//just for testing
+        //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
+        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
 
 
         glViewport(0, 0, x, y);
@@ -120,7 +142,7 @@ public:
     
     void drawRender() {
         for (auto& d : drawcalls)
-            d->draw();
+            d->draw(*this);
     }
     void clearRender() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -258,7 +280,9 @@ public:
 };
 
 
-#include "vboindexer.hpp"
+
+
+
 class DrawObject : public iDrawCall {
 public:
     VertexBuffer vb, vbUv;
@@ -307,11 +331,11 @@ public:
         va.addBuffer(vb, vl);
         va.unbind();
     }
-    void draw() {
+    void draw(const class Renderer& renderer) {
         sa.bind();
-        va.bind();
-        tx.bind();
+        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
 
+        va.bind();
         a = a > 50 ? 1 : a + 0.1f;
         for (int i = 1; i < 10; i++) {
             auto mPos = glm::mat4(1.0f);
@@ -319,7 +343,8 @@ public:
             mPos = glm::translate(mPos, cubePositions[i]);
             mPos = glm::rotate(mPos, glm::radians(a *i), glm::vec3(1.f, 1.f, 0.f));
             sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = mPos;
-            sa.bind();
+
+            sa.uploadParams();
             glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
         }
     }
