@@ -130,8 +130,8 @@ public:
         //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
 
 
-        glViewport(0, 0, x, y);
-        
+        glViewport(0, 0, x, y);        
+        glEnable(GL_DEPTH_TEST);
         //textureAlpha
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -146,7 +146,7 @@ public:
     }
     void clearRender() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     void swapBuffers() {
         glfwSwapBuffers(window);
