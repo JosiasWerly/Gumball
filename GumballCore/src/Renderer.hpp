@@ -280,6 +280,19 @@ public:
 };
 
 
+
+class Rectangle2 : 
+    public iDrawCall {
+    VertexBuffer vb;
+    VertexBufferLayout vl;
+    VertexArray va;
+    IndexBuffer ib;
+    Shader sa;
+public:
+    glm::mat4 fMat = glm::mat4(1);
+};
+
+
 class Rectangle : public iDrawCall{
     VertexBuffer vb;
     VertexBufferLayout vl;
@@ -301,8 +314,6 @@ public:
     }
     void rotate(glm::fvec3 axis, float radians) {
         fMat = glm::rotate(fMat, radians, axis);
-        //glm::extractEulerAngleXYZ();
-        //rot = glm::extra(fMat);
     }
 
     Rectangle(){
@@ -340,9 +351,6 @@ public:
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
-
-
-
 class DrawObject : public iDrawCall {
 public:
     VertexBuffer vb;

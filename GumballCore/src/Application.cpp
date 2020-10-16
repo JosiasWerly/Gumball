@@ -90,9 +90,6 @@ int main() {
             //r.viewMode.mView = glm::translate(r.viewMode.mView, glm::vec3{ -0.1 });
         }
 
-
-
-
         r.clearRender();       
         r.drawRender();
         r.swapBuffers();
