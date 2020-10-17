@@ -185,13 +185,14 @@
     <None Include="packages.config" />
     <None Include="res\shaders\blue.shader" />
     <None Include="res\shaders\defaultShader.shader" />
-    <None Include="res\shaders\red.shader" />
+    <None Include="res\shaders\default.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\objloader.hpp" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
     <ClInclude Include="src\Gumball.hpp" />
+    <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\Patterns.hpp" />
     <ClInclude Include="src\Renderer.hpp" />
     <ClInclude Include="src\Shader.hpp" />

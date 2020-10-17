@@ -279,48 +279,22 @@ public:
     }
 };
 
+#include "Mesh.hpp"
 
-
-class Rectangle2 : 
+class Rectangle : 
     public iDrawCall {
     VertexBuffer vb;
     VertexBufferLayout vl;
     VertexArray va;
     IndexBuffer ib;
-    Shader sa;
 public:
-    glm::mat4 fMat = glm::mat4(1);
-};
-
-
-class Rectangle : public iDrawCall{
-    VertexBuffer vb;
-    VertexBufferLayout vl;
-    VertexArray va;
-    IndexBuffer ib;
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
-public:
-    glm::fvec3 pos, rot;
-    glm::fvec4 c = { 1, 1, 1, 1 };
-
-    void color(glm::fvec4 color) {
-        this->c = color;
-    }
-
-    void move(glm::fvec3 pos) {
-        this->pos = pos;
-        fMat = glm::translate(fMat, pos);
-    }
-    void rotate(glm::fvec3 axis, float radians) {
-        fMat = glm::rotate(fMat, radians, axis);
-    }
-
-    Rectangle(){
+    Rectangle() {
+        sa.changeShader("default");
         vector<float> vertex;
         vector<unsigned int> index;
 
-        sa.changeShader("red");
         vertex = {
             0, 0,
             1, 0,
@@ -341,79 +315,137 @@ public:
     }
     void draw(const class Renderer& renderer) {
         va.bind();
-        sa.bind();
-
-        sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = c;
-        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
-        sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
-        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
-        sa.uploadParams();
-        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+		sa.bind();
+		sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
+		sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
+		
+		sa.uploadParams();
+		glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
-class DrawObject : public iDrawCall {
-public:
-    VertexBuffer vb;
-    VertexBufferLayout vl;
-    VertexArray va;
-    IndexBuffer ib;
-    Shader sa;
-    Texture tx;
 
-    vector<float> vertex;
-    vector<unsigned int> index;
-    float a = 0.1;
-    glm::vec3 cubePositions[10] = {
-        glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
-    DrawObject() {
-        tx.changeTexture("grid");
-        sa.changeShader("defaultShader");
-        vertex = {
-            0, 0,        0, 0,
-            1, 0,      1, 0,
-            1, 1,    1, 1,
-            0, 1,      0, 1
-        };        
-        index = {
-            0, 1, 2,
-            2, 3, 0
-        };
-        tx.bind();
-        vl.push<float>(2);
-        vl.push<float>(2);
-
-        va.bind();
-        vb.setData(vertex.data(), vertex.size() * sizeof(float));
-        ib.setData(index.data(), index.size());
-        va.addBuffer(vb, vl);
-        va.unbind();
-    }
-    void draw(const class Renderer& renderer) {
-        sa.bind();
-        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
-
-        va.bind();
-        a = a > 50 ? 1 : a + 0.1f;
-        for (int i = 1; i < 10; i++) {
-            auto mPos = glm::mat4(1.0f);
-            
-            mPos = glm::translate(mPos, cubePositions[i]);
-            mPos = glm::rotate(mPos, glm::radians(a *i), glm::vec3(1.f, 1.f, 0.f));
-            sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = mPos;
-
-            sa.uploadParams();
-            glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
-        }
-    }
-};
+//
+//class Rectangle : public iDrawCall{
+//    VertexBuffer vb;
+//    VertexBufferLayout vl;
+//    VertexArray va;
+//    IndexBuffer ib;
+//    Shader sa;
+//    glm::mat4 fMat = glm::mat4(1);
+//public:
+//    glm::fvec3 pos, rot;
+//    glm::fvec4 c = { 1, 1, 1, 1 };
+//
+//    void color(glm::fvec4 color) {
+//        this->c = color;
+//    }
+//
+//    void move(glm::fvec3 pos) {
+//        this->pos = pos;
+//        fMat = glm::translate(fMat, pos);
+//    }
+//    void rotate(glm::fvec3 axis, float radians) {
+//        fMat = glm::rotate(fMat, radians, axis);
+//    }
+//
+//    Rectangle(){
+//        vector<float> vertex;
+//        vector<unsigned int> index;
+//
+//        sa.changeShader("default");
+//        vertex = {
+//            0, 0,
+//            1, 0,
+//            1, 1,
+//            0, 1,
+//        };
+//        index = {
+//            0, 1, 2,
+//            2, 3, 0
+//        };
+//
+//        vl.push<float>(2);
+//        va.bind();
+//        vb.setData(vertex.data(), vertex.size() * sizeof(float));
+//        ib.setData(index.data(), index.size());
+//        va.addBuffer(vb, vl);
+//        va.unbind();
+//    }
+//    void draw(const class Renderer& renderer) {
+//        va.bind();
+//        sa.bind();
+//
+//        sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = c;
+//        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
+//        sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
+//        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
+//        sa.uploadParams();
+//        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+//    }
+//};
+//class DrawObject : public iDrawCall {
+//public:
+//    VertexBuffer vb;
+//    VertexBufferLayout vl;
+//    VertexArray va;
+//    IndexBuffer ib;
+//    Shader sa;
+//    Texture tx;
+//
+//    vector<float> vertex;
+//    vector<unsigned int> index;
+//    float a = 0.1;
+//    glm::vec3 cubePositions[10] = {
+//        glm::vec3(0.0f,  0.0f,  0.0f),
+//        glm::vec3(2.0f,  5.0f, -15.0f),
+//        glm::vec3(-1.5f, -2.2f, -2.5f),
+//        glm::vec3(-3.8f, -2.0f, -12.3f),
+//        glm::vec3(2.4f, -0.4f, -3.5f),
+//        glm::vec3(-1.7f,  3.0f, -7.5f),
+//        glm::vec3(1.3f, -2.0f, -2.5f),
+//        glm::vec3(1.5f,  2.0f, -2.5f),
+//        glm::vec3(1.5f,  0.2f, -1.5f),
+//        glm::vec3(-1.3f,  1.0f, -1.5f)
+//    };
+//
+//    DrawObject() {
+//        tx.changeTexture("grid");
+//        sa.changeShader("defaultShader");
+//        vertex = {
+//            0, 0,        0, 0,
+//            1, 0,      1, 0,
+//            1, 1,    1, 1,
+//            0, 1,      0, 1
+//        };        
+//        index = {
+//            0, 1, 2,
+//            2, 3, 0
+//        };
+//        tx.bind();
+//        vl.push<float>(2);
+//        vl.push<float>(2);
+//
+//        va.bind();
+//        vb.setData(vertex.data(), vertex.size() * sizeof(float));
+//        ib.setData(index.data(), index.size());
+//        va.addBuffer(vb, vl);
+//        va.unbind();
+//    }
+//    void draw(const class Renderer& renderer) {
+//        sa.bind();
+//        sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
+//
+//        va.bind();
+//        a = a > 50 ? 1 : a + 0.1f;
+//        for (int i = 1; i < 10; i++) {
+//            auto mPos = glm::mat4(1.0f);
+//            
+//            mPos = glm::translate(mPos, cubePositions[i]);
+//            mPos = glm::rotate(mPos, glm::radians(a *i), glm::vec3(1.f, 1.f, 0.f));
+//            sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = mPos;
+//
+//            sa.uploadParams();
+//            glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+//        }
+//    }
+//};

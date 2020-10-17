@@ -25,7 +25,7 @@
     <None Include="res\shaders\blue.shader">
       <Filter>res</Filter>
     </None>
-    <None Include="res\shaders\red.shader">
+    <None Include="res\shaders\default.shader">
       <Filter>res</Filter>
     </None>
   </ItemGroup>
@@ -61,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp">
       <Filter>src\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh.hpp">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
