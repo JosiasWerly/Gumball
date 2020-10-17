@@ -292,23 +292,37 @@ public:
     glm::mat4 fMat = glm::mat4(1);
     Rectangle() {
         sa.changeShader("default");
-        vector<float> vertex;
+        vector<glm::fvec3> vertex, outVertex, normal;
+        vector<glm::fvec2> uv;
         vector<unsigned int> index;
 
-        vertex = {
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-        };
-        index = {
-            0, 1, 2,
-            2, 3, 0
-        };
+        //vertex = {
+        //    {0, 0, 0},
+        //    {1, 0, 0},
+        //    {1, 1, 0},
+        //    {0, 1, 0}
+        //};
+        //index = {
+        //    0, 1, 2,
+        //    2, 3, 0
+        //};
 
-        vl.push<float>(2);
+        //vertex = {
+        //    {0, 0, 0},
+        //    {1, 0, 0},
+        //    {1, 1, 0},
+        //    {1, 1, 0},
+        //    {0, 1, 0},
+        //    {0, 0, 0}
+        //};
+        GMesh::gumballLoadObj("C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
+            vertex);
+        GMesh::gumballIndexer(vertex, outVertex, index);
+        vertex = outVertex;
+
+        vl.push<float>(3);
         va.bind();
-        vb.setData(vertex.data(), vertex.size() * sizeof(float));
+        vb.setData(vertex.data(), vertex.size() * sizeof(float)*3);
         ib.setData(index.data(), index.size());
         va.addBuffer(vb, vl);
         va.unbind();

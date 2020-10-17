@@ -38,7 +38,7 @@ void processInput(GLFWwindow* window);
 int main() {
     Renderer r;
     r.setup("gumball", 800, 600);
-    r.viewMode.mProjection = glm::translate(r.viewMode.mProjection, glm::vec3(0, 0, -100));
+    r.viewMode.mProjection = glm::translate(r.viewMode.mProjection, glm::vec3(0, 0, -3));
 
     auto& sy = ShaderSystem::instance();
     auto& st = TextureSystem::instance();
@@ -51,14 +51,14 @@ int main() {
     st.loadFromFile("res/textures/gumbalA.png");
     st.loadFromFile("res/textures/grid.png");
 
-    constexpr int recSize = 5000;
+    constexpr int recSize = 1;
     list<Rectangle*> rectangles;
     for (size_t i = 0; i < recSize; i++)
         rectangles.push_back(new Rectangle);
     
     
     for(auto& rec : rectangles){
-        rec->fMat = glm::translate(rec->fMat, glm::vec3(rand() % 50 - 25, rand() % 50 - 25, rand() % 50 - 25));
+        //rec->fMat = glm::translate(rec->fMat, glm::vec3(rand() % 50 - 25, rand() % 50 - 25, rand() % 50 - 25));
         rec->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = r.viewMode.mProjection;
         r << rec;
     }

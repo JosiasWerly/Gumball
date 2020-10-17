@@ -69,4 +69,9 @@
   <ItemGroup>
     <Text Include="readme.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="res\models\suzane.obj">
+      <Filter>res</Filter>
+    </Object>
+  </ItemGroup>
 </Project>
