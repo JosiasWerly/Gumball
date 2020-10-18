@@ -65,6 +65,9 @@
     <ClInclude Include="src\Mesh.hpp">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Drawcall.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />

@@ -92,6 +92,7 @@ public:
        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
     }
 };
+
 class iDrawCall {
 public:
     virtual void draw(const class Renderer& renderer) = 0;
@@ -281,11 +282,6 @@ public:
 
 #include "Mesh.hpp"
 
-struct sMeshBuffer{
-    glm::vec3 pos, normal;
-    glm::vec2 uv;
-};
-
 class Meshdata : 
     public iDrawCall {
     VertexBuffer vb;
@@ -296,7 +292,22 @@ public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
     Meshdata() {
+        vector<gMesh::sMeshVertexData> vertexData;
+        vector<unsigned int> index;
         sa.changeShader("default");
+        if (gMesh::gLoadMeshBuffer(
+            "C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
+            vertexData, index)) {
+            vl.push<float>(3);
+            vl.push<float>(3);
+            vl.push<float>(2);
+            va.bind();
+            vb.setData(vertexData.data(), vertexData.size() * sizeof(gMesh::sMeshVertexData));
+            ib.setData(index.data(), index.size());
+            va.addBuffer(vb, vl);
+            va.unbind();
+        }
+        /*sa.changeShader("default");
         vector<unsigned int> index;
         vector<glm::fvec3> vertex, normal;
         vector<glm::fvec2> uv;
@@ -316,17 +327,8 @@ public:
             for (size_t i = 0; i < vertex.size(); i++){
                 bufferData.push_back({vertex[i], normal[i], uv[i]});
             }
-            vl.push<float>(3);
-            vl.push<float>(3);
-            vl.push<float>(2);
-            va.bind();
-            vb.setData(bufferData.data(), bufferData.size() * sizeof(sMeshBuffer));
-            ib.setData(index.data(), index.size());
-            va.addBuffer(vb, vl);
-            va.unbind();
-
-        }
-        
+            
+        }*/
     }
     void draw(const class Renderer& renderer) {
         va.bind();

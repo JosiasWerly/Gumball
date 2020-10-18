@@ -10,7 +10,7 @@
 #include <fstream>
 #include <glm/glm.hpp>
 
-namespace GMesh {
+namespace gMesh {
 	using namespace std;
 	
 	
@@ -137,6 +137,37 @@ namespace GMesh {
 				}
 			}
 
+			return true;
+		}
+		return false;
+	}
+
+
+
+	struct sMeshVertexData {
+		glm::vec3 pos, normal;
+		glm::vec2 uv;
+	};
+	bool gLoadMeshBuffer(
+		const char* path, 
+		vector<sMeshVertexData>& meshBuffer,
+		vector<unsigned int> &index){
+		vector<glm::fvec3> vertex, normal;
+		vector<glm::fvec2> uv;
+		
+		if (gLoadObj(		
+			"C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
+			vertex, uv, normal)) {
+			vector<glm::fvec3> out_vertex, out_normal;
+			vector<glm::fvec2> out_uv;
+			gIndexVBO(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
+			vertex = out_vertex;
+			uv = out_uv;
+			normal = out_normal;
+
+			for (size_t i = 0; i < vertex.size(); i++) {
+				meshBuffer.push_back({ vertex[i], normal[i], uv[i] });
+			}
 			return true;
 		}
 		return false;
