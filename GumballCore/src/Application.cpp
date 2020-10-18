@@ -52,9 +52,9 @@ int main() {
     st.loadFromFile("res/textures/grid.png");
 
     constexpr int recSize = 1;
-    list<Rectangle*> rectangles;
+    list<Meshdata*> rectangles;
     for (size_t i = 0; i < recSize; i++)
-        rectangles.push_back(new Rectangle);
+        rectangles.push_back(new Meshdata);
     
     
     for(auto& rec : rectangles){
@@ -93,11 +93,11 @@ int main() {
         }
         
 
-        fpsCounter.fpsTick();
-        cout << fpsCounter.getMsBySec() << endl;
         r.clearRender();
         r.drawRender();
         r.swapBuffers();
+        fpsCounter.fpsTick();
+        cout << fpsCounter.getMsBySec() << endl;
     }
     sy.unloadAll();
     r.drawcalls.clear();

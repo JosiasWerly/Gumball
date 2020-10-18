@@ -1,6 +1,9 @@
 #shader vertex
 #version 330 core
 in vec4 pos;
+in vec2 uv;
+in vec4 normal;
+
 uniform mat4 uProj, uView, uModel;
 void main() {
     gl_Position = uProj * uView * uModel * pos;

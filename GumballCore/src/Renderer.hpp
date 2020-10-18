@@ -281,7 +281,12 @@ public:
 
 #include "Mesh.hpp"
 
-class Rectangle : 
+struct sMeshBuffer{
+    glm::vec3 pos, normal;
+    glm::vec2 uv;
+};
+
+class Meshdata : 
     public iDrawCall {
     VertexBuffer vb;
     VertexBufferLayout vl;
@@ -290,42 +295,38 @@ class Rectangle :
 public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
-    Rectangle() {
+    Meshdata() {
         sa.changeShader("default");
-        vector<glm::fvec3> vertex, outVertex, normal;
-        vector<glm::fvec2> uv;
         vector<unsigned int> index;
+        vector<glm::fvec3> vertex, normal;
+        vector<glm::fvec2> uv;
 
-        //vertex = {
-        //    {0, 0, 0},
-        //    {1, 0, 0},
-        //    {1, 1, 0},
-        //    {0, 1, 0}
-        //};
-        //index = {
-        //    0, 1, 2,
-        //    2, 3, 0
-        //};
+        if (GMesh::gLoadObj(
+            "C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
+            vertex, uv, normal)) {
+            
+            vector<sMeshBuffer> bufferData;
+            vector<glm::fvec3> out_vertex, out_normal;
+            vector<glm::fvec2> out_uv;
+            GMesh::gIndexVBO(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
+            vertex = out_vertex;
+            uv = out_uv;
+            normal = out_normal;
+            
+            for (size_t i = 0; i < vertex.size(); i++){
+                bufferData.push_back({vertex[i], normal[i], uv[i]});
+            }
+            vl.push<float>(3);
+            vl.push<float>(3);
+            vl.push<float>(2);
+            va.bind();
+            vb.setData(bufferData.data(), bufferData.size() * sizeof(sMeshBuffer));
+            ib.setData(index.data(), index.size());
+            va.addBuffer(vb, vl);
+            va.unbind();
 
-        //vertex = {
-        //    {0, 0, 0},
-        //    {1, 0, 0},
-        //    {1, 1, 0},
-        //    {1, 1, 0},
-        //    {0, 1, 0},
-        //    {0, 0, 0}
-        //};
-        GMesh::gumballLoadObj("C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
-            vertex);
-        GMesh::gumballIndexer(vertex, outVertex, index);
-        vertex = outVertex;
-
-        vl.push<float>(3);
-        va.bind();
-        vb.setData(vertex.data(), vertex.size() * sizeof(float)*3);
-        ib.setData(index.data(), index.size());
-        va.addBuffer(vb, vl);
-        va.unbind();
+        }
+        
     }
     void draw(const class Renderer& renderer) {
         va.bind();
