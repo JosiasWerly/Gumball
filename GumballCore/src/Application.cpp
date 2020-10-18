@@ -71,13 +71,13 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
 
-
+    float cLenght = 5.f;
     float a = .3f;
     while (!glfwWindowShouldClose(r.window)){
         if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS) {
             a += 0.1f;
             r.viewMode.mView = glm::lookAt(
-                glm::vec3(sin(a) * 10.0f, 0.0, cos(a) * 10.0f),
+                glm::vec3(sin(a) * cLenght, 0.0, cos(a) * cLenght),
                 glm::vec3(0.0, 0.0, 0.0),
                 glm::vec3(0.0, 1.0, 0.0)
             );
@@ -86,7 +86,7 @@ int main() {
         else if (glfwGetKey(r.window, GLFW_KEY_S) == GLFW_PRESS) {
             a -= 0.1f;
             r.viewMode.mView = glm::lookAt(
-                glm::vec3(sin(a) * 10.0f, 0.0, cos(a) * 10.0f),
+                glm::vec3(sin(a) * cLenght, 0.0, cos(a) * cLenght),
                 glm::vec3(0.0, 0.0, 0.0),
                 glm::vec3(0.0, 1.0, 0.0)
             );

@@ -4,17 +4,22 @@ in vec4 pos;
 in vec2 uv;
 in vec4 normal;
 
+
+out vec3 fNormal;
 uniform mat4 uProj, uView, uModel;
 void main() {
+    fNormal = normal.xyz;
     gl_Position = uProj * uView * uModel * pos;
 };
 
 
 #shader fragment
 #version 330 core
-
 out vec4 color;
+in vec3 fNormal;
 uniform vec4 uColor;
+
 void main() {
-    color =  uColor;
+    float diffuse = dot(fNormal, vec3(0, 0, 1));
+    color = diffuse * vec4(1, 1, 1, 1);
 };
