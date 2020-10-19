@@ -19,13 +19,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="res\shaders\defaultShader.shader">
-      <Filter>res</Filter>
-    </None>
-    <None Include="res\shaders\blue.shader">
-      <Filter>res</Filter>
-    </None>
     <None Include="res\shaders\default.shader">
+      <Filter>res</Filter>
+    </None>
+    <None Include="res\shaders\unlit.shader">
+      <Filter>res</Filter>
+    </None>
+    <None Include="res\shaders\texture.shader">
       <Filter>res</Filter>
     </None>
   </ItemGroup>
@@ -67,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="src\Drawcall.hpp">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GLBuffers.hpp">
+      <Filter>src\dependencies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

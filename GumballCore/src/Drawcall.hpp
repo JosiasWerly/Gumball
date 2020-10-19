@@ -14,21 +14,23 @@
 
 
 
-class DrawCallBuffers {
-public:
-    IndexBuffer iBuffer;
-    VertexBuffer vBuffer;
-    VertexBufferLayout vLayout;
-    VertexArray vArray;
-    Shader shader;
-};
+//class DrawCallBuffer{
+//    IndexBuffer iBuffer;
+//    VertexBuffer vBuffer;
+//    VertexBufferLayout vLayout;
+//    VertexArray vArray;
+//    Shader shader;
+//public:
+//
+//};
 class iDrawCall {
 public:
     virtual void draw(const class Renderer& renderer) = 0;
 };
-class MeshDrawCall {
 
-};
+
+
+
 
 
 #endif // !_drawCall

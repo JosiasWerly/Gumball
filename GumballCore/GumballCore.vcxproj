@@ -183,8 +183,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="res\shaders\blue.shader" />
-    <None Include="res\shaders\defaultShader.shader" />
+    <None Include="res\shaders\unlit.shader" />
+    <None Include="res\shaders\texture.shader" />
     <None Include="res\shaders\default.shader" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +192,7 @@
     <ClInclude Include="..\Dependencies\openGLTutorial\include\objloader.hpp" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
     <ClInclude Include="src\Drawcall.hpp" />
+    <ClInclude Include="src\GLBuffers.hpp" />
     <ClInclude Include="src\Gumball.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\Patterns.hpp" />

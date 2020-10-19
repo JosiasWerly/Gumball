@@ -43,9 +43,9 @@ int main() {
     auto& sy = ShaderSystem::instance();
     auto& st = TextureSystem::instance();
 
-    sy.loadFromFile("res/shaders/defaultShader.shader");
     sy.loadFromFile("res/shaders/default.shader");
-    sy.loadFromFile("res/shaders/blue.shader");
+    sy.loadFromFile("res/shaders/unlit.shader");
+    sy.loadFromFile("res/shaders/texture.shader");
     st.loadFromFile("res/textures/test.png");
     st.loadFromFile("res/textures/gumball.png");
     st.loadFromFile("res/textures/gumbalA.png");
@@ -71,7 +71,7 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
 
-    float cLenght = 5.f;
+    float cLenght = 2.f;
     float a = .3f;
     while (!glfwWindowShouldClose(r.window)){
         if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS) {

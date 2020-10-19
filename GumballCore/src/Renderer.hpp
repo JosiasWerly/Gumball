@@ -1,7 +1,8 @@
 #include "Gumball.hpp"
-#include "Shader.hpp"
+#include "GLBuffers.hpp"
 #include "Drawcall.hpp"
-
+#include "Shader.hpp"
+#include "Mesh.hpp"
 
 
 #include "stb_image.h"
@@ -93,8 +94,6 @@ public:
        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
     }
 };
-
-
 class Renderer {
 public:
     int x, y;
@@ -164,123 +163,9 @@ public:
     }
 };
 
-class VertexBuffer {
-public:
-    unsigned int bufferID;
-    VertexBuffer() {
-        glDCall(glGenBuffers(1, &bufferID));
-    }
-    ~VertexBuffer() {
-        glDCall(glDeleteBuffers(1, &bufferID));
-    }
-    void setData(const void* data, unsigned int size) {
-        glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
-        glDCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
-    }
-    void bind() const {
-        glDCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
-    }
-    void unbind() const {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-};
-class VertexBufferLayout {
-public:
-    struct VertexBufferElement {
-        unsigned int type, count;
-        unsigned char normalized;
-    };
 
-    static unsigned int getSizeType(const unsigned int type) {
-        switch (type) {
-        case GL_FLOAT:  return 4;
-        case GL_INT:    return 4;
-        case GL_BYTE:   return 1;
-        }
-        __debugbreak();
-        return -1;
-    }
 
-    int stride = 0;
-    vector<VertexBufferElement> elements;
-
-    int getStride() const {
-        return stride;
-    }
-    const vector<VertexBufferElement>& getElements() {
-        return elements;
-    }
-    template<typename T>void push(unsigned int) {}
-    template<>void push<float>(unsigned int count) {
-        elements.push_back({ GL_FLOAT, count, false });
-        stride += VertexBufferLayout::getSizeType(GL_FLOAT) * count;
-    }
-    template<>void push<int>(unsigned int count) {
-        elements.push_back({ GL_INT, count, false });
-        stride += VertexBufferLayout::getSizeType(GL_INT) * count;
-    }
-    template<>void push<char>(unsigned int count) {
-        elements.push_back({ GL_BYTE, count, false });
-        stride += VertexBufferLayout::getSizeType(GL_BYTE) * count;
-    }
-};
-class VertexArray {
-public:
-    unsigned int bufferId;
-    VertexArray() {
-        glGenVertexArrays(1, &bufferId);
-    }
-    ~VertexArray() {
-        glDeleteVertexArrays(1, &bufferId);
-    }
-    void bind() {
-        glBindVertexArray(bufferId);
-    }
-    void unbind() {
-        glBindVertexArray(0);
-    }
-    void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
-        bind();
-        vb.bind();
-        const auto& elements = layout.elements;
-        unsigned int offset = 0;
-        for (unsigned int i = 0; i < elements.size(); i++) {
-            const auto& element = elements[i];
-            glDCall(glEnableVertexAttribArray(i));
-            glDCall(glVertexAttribPointer(i, element.count, element.type,
-                element.normalized, layout.getStride(), (const void*)offset));
-            offset += element.count * VertexBufferLayout::getSizeType(element.type);
-        }
-    }
-};
-class IndexBuffer {
-public:
-    unsigned int bufferID, count;
-    IndexBuffer() {
-        glDCall(glGenBuffers(1, &bufferID));
-    }
-    ~IndexBuffer() {
-        glDCall(glDeleteBuffers(1, &bufferID));
-    }
-    void setData(unsigned int* indices, unsigned int count) {
-        this->count = count;
-        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
-        glDCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW));
-    }
-    void bind() const {
-        glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferID));
-    }
-    void unbind() const {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-    unsigned int getCount() const {
-        return count;
-    }
-};
-
-#include "Mesh.hpp"
-
-class Meshdata : 
+class Meshdata :
     public iDrawCall {
     VertexBuffer vb;
     VertexBufferLayout vl;
@@ -290,52 +175,30 @@ public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
     Meshdata() {
-        vector<gMesh::sMeshVertexData> vertexData;
+        vector<gMesh::MeshVertexData> vertexData;
         vector<unsigned int> index;
         sa.changeShader("default");
-        if (gMesh::gLoadMeshBuffer(
-            "C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
+        if (gMesh::MeshFunctionsLibrary::LoadMeshVertexData(
+            "res/models/suzane.obj",
             vertexData, index)) {
             vl.push<float>(3);
             vl.push<float>(3);
             vl.push<float>(2);
             va.bind();
-            vb.setData(vertexData.data(), vertexData.size() * sizeof(gMesh::sMeshVertexData));
+            vb.setData(vertexData.data(), vertexData.size() * sizeof(gMesh::MeshVertexData));
             ib.setData(index.data(), index.size());
             va.addBuffer(vb, vl);
             va.unbind();
         }
-        /*sa.changeShader("default");
-        vector<unsigned int> index;
-        vector<glm::fvec3> vertex, normal;
-        vector<glm::fvec2> uv;
-
-        if (GMesh::gLoadObj(
-            "C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
-            vertex, uv, normal)) {
-            
-            vector<sMeshBuffer> bufferData;
-            vector<glm::fvec3> out_vertex, out_normal;
-            vector<glm::fvec2> out_uv;
-            GMesh::gIndexVBO(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
-            vertex = out_vertex;
-            uv = out_uv;
-            normal = out_normal;
-            
-            for (size_t i = 0; i < vertex.size(); i++){
-                bufferData.push_back({vertex[i], normal[i], uv[i]});
-            }
-            
-        }*/
     }
     void draw(const class Renderer& renderer) {
         va.bind();
-		sa.bind();
-		sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
-		sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
-		
-		sa.uploadParams();
-		glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+        sa.bind();
+        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
+        sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
+
+        sa.uploadParams();
+        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
 

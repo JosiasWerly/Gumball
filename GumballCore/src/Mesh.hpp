@@ -10,10 +10,19 @@
 #include <fstream>
 #include <glm/glm.hpp>
 
-namespace gMesh {
-	using namespace std;
-	
-	
+using namespace std;
+
+typedef std::vector<glm::vec3> listVec3;
+typedef std::vector<glm::vec2> listVec2;
+typedef std::vector<unsigned int> listUInt;
+
+struct MeshVertexData {
+	glm::vec3 pos, normal;
+	glm::vec2 uv;
+};
+class MeshFunctionsLibrary {
+	MeshFunctionsLibrary(const ShaderFunctionsLibrary&) = delete;
+public:
 	struct gPackedVertex {
 		glm::vec3 position;
 		glm::vec2 uv;
@@ -22,7 +31,7 @@ namespace gMesh {
 			return memcmp((void*)this, (void*)&that, sizeof(gPackedVertex)) > 0;
 		};
 	};
-	bool getSimilarVertexIndex_fast(
+	static bool getSimilarVertexIndex_fast(
 		gPackedVertex& packed,
 		std::map<gPackedVertex, unsigned int>& VertexToOutIndex,
 		unsigned int& result
@@ -36,15 +45,16 @@ namespace gMesh {
 			return true;
 		}
 	}
-	void gIndexVBO(
-		std::vector<glm::vec3>& in_vertices,
-		std::vector<glm::vec2>& in_uvs,
-		std::vector<glm::vec3>& in_normals,
 
-		std::vector<unsigned int>& out_indices,
-		std::vector<glm::vec3>& out_vertices,
-		std::vector<glm::vec2>& out_uvs,
-		std::vector<glm::vec3>& out_normals
+	static void CalculateIndexData(
+		listVec3& in_vertices,
+		listVec2& in_uvs,
+		listVec3& in_normals,
+
+		listUInt& out_indices,
+		listVec3& out_vertices,
+		listVec2& out_uvs,
+		listVec3& out_normals
 	) {
 		std::map<gPackedVertex, unsigned int> VertexToOutIndex;
 
@@ -71,12 +81,12 @@ namespace gMesh {
 			}
 		}
 	}
-	
-	bool gLoadObj(
+
+	static bool LoadObjFile(
 		const char* path,
-		std::vector<glm::vec3>& out_vertices,
-		std::vector<glm::vec2>& out_uvs,
-		std::vector<glm::vec3>& out_normals) {
+		listVec3& out_vertices,
+		listVec2& out_uvs,
+		listVec3& out_normals) {
 
 		auto splice = [](string& data, string lim, int begin = 0)->std::vector<std::string> {
 			std::regex ws_re(lim);
@@ -85,24 +95,24 @@ namespace gMesh {
 			};
 			return result;
 		};
-		
-		std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
-		std::vector<glm::vec3> temp_vertices, temp_normals;
-		std::vector<glm::vec2> temp_uvs;
-		
+
+		listUInt vertexIndices, uvIndices, normalIndices;
+		listVec3 temp_vertices, temp_normals;
+		listVec2 temp_uvs;
+
 		ifstream fileStream(path);
 		if (fileStream.is_open()) {
 			string line;
-			while (std::getline(fileStream, line)){
+			while (std::getline(fileStream, line)) {
 				if (line.find("v ") != -1) {
 					auto r = splice(line, "\\s+");
 					temp_vertices.push_back(
-							glm::fvec3{
-								std::stod(r[1]),
-								std::stod(r[2]),
-								std::stod(r[3])
-							}
-					);					
+						glm::fvec3{
+							std::stod(r[1]),
+							std::stod(r[2]),
+							std::stod(r[3])
+						}
+					);
 				}
 				else if (line.find("vt ") != -1) {
 					auto r = splice(line, "\\s+");
@@ -129,7 +139,7 @@ namespace gMesh {
 					for (short i = 0; i < rPack.size(); i++) {
 						auto& sData = rPack[i];
 						auto r = splice(sData, "\\/");
-						out_vertices.push_back(temp_vertices[stoi(r[0])-1]);
+						out_vertices.push_back(temp_vertices[stoi(r[0]) - 1]);
 						out_uvs.push_back(temp_uvs[stoi(r[1]) - 1]);
 						out_normals.push_back(temp_normals[stoi(r[2]) - 1]);
 					}
@@ -142,25 +152,19 @@ namespace gMesh {
 		return false;
 	}
 
-
-
-	struct sMeshVertexData {
-		glm::vec3 pos, normal;
-		glm::vec2 uv;
-	};
-	bool gLoadMeshBuffer(
-		const char* path, 
-		vector<sMeshVertexData>& meshBuffer,
-		vector<unsigned int> &index){
+	static bool LoadMeshVertexData(
+		const char* path,
+		vector<MeshVertexData>& meshBuffer,
+		listUInt& index) {
 		vector<glm::fvec3> vertex, normal;
 		vector<glm::fvec2> uv;
-		
-		if (gLoadObj(		
-			"C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\GumballCore\\res\\models\\suzane.obj",
+
+		if (MeshFunctionsLibrary::LoadObjFile(
+			path,
 			vertex, uv, normal)) {
 			vector<glm::fvec3> out_vertex, out_normal;
 			vector<glm::fvec2> out_uv;
-			gIndexVBO(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
+			MeshFunctionsLibrary::CalculateIndexData(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
 			vertex = out_vertex;
 			uv = out_uv;
 			normal = out_normal;
@@ -172,5 +176,28 @@ namespace gMesh {
 		}
 		return false;
 	}
+
 };
+
+
+
+
+/*
+class MeshSystem :
+	public AssetFactory<ShaderBind>,
+	public Singleton<MeshSystem> {
+public:
+	void loadFromFile(string filePath) {
+		string fName = gbLib::getNameOfFilePath(filePath);
+	}
+	void loadMesh(string name) {
+
+	}
+	void unload(string name) {
+	}
+	void unloadAll() {
+	}
+};
+*/
+
 #endif // !_mesh
