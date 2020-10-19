@@ -20,6 +20,11 @@ struct MeshVertexData {
 	glm::vec3 pos, normal;
 	glm::vec2 uv;
 };
+
+struct MeshData{
+	vector<MeshVertexData> mesh;
+	vector<unsigned int> index;
+};
 class MeshFunctionsLibrary {
 	MeshFunctionsLibrary(const ShaderFunctionsLibrary&) = delete;
 public:
@@ -179,25 +184,25 @@ public:
 
 };
 
-
-
-
-/*
 class MeshSystem :
-	public AssetFactory<ShaderBind>,
+	public AssetFactory<MeshData>,
 	public Singleton<MeshSystem> {
 public:
 	void loadFromFile(string filePath) {
 		string fName = gbLib::getNameOfFilePath(filePath);
-	}
-	void loadMesh(string name) {
-
+		vector<MeshVertexData> vertexData;
+		vector<unsigned int> index;		
+		if (MeshFunctionsLibrary::LoadMeshVertexData(
+			filePath.c_str(),
+			vertexData, index)) {
+			assets.push(fName, { vertexData, index });
+		}
 	}
 	void unload(string name) {
-	}
-	void unloadAll() {
+		if (!assets.contain(name))
+			assets.pop(name);
 	}
 };
-*/
+
 
 #endif // !_mesh

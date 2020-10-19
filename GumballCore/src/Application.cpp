@@ -42,14 +42,18 @@ int main() {
 
     auto& sy = ShaderSystem::instance();
     auto& st = TextureSystem::instance();
+    auto& sm = MeshSystem::instance();
 
     sy.loadFromFile("res/shaders/default.shader");
     sy.loadFromFile("res/shaders/unlit.shader");
     sy.loadFromFile("res/shaders/texture.shader");
+    
     st.loadFromFile("res/textures/test.png");
     st.loadFromFile("res/textures/gumball.png");
     st.loadFromFile("res/textures/gumbalA.png");
     st.loadFromFile("res/textures/grid.png");
+
+    sm.loadFromFile("res/models/suzane.obj");
 
     constexpr int recSize = 1;
     list<Meshdata*> rectangles;
