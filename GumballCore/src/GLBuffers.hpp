@@ -2,7 +2,7 @@
 #define _glbuffers
 #include "Gumball.hpp"
 
-class VertexBuffer {
+class VertexBuffer  {
 public:
     unsigned int bufferID;
     VertexBuffer() {

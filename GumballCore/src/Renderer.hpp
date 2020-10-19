@@ -175,17 +175,17 @@ public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
     Meshdata() {
-        vector<gMesh::MeshVertexData> vertexData;
+        vector<MeshVertexData> vertexData;
         vector<unsigned int> index;
         sa.changeShader("default");
-        if (gMesh::MeshFunctionsLibrary::LoadMeshVertexData(
+        if (MeshFunctionsLibrary::LoadMeshVertexData(
             "res/models/suzane.obj",
             vertexData, index)) {
             vl.push<float>(3);
             vl.push<float>(3);
             vl.push<float>(2);
             va.bind();
-            vb.setData(vertexData.data(), vertexData.size() * sizeof(gMesh::MeshVertexData));
+            vb.setData(vertexData.data(), vertexData.size() * sizeof(MeshVertexData));
             ib.setData(index.data(), index.size());
             va.addBuffer(vb, vl);
             va.unbind();
