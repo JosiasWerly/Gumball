@@ -1,5 +1,6 @@
 #include "Gumball.hpp"
 #include "Shader.hpp"
+#include "Drawcall.hpp"
 
 
 
@@ -93,10 +94,7 @@ public:
     }
 };
 
-class iDrawCall {
-public:
-    virtual void draw(const class Renderer& renderer) = 0;
-};
+
 class Renderer {
 public:
     int x, y;
@@ -286,8 +284,8 @@ class Meshdata :
     public iDrawCall {
     VertexBuffer vb;
     VertexBufferLayout vl;
-    VertexArray va;
     IndexBuffer ib;
+    VertexArray va;
 public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
