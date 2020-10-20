@@ -23,12 +23,27 @@ public:
     }
 };
 class VertexBufferLayout {
-public:
+public:    
     struct VertexBufferElement {
         unsigned int type, count;
         unsigned char normalized;
     };
-
+    struct VBEProxy {
+        VertexBufferElement value;
+        unsigned int count;
+        
+        template<class t> VBEProxy(t, unsigned int) {
+        }
+        template<class t> VBEProxy(float, unsigned int) {
+            value = { GL_FLOAT, count, false };
+        }
+        template<class t> VBEProxy(int, unsigned int) {
+            value = { GL_INT, count, false };
+        }
+        template<class t> VBEProxy(char, unsigned int) {
+            value = { GL_BYTE, count, false };
+        }
+    };
     static unsigned int getSizeType(const unsigned int type) {
         switch (type) {
         case GL_FLOAT:  return 4;
@@ -49,6 +64,14 @@ public:
         return elements;
     }
 
+    struct test {
+        float a, b;
+    };
+    VertexBufferLayout& operator<<(float) {
+        //elements.push_back(vbe.value);
+        //stride += VertexBufferLayout::getSizeType(GL_FLOAT) * vbe.count;
+        return *this;
+    }
     template<typename T>void push(unsigned int) {}
     template<>void push<float>(unsigned int count) {
         elements.push_back({ GL_FLOAT, count, false });

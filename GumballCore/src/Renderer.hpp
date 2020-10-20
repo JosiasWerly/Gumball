@@ -175,6 +175,11 @@ public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
     Meshdata() {
+        vl << 2.f;
+
+        
+        
+
         sa.changeShader("default");
         auto& meshData = MeshSystem::instance().getAsset("suzane");
 		vl.push<float>(3);

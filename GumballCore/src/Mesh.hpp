@@ -20,7 +20,6 @@ struct MeshVertexData {
 	glm::vec3 pos, normal;
 	glm::vec2 uv;
 };
-
 struct MeshData{
 	vector<MeshVertexData> mesh;
 	vector<unsigned int> index;
