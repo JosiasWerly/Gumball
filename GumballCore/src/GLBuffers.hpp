@@ -29,19 +29,19 @@ public:
         unsigned char normalized;
     };
     struct VBEProxy {
+    public:        
         VertexBufferElement value;
         unsigned int count;
-        
         template<class t> VBEProxy(t, unsigned int) {
         }
-        template<class t> VBEProxy(float, unsigned int) {
-            value = { GL_FLOAT, count, false };
+        template<> VBEProxy(float, unsigned int) {
+            //value = { GL_FLOAT, count, false };
         }
-        template<class t> VBEProxy(int, unsigned int) {
-            value = { GL_INT, count, false };
+        template<> VBEProxy(int, unsigned int) {
+            //value = { GL_INT, count, false };
         }
-        template<class t> VBEProxy(char, unsigned int) {
-            value = { GL_BYTE, count, false };
+        template<> VBEProxy(char, unsigned int) {
+            //value = { GL_BYTE, count, false };
         }
     };
     static unsigned int getSizeType(const unsigned int type) {
@@ -65,9 +65,10 @@ public:
     }
 
     struct test {
+    public:
         float a, b;
     };
-    VertexBufferLayout& operator<<(float) {
+    VertexBufferLayout& operator<<(VBEProxy) {
         //elements.push_back(vbe.value);
         //stride += VertexBufferLayout::getSizeType(GL_FLOAT) * vbe.count;
         return *this;

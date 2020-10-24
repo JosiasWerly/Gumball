@@ -163,8 +163,6 @@ public:
     }
 };
 
-
-
 class Meshdata :
     public iDrawCall {
     VertexBuffer vb;
@@ -175,7 +173,7 @@ public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
     Meshdata() {
-        vl << 2.f;
+        vl<<{float(), 10});
 
         
         
