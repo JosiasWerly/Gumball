@@ -36,7 +36,6 @@ FpsCounter fpsCounter;
 
 void processInput(GLFWwindow* window);
 int main() {
-    
     Renderer r;
     r.setup("gumball", 800, 600);
     r.viewMode.mProjection = glm::translate(r.viewMode.mProjection, glm::vec3(0, 0, -3));
