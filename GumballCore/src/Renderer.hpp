@@ -3,6 +3,7 @@
 #include "Drawcall.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"
+#include "Transform.hpp"
 
 
 #include "stb_image.h"
@@ -163,21 +164,13 @@ public:
     }
 };
 
+
 class Meshdata :
     public iDrawCall {
-    VertexBuffer vb;
-    VertexBufferLayout vl;
-    IndexBuffer ib;
-    VertexArray va;
 public:
     Shader sa;
     glm::mat4 fMat = glm::mat4(1);
     Meshdata() {
-        vl<<{float(), 10});
-
-        
-        
-
         sa.changeShader("default");
         auto& meshData = MeshSystem::instance().getAsset("suzane");
 		vl.push<float>(3);

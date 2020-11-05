@@ -71,6 +71,12 @@
     <ClInclude Include="src\GLBuffers.hpp">
       <Filter>src\dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transform.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />

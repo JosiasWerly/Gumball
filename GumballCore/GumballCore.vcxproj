@@ -194,10 +194,12 @@
     <ClInclude Include="src\Drawcall.hpp" />
     <ClInclude Include="src\GLBuffers.hpp" />
     <ClInclude Include="src\Gumball.hpp" />
+    <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\Patterns.hpp" />
     <ClInclude Include="src\Renderer.hpp" />
     <ClInclude Include="src\Shader.hpp" />
+    <ClInclude Include="src\Transform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
