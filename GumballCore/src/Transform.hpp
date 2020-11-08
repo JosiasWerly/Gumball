@@ -4,8 +4,6 @@
 
 class Transform{
 	Transform* parent = nullptr;
-
-
 	glm::mat4 ModelMatrix;
 public:
 	glm::vec3 
