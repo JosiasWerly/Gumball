@@ -35,8 +35,11 @@ FpsCounter fpsCounter;
 
 void processInput(GLFWwindow* window);
 int main() {
-    Renderer r;
-    r.setup("gumball", 800, 600);
+    Gumball::Window w;
+    w.create("Gumball", 800, 600);
+    
+        
+
     //r.viewMode.mView = glm::translate(r.viewMode.mView, glm::vec3(0, 0, -3));
 
     auto& sy = ShaderSystem::instance();
@@ -56,7 +59,7 @@ int main() {
     sm.loadFromFile("res/models/torus.obj");
 
     
-    
+    Renderer r(&w);
     Camera* cams[]{
         r.newCamera(0b00000001),
         r.newCamera(0b00000010),
@@ -67,6 +70,7 @@ int main() {
     cams[1]->transform.rotation += glm::vec3(0, 0, 15);
     
 
+    
     
     constexpr int recSize = 2;
     vector<Meshdata*> drawObjects;
@@ -154,3 +158,12 @@ int main() {
     glfwTerminate();
     return 0;
 }
+
+/*
+##### Gumball 0.1 #####
+-create asset system
+-resolve drawcall, camera and uniforms system
+
+-collision detection
+-traces, lines
+*/

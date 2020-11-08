@@ -191,6 +191,7 @@
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\objloader.hpp" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
+    <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawcall.hpp" />
     <ClInclude Include="src\GLBuffers.hpp" />
     <ClInclude Include="src\Gumball.hpp" />

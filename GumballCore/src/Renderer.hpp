@@ -6,88 +6,27 @@
 #include "Shader.hpp"
 #include "Mesh.hpp"
 #include "Transform.hpp"
+#include "Camera.hpp"
 
-class ViewMode{
+
+
+
+class iRenderProcess{
 public:
-    enum class eProjectionMode{
-        Ortho, Perspective, Custom
-    };
-    eProjectionMode eProjection;
-    glm::mat4 mProjection = glm::mat4(1.0f);
-
-    void setProjectionPerspective(float fovy, float aspect, float near = 0.1f, float far = 200.0f){
-        mProjection = glm::perspective(fovy, aspect, near, far);
-        eProjection = eProjectionMode::Perspective;
-    }
-    void setProjectionOrtho(float left, float right, float bottom, float top, float near = .1f, float far = 200.0f){
-        mProjection = glm::ortho(left, right, bottom, top, near, far);
-        eProjection = eProjectionMode::Perspective;
-    }
-    void customProjection(){
-        //projection = false ?//just for testing
-       //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-       //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
-    }
+    const class Renderer* render;
+    virtual void process() = 0;
 };
-class Camera {
-    unsigned char renderLayer;
-public:    
-    ViewMode viewMode;
-    Transform transform;
 
-    Camera() {
-    }
-    unsigned char Layer() {
-        return renderLayer;
-    }
-    unsigned char Layer(unsigned char newLayer) {
-        return renderLayer = newLayer;
-    }
-};
 class Renderer {
+    Gumball::Window* gWindow;
 public:
-    int x, y;
     GLFWwindow* window;
     set<iDrawCall*> drawcalls;
     list<Camera*> cameras;
-
-    ~Renderer() {
-        glfwTerminate();
+    Renderer(Gumball::Window* target) {
+        this->gWindow = target;
+        this->window = target->getWindow();
     }
-    void setup(string winName, int x, int y) {
-        this->x = x;
-        this->y = y;
-
-        glfwInit();
-
-        //cout << "glVersion " << glGetString(GL_VERSION) << endl;
-
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //profile
-        gladLoadGL();
-
-        window = glfwCreateWindow(x, y, winName.c_str(), NULL, NULL);
-        if (!window) {
-            glfwTerminate();
-            exit(EXIT_FAILURE);
-        }
-        glfwMakeContextCurrent(window);
-        gladLoadGL();
-
-        //viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
-
-        glViewport(0, 0, x, y);        
-        glEnable(GL_DEPTH_TEST);
-        
-        //textureAlpha
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //endTextureAlpha
-        
-        glfwSwapInterval(1);
-    }
-    
     void drawRender() {
         for (auto& d : drawcalls) {
             drawByLayer(*d);
@@ -105,14 +44,14 @@ public:
 
     Camera* newCamera(unsigned char layer) {
         Camera *newCam = new Camera;
-        newCam->viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
-        newCam->Layer(layer);
+        newCam->viewMode.setProjectionPerspective(glm::radians(45.0f), gWindow->getAspec(), .1f, 200.0f);
+        newCam->layer(layer);
         cameras.push_back(newCam);
         return newCam;
     }
     void drawByLayer(iDrawCall &d) {
         for (auto cam : cameras){
-            if (cam->Layer() & d.layer) {
+            if (cam->layer() & d.layer) {
                 d.sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = cam->viewMode.mProjection;
                 d.sa.getParam("uView")->value<Uniform<glm::mat4>>().data = cam->transform.getModel();
                 d.draw(*this);
