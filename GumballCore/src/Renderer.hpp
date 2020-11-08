@@ -169,23 +169,24 @@ class Meshdata :
     public iDrawCall {
 public:
     Shader sa;
-    glm::mat4 fMat = glm::mat4(1);
-    Meshdata() {
+    Transform transform;
+    Meshdata() {}
+    void loadMesh(string objName) {
         sa.changeShader("default");
-        auto& meshData = MeshSystem::instance().getAsset("suzane");
-		vl.push<float>(3);
-		vl.push<float>(3);
-		vl.push<float>(2);
-		va.bind();
-		vb.setData(meshData.mesh.data(), meshData.mesh.size() * sizeof(MeshVertexData));
-		ib.setData((unsigned int*)meshData.index.data(), meshData.index.size());
-		va.addBuffer(vb, vl);
-		va.unbind();
+        auto& meshData = MeshSystem::instance().getAsset(objName);
+        vl.push<float>(3);
+        vl.push<float>(3);
+        vl.push<float>(2);
+        va.bind();
+        vb.setData(meshData.mesh.data(), meshData.mesh.size() * sizeof(MeshVertexData));
+        ib.setData((unsigned int*)meshData.index.data(), meshData.index.size());
+        va.addBuffer(vb, vl);
+        va.unbind();
     }
     void draw(const class Renderer& renderer) {
         va.bind();
         sa.bind();
-        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
+        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = transform.getResultModel();
         sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
 
         sa.uploadParams();

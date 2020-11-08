@@ -54,18 +54,22 @@ int main() {
     st.loadFromFile("res/textures/grid.png");
 
     sm.loadFromFile("res/models/suzane.obj");
+    sm.loadFromFile("res/models/torus.obj");
 
-    constexpr int recSize = 1;
-    list<Meshdata*> rectangles;
-    for (size_t i = 0; i < recSize; i++)
-        rectangles.push_back(new Meshdata);
-    
-    Meshdata* suz = nullptr;
-    for(auto& rec : rectangles){
-        //rec->fMat = glm::translate(rec->fMat, glm::vec3(rand() % 50 - 25, rand() % 50 - 25, rand() % 50 - 25));
-        suz = rec;
-        rec->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = r.viewMode.mProjection;
-        r << rec;
+    constexpr int recSize = 2;
+    vector<Meshdata*> drawObjects;
+
+    for (size_t i = 0; i < recSize; i++) {
+        Meshdata* newMesh = new Meshdata;
+
+        if(drawObjects.size() != 0)
+            newMesh->transform.attach(&drawObjects.back()->transform);
+        
+        newMesh->loadMesh(i % 2 ? "suzane" : "torus");        
+        
+        newMesh->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = r.viewMode.mProjection;
+        drawObjects.push_back(newMesh);
+        r << newMesh;
     }
 
 
@@ -75,26 +79,41 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
-    Transform t;
+    Meshdata* suz = drawObjects[0];
+    Meshdata* tor = drawObjects[1];
+
     while (!glfwWindowShouldClose(r.window)){
         if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS)
-            t.rotation += glm::vec3(0.01, 0, 0);
+            suz->transform.rotation += glm::vec3(0.01, 0, 0);
         else if (glfwGetKey(r.window, GLFW_KEY_S) == GLFW_PRESS)
-            t.rotation += glm::vec3(-0.01, 0, 0);
+            suz->transform.rotation += glm::vec3(-0.01, 0, 0);
 
         if (glfwGetKey(r.window, GLFW_KEY_A) == GLFW_PRESS)
-            t.position += glm::vec3(0, 0, 0.01);
+            suz->transform.position += glm::vec3(0, 0, 0.01);
         else if (glfwGetKey(r.window, GLFW_KEY_D) == GLFW_PRESS)
-            t.position += glm::vec3(0, 0, -0.01);
+            suz->transform.position += glm::vec3(0, 0, -0.01);
 
         if (glfwGetKey(r.window, GLFW_KEY_Q) == GLFW_PRESS)
-            t.scale += glm::vec3(0.01, 0, 0);
+            suz->transform.scale += glm::vec3(0.01, 0, 0);
         else if (glfwGetKey(r.window, GLFW_KEY_E) == GLFW_PRESS)
-            t.scale += glm::vec3(-0.01, 0, 0);
+            suz->transform.scale += glm::vec3(-0.01, 0, 0);
 
 
+        if (glfwGetKey(r.window, GLFW_KEY_I) == GLFW_PRESS)
+            tor->transform.rotation += glm::vec3(0.01, 0, 0);
+        else if (glfwGetKey(r.window, GLFW_KEY_K) == GLFW_PRESS)
+            tor->transform.rotation += glm::vec3(-0.01, 0, 0);
 
-        suz->fMat = t.getModel();
+        if (glfwGetKey(r.window, GLFW_KEY_J) == GLFW_PRESS)
+            tor->transform.position += glm::vec3(0, 0, 0.01);
+        else if (glfwGetKey(r.window, GLFW_KEY_L) == GLFW_PRESS)
+            tor->transform.position += glm::vec3(0, 0, -0.01);
+
+        if (glfwGetKey(r.window, GLFW_KEY_U) == GLFW_PRESS)
+            tor->transform.scale += glm::vec3(0.01, 0, 0);
+        else if (glfwGetKey(r.window, GLFW_KEY_O) == GLFW_PRESS)
+            tor->transform.scale += glm::vec3(-0.01, 0, 0);
+        
 
         r.clearRender();
         r.drawRender();

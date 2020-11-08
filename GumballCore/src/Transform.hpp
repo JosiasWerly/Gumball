@@ -3,6 +3,9 @@
 #include "Math.hpp"
 
 class Transform{
+	Transform* parent = nullptr;
+
+
 	glm::mat4 ModelMatrix;
 public:
 	glm::vec3 
@@ -11,6 +14,7 @@ public:
 		scale = glm::vec3(1, 1, 1);
 	Transform(){
 	}
+	
 	glm::mat4 getModel() {
 		glm::mat4 out(1);
 		out = glm::translate(out, position);
@@ -20,7 +24,16 @@ public:
 		out = glm::scale(out, scale);
 		return out;
 	}
+	glm::mat4 getResultModel(glm::mat4 childModel = glm::mat4(1)) {
+		if (parent)
+			return parent->getResultModel(getModel());
+		else
+			return getModel() * childModel;			
+	}
+	void attach(Transform* parent) {
+		this->parent = parent;
+	}
 };
-
+ 
 
 #endif // !_math
