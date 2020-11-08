@@ -29,15 +29,14 @@ public:
        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
     }
 };
-
 class Camera {
     unsigned char renderLayer;
-public:
-    
+public:    
     ViewMode viewMode;
     Transform transform;
 
-    Camera() {}
+    Camera() {
+    }
     unsigned char Layer() {
         return renderLayer;
     }
@@ -49,7 +48,6 @@ class Renderer {
 public:
     int x, y;
     GLFWwindow* window;
-    //ViewMode viewMode;
     set<iDrawCall*> drawcalls;
     list<Camera*> cameras;
 
@@ -61,7 +59,9 @@ public:
         this->y = y;
 
         glfwInit();
+
         //cout << "glVersion " << glGetString(GL_VERSION) << endl;
+
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //profile
@@ -76,8 +76,6 @@ public:
         gladLoadGL();
 
         //viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
-
-
 
         glViewport(0, 0, x, y);        
         glEnable(GL_DEPTH_TEST);
@@ -111,7 +109,6 @@ public:
         newCam->Layer(layer);
         cameras.push_back(newCam);
         return newCam;
-
     }
     void drawByLayer(iDrawCall &d) {
         for (auto cam : cameras){
@@ -122,8 +119,6 @@ public:
             }
         }
     }
-
-
     Renderer& operator<<(iDrawCall* drawCall) {
         drawcalls.insert(drawCall);
         return *this;

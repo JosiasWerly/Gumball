@@ -62,8 +62,10 @@ int main() {
         r.newCamera(0b00000010),
         r.newCamera(0b00000100)
     };
-    cams[0]->transform.position += glm::vec3(1, 0, -10);
+    cams[0]->transform.position += glm::vec3(5, 0, -10);
     cams[1]->transform.position += glm::vec3(0, 0, -10);
+    cams[1]->transform.rotation += glm::vec3(0, 0, 15);
+    
 
     
     constexpr int recSize = 2;
@@ -87,7 +89,7 @@ int main() {
     }
 
 
-	//clear all the bind/selectionStack 
+	//clear all the bind/selectionStack
     glUseProgram(0);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -96,37 +98,49 @@ int main() {
     Meshdata* suz = drawObjects[0];
     Meshdata* tor = drawObjects[1];
 
+    Camera* c = cams[1];
     while (!glfwWindowShouldClose(r.window)){
         if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS)
-            suz->transform.rotation += glm::vec3(0.01, 0, 0);
+            c->transform.rotation += glm::vec3(0, 0, 0.1);
         else if (glfwGetKey(r.window, GLFW_KEY_S) == GLFW_PRESS)
-            suz->transform.rotation += glm::vec3(-0.01, 0, 0);
+            c->transform.rotation += glm::vec3(0, 0, -0.1);
 
         if (glfwGetKey(r.window, GLFW_KEY_A) == GLFW_PRESS)
-            suz->transform.position += glm::vec3(0, 0, 0.01);
-        else if (glfwGetKey(r.window, GLFW_KEY_D) == GLFW_PRESS)
-            suz->transform.position += glm::vec3(0, 0, -0.01);
+            c->transform.rotation += glm::vec3(0, 0.1, 0);
+		else if (glfwGetKey(r.window, GLFW_KEY_D) == GLFW_PRESS)
+            c->transform.rotation += glm::vec3(0, -0.1, 0);
+		
 
-        if (glfwGetKey(r.window, GLFW_KEY_Q) == GLFW_PRESS)
-            suz->transform.scale += glm::vec3(0.01, 0, 0);
-        else if (glfwGetKey(r.window, GLFW_KEY_E) == GLFW_PRESS)
-            suz->transform.scale += glm::vec3(-0.01, 0, 0);
-
-
-        if (glfwGetKey(r.window, GLFW_KEY_I) == GLFW_PRESS)
-            tor->transform.rotation += glm::vec3(0.01, 0, 0);
-        else if (glfwGetKey(r.window, GLFW_KEY_K) == GLFW_PRESS)
-            tor->transform.rotation += glm::vec3(-0.01, 0, 0);
-
-        if (glfwGetKey(r.window, GLFW_KEY_J) == GLFW_PRESS)
-            tor->transform.position += glm::vec3(0, 0, 0.01);
-        else if (glfwGetKey(r.window, GLFW_KEY_L) == GLFW_PRESS)
-            tor->transform.position += glm::vec3(0, 0, -0.01);
-
-        if (glfwGetKey(r.window, GLFW_KEY_U) == GLFW_PRESS)
-            tor->transform.scale += glm::vec3(0.01, 0, 0);
-        else if (glfwGetKey(r.window, GLFW_KEY_O) == GLFW_PRESS)
-            tor->transform.scale += glm::vec3(-0.01, 0, 0);
+        //if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS)
+        //    suz->transform.rotation += glm::vec3(0.01, 0, 0);
+        //else if (glfwGetKey(r.window, GLFW_KEY_S) == GLFW_PRESS)
+        //    suz->transform.rotation += glm::vec3(-0.01, 0, 0);
+        //
+        //if (glfwGetKey(r.window, GLFW_KEY_A) == GLFW_PRESS)
+        //    suz->transform.position += glm::vec3(0, 0, 0.01);
+        //else if (glfwGetKey(r.window, GLFW_KEY_D) == GLFW_PRESS)
+        //    suz->transform.position += glm::vec3(0, 0, -0.01);
+        //
+        //if (glfwGetKey(r.window, GLFW_KEY_Q) == GLFW_PRESS)
+        //    suz->transform.scale += glm::vec3(0.01, 0, 0);
+        //else if (glfwGetKey(r.window, GLFW_KEY_E) == GLFW_PRESS)
+        //    suz->transform.scale += glm::vec3(-0.01, 0, 0);
+        //
+        //
+        //if (glfwGetKey(r.window, GLFW_KEY_I) == GLFW_PRESS)
+        //    tor->transform.rotation += glm::vec3(0.01, 0, 0);
+        //else if (glfwGetKey(r.window, GLFW_KEY_K) == GLFW_PRESS)
+        //    tor->transform.rotation += glm::vec3(-0.01, 0, 0);
+        //
+        //if (glfwGetKey(r.window, GLFW_KEY_J) == GLFW_PRESS)
+        //    tor->transform.position += glm::vec3(0, 0, 0.01);
+        //else if (glfwGetKey(r.window, GLFW_KEY_L) == GLFW_PRESS)
+        //    tor->transform.position += glm::vec3(0, 0, -0.01);
+        //
+        //if (glfwGetKey(r.window, GLFW_KEY_U) == GLFW_PRESS)
+        //    tor->transform.scale += glm::vec3(0.01, 0, 0);
+        //else if (glfwGetKey(r.window, GLFW_KEY_O) == GLFW_PRESS)
+        //    tor->transform.scale += glm::vec3(-0.01, 0, 0);
         
 
         r.clearRender();
