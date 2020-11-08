@@ -3,7 +3,6 @@
 #include "Patterns.hpp"
 
 
-
 //sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = c;
 //sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
 //sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
@@ -38,7 +37,7 @@ void processInput(GLFWwindow* window);
 int main() {
     Renderer r;
     r.setup("gumball", 800, 600);
-    r.viewMode.mView = glm::translate(r.viewMode.mView, glm::vec3(0, 0, -3));
+    //r.viewMode.mView = glm::translate(r.viewMode.mView, glm::vec3(0, 0, -3));
 
     auto& sy = ShaderSystem::instance();
     auto& st = TextureSystem::instance();
@@ -56,6 +55,17 @@ int main() {
     sm.loadFromFile("res/models/suzane.obj");
     sm.loadFromFile("res/models/torus.obj");
 
+    
+    
+    Camera* cams[]{
+        r.newCamera(0b00000001),
+        r.newCamera(0b00000010),
+        r.newCamera(0b00000100)
+    };
+    cams[0]->transform.position += glm::vec3(1, 0, -10);
+    cams[1]->transform.position += glm::vec3(0, 0, -10);
+
+    
     constexpr int recSize = 2;
     vector<Meshdata*> drawObjects;
 
@@ -65,9 +75,13 @@ int main() {
         if(drawObjects.size() != 0)
             newMesh->transform.attach(&drawObjects.back()->transform);
         
-        newMesh->loadMesh(i % 2 ? "suzane" : "torus");        
-        
-        newMesh->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = r.viewMode.mProjection;
+        if (i % 2) {
+            newMesh->loadMesh("suzane" );
+            newMesh->layer = 0b11;
+        }
+        else {
+            newMesh->loadMesh("torus");
+        }
         drawObjects.push_back(newMesh);
         r << newMesh;
     }

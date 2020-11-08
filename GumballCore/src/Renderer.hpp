@@ -13,9 +13,7 @@ public:
         Ortho, Perspective, Custom
     };
     eProjectionMode eProjection;
-    glm::mat4 
-        mView = glm::mat4(1.0f),
-        mProjection = glm::mat4(1.0f);
+    glm::mat4 mProjection = glm::mat4(1.0f);
 
     void setProjectionPerspective(float fovy, float aspect, float near = 0.1f, float far = 200.0f){
         mProjection = glm::perspective(fovy, aspect, near, far);
@@ -31,18 +29,30 @@ public:
        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
     }
 };
-class Camera {
-public:
-    Transform transform;
-    ViewMode viewmode;
-};
 
+class Camera {
+    unsigned char renderLayer;
+public:
+    
+    ViewMode viewMode;
+    Transform transform;
+
+    Camera() {}
+    unsigned char Layer() {
+        return renderLayer;
+    }
+    unsigned char Layer(unsigned char newLayer) {
+        return renderLayer = newLayer;
+    }
+};
 class Renderer {
 public:
     int x, y;
     GLFWwindow* window;
-    ViewMode viewMode;
+    //ViewMode viewMode;
     set<iDrawCall*> drawcalls;
+    list<Camera*> cameras;
+
     ~Renderer() {
         glfwTerminate();
     }
@@ -65,12 +75,13 @@ public:
         glfwMakeContextCurrent(window);
         gladLoadGL();
 
-        viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
+        //viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
 
 
 
         glViewport(0, 0, x, y);        
         glEnable(GL_DEPTH_TEST);
+        
         //textureAlpha
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -80,8 +91,10 @@ public:
     }
     
     void drawRender() {
-        for (auto& d : drawcalls)
-            d->draw(*this);
+        for (auto& d : drawcalls) {
+            drawByLayer(*d);
+            //d->draw(*this);
+        }
     }
     void clearRender() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -90,6 +103,24 @@ public:
     void swapBuffers() {
         glfwSwapBuffers(window);
         glfwPollEvents();
+    }
+
+    Camera* newCamera(unsigned char layer) {
+        Camera *newCam = new Camera;
+        newCam->viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
+        newCam->Layer(layer);
+        cameras.push_back(newCam);
+        return newCam;
+
+    }
+    void drawByLayer(iDrawCall &d) {
+        for (auto cam : cameras){
+            if (cam->Layer() & d.layer) {
+                d.sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = cam->viewMode.mProjection;
+                d.sa.getParam("uView")->value<Uniform<glm::mat4>>().data = cam->transform.getModel();
+                d.draw(*this);
+            }
+        }
     }
 
 
@@ -104,10 +135,11 @@ public:
     }
 };
 
+
+
 class Meshdata :
     public iDrawCall {
-public:
-    Shader sa;
+public:    
     Transform transform;
     Meshdata() {}
     void loadMesh(string objName) {
@@ -126,7 +158,7 @@ public:
         va.bind();
         sa.bind();
         sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = transform.getResultModel();
-        sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
+        //sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
 
         sa.uploadParams();
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
