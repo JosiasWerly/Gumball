@@ -1,74 +1,11 @@
+#ifndef _renderer
+#define _renderer
 #include "Gumball.hpp"
 #include "GLBuffers.hpp"
 #include "Drawcall.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"
 #include "Transform.hpp"
-
-
-#include "stb_image.h"
-struct TextureReference {
-    unsigned int glBufferId;
-    unsigned char* memoryBuffer;
-    int width, height;
-};
-class TextureSystem :
-    public AssetFactory<TextureReference>,
-    public Singleton<TextureSystem> {
-public:
-    void loadFromFile(string filePath) {
-        stbi_set_flip_vertically_on_load(true);
-        int x, y, channels;
-        unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
-        unsigned int bufferId = 0;
-
-        if (imageBuffer) {
-            glDCall(glGenTextures(1, &bufferId));
-            glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
-            //filtering
-            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
-            //wrapping
-            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-            glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-            glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
-            glDCall(glBindTexture(GL_TEXTURE_2D, 0));
-            assets.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
-        }
-        else throw;
-    }
-    void unload(string name) {
-        auto s = assets.get(name);
-        glDeleteTextures(1, &s->glBufferId);
-        delete s->memoryBuffer;
-        assets.pop(name);
-    }
-    void unloadAll() {
-
-    }
-};
-class Texture {
-public:
-    TextureReference textureData;
-    Texture() {
-    }
-    Texture(string name){
-        changeTexture(name);
-    }
-    void changeTexture(string name) {
-        textureData = TextureSystem::instance().getAsset(name);
-    }
-    void bind(char slot = 0) {
-        glDCall(glActiveTexture(GL_TEXTURE0 + slot));
-        glDCall(glBindTexture(GL_TEXTURE_2D, textureData.glBufferId));
-    }
-    void unbind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-};
-
 
 class ViewMode{
 public:
@@ -84,10 +21,9 @@ public:
         mProjection = glm::perspective(fovy, aspect, near, far);
         eProjection = eProjectionMode::Perspective;
     }
-    void setProjectionOrtho(){
-        //projection = false ?//just for testing
-       //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-       //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+    void setProjectionOrtho(float left, float right, float bottom, float top, float near = .1f, float far = 200.0f){
+        mProjection = glm::ortho(left, right, bottom, top, near, far);
+        eProjection = eProjectionMode::Perspective;
     }
     void customProjection(){
         //projection = false ?//just for testing
@@ -95,6 +31,12 @@ public:
        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
     }
 };
+class Camera {
+public:
+    Transform transform;
+    ViewMode viewmode;
+};
+
 class Renderer {
 public:
     int x, y;
@@ -124,9 +66,7 @@ public:
         gladLoadGL();
 
         viewMode.setProjectionPerspective(glm::radians(45.0f), (float)x / (float)y, .1f, 200.0f);
-        //projection = false ?//just for testing
-        //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-        //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+
 
 
         glViewport(0, 0, x, y);        
@@ -164,7 +104,6 @@ public:
     }
 };
 
-
 class Meshdata :
     public iDrawCall {
 public:
@@ -193,3 +132,4 @@ public:
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
+#endif // !_renderer

@@ -12,7 +12,6 @@ public:
 		scale = glm::vec3(1, 1, 1);
 	Transform(){
 	}
-	
 	glm::mat4 getModel() {
 		glm::mat4 out(1);
 		out = glm::translate(out, position);
