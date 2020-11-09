@@ -36,7 +36,6 @@ namespace gbLib {
 };
 
 namespace Gumball {
-
     class Window {
         class FpsCounter {
             double lastTime = 0;
