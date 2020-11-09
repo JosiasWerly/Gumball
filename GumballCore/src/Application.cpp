@@ -82,9 +82,12 @@ int main() {
 
 /*
 ##### Gumball 0.1 #####
--create asset system
--resolve drawcall, camera and uniforms system
+     refator:
 
--collision detection
--traces, lines
+[ok] uniforms system
+[mk1] resolve drawcall, 
+[mk1] camera
+[todo] create asset system
+[todo] collision detection
+[todo] traces, lines
 */
