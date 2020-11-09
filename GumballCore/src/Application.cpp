@@ -101,7 +101,7 @@ int main() {
     auto& sm = MeshSystem::instance();
 
     sy.loadFromFile("res/shaders/default.shader");
-    sy.loadFromFile("res/shaders/unlit.shader");
+    sy.loadFromFile("res/shaders/unlit.shader");m 
     sy.loadFromFile("res/shaders/texture.shader");
     
     st.loadFromFile("res/textures/test.png");
