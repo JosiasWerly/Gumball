@@ -11,53 +11,26 @@
 
 
 
-class iRenderProcess{
-public:
-    const class Renderer* render;
-    virtual void process() = 0;
-};
-
 class Renderer {
     Gumball::Window* gWindow;
 public:
     GLFWwindow* window;
     set<iDrawCall*> drawcalls;
-    list<Camera*> cameras;
+    Camera* camera;
+    
+    
     Renderer(Gumball::Window* target) {
         this->gWindow = target;
         this->window = target->getWindow();
     }
     void drawRender() {
         for (auto& d : drawcalls) {
-            drawByLayer(*d);
-            //d->draw(*this);
+            d->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = camera->viewMode.mProjection;
+            d->sa.getParam("uView")->value<Uniform<glm::mat4>>().data = camera->transform.getModel();
+            d->draw(*this);
         }
     }
-    void clearRender() {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-    void swapBuffers() {
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-    Camera* newCamera(unsigned char layer) {
-        Camera *newCam = new Camera;
-        newCam->viewMode.setProjectionPerspective(glm::radians(45.0f), gWindow->getAspec(), .1f, 200.0f);
-        newCam->layer(layer);
-        cameras.push_back(newCam);
-        return newCam;
-    }
-    void drawByLayer(iDrawCall &d) {
-        for (auto cam : cameras){
-            if (cam->layer() & d.layer) {
-                d.sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = cam->viewMode.mProjection;
-                d.sa.getParam("uView")->value<Uniform<glm::mat4>>().data = cam->transform.getModel();
-                d.draw(*this);
-            }
-        }
-    }
+    
     Renderer& operator<<(iDrawCall* drawCall) {
         drawcalls.insert(drawCall);
         return *this;
@@ -68,8 +41,6 @@ public:
             drawcalls.erase(i);
     }
 };
-
-
 
 class Meshdata :
     public iDrawCall {

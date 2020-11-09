@@ -72,7 +72,6 @@ public:
 
 class iDrawCall {
 public:
-    unsigned char layer = 0x00000001;
     Shader sa;
     VertexBuffer vb; // the guy who contains the data
     VertexBufferLayout vl; //the layout of data

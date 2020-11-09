@@ -13,7 +13,7 @@ public:
     eProjectionMode eProjection;
     glm::mat4 mProjection = glm::mat4(1.0f);
 
-    void setProjectionPerspective(float fovy, float aspect, float near = 0.1f, float far = 200.0f) {
+    void setProjectionPerspective(float fovy = glm::radians(45.0f), float aspect = 1.3333333730697632, float near = 0.1f, float far = 500.0f) {
         mProjection = glm::perspective(fovy, aspect, near, far);
         eProjection = eProjectionMode::Perspective;
     }
@@ -30,18 +30,12 @@ public:
     }
 };
 class Camera {
-    unsigned char renderLayer;
 public:
     Transform transform;
     ViewMode viewMode;
 
     Camera() {
-    }
-    unsigned char layer() {
-        return renderLayer;
-    }
-    unsigned char layer(unsigned char newLayer) {
-        return renderLayer = newLayer;
+        viewMode.setProjectionPerspective();
     }
 };
 #endif // !_camera

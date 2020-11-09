@@ -36,9 +36,33 @@ namespace gbLib {
 };
 
 namespace Gumball {
+
     class Window {
+        class FpsCounter {
+            double lastTime = 0;
+            unsigned int frames = 0;
+        public:
+            double ms = 0;
+            FpsCounter() {
+                lastTime = glfwGetTime();
+            }
+            void fpsTick() {
+                double actualTime = glfwGetTime();
+                frames++;
+                if (actualTime - lastTime >= 1.0) {
+                    ms = 1000 / frames;
+                    frames = 0;
+                    lastTime += 1.0f;
+                }
+            }
+            double getMsBySec() {
+                return ms;
+            }
+        };
+
         int x, y;
         GLFWwindow* window;
+        FpsCounter fpsCounter;
     public:
         Window() {
 
@@ -50,7 +74,12 @@ namespace Gumball {
         GLFWwindow* getWindow() {
             return window;
         }
-
+        void clearGLStack() {
+            glUseProgram(0);
+            glBindVertexArray(0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
         float getAspec() {
             return ((float)x / (float)y);
         }
@@ -86,6 +115,20 @@ namespace Gumball {
         }
         void destroy() {
             glfwTerminate();
+        }
+        
+        
+        void clearBuffer() {
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+        void swapBuffers() {
+            fpsCounter.fpsTick();
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+        double getMS() {
+            return fpsCounter.getMsBySec();
         }
     };
 };

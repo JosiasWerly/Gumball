@@ -9,35 +9,15 @@
 //sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
 
 
-class FpsCounter{
-    double lastTime = 0;
-    unsigned int frames = 0;
-public:
-    double ms = 0;
-    FpsCounter(){
-        lastTime = glfwGetTime();
-    }
-    void fpsTick() {
-        double actualTime = glfwGetTime();
-        frames++;
-        if (actualTime - lastTime >= 1.0) {
-            ms = 1000 / frames;
-            frames = 0;
-            lastTime += 1.0f;
-        }
-    }
-    double getMsBySec() {
-        return ms;
-    }
-};
-FpsCounter fpsCounter;
+
+
 
 
 void processInput(GLFWwindow* window);
 int main() {
     Gumball::Window w;
     w.create("Gumball", 800, 600);
-    
+    double t = w.getAspec();
         
 
     //r.viewMode.mView = glm::translate(r.viewMode.mView, glm::vec3(0, 0, -3));
@@ -60,49 +40,33 @@ int main() {
 
     
     Renderer r(&w);
-    Camera* cams[]{
-        r.newCamera(0b00000001),
-        r.newCamera(0b00000010),
-        r.newCamera(0b00000100)
-    };
-    cams[0]->transform.position += glm::vec3(5, 0, -10);
-    cams[1]->transform.position += glm::vec3(0, 0, -10);
-    cams[1]->transform.rotation += glm::vec3(0, 0, 15);
+    Camera* c = r.camera = new Camera();
+    c->transform.position += glm::vec3(0, 0, -200);
     
-
-    
-    
-    constexpr int recSize = 2;
+    constexpr int recSize = 100;
     vector<Meshdata*> drawObjects;
 
     for (size_t i = 0; i < recSize; i++) {
         Meshdata* newMesh = new Meshdata;
 
-        if(drawObjects.size() != 0)
-            newMesh->transform.attach(&drawObjects.back()->transform);
+        //if(drawObjects.size() != 0)
+        //    newMesh->transform.attach(&drawObjects.back()->transform);
         
-        if (i % 2) {
+        if (i % 2)
             newMesh->loadMesh("suzane" );
-            newMesh->layer = 0b11;
-        }
-        else {
+        else 
             newMesh->loadMesh("torus");
-        }
+        newMesh->transform.position += glm::vec3(rand() % 100 -50, rand() % 100-50, rand() % 100-50);
         drawObjects.push_back(newMesh);
         r << newMesh;
     }
 
 
-	//clear all the bind/selectionStack
-    glUseProgram(0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
     Meshdata* suz = drawObjects[0];
     Meshdata* tor = drawObjects[1];
 
-    Camera* c = cams[1];
+    w.clearGLStack();
     while (!glfwWindowShouldClose(r.window)){
         if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS)
             c->transform.rotation += glm::vec3(0, 0, 0.1);
@@ -113,45 +77,11 @@ int main() {
             c->transform.rotation += glm::vec3(0, 0.1, 0);
 		else if (glfwGetKey(r.window, GLFW_KEY_D) == GLFW_PRESS)
             c->transform.rotation += glm::vec3(0, -0.1, 0);
-		
-
-        //if (glfwGetKey(r.window, GLFW_KEY_W) == GLFW_PRESS)
-        //    suz->transform.rotation += glm::vec3(0.01, 0, 0);
-        //else if (glfwGetKey(r.window, GLFW_KEY_S) == GLFW_PRESS)
-        //    suz->transform.rotation += glm::vec3(-0.01, 0, 0);
-        //
-        //if (glfwGetKey(r.window, GLFW_KEY_A) == GLFW_PRESS)
-        //    suz->transform.position += glm::vec3(0, 0, 0.01);
-        //else if (glfwGetKey(r.window, GLFW_KEY_D) == GLFW_PRESS)
-        //    suz->transform.position += glm::vec3(0, 0, -0.01);
-        //
-        //if (glfwGetKey(r.window, GLFW_KEY_Q) == GLFW_PRESS)
-        //    suz->transform.scale += glm::vec3(0.01, 0, 0);
-        //else if (glfwGetKey(r.window, GLFW_KEY_E) == GLFW_PRESS)
-        //    suz->transform.scale += glm::vec3(-0.01, 0, 0);
-        //
-        //
-        //if (glfwGetKey(r.window, GLFW_KEY_I) == GLFW_PRESS)
-        //    tor->transform.rotation += glm::vec3(0.01, 0, 0);
-        //else if (glfwGetKey(r.window, GLFW_KEY_K) == GLFW_PRESS)
-        //    tor->transform.rotation += glm::vec3(-0.01, 0, 0);
-        //
-        //if (glfwGetKey(r.window, GLFW_KEY_J) == GLFW_PRESS)
-        //    tor->transform.position += glm::vec3(0, 0, 0.01);
-        //else if (glfwGetKey(r.window, GLFW_KEY_L) == GLFW_PRESS)
-        //    tor->transform.position += glm::vec3(0, 0, -0.01);
-        //
-        //if (glfwGetKey(r.window, GLFW_KEY_U) == GLFW_PRESS)
-        //    tor->transform.scale += glm::vec3(0.01, 0, 0);
-        //else if (glfwGetKey(r.window, GLFW_KEY_O) == GLFW_PRESS)
-        //    tor->transform.scale += glm::vec3(-0.01, 0, 0);
-        
-
-        r.clearRender();
+		       
+        w.clearBuffer();
         r.drawRender();
-        r.swapBuffers();
-        fpsCounter.fpsTick();
-        cout << fpsCounter.getMsBySec() << endl;
+        w.swapBuffers();
+        cout << w.getMS() << endl;
     }
     sy.unloadAll();
     r.drawcalls.clear();
