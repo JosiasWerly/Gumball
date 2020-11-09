@@ -27,7 +27,6 @@ public:
         paramStorage->pushParam(paramBind);
     }
 };
-
 #pragma region dont_look_at_this
 //general case
 template<typename t> class Uniform : public iParamStorage {
@@ -170,7 +169,6 @@ void ShaderParam::setStorage(unsigned int type) {
     paramStorage = ShaderFunctionsLibrary::reflectGLEnum(type);
 }
 
-
 struct ShaderBind {
     string name;
     unsigned int programId;
@@ -204,7 +202,6 @@ public:
     }
 };
 
-
 class ShaderParameters {
 protected:
     ShaderBind& shaderbindRef;
@@ -230,7 +227,6 @@ public:
         return *(T*)&returnFail;
     }
 };
-
 class Shader {
 protected:
     ShaderBind shaderBind;
