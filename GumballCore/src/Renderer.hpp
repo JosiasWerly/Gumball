@@ -25,9 +25,12 @@ public:
     }
     void drawRender() {
         for (auto& d : drawcalls) {
-            d->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = camera->viewMode.mProjection;
-            d->sa.getParam("uView")->value<Uniform<glm::mat4>>().data = camera->transform.getModel();
+            d->sa.params.get<glm::mat4>("uProj") = camera->viewMode.mProjection;
+            d->sa.params.get<glm::mat4>("uView") = camera->transform.getModel();
+            
             d->draw(*this);
+
+            d->sa.params.uploadParams();
         }
     }
     
@@ -62,10 +65,7 @@ public:
     void draw(const class Renderer& renderer) {
         va.bind();
         sa.bind();
-        sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = transform.getResultModel();
-        //sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
-
-        sa.uploadParams();
+        sa.params.get<glm::mat4>("uModel") = transform.getResultModel();        
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };

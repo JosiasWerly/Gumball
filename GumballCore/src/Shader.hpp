@@ -12,20 +12,37 @@ struct ShaderParamBind {
     unsigned int paramLocation;
     unsigned int paramType;
 };
-class iShaderParamPushMethod {
+class iParamStorage {
 public:
     virtual void pushParam(const ShaderParamBind& param) = 0;
+    virtual void* getPtr() = 0;
+};
+class ShaderParam {
+public:
+    ShaderParamBind paramBind;
+    iParamStorage* paramStorage = nullptr;
+
+    void setStorage(unsigned int type);
+    void bind() {
+        paramStorage->pushParam(paramBind);
+    }
 };
 
-template<typename t> class Uniform : public iShaderParamPushMethod {
-public:
+#pragma region dont_look_at_this
+//general case
+template<typename t> class Uniform : public iParamStorage {
     virtual void pushParam(const ShaderParamBind& param) = 0;
+    virtual void* getPtr() = 0;
 };
+
+//specific case
 #define UniformDefaultExp(t, exp)\
-template<> class Uniform<t> : public iShaderParamPushMethod {public:\
+template<> class Uniform<t> : public iParamStorage {\
+    public:\
     t data = t();\
     void operator=(t data) { this->data = data; }\
-    void pushParam(const ShaderParamBind& param) { exp; }}
+    void pushParam(const ShaderParamBind& param) { exp; }\
+    void* getPtr(){return &data;}}
 
 UniformDefaultExp(int, glUniform1iv(param.paramLocation, 1, &data));
 UniformDefaultExp(float, glUniform1fv(param.paramLocation, 1, &data));
@@ -37,48 +54,8 @@ UniformDefaultExp(glm::ivec2, glUniform2iv(param.paramLocation, 1, glm::value_pt
 UniformDefaultExp(glm::ivec3, glUniform3iv(param.paramLocation, 1, glm::value_ptr(data)));
 UniformDefaultExp(glm::ivec4, glUniform4iv(param.paramLocation, 1, glm::value_ptr(data)));
 #undef UniformDefaultExp
+#pragma endregion
 
-
-class ShaderParam {
-    iShaderParamPushMethod* method;
-public:
-    ShaderParamBind param;
-    void setMethod(iShaderParamPushMethod* newMethod) {
-        if (method) {
-            delete method;
-            method = nullptr;
-        }
-        method = newMethod;
-    }
-    template<class T>T& value() {
-        return *dynamic_cast<T*>(method);
-    }
-    virtual void bind() {
-        method->pushParam(param);
-    }
-
-    static iShaderParamPushMethod* reflectGLEnum(GLenum type) {
-        iShaderParamPushMethod* out = 0;
-        switch (type) {
-        case GL_FLOAT:          out = new Uniform<float>;       break;
-        case GL_INT:            out = new Uniform<int>;         break;
-        case GL_SAMPLER_2D:     out = new Uniform<int>;         break;
-
-
-        case GL_FLOAT_VEC2:     out = new Uniform<glm::fvec2>;      break;
-        case GL_FLOAT_VEC3:     out = new Uniform<glm::fvec3>;      break;
-        case GL_FLOAT_VEC4:     out = new Uniform<glm::fvec4>;      break;
-        case GL_INT_VEC4:       out = new Uniform<glm::ivec4>;      break;
-        case GL_INT_VEC3:       out = new Uniform<glm::ivec3>;      break;
-        case GL_INT_VEC2:       out = new Uniform<glm::ivec2>;      break;
-        case GL_FLOAT_MAT4:     out = new Uniform<glm::mat4>;       break;
-        default:
-            cout << "reflectGLEnumError" << endl;
-            throw;
-        }
-        return out;
-    }
-};
 class ShaderFunctionsLibrary {
     ShaderFunctionsLibrary(const ShaderFunctionsLibrary&) = delete;
 public:
@@ -159,14 +136,40 @@ public:
             glGetActiveUniform(shaderProgram, (GLuint)i, bufSize, &length, &size, &type, name);
             paramLocation = glGetUniformLocation(shaderProgram, name);
             ShaderParam* shParam = new ShaderParam;
-            shParam->param.paramLocation = paramLocation;
-            shParam->param.paramType = type;
-            shParam->setMethod(ShaderParam::reflectGLEnum(type));
+            shParam->paramBind = { (unsigned int)paramLocation, type };
+            shParam->setStorage(type);
             out[name] = shParam;
         }
         return out;
     }
+    static iParamStorage* reflectGLEnum(GLenum type) {
+        iParamStorage* out = 0;
+        switch (type) {
+        case GL_FLOAT:          out = new Uniform<float>;       break;
+        case GL_INT:            out = new Uniform<int>;         break;
+        case GL_SAMPLER_2D:     out = new Uniform<int>;         break;
+
+
+        case GL_FLOAT_VEC2:     out = new Uniform<glm::fvec2>;      break;
+        case GL_FLOAT_VEC3:     out = new Uniform<glm::fvec3>;      break;
+        case GL_FLOAT_VEC4:     out = new Uniform<glm::fvec4>;      break;
+        case GL_INT_VEC4:       out = new Uniform<glm::ivec4>;      break;
+        case GL_INT_VEC3:       out = new Uniform<glm::ivec3>;      break;
+        case GL_INT_VEC2:       out = new Uniform<glm::ivec2>;      break;
+        case GL_FLOAT_MAT4:     out = new Uniform<glm::mat4>;       break;
+        default:
+            cout << "reflectGLEnumError" << endl;
+            throw;
+        }
+        return out;
+    }
 };
+void ShaderParam::setStorage(unsigned int type) {
+    if (paramStorage)
+        delete paramStorage;
+    paramStorage = ShaderFunctionsLibrary::reflectGLEnum(type);
+}
+
 
 struct ShaderBind {
     string name;
@@ -200,35 +203,52 @@ public:
         }
     }
 };
-class Shader {
-    typedef map<string, ShaderParam*> Uniforms;
+
+
+class ShaderParameters {
 protected:
-    ShaderBind shaderBind;
+    ShaderBind& shaderbindRef;
 public:
+    typedef map<string, ShaderParam*> Uniforms;
     Uniforms uniforms;
-    Shader(){
+
+    ShaderParameters(ShaderBind& shaderbindRef) :
+        shaderbindRef(shaderbindRef){
     }
-    Shader(string name){
-        changeShader(name);
-    }
-    void changeShader(string name) {
-        shaderBind = ShaderSystem::instance().getAsset(name);
-        getShaderParams();
-    }
-    void getShaderParams() {
-        uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderBind.programId);
-    }
-    ShaderParam* getParam(string name) {
-        auto it = uniforms.find(name);
-        if (it != uniforms.end())
-            return (it)->second;
-        return nullptr;
+    void retrieveParams() {
+        uniforms = ShaderFunctionsLibrary::getActiveUniforms(shaderbindRef.programId);
     }
     void uploadParams() {
         for (auto& k : uniforms)
             k.second->bind();
     }
+    template<class T> T& get(string key) {
+        static char returnFail[64];
+        auto it = uniforms.find(key);
+        if (it != uniforms.end())
+            return *reinterpret_cast<T*>((it)->second->paramStorage->getPtr());
+        return *(T*)&returnFail;
+    }
+};
+
+class Shader {
+protected:
+    ShaderBind shaderBind;
+public:
+    ShaderParameters params;
     
+    Shader() : 
+        params(shaderBind){
+    }
+    Shader(string name) : 
+        params(shaderBind) {
+        changeShader(name);
+    }
+    
+    void changeShader(string name) {
+        shaderBind = ShaderSystem::instance().getAsset(name);
+        params.retrieveParams();
+    }
     void bind() {
         glDCall(glUseProgram(shaderBind.programId));
     }
