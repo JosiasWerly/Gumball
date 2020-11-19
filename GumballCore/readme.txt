@@ -3,7 +3,7 @@ Make a "GameEngine" that give the programmer all the access for exploring and bu
 
 Gumball heading Rules:
 -be 2d and 3d;
--possibility to load assets(textures, shaders, meshes, sounds)
+-possibility to preload assets(textures, shaders, meshes, sounds)
 -support c++, lua, python, js and C#;
 -contain physics;
 -support for network;
