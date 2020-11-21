@@ -183,24 +183,24 @@ public:
 
 };
 
-class MeshSystem :
-	public iAssetFactory {
-public:
-	iAsset* loadFromDisk(string filePath) {
-		//string fName = gbLib::getNameOfFilePath(filePath);
-		//vector<MeshVertexData> vertexData;
-		//vector<unsigned int> index;		
-		//if (MeshFunctionsLibrary::LoadMeshVertexData(
-		//	filePath.c_str(),
-		//	vertexData, index)) {
-		//	assets.push(fName, { vertexData, index });
-		//}
-	}
-	iAsset* unLoad(void* data) {
-		//if (!assets.contain(name))
-		//	assets.pop(name);
-	}
-};
+//class MeshSystem :
+//	public iAssetFactory {
+//public:
+//	Asset* loadFromDisk(string filePath) {
+//		//string fName = gbLib::getNameOfFilePath(filePath);
+//		//vector<MeshVertexData> vertexData;
+//		//vector<unsigned int> index;		
+//		//if (MeshFunctionsLibrary::LoadMeshVertexData(
+//		//	filePath.c_str(),
+//		//	vertexData, index)) {
+//		//	assets.push(fName, { vertexData, index });
+//		//}
+//	}
+//	Asset* unLoad(void* data) {
+//		//if (!assets.contain(name))
+//		//	assets.pop(name);
+//	}
+//};
 
 
 #endif // !_mesh

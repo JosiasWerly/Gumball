@@ -102,32 +102,53 @@ public:
 };
 
 
-class iAsset {
-public:
-};
 
-template<typename TAsset = void> // with this i dont need a decorator every time i want to expand the system
-class Asset : 
-    public iAsset{
-public:
-    TAsset assetData;
-    Asset(TAsset assetData) : assetData(assetData) {}
-};
 
+class AssetContent {
+    struct sAssetData {
+    protected:
+        sAssetData() {}
+    };
+    template<class T> struct tAssetData :
+        public sAssetData {
+        tAssetData(T data) :
+            data(data) {
+        }
+        T data;
+    };
+    
+    sAssetData* content = nullptr;
+public:
+    AssetContent(){}
+    template<class T>void set(T value) {
+        if (content)
+            delete content;
+        content = new tAssetData<T>(value);
+    }
+    template<class T>T get() {
+        return reinterpret_cast<tAssetData<T>*>(content)->data;
+    }
+
+};
+class Asset {
+public:
+    unsigned int id;
+    AssetContent content;
+};
 
 class iAssetFactory {
     friend class AssetManager;
     class AssetManager* assetManager;
 public:
     virtual bool canBuild(const string& filePath) = 0;
-    virtual iAsset* loadFromDisk(const string& filePath) = 0;
-    virtual iAsset* unLoad(void* data) = 0;
+    virtual AssetContent loadFromDisk(const string& filePath) = 0;
+    virtual bool unLoad(AssetContent data) = 0;
 };
 
 class AssetManager : 
     public Singleton<AssetManager> {
 public:
-    gMap<iAsset> loadedAssets;
+    map<string, Asset*> assets;
     gMap<iAssetFactory> assetFactories;
 
     bool loadAssetFromDisk(string filePath) {
@@ -139,9 +160,11 @@ public:
         for (; it != assets.end(); it++) {
             iAssetFactory* fact = it->second;
             if (fact->canBuild(filePath)) {
-                iAsset* builded = fact->loadFromDisk(fileName);
-                if (builded) {
-                    loadedAssets.push(fileName, builded);
+                AssetContent content = fact->loadFromDisk(fileName);
+                if (content.get) {
+                    Asset* newAsset = new Asset();
+                    newAsset->content = content;
+                    assets.emplace(fileName, newAsset);
                     return true;
                 }
             }
@@ -159,9 +182,6 @@ public:
 
     template<class T>T& getAsset(string name) {
         return *reinterpret_cast<T*>(loadedAssets.get(name));
-    }
-    template<>iAsset& getAsset(string name) {
-        return *loadedAssets.get(name);
     }
 };
 #endif // !_patterns

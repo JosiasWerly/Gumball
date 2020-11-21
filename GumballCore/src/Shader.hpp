@@ -181,23 +181,24 @@ public:
     bool canBuild(const string& filePath) {
         return gbLib::getExtOfFilePath(filePath) == "shader";
     }
-    iAsset* loadFromDisk(const string& filePath) {
+    AssetContent loadFromDisk(const string& filePath) {
         string fName = gbLib::getNameOfFilePath(filePath);
         auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
-        loadShader(fName, shaderCode.vertex, shaderCode.fragment);
-        return nullptr;
+        return loadShader(fName, shaderCode.vertex, shaderCode.fragment);        
     }
-    iAsset* unLoad(void* data) {
+    bool unLoad(AssetContent data) {
         //gMap<ShaderBind>::it i;
         //assets.contain(name, i);
         //glDeleteProgram(i->second->programId);
         //assets.pop(name);
-        return nullptr;
+        return false;
     }
-    void loadShader(string name, string vertex, string fragment) {        
-        //    unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
+    AssetContent loadShader(string name, string vertex, string fragment) {
+        unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
+        AssetContent out;
         //    assets.push(name, { name, shaderProgram });
         //}
+        return out;
     }
 };
 

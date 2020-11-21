@@ -2,6 +2,9 @@
 #include "Renderer.hpp"
 #include "Patterns.hpp"
 
+
+
+
 void processInput(GLFWwindow* window);
 int main() {
     Gumball::Window w;
