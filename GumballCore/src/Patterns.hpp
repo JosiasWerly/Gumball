@@ -27,8 +27,16 @@ public:
 	}
 };
 
+
+
+
+
+
+
+
+
 template<typename TValue>
-class AssetCollection {
+class gMap {
 public:
     typedef pair<string, TValue*> pAsset;
     typename typedef map<string, TValue*>::iterator it;
@@ -54,6 +62,15 @@ public:
         }
         return nullptr;
     }
+    template<class T>T* push(string name, const T&& init) {
+        if (!contain(name)) {
+            T* newVal = new T(init);
+            assets.insert({ name, newVal });
+            return newVal;
+        }
+        return nullptr;
+    }
+    
     virtual bool pop(string name) {
         it i;
         if (contain(name, i)) {
@@ -67,7 +84,7 @@ public:
             delete i.second;
         assets.clear();
     }
-    virtual const TValue* get(string name) {
+    virtual TValue* get(string name) {
         it i;
         contain(name, i);
         return (*i).second;
@@ -75,24 +92,36 @@ public:
 };
 
 
-class iAssetFactory {
-    virtual void loadFromFile(string filePath) = 0;
-    virtual void unload(string name) = 0;
-    virtual void unloadAll() = 0;
-};
-template<typename TAsset>
-class AssetFactory : 
-    public iAssetFactory {
+class iAsset {
 public:
-    AssetCollection<TAsset> assets;
-    virtual void loadFromFile(string filePath) {
+};
+
+class iAssetFactory {
+    friend class AssetManager;
+    class AssetManager* assetManager;
+public:
+    virtual iAsset* loadFromDisk(string filePath) = 0;
+    virtual iAsset* unLoad(void* data) = 0;
+};
+
+class AssetManager : 
+    public Singleton<AssetManager> {
+public:
+    gMap<iAsset> loadedAssets;
+    gMap<iAssetFactory> assetFactories;
+
+    template<class T>T* getFactory(string name) {
+        return *reinterpret_cast<T*>(assetFactories.get(name));
     }
-    virtual void unload(string name) {
+    template<>iAssetFactory* getFactory(string name) {
+        return assetFactories.get(name);
     }
-    virtual void unloadAll() {
+
+    template<class T>T& getAsset(string name) {
+        return *reinterpret_cast<T*>(loadedAssets.get(name));
     }
-    const TAsset& getAsset(string name) {
-        return *assets.get(name);
+    template<>iAsset& getAsset(string name) {
+        return *loadedAssets.get(name);
     }
 };
 #endif // !_patterns

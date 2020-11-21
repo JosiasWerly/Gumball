@@ -173,32 +173,27 @@ struct ShaderBind {
     string name;
     unsigned int programId;
 };
+
+
 class ShaderSystem :
-    public AssetFactory<ShaderBind>,
-    public Singleton<ShaderSystem> {
+    public iAssetFactory{
 public:
-    void loadFromFile(string filePath) {
-        string fName = gbLib::getNameOfFilePath(filePath);
-        auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
-        loadShader(fName, shaderCode.vertex, shaderCode.fragment);
+    iAsset* loadFromDisk(string filePath) {
+        //string fName = gbLib::getNameOfFilePath(filePath);
+        //auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
+        //loadShader(fName, shaderCode.vertex, shaderCode.fragment);
     }
-    void unload(string name) {
-        AssetCollection<ShaderBind>::it i;
-        assets.contain(name, i);
-        glDeleteProgram(i->second->programId);
-        assets.pop(name);
-    }
-    void unloadAll() {
-        auto assetsRef = assets.getAssets();
-        for (auto k : assetsRef)
-            glDeleteProgram(k.second->programId);
-        assets.clear();
+    iAsset* unLoad(void* data) {
+        //gMap<ShaderBind>::it i;
+        //assets.contain(name, i);
+        //glDeleteProgram(i->second->programId);
+        //assets.pop(name);
     }
     void loadShader(string name, string vertex, string fragment) {
-        if (!assets.contain(name)) {
-            unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
-            assets.push(name, { name, shaderProgram });
-        }
+        //if (!assets.contain(name)) {
+        //    unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
+        //    assets.push(name, { name, shaderProgram });
+        //}
     }
 };
 
@@ -242,8 +237,9 @@ public:
     }
     
     void changeShader(string name) {
-        shaderBind = ShaderSystem::instance().getAsset(name);
-        params.retrieveParams();
+        //TODO
+        //shaderBind = ShaderSystem::instance().getAsset(name);
+        //params.retrieveParams();
     }
     void bind() {
         glDCall(glUseProgram(shaderBind.programId));

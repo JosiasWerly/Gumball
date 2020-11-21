@@ -2,37 +2,26 @@
 #include "Renderer.hpp"
 #include "Patterns.hpp"
 
-
-//sa.getParam("uColor")->value<Uniform<glm::fvec4>>().data = c;
-//sa.getParam("uModel")->value<Uniform<glm::mat4>>().data = fMat;
-//sa.getParam("uView")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mView;
-//sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = renderer.viewMode.mProjection;
-
-
-
-
-// d->sa.getParam("uProj")->value<Uniform<glm::mat4>>().data = camera->viewMode.mProjection;
-
 void processInput(GLFWwindow* window);
 int main() {
     Gumball::Window w;
     w.create("Gumball", 800, 600);
        
-    auto& sy = ShaderSystem::instance();
-    auto& st = TextureSystem::instance();
-    auto& sm = MeshSystem::instance();
-
-    sy.loadFromFile("res/shaders/default.shader");
-    sy.loadFromFile("res/shaders/unlit.shader");
-    sy.loadFromFile("res/shaders/texture.shader");
-     
-    st.loadFromFile("res/textures/test.png");
-    st.loadFromFile("res/textures/gumball.png");
-    st.loadFromFile("res/textures/gumbalA.png");
-    st.loadFromFile("res/textures/grid.png");
-
-    sm.loadFromFile("res/models/suzane.obj");
-    sm.loadFromFile("res/models/torus.obj");
+    //auto& sy = ShaderSystem::instance();
+    //auto& st = TextureSystem::instance();
+    //auto& sm = MeshSystem::instance();
+    //
+    //sy.loadFromFile("res/shaders/default.shader");
+    //sy.loadFromFile("res/shaders/unlit.shader");
+    //sy.loadFromFile("res/shaders/texture.shader");
+    // 
+    //st.loadFromFile("res/textures/test.png");
+    //st.loadFromFile("res/textures/gumball.png");
+    //st.loadFromFile("res/textures/gumbalA.png");
+    //st.loadFromFile("res/textures/grid.png");
+    //
+    //sm.loadFromFile("res/models/suzane.obj");
+    //sm.loadFromFile("res/models/torus.obj");
         
     Renderer r(&w);
     Camera* c = r.camera = new Camera();
@@ -74,7 +63,7 @@ int main() {
         w.swapBuffers();
         cout << w.getMS() << endl;
     }
-    sy.unloadAll();
+    //sy.unloadAll();
     r.drawcalls.clear();
     glfwTerminate();
     return 0;
@@ -87,7 +76,7 @@ int main() {
 [ok] uniforms system
 [mk1] resolve drawcall, 
 [mk1] camera
-[todo] create asset system
+[mk0] create asset system
 [todo] collision detection
 [todo] traces, lines
 */

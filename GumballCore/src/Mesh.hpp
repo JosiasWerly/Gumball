@@ -184,22 +184,21 @@ public:
 };
 
 class MeshSystem :
-	public AssetFactory<MeshData>,
-	public Singleton<MeshSystem> {
+	public iAssetFactory {
 public:
-	void loadFromFile(string filePath) {
-		string fName = gbLib::getNameOfFilePath(filePath);
-		vector<MeshVertexData> vertexData;
-		vector<unsigned int> index;		
-		if (MeshFunctionsLibrary::LoadMeshVertexData(
-			filePath.c_str(),
-			vertexData, index)) {
-			assets.push(fName, { vertexData, index });
-		}
+	iAsset* loadFromDisk(string filePath) {
+		//string fName = gbLib::getNameOfFilePath(filePath);
+		//vector<MeshVertexData> vertexData;
+		//vector<unsigned int> index;		
+		//if (MeshFunctionsLibrary::LoadMeshVertexData(
+		//	filePath.c_str(),
+		//	vertexData, index)) {
+		//	assets.push(fName, { vertexData, index });
+		//}
 	}
-	void unload(string name) {
-		if (!assets.contain(name))
-			assets.pop(name);
+	iAsset* unLoad(void* data) {
+		//if (!assets.contain(name))
+		//	assets.pop(name);
 	}
 };
 
