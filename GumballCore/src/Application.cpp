@@ -6,7 +6,9 @@ void processInput(GLFWwindow* window);
 int main() {
     Gumball::Window w;
     w.create("Gumball", 800, 600);
-       
+
+    auto& am = AssetManager::instance();
+    am.assetFactories.push("shader", new ShaderFactory);
     //auto& sy = ShaderSystem::instance();
     //auto& st = TextureSystem::instance();
     //auto& sm = MeshSystem::instance();

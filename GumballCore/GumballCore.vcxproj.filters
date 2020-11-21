@@ -16,6 +16,9 @@
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\vboindexer.cpp">
       <Filter>src\dependencies</Filter>
     </ClCompile>
+    <ClCompile Include="src\Gumball.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

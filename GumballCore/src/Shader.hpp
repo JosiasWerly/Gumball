@@ -175,22 +175,26 @@ struct ShaderBind {
 };
 
 
-class ShaderSystem :
+class ShaderFactory :
     public iAssetFactory{
 public:
-    iAsset* loadFromDisk(string filePath) {
-        //string fName = gbLib::getNameOfFilePath(filePath);
-        //auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
-        //loadShader(fName, shaderCode.vertex, shaderCode.fragment);
+    bool canBuild(const string& filePath) {
+        return gbLib::getExtOfFilePath(filePath) == "shader";
+    }
+    iAsset* loadFromDisk(const string& filePath) {
+        string fName = gbLib::getNameOfFilePath(filePath);
+        auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
+        loadShader(fName, shaderCode.vertex, shaderCode.fragment);
+        return nullptr;
     }
     iAsset* unLoad(void* data) {
         //gMap<ShaderBind>::it i;
         //assets.contain(name, i);
         //glDeleteProgram(i->second->programId);
         //assets.pop(name);
+        return nullptr;
     }
-    void loadShader(string name, string vertex, string fragment) {
-        //if (!assets.contain(name)) {
+    void loadShader(string name, string vertex, string fragment) {        
         //    unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
         //    assets.push(name, { name, shaderProgram });
         //}

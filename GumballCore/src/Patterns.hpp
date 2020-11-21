@@ -9,6 +9,8 @@
 #include <array>
 #include <list>
 #include <map>
+
+#include "Gumball.hpp"
 using namespace std;
 
 template<typename T>
@@ -62,15 +64,23 @@ public:
         }
         return nullptr;
     }
-    template<class T>T* push(string name, const T&& init) {
+    TValue* push(string name, TValue* newVal) {
         if (!contain(name)) {
-            T* newVal = new T(init);
             assets.insert({ name, newVal });
             return newVal;
         }
         return nullptr;
     }
-    
+    template<class T>T* push(string name, const T&& init) {
+        if (!contain(name)) {
+            T* newVal = new T(init);
+            assets[name] = reinterpret_cast<TValue*>(newVal);
+            //assets.insert({ name, init });
+            return newVal;
+        }
+        return nullptr;
+    }
+      
     virtual bool pop(string name) {
         it i;
         if (contain(name, i)) {
@@ -96,11 +106,21 @@ class iAsset {
 public:
 };
 
+template<typename TAsset = void> // with this i dont need a decorator every time i want to expand the system
+class Asset : 
+    public iAsset{
+public:
+    TAsset assetData;
+    Asset(TAsset assetData) : assetData(assetData) {}
+};
+
+
 class iAssetFactory {
     friend class AssetManager;
     class AssetManager* assetManager;
 public:
-    virtual iAsset* loadFromDisk(string filePath) = 0;
+    virtual bool canBuild(const string& filePath) = 0;
+    virtual iAsset* loadFromDisk(const string& filePath) = 0;
     virtual iAsset* unLoad(void* data) = 0;
 };
 
@@ -109,6 +129,26 @@ class AssetManager :
 public:
     gMap<iAsset> loadedAssets;
     gMap<iAssetFactory> assetFactories;
+
+    bool loadAssetFromDisk(string filePath) {
+        string fileName = gbLib::getNameOfFilePath(filePath),
+               fileExt = gbLib::getExtOfFilePath(filePath);
+
+        auto& assets = assetFactories.getAssets();
+        auto it = assets.begin();
+        for (; it != assets.end(); it++) {
+            iAssetFactory* fact = it->second;
+            if (fact->canBuild(filePath)) {
+                iAsset* builded = fact->loadFromDisk(fileName);
+                if (builded) {
+                    loadedAssets.push(fileName, builded);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     template<class T>T* getFactory(string name) {
         return *reinterpret_cast<T*>(assetFactories.get(name));

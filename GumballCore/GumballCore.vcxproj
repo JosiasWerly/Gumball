@@ -180,6 +180,7 @@
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\objloader.cpp" />
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\vboindexer.cpp" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Gumball.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
