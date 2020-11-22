@@ -58,8 +58,8 @@ public:
         vl.push<float>(3);
         vl.push<float>(2);
         va.bind();
-        vb.setData(meshData.mesh.data(), meshData.mesh.size() * sizeof(MeshVertexData));
-        ib.setData((unsigned int*)meshData.index.data(), meshData.index.size());
+        vb.setData(meshData.mesh.data(), (unsigned int)meshData.mesh.size() * sizeof(MeshVertexData));
+        ib.setData((unsigned int*)meshData.index.data(), (unsigned int)meshData.index.size());
         va.addBuffer(vb, vl);
         va.unbind();
     }

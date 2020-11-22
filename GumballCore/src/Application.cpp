@@ -13,6 +13,7 @@ int main() {
     auto& am = AssetManager::instance();
     am.assetFactories.emplace("shader", new ShaderFactory);
     am.assetFactories.emplace("mesh", new MeshFactory);
+    am.assetFactories.emplace("mesh", new TextureFactory);
 
     am.loadAssetFromDisk("res/shaders/default.shader");
     am.loadAssetFromDisk("res/shaders/unlit.shader");
@@ -20,11 +21,11 @@ int main() {
 
     am.loadAssetFromDisk("res/models/torus.obj");
     am.loadAssetFromDisk("res/models/suzane.obj");
-    
-    //st.loadFromFile("res/textures/test.png");
-    //st.loadFromFile("res/textures/gumball.png");
-    //st.loadFromFile("res/textures/gumbalA.png"); 
-    //st.loadFromFile("res/textures/grid.png");
+
+    am.loadAssetFromDisk("res/textures/test.png");
+    am.loadAssetFromDisk("res/textures/gumball.png");
+    am.loadAssetFromDisk("res/textures/gumbalA.png");
+    am.loadAssetFromDisk("res/textures/grid.png");
         
     Renderer r(&w);
     Camera* c = r.camera = new Camera();

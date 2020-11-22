@@ -13,39 +13,46 @@ struct TextureReference {
     unsigned char* memoryBuffer;
     int width, height;
 };
-//class TextureSystem :
-//    public iAssetFactory {
-//public:
-//    Asset* loadFromDisk(string filePath) {
-//        //stbi_set_flip_vertically_on_load(true);
-//        //int x, y, channels;
-//        //unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
-//        //unsigned int bufferId = 0;
-//        //
-//        //if (imageBuffer) {
-//        //    glDCall(glGenTextures(1, &bufferId));
-//        //    glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
-//        //    //filtering
-//        //    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-//        //    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-//
-//        //    //wrapping
-//        //    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-//        //    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-//
-//        //    glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
-//        //    glDCall(glBindTexture(GL_TEXTURE_2D, 0));
-//        //    assets.push(gbLib::getNameOfFilePath(filePath), { bufferId, imageBuffer, x, y });
-//        //}
-//        //else throw;
-//    }
-//    Asset* unLoad(void* data) {
-//        /*auto s = assets.get(name);
-//        glDeleteTextures(1, &s->glBufferId);
-//        delete s->memoryBuffer;
-//        assets.pop(name);*/
-//    }
-//};
+
+class TextureFactory :
+    public iAssetFactory {
+public:
+    bool canBuild(const string& filePath) {
+        return gbLib::getExtOfFilePath(filePath) == "png";
+    }
+    bool loadFromDisk(const string& filePath, AssetContent& content) {
+		stbi_set_flip_vertically_on_load(true);
+		int x, y, channels;
+		unsigned char* imageBuffer = stbi_load(filePath.c_str(), &x, &y, &channels, 4);
+		unsigned int bufferId = 0;
+		
+		if (imageBuffer) {
+		    glDCall(glGenTextures(1, &bufferId));
+		    glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
+		    //filtering
+		    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+		    //wrapping
+		    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+		    glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
+		    glDCall(glBindTexture(GL_TEXTURE_2D, 0));
+
+            content.anew<TextureReference>() = { bufferId, imageBuffer, x, y };
+            return true;
+		}
+        return false;
+    }
+    bool unLoad(AssetContent& content) {
+        TextureReference& dt = content.get<TextureReference>();
+        glDeleteTextures(1, &dt.glBufferId);
+        delete dt.memoryBuffer;
+        content.free();
+        return true;
+    }
+};
 class Texture {
 public:
     TextureReference textureData;
