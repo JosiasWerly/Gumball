@@ -181,23 +181,19 @@ public:
     bool canBuild(const string& filePath) {
         return gbLib::getExtOfFilePath(filePath) == "shader";
     }
-    AssetContent loadFromDisk(const string& filePath) {
+    bool loadFromDisk(const string& filePath, AssetContent& content) {
         string fName = gbLib::getNameOfFilePath(filePath);
         auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
-        return loadShader(fName, shaderCode.vertex, shaderCode.fragment);        
+        content = loadShader(fName, shaderCode.vertex, shaderCode.fragment);
+        return true;
     }
-    bool unLoad(AssetContent data) {
-        //gMap<ShaderBind>::it i;
-        //assets.contain(name, i);
-        //glDeleteProgram(i->second->programId);
-        //assets.pop(name);
-        return false;
+    bool unLoad(AssetContent& data) {
+        glDeleteProgram(data.get<ShaderBind>().programId);
+        return true;
     }
     AssetContent loadShader(string name, string vertex, string fragment) {
         unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
-        AssetContent out;
-        //    assets.push(name, { name, shaderProgram });
-        //}
+        AssetContent out(ShaderBind{ name, shaderProgram });
         return out;
     }
 };
@@ -242,9 +238,8 @@ public:
     }
     
     void changeShader(string name) {
-        //TODO
-        //shaderBind = ShaderSystem::instance().getAsset(name);
-        //params.retrieveParams();
+        shaderBind = AssetManager::instance().assets[name]->content.get<ShaderBind>();
+        params.retrieveParams();
     }
     void bind() {
         glDCall(glUseProgram(shaderBind.programId));

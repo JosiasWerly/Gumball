@@ -101,9 +101,7 @@ public:
     }
 };
 
-
-
-
+//this is how we do a good decorator. but i feel there is too many layers... hate burocracy
 class AssetContent {
     struct sAssetData {
     protected:
@@ -119,7 +117,14 @@ class AssetContent {
     
     sAssetData* content = nullptr;
 public:
-    AssetContent(){}
+    AssetContent(){
+    }
+    template<class T>AssetContent(T value){
+        this->set<T>(value);
+    }
+    bool isValid() {
+        return content;
+    }
     template<class T>void set(T value) {
         if (content)
             delete content;
@@ -128,60 +133,44 @@ public:
     template<class T>T get() {
         return reinterpret_cast<tAssetData<T>*>(content)->data;
     }
-
 };
 class Asset {
 public:
     unsigned int id;
     AssetContent content;
 };
-
 class iAssetFactory {
-    friend class AssetManager;
-    class AssetManager* assetManager;
 public:
     virtual bool canBuild(const string& filePath) = 0;
-    virtual AssetContent loadFromDisk(const string& filePath) = 0;
-    virtual bool unLoad(AssetContent data) = 0;
+    virtual bool loadFromDisk(const string& filePath, AssetContent& content) = 0;
+    virtual bool unLoad(AssetContent& data) = 0;
 };
-
 class AssetManager : 
     public Singleton<AssetManager> {
 public:
     map<string, Asset*> assets;
-    gMap<iAssetFactory> assetFactories;
-
+    map<string, iAssetFactory*> assetFactories;
     bool loadAssetFromDisk(string filePath) {
         string fileName = gbLib::getNameOfFilePath(filePath),
                fileExt = gbLib::getExtOfFilePath(filePath);
 
-        auto& assets = assetFactories.getAssets();
-        auto it = assets.begin();
-        for (; it != assets.end(); it++) {
+        auto it = assetFactories.begin();
+        for (; it != assetFactories.end(); it++) {
             iAssetFactory* fact = it->second;
             if (fact->canBuild(filePath)) {
-                AssetContent content = fact->loadFromDisk(fileName);
-                if (content.get) {
-                    Asset* newAsset = new Asset();
-                    newAsset->content = content;
+                Asset* newAsset = new Asset();
+                if (fact->loadFromDisk(filePath, newAsset->content)) {
                     assets.emplace(fileName, newAsset);
                     return true;
+                }
+                else {
+                    delete newAsset;
+                    return false;
                 }
             }
         }
         return false;
     }
 
-
-    template<class T>T* getFactory(string name) {
-        return *reinterpret_cast<T*>(assetFactories.get(name));
-    }
-    template<>iAssetFactory* getFactory(string name) {
-        return assetFactories.get(name);
-    }
-
-    template<class T>T& getAsset(string name) {
-        return *reinterpret_cast<T*>(loadedAssets.get(name));
-    }
 };
 #endif // !_patterns

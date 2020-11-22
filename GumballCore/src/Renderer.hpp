@@ -51,15 +51,14 @@ public:
     Transform transform;
     Meshdata() {}
     void loadMesh(string objName) {
-        //TODO
         sa.changeShader("default");
-        //auto& meshData = MeshSystem::instance().getAsset(objName);
+        auto meshData = AssetManager::instance().assets[objName]->content.get<MeshData>();        
         vl.push<float>(3);
         vl.push<float>(3);
         vl.push<float>(2);
         va.bind();
-        //vb.setData(meshData.mesh.data(), meshData.mesh.size() * sizeof(MeshVertexData));
-        //ib.setData((unsigned int*)meshData.index.data(), meshData.index.size());
+        vb.setData(meshData.mesh.data(), meshData.mesh.size() * sizeof(MeshVertexData));
+        ib.setData((unsigned int*)meshData.index.data(), meshData.index.size());
         va.addBuffer(vb, vl);
         va.unbind();
     }

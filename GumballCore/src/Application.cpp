@@ -11,22 +11,20 @@ int main() {
     w.create("Gumball", 800, 600);
 
     auto& am = AssetManager::instance();
-    am.assetFactories.push("shader", new ShaderFactory);
-    //auto& sy = ShaderSystem::instance();
-    //auto& st = TextureSystem::instance();
-    //auto& sm = MeshSystem::instance();
-    //
-    //sy.loadFromFile("res/shaders/default.shader");
-    //sy.loadFromFile("res/shaders/unlit.shader");
-    //sy.loadFromFile("res/shaders/texture.shader");
-    // 
+    am.assetFactories.emplace("shader", new ShaderFactory);
+    am.assetFactories.emplace("mesh", new MeshFactory);
+
+    am.loadAssetFromDisk("res/shaders/default.shader");
+    am.loadAssetFromDisk("res/shaders/unlit.shader");
+    am.loadAssetFromDisk("res/shaders/texture.shader");
+
+    am.loadAssetFromDisk("res/models/suzane.obj");
+    am.loadAssetFromDisk("res/models/torus.obj");
+    
     //st.loadFromFile("res/textures/test.png");
     //st.loadFromFile("res/textures/gumball.png");
-    //st.loadFromFile("res/textures/gumbalA.png");
+    //st.loadFromFile("res/textures/gumbalA.png"); 
     //st.loadFromFile("res/textures/grid.png");
-    //
-    //sm.loadFromFile("res/models/suzane.obj");
-    //sm.loadFromFile("res/models/torus.obj");
         
     Renderer r(&w);
     Camera* c = r.camera = new Camera();
