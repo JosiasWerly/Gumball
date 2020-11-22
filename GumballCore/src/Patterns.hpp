@@ -103,19 +103,21 @@ public:
 
 //this is how we do a good decorator. but i feel there is too many layers... hate burocracy
 class AssetContent {
-public:
-    struct sAssetData {
+    class sAssetData {
     protected:
         sAssetData() {}
     };
-    template<class T> struct tAssetData :
+    template<class T> class tAssetData :
         public sAssetData {
+    public:
+        tAssetData(){}
         tAssetData(T data) :
             data(data) {
         }
         T data;
     };
     sAssetData* content = nullptr;
+public:
     AssetContent(){
     }
     template<class T>AssetContent(T value){
@@ -124,12 +126,17 @@ public:
     bool isValid() {
         return content;
     }
-    template<class T>void set(T value) {
+    void free() {
         if (content)
             delete content;
-        content = new tAssetData<T>(value);
     }
-    template<class T>T get() {
+    template<class T>T& anew() {
+        free();
+        tAssetData<T>* newContent = new tAssetData<T>();
+        content = newContent;
+        return newContent->data;
+    }
+    template<class T>T& get() {
         return reinterpret_cast<tAssetData<T>*>(content)->data;
     }
 };
@@ -142,7 +149,7 @@ class iAssetFactory {
 public:
     virtual bool canBuild(const string& filePath) = 0;
     virtual bool loadFromDisk(const string& filePath, AssetContent& content) = 0;
-    virtual bool unLoad(AssetContent& data) = 0;
+    virtual bool unLoad(AssetContent& content) = 0;
 };
 class AssetManager : 
     public Singleton<AssetManager> {

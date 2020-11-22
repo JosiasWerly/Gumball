@@ -187,13 +187,15 @@ public:
         content = loadShader(fName, shaderCode.vertex, shaderCode.fragment);
         return true;
     }
-    bool unLoad(AssetContent& data) {
-        glDeleteProgram(data.get<ShaderBind>().programId);
+    bool unLoad(AssetContent& content) {
+        glDeleteProgram(content.get<ShaderBind>().programId);
+        content.free();
         return true;
     }
     AssetContent loadShader(string name, string vertex, string fragment) {
         unsigned int shaderProgram = ShaderFunctionsLibrary::buildShader(vertex, fragment);
-        AssetContent out(ShaderBind{ name, shaderProgram });
+        AssetContent out;
+        out.anew<ShaderBind>() = { name, shaderProgram };
         return out;
     }
 };

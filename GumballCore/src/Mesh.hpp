@@ -198,11 +198,13 @@ public:
 		if (MeshFunctionsLibrary::LoadMeshVertexData(
 			filePath.c_str(),
 			vertexData, index)) {
-			//content.set<MeshData>({ vertexData, index });
+			content.anew<MeshData>() = { vertexData, index };
+			return true;
 		}
-		return true;
+		return false;
 	}
-	bool unLoad(AssetContent& data) {
+	bool unLoad(AssetContent& content) {
+		content.free();
 		return true;
 	}
 };

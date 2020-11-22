@@ -51,8 +51,9 @@ public:
     Transform transform;
     Meshdata() {}
     void loadMesh(string objName) {
+        auto& am = AssetManager::instance();
+        auto meshData = am.assets[objName]->content.get<MeshData>();
         sa.changeShader("default");
-        auto meshData = AssetManager::instance().assets[objName]->content.get<MeshData>();        
         vl.push<float>(3);
         vl.push<float>(3);
         vl.push<float>(2);
