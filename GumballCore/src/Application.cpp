@@ -18,8 +18,8 @@ int main() {
     am.loadAssetFromDisk("res/shaders/unlit.shader");
     am.loadAssetFromDisk("res/shaders/texture.shader");
 
-    am.loadAssetFromDisk("res/models/suzane.obj");
     am.loadAssetFromDisk("res/models/torus.obj");
+    am.loadAssetFromDisk("res/models/suzane.obj");
     
     //st.loadFromFile("res/textures/test.png");
     //st.loadFromFile("res/textures/gumball.png");

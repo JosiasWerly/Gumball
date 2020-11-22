@@ -198,7 +198,7 @@ public:
 		if (MeshFunctionsLibrary::LoadMeshVertexData(
 			filePath.c_str(),
 			vertexData, index)) {
-			content.set<MeshData>({ vertexData, index });
+			//content.set<MeshData>({ vertexData, index });
 		}
 		return true;
 	}

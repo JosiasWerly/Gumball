@@ -103,6 +103,7 @@ public:
 
 //this is how we do a good decorator. but i feel there is too many layers... hate burocracy
 class AssetContent {
+public:
     struct sAssetData {
     protected:
         sAssetData() {}
@@ -114,9 +115,7 @@ class AssetContent {
         }
         T data;
     };
-    
     sAssetData* content = nullptr;
-public:
     AssetContent(){
     }
     template<class T>AssetContent(T value){
@@ -153,7 +152,7 @@ public:
     bool loadAssetFromDisk(string filePath) {
         string fileName = gbLib::getNameOfFilePath(filePath),
                fileExt = gbLib::getExtOfFilePath(filePath);
-
+        cout << filePath;
         auto it = assetFactories.begin();
         for (; it != assetFactories.end(); it++) {
             iAssetFactory* fact = it->second;
@@ -161,14 +160,16 @@ public:
                 Asset* newAsset = new Asset();
                 if (fact->loadFromDisk(filePath, newAsset->content)) {
                     assets.emplace(fileName, newAsset);
+                    cout << " OK" << endl;
                     return true;
                 }
                 else {
                     delete newAsset;
-                    return false;
+                    break;
                 }
             }
         }
+        cout << " BAD" << endl;
         return false;
     }
 
