@@ -10,23 +10,24 @@ int main() {
     Gumball::Window w;
     w.create("Gumball", 800, 600);
 
-    auto& am = AssetManager::instance();
-    am.assetFactories.emplace("shader", new ShaderFactory);
-    am.assetFactories.emplace("mesh", new MeshFactory);
-    am.assetFactories.emplace("mesh", new TextureFactory);
+    auto& am = AssetManager::instance();    
+    am.pushFactory("shader", new ShaderFactory);
+    am.pushFactory("mesh", new MeshFactory);
+    am.pushFactory("texture", new TextureFactory);
 
     am.loadAssetFromDisk("res/shaders/default.shader");
     am.loadAssetFromDisk("res/shaders/unlit.shader");
     am.loadAssetFromDisk("res/shaders/texture.shader");
-
-    am.loadAssetFromDisk("res/models/torus.obj");
-    am.loadAssetFromDisk("res/models/suzane.obj");
 
     am.loadAssetFromDisk("res/textures/test.png");
     am.loadAssetFromDisk("res/textures/gumball.png");
     am.loadAssetFromDisk("res/textures/gumbalA.png");
     am.loadAssetFromDisk("res/textures/grid.png");
         
+    am.loadAssetFromDisk("res/models/torus.obj");
+    am.loadAssetFromDisk("res/models/suzane.obj");
+
+
     Renderer r(&w);
     Camera* c = r.camera = new Camera();
     c->transform.position += glm::vec3(0, 0, -200);
@@ -80,7 +81,7 @@ int main() {
 [ok] uniforms system
 [mk1] resolve drawcall, 
 [mk1] camera
-[mk0] create asset system
+[mk1] create asset system
 [todo] collision detection
 [todo] traces, lines
 */

@@ -52,7 +52,7 @@ public:
     Meshdata() {}
     void loadMesh(string objName) {
         auto& am = AssetManager::instance();
-        auto meshData = am.assets[objName]->content.get<MeshData>();
+        auto meshData = am.getData<MeshData>(objName);
         sa.changeShader("default");
         vl.push<float>(3);
         vl.push<float>(3);

@@ -173,8 +173,6 @@ struct ShaderBind {
     string name;
     unsigned int programId;
 };
-
-
 class ShaderFactory :
     public iAssetFactory{
 public:
@@ -240,7 +238,7 @@ public:
     }
     
     void changeShader(string name) {
-        shaderBind = AssetManager::instance().assets[name]->content.get<ShaderBind>();
+        shaderBind = AssetManager::instance().getData<ShaderBind>(name);
         params.retrieveParams();
     }
     void bind() {
