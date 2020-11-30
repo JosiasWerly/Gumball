@@ -189,10 +189,10 @@ class MeshFactory :
 	public iAssetFactory {
 public:
 	bool canBuild(const string& filePath) {
-		return gbLib::getExtOfFilePath(filePath) == "obj";
+		return getExtOfFilePath(filePath) == "obj";
 	}
 	bool loadFromDisk(const string& filePath, AssetContent& content) {
-		string fName = gbLib::getNameOfFilePath(filePath);
+		string fName = getNameOfFilePath(filePath);
 		vector<MeshVertexData> vertexData;
 		vector<unsigned int> index;		
 		if (MeshFunctionsLibrary::LoadMeshVertexData(

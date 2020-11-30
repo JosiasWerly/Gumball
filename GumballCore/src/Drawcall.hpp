@@ -1,7 +1,7 @@
 #ifndef _drawCall
 #define _drawCall
+#include "GFunctionLibrary.hpp"
 #include "glm/glm.hpp"
-#include "Gumball.hpp"
 #include "GLBuffers.hpp"
 #include "Shader.hpp"
 
@@ -18,7 +18,7 @@ class TextureFactory :
     public iAssetFactory {
 public:
     bool canBuild(const string& filePath) {
-        return gbLib::getExtOfFilePath(filePath) == "png";
+        return getExtOfFilePath(filePath) == "png";
     }
     bool loadFromDisk(const string& filePath, AssetContent& content) {
 		stbi_set_flip_vertically_on_load(true);

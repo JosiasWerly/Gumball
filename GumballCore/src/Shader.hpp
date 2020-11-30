@@ -2,7 +2,8 @@
 #ifndef _shader
 #define _shader
 
-#include "Gumball.hpp"
+#include "Math.hpp"
+#include "GFunctionLibrary.hpp"
 #include "Patterns.hpp"
 #include <fstream>
 #include <sstream>
@@ -177,10 +178,10 @@ class ShaderFactory :
     public iAssetFactory{
 public:
     bool canBuild(const string& filePath) {
-        return gbLib::getExtOfFilePath(filePath) == "shader";
+        return getExtOfFilePath(filePath) == "shader";
     }
     bool loadFromDisk(const string& filePath, AssetContent& content) {
-        string fName = gbLib::getNameOfFilePath(filePath);
+        string fName = getNameOfFilePath(filePath);
         auto shaderCode = ShaderFunctionsLibrary::loadShaderCodeFromFile(filePath);
         content = loadShader(fName, shaderCode.vertex, shaderCode.fragment);
         return true;

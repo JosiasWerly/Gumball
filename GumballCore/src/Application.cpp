@@ -1,13 +1,9 @@
-
 #include "Renderer.hpp"
 #include "Patterns.hpp"
 
-
-
-
 void processInput(GLFWwindow* window);
 int main() {
-    Gumball::Window w;
+    Window w;
     w.create("Gumball", 800, 600);
 
     auto& am = AssetManager::instance();    

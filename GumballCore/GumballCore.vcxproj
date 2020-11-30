@@ -180,6 +180,7 @@
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\objloader.cpp" />
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\vboindexer.cpp" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +195,7 @@
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawcall.hpp" />
+    <ClInclude Include="src\GFunctionLibrary.hpp" />
     <ClInclude Include="src\GLBuffers.hpp" />
     <ClInclude Include="src\Gumball.hpp" />
     <ClInclude Include="src\Math.hpp" />

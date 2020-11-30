@@ -1,6 +1,7 @@
 #ifndef _glbuffers
 #define _glbuffers
-#include "Gumball.hpp"
+#include "GFunctionLibrary.hpp"
+
 
 class VertexBuffer  {
 public:

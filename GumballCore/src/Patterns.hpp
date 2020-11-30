@@ -176,8 +176,8 @@ public:
 	}
 
 	bool loadAssetFromDisk(string filePath) {
-		string fileName = gbLib::getNameOfFilePath(filePath),
-			fileExt = gbLib::getExtOfFilePath(filePath);
+		string fileName = getNameOfFilePath(filePath),
+			fileExt = getExtOfFilePath(filePath);
 		cout << filePath;
 		iAssetFactory* fact = findFactoryForAsset(filePath);
 		if (fact) {
