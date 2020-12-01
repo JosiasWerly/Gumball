@@ -10,6 +10,17 @@
 #include "Mesh.hpp"
 #include "Camera.hpp"
 
+
+
+class BaseRender {
+protected:
+    friend class Window;
+    class Window* window;
+    class GLFWwindow* glfWindow;
+public:
+    BaseRender(){}
+    virtual void diposeRender() = 0;
+};
 class Window {
     class FpsCounter {
         double lastTime = 0;
@@ -36,15 +47,13 @@ class Window {
     int x, y;
     GLFWwindow* window;
     FpsCounter fpsCounter;
-    
-    //string winName;
-    //Thread th;
+    BaseRender* render;
 public:
     Window() {
 
     }
     ~Window() {
-
+        glfwTerminate();
     }
 
     GLFWwindow* getGLFWindow() {
@@ -89,11 +98,13 @@ public:
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //endTextureAlpha
     }
-    void destroy() {
-        glfwTerminate();
+
+
+    void attachRender(BaseRender* render) {
+        this->render = render;
+        this->render->window = this;
+        this->render->glfWindow = window;
     }
-
-
     void clearBuffer() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,13 +114,17 @@ public:
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
+    void disposeRender() {
+        clearBuffer();
+        render->diposeRender();
+        swapBuffers();
+        cout << getMS() << endl;
+    }
+    
+    
     bool shouldClose() {
         return glfwWindowShouldClose(window);
     }
-
-    
-
     //this will be moved to Renderer class
     double getMS() {
         return fpsCounter.getMsBySec();
@@ -125,19 +140,14 @@ public:
     VertexArray va; //the guys who wrap everything above
     virtual void draw(const class Renderer& renderer) = 0;
 };
-class Renderer {
-    Window* gWindow;
+class Renderer : 
+    public BaseRender {
 public:
-    GLFWwindow* window;
-    set<iDrawCall*> drawcalls;
     Camera* camera;
-    
-    
-    Renderer(Window* target) {
-        this->gWindow = target;
-        this->window = target->getGLFWindow();
-    }
-    void drawRender() {
+    set<iDrawCall*> drawcalls;
+
+    Renderer(){}
+    void diposeRender() {
         for (auto& d : drawcalls) {
             if (camera) {
                 d->sa.params.get<glm::mat4>("uProj") = camera->viewMode.mProjection;

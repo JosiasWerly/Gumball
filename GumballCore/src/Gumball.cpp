@@ -3,8 +3,9 @@
 
 
 Engine::Engine() {
+	render = new Renderer;
 	window = new Window;
-	render = new Renderer(window);
+	window->attachRender(render);
 	assetManager = &AssetManager::instance();
 
 	assetManager->pushFactory("shader", new ShaderFactory);

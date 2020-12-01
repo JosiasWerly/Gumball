@@ -3,14 +3,10 @@
 void processInput(GLFWwindow* window);
 int main() {
     window.create("Gumball", 800, 600);
-    assetManager.pushFactory("shader", new ShaderFactory);
-    assetManager.pushFactory("mesh", new MeshFactory);
-    assetManager.pushFactory("texture", new TextureFactory);
-    
     assetManager.loadAssetFromDisk("res/shaders/default.shader");
     assetManager.loadAssetFromDisk("res/shaders/unlit.shader");
     assetManager.loadAssetFromDisk("res/shaders/texture.shader");
-    
+
     assetManager.loadAssetFromDisk("res/textures/test.png");
     assetManager.loadAssetFromDisk("res/textures/gumball.png");
     assetManager.loadAssetFromDisk("res/textures/gumbalA.png");
@@ -29,10 +25,6 @@ int main() {
 
     for (size_t i = 0; i < recSize; i++) {
         Meshdata* newMesh = new Meshdata;
-
-        //if(drawObjects.size() != 0)
-        //    newMesh->transform.attach(&drawObjects.back()->transform);
-        
         if (i % 2)
             newMesh->loadMesh("suzane" );
         else 
@@ -41,7 +33,7 @@ int main() {
         drawObjects.push_back(newMesh);
         render << newMesh;
     }
-    window.clearGLStack();
+
     while (!window.shouldClose()){
         if (engine.keyPressed(GLFW_KEY_W))
             c->transform.rotation += glm::vec3(0, 0, 0.1);
@@ -52,10 +44,9 @@ int main() {
             c->transform.rotation += glm::vec3(0, 0.1, 0);
 		else if (engine.keyPressed(GLFW_KEY_D))
             c->transform.rotation += glm::vec3(0, -0.1, 0);
-        engine.processRender();
+
+        window.disposeRender();
     }
-    render.drawcalls.clear();
-    
     return 0;
 }
 

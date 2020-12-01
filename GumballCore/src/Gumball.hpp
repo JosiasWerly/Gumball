@@ -12,13 +12,6 @@ public:
 	Engine();
 	~Engine();
 
-	void processRender() {
-		//in the future i will have multiple renderers && multiple cameras
-		window->clearBuffer();
-		render->drawRender();
-		window->swapBuffers();
-		cout << window->getMS() << endl;
-	}
 
 	//THIS IS TEMPORARY
 	bool keyPressed(int key) {
