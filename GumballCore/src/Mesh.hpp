@@ -8,7 +8,12 @@
 #include <stdio.h>
 #include <cstring>
 #include <fstream>
-#include <glm/glm.hpp>
+
+
+#include "Patterns.hpp"
+#include "Math.hpp"
+#include "GFunctionLibrary.hpp"
+#include "Shader.hpp"
 
 using namespace std;
 

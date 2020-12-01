@@ -10,7 +10,7 @@
 #include <list>
 #include <map>
 
-#include "Gumball.hpp"
+#include "GFunctionLibrary.hpp"
 using namespace std;
 
 template<typename T>

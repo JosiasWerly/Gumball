@@ -182,6 +182,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -194,7 +195,7 @@
     <ClInclude Include="..\Dependencies\openGLTutorial\include\objloader.hpp" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
     <ClInclude Include="src\Camera.hpp" />
-    <ClInclude Include="src\Drawcall.hpp" />
+    <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\GFunctionLibrary.hpp" />
     <ClInclude Include="src\GLBuffers.hpp" />
     <ClInclude Include="src\Gumball.hpp" />

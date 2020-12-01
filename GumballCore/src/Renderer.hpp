@@ -2,10 +2,11 @@
 #define _renderer
 #include "GFunctionLibrary.hpp"
 #include "GLBuffers.hpp"
-#include "Drawcall.hpp"
+#include "Transform.hpp"
+#include "Texture.hpp"
+#include "Renderer.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"
-#include "Transform.hpp"
 #include "Camera.hpp"
 
 class Window {
@@ -103,6 +104,15 @@ public:
     }
 };
 
+class iDrawCall {
+public:
+    Shader sa;
+    VertexBuffer vb; // the guy who contains the data
+    VertexBufferLayout vl; //the layout of data
+    IndexBuffer ib; // data replication
+    VertexArray va; //the guys who wrap everything above
+    virtual void draw(const class Renderer& renderer) = 0;
+};
 class Renderer {
     Window* gWindow;
 public:
@@ -136,6 +146,7 @@ public:
             drawcalls.erase(i);
     }
 };
+
 
 class Meshdata :
     public iDrawCall {
