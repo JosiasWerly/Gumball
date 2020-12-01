@@ -2,7 +2,22 @@
 
 void processInput(GLFWwindow* window);
 
+void print() {
+    cout << "myPrint" << endl;
+}
+class myTest {
+public:
+    void t() {
+        cout << "wwww" << endl;
+    }
+};
+
 int main() {
+    myTest m;
+    Thread th;
+    th.bind<myTest>(&m, &myTest::t);
+    th.start(true);
+
     window.create("Gumball", 800, 600);
     assetManager.pushFactory("shader", new ShaderFactory);
     assetManager.pushFactory("mesh", new MeshFactory);
@@ -56,10 +71,8 @@ int main() {
 		else if (window.keyPressed(GLFW_KEY_D))
             c->transform.rotation += glm::vec3(0, -0.1, 0);
         
-        window.clearBuffer();
-        render.drawRender();
-        window.swapBuffers();
-        cout << window.getMS() << endl;
+        engine.processRender();
+        
     }
     //sy.unloadAll();
     render.drawcalls.clear();

@@ -195,4 +195,110 @@ public:
 		return assets[assetName]->content.get<T>();
 	}
 };
+
+
+
+
+
+/*
+template <typename OBJECT, typename FUNC>
+long long getNum(OBJECT obj, FUNC getNumber)
+{
+	return (obj.*getNumber)();
+}
+*/
+
+#include <thread>
+
+
+
+
+
+class Thread{	
+	class BaseBinder {
+	public:
+		virtual void call() = 0;
+	};
+	template<typename TObj>
+	class Method :
+		public BaseBinder {
+	public:
+		typedef void(TObj::*Fnx)(void);
+		TObj* ob;
+		Fnx fn;
+		Method(TObj* obj, Fnx fnx) {
+			ob = obj;
+			fn = fnx;
+		}
+		void call() {
+			(*ob.*fn)();
+		}
+	};
+	class Function :
+		public BaseBinder {
+	public:
+		typedef void(*Fnx)(void);
+		Fnx fnx;
+		
+		Function(Fnx fn) {
+			fnx = fn;
+		}
+		void call() {
+			fnx();
+		}
+	};
+	
+	bool loop;
+	std::thread* th;
+	BaseBinder* binder;
+public:
+	void internalLoop() {
+		do{
+			binder->call();
+		} while (loop);			
+	}
+	Thread() {
+		stop();
+		if (binder)
+			delete binder;
+	}
+	Thread(void(*fnx)(void)) {
+		bind(fnx);
+	}
+	template<typename TObj>Thread(TObj* obj, void(TObj::*fnx)(void)) {
+		bind<TObj>(obj, fnx);
+	}
+
+	void bind(void(*fnx)(void)) {
+		if (binder)
+			delete binder;
+		binder = new Function(fnx);
+	}
+	template<typename TObj>void bind(TObj* obj, void(TObj::*fnx)(void)) {
+		if (binder)
+			delete binder;
+		binder = new Method<TObj>(obj, fnx);
+	}
+	void start(bool loop = false) {
+		this->loop = loop;
+		stop();
+		if(binder)
+			th = new thread(&Thread::internalLoop, this);
+	}
+	void stop() {
+		if (th) {
+			th->join();
+			delete th;
+			th = nullptr;
+		}
+	}
+
+	bool isBinded() {
+		return binder;
+	}
+	bool isRunning() {
+		return th;
+	}
+};
+
 #endif // !_patterns

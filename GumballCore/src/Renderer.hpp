@@ -1,7 +1,8 @@
 #ifndef _renderer
 #define _renderer
-#include "GFunctionLibrary.hpp"
+
 #include "GLBuffers.hpp"
+#include "GFunctionLibrary.hpp"
 #include "Transform.hpp"
 #include "Texture.hpp"
 #include "Renderer.hpp"
@@ -157,6 +158,8 @@ public:
             drawcalls.erase(i);
     }
 };
+
+
 class Meshdata :
     public iDrawCall {
 public:    
