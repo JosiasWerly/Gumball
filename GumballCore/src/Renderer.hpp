@@ -43,7 +43,7 @@ public:
 
     }
 
-    GLFWwindow* getWindow() {
+    GLFWwindow* getGLFWindow() {
         return window;
     }
     void clearGLStack() {
@@ -99,6 +99,17 @@ public:
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    bool shouldClose() {
+        return glfwWindowShouldClose(window);
+    }
+
+    //THIS IS TEMPORARY
+    bool keyPressed(int key) {
+        return glfwGetKey(window, key) == GLFW_PRESS;
+    }
+
+    //this will be moved to Renderer class
     double getMS() {
         return fpsCounter.getMsBySec();
     }
@@ -123,7 +134,7 @@ public:
     
     Renderer(Window* target) {
         this->gWindow = target;
-        this->window = target->getWindow();
+        this->window = target->getGLFWindow();
     }
     void drawRender() {
         for (auto& d : drawcalls) {
@@ -146,8 +157,6 @@ public:
             drawcalls.erase(i);
     }
 };
-
-
 class Meshdata :
     public iDrawCall {
 public:    

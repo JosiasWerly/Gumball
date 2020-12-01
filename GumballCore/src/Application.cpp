@@ -45,17 +45,17 @@ int main() {
 
 
     window.clearGLStack();
-    while (!glfwWindowShouldClose(window.getWindow())){
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_W) == GLFW_PRESS)
+    while (!window.shouldClose()){
+        if (window.keyPressed(GLFW_KEY_W))
             c->transform.rotation += glm::vec3(0, 0, 0.1);
-        else if (glfwGetKey(window.getWindow(), GLFW_KEY_S) == GLFW_PRESS)
+        else if (window.keyPressed(GLFW_KEY_S))
             c->transform.rotation += glm::vec3(0, 0, -0.1);
 
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_A) == GLFW_PRESS)
+        if (window.keyPressed(GLFW_KEY_A))
             c->transform.rotation += glm::vec3(0, 0.1, 0);
-		else if (glfwGetKey(window.getWindow(), GLFW_KEY_D) == GLFW_PRESS)
+		else if (window.keyPressed(GLFW_KEY_D))
             c->transform.rotation += glm::vec3(0, -0.1, 0);
-		       
+        
         window.clearBuffer();
         render.drawRender();
         window.swapBuffers();

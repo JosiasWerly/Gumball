@@ -11,10 +11,12 @@ public:
 
 	Engine();
 	~Engine();
+
+
 };
 static Engine engine;
 
-//this is just to make it simplier for now... until i have peace in my heart for supporting multiple renderers && cameras
+//this is just to make it simplier for now... until i have peace in my heart for supporting multiple renderers && cam
 static AssetManager& assetManager = *engine.assetManager;
 static Window& window = *engine.window;
 static Renderer& render = *engine.render;
