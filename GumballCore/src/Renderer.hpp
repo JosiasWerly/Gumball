@@ -102,6 +102,7 @@ public:
         return fpsCounter.getMsBySec();
     }
 };
+
 class Renderer {
     Window* gWindow;
 public:
@@ -116,11 +117,11 @@ public:
     }
     void drawRender() {
         for (auto& d : drawcalls) {
-            d->sa.params.get<glm::mat4>("uProj") = camera->viewMode.mProjection;
-            d->sa.params.get<glm::mat4>("uView") = camera->transform.getModel();
-            
+            if (camera) {
+                d->sa.params.get<glm::mat4>("uProj") = camera->viewMode.mProjection;
+                d->sa.params.get<glm::mat4>("uView") = camera->transform.getModel();
+            }            
             d->draw(*this);
-
             d->sa.params.uploadParams();
         }
     }

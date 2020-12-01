@@ -8,12 +8,12 @@
 
 
 #include "stb_image.h"
+//old stuff
 struct TextureReference {
     unsigned int glBufferId;
     unsigned char* memoryBuffer;
     int width, height;
 };
-
 class TextureFactory :
     public iAssetFactory {
 public:
@@ -73,6 +73,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 };
+//end of oldstuff
 
 class iDrawCall {
 public:

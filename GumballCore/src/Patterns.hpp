@@ -29,14 +29,6 @@ public:
 	}
 };
 
-
-
-
-
-
-
-
-
 template<typename TValue>
 class gMap {
 public:
