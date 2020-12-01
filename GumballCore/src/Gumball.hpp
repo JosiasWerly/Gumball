@@ -17,11 +17,13 @@ public:
 		window->clearBuffer();
 		render->drawRender();
 		window->swapBuffers();
-
 		cout << window->getMS() << endl;
 	}
 
-
+	//THIS IS TEMPORARY
+	bool keyPressed(int key) {
+		return glfwGetKey(window->getGLFWindow(), key) == GLFW_PRESS;
+	}
 };
 static Engine engine;
 

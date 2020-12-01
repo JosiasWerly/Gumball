@@ -36,6 +36,9 @@ class Window {
     int x, y;
     GLFWwindow* window;
     FpsCounter fpsCounter;
+    
+    //string winName;
+    //Thread th;
 public:
     Window() {
 
@@ -105,10 +108,7 @@ public:
         return glfwWindowShouldClose(window);
     }
 
-    //THIS IS TEMPORARY
-    bool keyPressed(int key) {
-        return glfwGetKey(window, key) == GLFW_PRESS;
-    }
+    
 
     //this will be moved to Renderer class
     double getMS() {
