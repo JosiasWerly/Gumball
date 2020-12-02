@@ -120,8 +120,7 @@ public:
         swapBuffers();
         cout << getMS() << endl;
     }
-    
-    
+
     bool shouldClose() {
         return glfwWindowShouldClose(window);
     }
@@ -168,7 +167,6 @@ public:
             drawcalls.erase(i);
     }
 };
-
 
 class Meshdata :
     public iDrawCall {

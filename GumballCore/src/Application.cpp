@@ -13,38 +13,42 @@ int main() {
     assetManager.loadAssetFromDisk("res/textures/grid.png");
     
     assetManager.loadAssetFromDisk("res/models/torus.obj");
-    assetManager.loadAssetFromDisk("res/models/suzane.obj");
+    assetManager.loadAssetFromDisk("res/models/suzane.obj");    
+    Camera* mainCamera = render.camera = new Camera();
+    mainCamera->transform.position += glm::vec3(0, 0, -200);
 
-
-    
-    Camera* c = render.camera = new Camera();
-    c->transform.position += glm::vec3(0, 0, -200);
-    
     constexpr int recSize = 100;
     vector<Meshdata*> drawObjects;
-
     for (size_t i = 0; i < recSize; i++) {
         Meshdata* newMesh = new Meshdata;
         if (i % 2)
-            newMesh->loadMesh("suzane" );
-        else 
+            newMesh->loadMesh("suzane");
+        else
             newMesh->loadMesh("torus");
-        newMesh->transform.position += glm::vec3(rand() % 100 -50, rand() % 100-50, rand() % 100-50);
+        newMesh->transform.position += glm::vec3(rand() % 100 - 50, rand() % 100 - 50, rand() % 100 - 50);
         drawObjects.push_back(newMesh);
         render << newMesh;
     }
 
-    while (!window.shouldClose()){
-        if (engine.keyPressed(GLFW_KEY_W))
-            c->transform.rotation += glm::vec3(0, 0, 0.1);
-        else if (engine.keyPressed(GLFW_KEY_S))
-            c->transform.rotation += glm::vec3(0, 0, -0.1);
+    auto gameThread = [](){
+        Camera* c = render.camera;
+        while (true) {
+            if (engine.keyPressed(GLFW_KEY_W))
+                c->transform.rotation += glm::vec3(0, 0, 0.1);
+            else if (engine.keyPressed(GLFW_KEY_S))
+                c->transform.rotation += glm::vec3(0, 0, -0.1);
 
-        if (engine.keyPressed(GLFW_KEY_A))
-            c->transform.rotation += glm::vec3(0, 0.1, 0);
-		else if (engine.keyPressed(GLFW_KEY_D))
-            c->transform.rotation += glm::vec3(0, -0.1, 0);
+            if (engine.keyPressed(GLFW_KEY_A))
+                c->transform.rotation += glm::vec3(0, 0.1, 0);
+            else if (engine.keyPressed(GLFW_KEY_D))
+                c->transform.rotation += glm::vec3(0, -0.1, 0);
+        }
+    };
 
+    Thread th;
+    th.bind(gameThread);
+    th.start();
+    while (true){
         window.disposeRender();
     }
     return 0;
