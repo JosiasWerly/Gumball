@@ -118,7 +118,6 @@ public:
         clearBuffer();
         render->diposeRender();
         swapBuffers();
-        cout << getMS() << endl;
     }
 
     bool shouldClose() {

@@ -2,6 +2,10 @@
 
 void processInput(GLFWwindow* window);
 int main() {
+    FVector 
+        a(1, 1, 1),
+        b(2, 2, 2);
+
     window.create("Gumball", 800, 600);
     assetManager.loadAssetFromDisk("res/shaders/default.shader");
     assetManager.loadAssetFromDisk("res/shaders/unlit.shader");
@@ -13,42 +17,47 @@ int main() {
     assetManager.loadAssetFromDisk("res/textures/grid.png");
     
     assetManager.loadAssetFromDisk("res/models/torus.obj");
-    assetManager.loadAssetFromDisk("res/models/suzane.obj");    
+    assetManager.loadAssetFromDisk("res/models/cube.obj");
+    assetManager.loadAssetFromDisk("res/models/plane.obj");
+    assetManager.loadAssetFromDisk("res/models/sphere.obj");
+    //assetManager.loadAssetFromDisk("res/models/suzane.obj");
     Camera* mainCamera = render.camera = new Camera();
-    mainCamera->transform.position += glm::vec3(0, 0, -200);
+    mainCamera->transform.position += glm::vec3(0, 0, -10);
 
-    constexpr int recSize = 100;
+    constexpr int recSize = 2;
     vector<Meshdata*> drawObjects;
     for (size_t i = 0; i < recSize; i++) {
         Meshdata* newMesh = new Meshdata;
-        if (i % 2)
-            newMesh->loadMesh("suzane");
-        else
-            newMesh->loadMesh("torus");
-        newMesh->transform.position += glm::vec3(rand() % 100 - 50, rand() % 100 - 50, rand() % 100 - 50);
+        if (i % 2) {
+            newMesh->loadMesh("sphere");
+            newMesh->transform.position += glm::vec3(0, 2, 0);
+        }
+        else {
+            newMesh->loadMesh("cube");
+            newMesh->transform.position += glm::vec3(0, -2, 0);
+        }
+        //newMesh->transform.position += glm::vec3(rand() % 50 - 25, rand() % 50- 25, rand() % 50 - 25);
         drawObjects.push_back(newMesh);
         render << newMesh;
     }
-
-    auto gameThread = [](){
-        Camera* c = render.camera;
-        while (true) {
-            if (engine.keyPressed(GLFW_KEY_W))
-                c->transform.rotation += glm::vec3(0, 0, 0.1);
-            else if (engine.keyPressed(GLFW_KEY_S))
-                c->transform.rotation += glm::vec3(0, 0, -0.1);
-
-            if (engine.keyPressed(GLFW_KEY_A))
-                c->transform.rotation += glm::vec3(0, 0.1, 0);
-            else if (engine.keyPressed(GLFW_KEY_D))
-                c->transform.rotation += glm::vec3(0, -0.1, 0);
-        }
-    };
-
-    Thread th;
-    th.bind(gameThread);
-    th.start();
+    float turnRate = 0.01;
     while (true){
+        Transform* t = &render.camera->transform;
+        cout << t->rotation.right().rawVec().x << " " << t->rotation.right().rawVec().y << " " << t->rotation.right().rawVec().z << endl;
+        if (engine.keyPressed(GLFW_KEY_W))
+            t->rotation.rotate(-turnRate, 0, 0);
+        else if (engine.keyPressed(GLFW_KEY_S))
+            t->rotation.rotate(turnRate, 0, 0);
+        
+        if (engine.keyPressed(GLFW_KEY_Q))
+            t->rotation.rotate(0, -turnRate, 0);
+        else if (engine.keyPressed(GLFW_KEY_E))
+            t->rotation.rotate(0, turnRate, 0);
+
+        if (engine.keyPressed(GLFW_KEY_A))
+            t->rotation.rotate(0, 0, -turnRate);
+        else if (engine.keyPressed(GLFW_KEY_D))
+            t->rotation.rotate(0, 0, turnRate);
         window.disposeRender();
     }
     return 0;
