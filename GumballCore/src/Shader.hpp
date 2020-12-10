@@ -5,6 +5,7 @@
 #include "Math.hpp"
 #include "GFunctionLibrary.hpp"
 #include "Patterns.hpp"
+#include "AssetManager.hpp"
 #include <fstream>
 #include <sstream>
 

@@ -133,6 +133,4 @@ public:
 		this->parent = parent;
 	}
 };
- 
-
 #endif // !_math

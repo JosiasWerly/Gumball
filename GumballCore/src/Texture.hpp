@@ -10,7 +10,6 @@
 
 
 #include "stb_image.h"
-//old stuff
 struct TextureReference {
     unsigned int glBufferId;
     unsigned char* memoryBuffer;
@@ -75,5 +74,4 @@ public:
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 };
-//end of oldstuff
 #endif // !_drawCall

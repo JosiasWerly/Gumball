@@ -144,7 +144,8 @@ public:
     Camera* camera;
     set<iDrawCall*> drawcalls;
 
-    Renderer(){}
+    Renderer(){
+    }
     void diposeRender() {
         for (auto& d : drawcalls) {
             if (camera) {
