@@ -40,6 +40,9 @@ int main() {
 			t->rotation.rotate(0, 0, -turnRate);
 		else if (engine.keyPressed(GLFW_KEY_D))
 			t->rotation.rotate(0, 0, turnRate);
+
+		if (engine.keyPressed(GLFW_KEY_SPACE))
+			drawObjects[0]->setColor(glm::vec3(0, 1, 0));
 		window.disposeRender();
 	}
 	return 0;

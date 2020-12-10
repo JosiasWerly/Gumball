@@ -28,6 +28,9 @@
     <ClCompile Include="src\AssetManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Drawables.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -96,6 +99,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\AssetManager.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Drawables.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

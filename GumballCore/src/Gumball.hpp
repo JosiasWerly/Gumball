@@ -2,6 +2,7 @@
 #define _gumball
 #include "Patterns.hpp"
 #include "Renderer.hpp"
+#include "Drawables.hpp"
 
 class Engine{
 public:
