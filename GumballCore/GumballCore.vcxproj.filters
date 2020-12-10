@@ -31,6 +31,9 @@
     <ClCompile Include="src\Drawables.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Math.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

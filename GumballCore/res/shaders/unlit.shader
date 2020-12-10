@@ -1,8 +1,8 @@
 #shader vertex
 #version 330 core
 in vec4 pos;
-in vec2 uv;
 in vec4 normal;
+in vec2 uv;
 
 
 out vec3 fNormal;
@@ -21,5 +21,6 @@ uniform vec4 uColor;
 
 void main() {
     float diffuse = dot(fNormal, vec3(0, 0, 1));
-    color = diffuse * vec4(1, 1, 1, 1);
+    color = diffuse * uColor;
+    //color = diffuse * vec4(1, 1, 1, 1);
 };

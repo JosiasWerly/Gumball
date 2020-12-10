@@ -88,6 +88,9 @@ public:
 	}
 	
 	Rotator& rotate(float pitch, float roll, float yaw) {
+		fDegreeToRad(pitch);
+		fDegreeToRad(roll);
+		fDegreeToRad(yaw);
 		_rot = glm::rotate(_rot, pitch, right().rawVec());
 		_rot = glm::rotate(_rot, roll, forward().rawVec());
 		_rot = glm::rotate(_rot, yaw, up().rawVec());
@@ -120,7 +123,8 @@ public:
 	glm::mat4 getModel() {
 		glm::mat4 out(1);
 		out = glm::translate(out, position.rawVec());
-		out = rotation.rawMat() * out;
+		out = out * rotation.rawMat();
+		//out = glm::scale(out, scale.rawVec());
 		return out;
 	}
 	glm::mat4 getResultModel(glm::mat4 childModel = glm::mat4(1)) {

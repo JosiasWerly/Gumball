@@ -54,24 +54,26 @@ public:
         return true;
     }
 };
+
+
+
 class Texture {
 public:
-    TextureReference textureData;
-    Texture() {
-    }
-    Texture(string name) {
-        changeTexture(name);
-    }
-    void changeTexture(string name) {
-        //TODO
-        //textureData = TextureSystem::instance().getAsset(name);
-    }
-    void bind(char slot = 0) {
-        glDCall(glActiveTexture(GL_TEXTURE0 + slot));
-        glDCall(glBindTexture(GL_TEXTURE_2D, textureData.glBufferId));
-    }
-    void unbind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
+	TextureReference textureData;
+	Texture() {
+	}
+	Texture(string name) {
+		changeTexture(name);
+	}
+	void changeTexture(string name) {
+		textureData = AssetManager::instance().getData<TextureReference>(name);
+	}
+	void bind(char slot = 0) {
+		glDCall(glActiveTexture(GL_TEXTURE0 + slot));
+		glDCall(glBindTexture(GL_TEXTURE_2D, textureData.glBufferId));
+	}
+	void unbind() {
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 };
 #endif // !_drawCall

@@ -184,6 +184,7 @@
     <ClCompile Include="src\Drawables.cpp" />
     <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
+    <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
