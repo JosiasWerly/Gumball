@@ -16,8 +16,12 @@ public:
         auto& am = AssetManager::instance();
         auto meshData = am.getData<MeshData>(objName);
         sa.changeShader("default");
-        sa.params.get<glm::vec3>("uColor") = glm::vec3(1, 1, 1);
-        tex.changeTexture("grid");
+        sa.params.get<glm::vec4>("uColor") = glm::vec4(1, 1, 1, 1);
+        tex.changeTexture("gumbalA");
+        for (int x = 0; x < 64; x++)
+            tex.setPixel(x, x, 0xff0000ff);
+        tex.udpToGPU();
+        sa.params.get<int>("uTexture") = 0;
 
         vl.push<float>(3);//pos
         vl.push<float>(3);//normal 
@@ -27,9 +31,6 @@ public:
         ib.setData((unsigned int*)meshData.index.data(), (unsigned int)meshData.index.size());
         va.addBuffer(vb, vl);
         va.unbind();
-    }
-    void setTexture() {
-
     }
     void setColor(glm::vec3 color) {
         sa.params.get<glm::vec3>("uColor") = color;

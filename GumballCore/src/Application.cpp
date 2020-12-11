@@ -26,26 +26,26 @@ int main() {
 		render << newMesh;
 	}
 	float turnRate = 4;
+
+
+	Transform* t = &mainCamera->transform;
 	while (true) {
-		//drawObjects[1]->transform.rotation.rotate(-.1f, 0, 0);
-		Transform* t = &render.camera->transform;
-		if (engine.keyPressed(GLFW_KEY_W))
-			t->rotation.rotate(turnRate, 0, 0);
-		else if (engine.keyPressed(GLFW_KEY_S))
-			t->rotation.rotate(-turnRate, 0, 0);
+		if (t) {
+			if (engine.keyPressed(GLFW_KEY_W))
+				t->rotation.rotate(turnRate, 0, 0);
+			else if (engine.keyPressed(GLFW_KEY_S))
+				t->rotation.rotate(-turnRate, 0, 0);
 
-		if (engine.keyPressed(GLFW_KEY_Q))
-			t->rotation.rotate(0, turnRate, 0);
-		else if (engine.keyPressed(GLFW_KEY_E))
-			t->rotation.rotate(0, -turnRate, 0);
+			if (engine.keyPressed(GLFW_KEY_Q))
+				t->rotation.rotate(0, turnRate, 0);
+			else if (engine.keyPressed(GLFW_KEY_E))
+				t->rotation.rotate(0, -turnRate, 0);
 
-		if (engine.keyPressed(GLFW_KEY_A))
-			t->rotation.rotate(0, 0, turnRate);
-		else if (engine.keyPressed(GLFW_KEY_D))
-			t->rotation.rotate(0, 0, -turnRate);
-
-		if (engine.keyPressed(GLFW_KEY_SPACE))
-			drawObjects[0]->setColor(glm::vec3(0, 1, 0));
+			if (engine.keyPressed(GLFW_KEY_A))
+				t->rotation.rotate(0, 0, turnRate);
+			else if (engine.keyPressed(GLFW_KEY_D))
+				t->rotation.rotate(0, 0, -turnRate);
+		}
 		window.disposeRender();
 	}
 	return 0;

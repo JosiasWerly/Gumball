@@ -39,7 +39,7 @@ public:
 		    glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
 		    glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer));
-		    glDCall(glBindTexture(GL_TEXTURE_2D, 0));
+		    glDCall(glBindTexture(GL_TEXTURE_2D, bufferId));
 
             content.anew<TextureReference>() = { bufferId, imageBuffer, x, y };
             return true;
@@ -59,16 +59,29 @@ public:
 
 class Texture {
 public:
+	char slot = 0;
 	TextureReference textureData;
 	Texture() {
 	}
 	Texture(string name) {
 		changeTexture(name);
 	}
+	void setPixel(int x, int y, int color) {
+		int p = ((y * textureData.height) + x)*4;
+		textureData.memoryBuffer[p] = (color >> 24);
+		textureData.memoryBuffer[p + 1] = (color >> 16);
+		textureData.memoryBuffer[p + 2] = (color >> 8);
+		textureData.memoryBuffer[p + 3] = color;
+	}
 	void changeTexture(string name) {
 		textureData = AssetManager::instance().getData<TextureReference>(name);
 	}
-	void bind(char slot = 0) {
+	void udpToGPU() {
+		this->bind();
+		glDCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureData.width, textureData.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData.memoryBuffer));
+		glDCall(glBindTexture(GL_TEXTURE_2D, textureData.glBufferId));
+	}
+	void bind() {
 		glDCall(glActiveTexture(GL_TEXTURE0 + slot));
 		glDCall(glBindTexture(GL_TEXTURE_2D, textureData.glBufferId));
 	}
