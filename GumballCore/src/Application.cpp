@@ -9,7 +9,6 @@ int main() {
 	mainCamera->transform.position += glm::vec3(0, 0, -10);
 
 	constexpr int recSize = 2;
-	float pi = 3.14159265359;
 	vector<Meshdata*> drawObjects;
 	for (size_t i = 0; i < recSize; i++) {
 		Meshdata* newMesh = new Meshdata;
@@ -54,12 +53,8 @@ int main() {
 /*
 ##### Gumball 0.1 #####
      refator:
-
-[ok] resolve drawcall
-[ok] camera
-
 [mk1] uniforms system
-[DOING] texture && UV
+[mk1] texture && UV
 [TODO] input wrapper
 [todo] separe gamethread vs drawThread && querrySystem
 [todo] collision detection

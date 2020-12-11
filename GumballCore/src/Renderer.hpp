@@ -75,6 +75,7 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //profile
 
         window = glfwCreateWindow(x, y, winName.c_str(), NULL, NULL);
+        
         if (!window) {
             glfwTerminate();
             exit(EXIT_FAILURE);
@@ -95,7 +96,9 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //endTextureAlpha
     }
-
+    void setSize(int x, int y) {
+        glfwSetWindowSize(window, x, y);
+    }
 
     void attachRender(BaseRender* render) {
         this->render = render;
