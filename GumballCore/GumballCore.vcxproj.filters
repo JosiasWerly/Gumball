@@ -34,6 +34,12 @@
     <ClCompile Include="src\Math.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Actor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -105,6 +111,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Drawables.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Actor.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

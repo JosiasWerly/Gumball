@@ -136,8 +136,23 @@ public:
     VertexBufferLayout vl; //the layout of data
     IndexBuffer ib; // data replication
     VertexArray va; //the guys who wrap everything above
+    Transform* transform;
     virtual void draw(const class Renderer& renderer) = 0;
 };
+
+class Drawable :
+    public iDrawCall {
+public:
+    Transform* transform;
+    void draw(const class Renderer& renderer) {
+        va.bind();
+        sa.bind();
+        sa.params.uploadParams();
+        sa.params.get<glm::mat4>("uModel") = transform->getResultModel();
+        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+    }
+};
+
 class Renderer : 
     public BaseRender {
 public:
@@ -147,12 +162,12 @@ public:
     Renderer(){
     }
     void diposeRender() {
+        glm::mat4 camModel = camera->transform.getModel();
         for (auto& d : drawcalls) {
             if (camera) {
                 d->sa.params.get<glm::mat4>("uProj") = camera->viewMode.mProjection;
-                d->sa.params.get<glm::mat4>("uView") = camera->transform.getModel();
-            }            
-            d->sa.params.uploadParams();
+                d->sa.params.get<glm::mat4>("uView") = camModel;
+            }
             d->draw(*this);
         }
     }

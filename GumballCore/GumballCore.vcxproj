@@ -179,12 +179,14 @@
     <ClCompile Include="..\Dependencies\ImageLoader\scr\stb_image.cpp" />
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\objloader.cpp" />
     <ClCompile Include="..\Dependencies\openGLTutorial\scr\vboindexer.cpp" />
+    <ClCompile Include="src\Actor.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\AssetManager.cpp" />
     <ClCompile Include="src\Drawables.cpp" />
     <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
     <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +199,11 @@
     <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\objloader.hpp" />
     <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
+    <ClInclude Include="src\Actor.hpp" />
     <ClInclude Include="src\AssetManager.hpp" />
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawables.hpp" />
+    <ClInclude Include="src\Memory.hpp" />
     <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\GFunctionLibrary.hpp" />
     <ClInclude Include="src\GLBuffers.hpp" />

@@ -5,22 +5,18 @@
 #include "Texture.hpp"
 #include "Mesh.hpp"
 
-
-class Meshdata :
-    public iDrawCall {
+class MeshDrawable :
+    public Drawable {
 public:
-    Transform transform;
-    Texture tex;
-    Meshdata() {}
-    void loadMesh(string objName) {
+    void changeMesh(string objName) {
         auto& am = AssetManager::instance();
         auto meshData = am.getData<MeshData>(objName);
         sa.changeShader("default");
         sa.params.get<glm::vec4>("uColor") = glm::vec4(1, 1, 1, 1);
-        tex.changeTexture("gumbalA");
-        for (int x = 0; x < 64; x++)
-            tex.setPixel(x, x, 0xff0000ff);
-        tex.udpToGPU();
+        //tex.changeTexture("gumbalA");
+        //for (int x = 0; x < 64; x++)
+        //    tex.setPixel(x, x, 0xff0000ff);
+        //tex.udpToGPU();
         sa.params.get<int>("uTexture") = 0;
 
         vl.push<float>(3);//pos
@@ -32,14 +28,12 @@ public:
         va.addBuffer(vb, vl);
         va.unbind();
     }
-    void setColor(glm::vec3 color) {
-        sa.params.get<glm::vec3>("uColor") = color;
-    }
     void draw(const class Renderer& renderer) {
         va.bind();
-        tex.bind();
+        //tex.bind();
         sa.bind();
-        sa.params.get<glm::mat4>("uModel") = transform.getResultModel();
+        sa.params.uploadParams();
+        sa.params.get<glm::mat4>("uModel") = transform->getResultModel();
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };

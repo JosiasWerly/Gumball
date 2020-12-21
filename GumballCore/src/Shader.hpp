@@ -245,4 +245,7 @@ public:
         glUseProgram(0);
     }
 };
+
+
+
 #endif // !_shader

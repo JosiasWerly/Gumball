@@ -175,4 +175,50 @@ public:
 	}
 };
 
+
+class Scriptable {
+protected:
+	bool isEnable;
+public:
+	bool getIsEnable() { return isEnable; }
+	virtual void enable() { isEnable = true; }
+	virtual void disable() { isEnable = false; }
+
+	virtual void constructor() {
+	}
+	virtual void destructor() {
+	}
+	virtual void tick() {
+	}
+};
+class ScriptManager {
+public:
+	list<Scriptable*> current, toDelete, toSpawn;
+	
+	ScriptManager& operator<<(Scriptable* script) {
+		toSpawn.push_back(script);
+		return *this;
+	}
+	ScriptManager& operator>>(Scriptable* script) {
+		toDelete.push_back(script);
+		return *this;
+	}
+	void tick() {
+		for (auto& sc : toSpawn) {
+			sc->constructor();
+			current.push_back(sc);
+		}
+		for (auto& sc : toDelete) {
+			sc->destructor();
+			current.remove(sc);
+		}
+		for (auto& sc : current)
+			sc->tick();
+
+		toDelete.clear();
+		toSpawn.clear();
+	}
+};
+
+
 #endif // !_patterns

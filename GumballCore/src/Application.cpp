@@ -1,5 +1,8 @@
 #include "Gumball.hpp"
 
+
+
+
 int main() {
 	window.create("Gumball", 800, 600);
 	assetManager.loadAssets("res/");
@@ -8,17 +11,17 @@ int main() {
 	mainCamera->transform.position += glm::vec3(0, 0, -10);
 
 	constexpr int recSize = 2;
-	vector<Meshdata*> drawObjects;
+	vector<MeshDrawable*> drawObjects;
 	for (size_t i = 0; i < recSize; i++) {
-		Meshdata* newMesh = new Meshdata;
+		MeshDrawable* newMesh = new MeshDrawable;
+		newMesh->transform = new Transform;
 		if (i % 2) {
-			newMesh->loadMesh("plane");
-			newMesh->transform.position += glm::vec3(0, 2, 0);
-			newMesh->transform.rotation.rotate(90, 0, 0);
+			newMesh->changeMesh("cube");
+			newMesh->transform->position += glm::vec3(0, 2, 0);
+			newMesh->transform->rotation.rotate(90, 0, 0);
 		}
 		else {
-			newMesh->loadMesh("cube");
-			newMesh->transform.position += glm::vec3(0, -2, 0);
+			newMesh->transform->position += glm::vec3(0, -2, 0);
 		}
 		drawObjects.push_back(newMesh);
 		render << newMesh;
@@ -45,6 +48,7 @@ int main() {
 				t->rotation.rotate(0, 0, -turnRate);
 		}
 		window.disposeRender();
+		memory.tick();
 	}
 	return 0;
 }
@@ -59,63 +63,3 @@ int main() {
 [todo] collision detection
 [todo] traces, lines
 */
-
-
-
-template<class T> struct Dt {
-public:
-	T* value = nullptr;
-	unsigned int refs = 1;
-	Dt(T* init) : 
-		value(init){
-	}
-	~Dt() {
-		delete value;
-	}
-};
-template<class T> class Var {
-public:
-	typedef Var<T> varT;
-	typedef Dt<T> dtT;
-
-	dtT* dt;
-	Var(T* ptr = nullptr) {
-		dt = new dtT(ptr ? ptr : new T);
-	}
-	Var(varT& Other) {
-		dt = Other.dt;
-		dt->refs++;
-	}
-	~Var() {
-		if (dt && --dt->refs == 0) {
-			delete dt;
-		}
-	}
-
-	varT& operator=(varT &cpy) {
-		if (dt != cpy.dt) {
-			if (dt)
-				dt->refs--;
-			dt = cpy.dt;
-			dt->refs++;
-		}
-		return *this;
-	}
-
-	operator T* () {
-		return dt ? dt->value : nullptr;
-	}
-	T* operator=(T* newValue) {
-		if (dt->value)
-			delete dt->value;
-		dt->value = newValue;
-		return dt->value;
-	}
-	T* operator()() {
-		return dt->value;
-	}
-
-	operator bool() {
-		return dt->value;
-	}
-};
