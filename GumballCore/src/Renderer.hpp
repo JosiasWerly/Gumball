@@ -143,7 +143,6 @@ public:
 class Drawable :
     public iDrawCall {
 public:
-    Transform* transform;
     void draw(const class Renderer& renderer) {
         va.bind();
         sa.bind();

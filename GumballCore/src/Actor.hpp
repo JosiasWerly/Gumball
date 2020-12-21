@@ -19,7 +19,12 @@ public:
 	void popComponent(class ActorComponent* comp) {
 		components.remove(comp);
 	}
-
+	virtual void enable() {
+		gObject::enable();
+	}
+	virtual void disable() {
+		gObject::disable();
+	}
 	virtual void constructor() {
 	}
 	virtual void destructor() {
@@ -47,8 +52,12 @@ public:
 class MeshComponent : 
 	public ActorComponent {
 public:
-	MeshDrawable mesh;
 	using ActorComponent::ActorComponent;
+	MeshDrawable mesh;
+	MeshComponent(Actor* owner) : 
+		ActorComponent(owner){		
+		mesh.transform = &owner->transform;
+	}
 };
 
 #endif // !_actor

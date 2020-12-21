@@ -4,6 +4,7 @@
 #include "Renderer.hpp"
 #include "Drawables.hpp"
 #include "Memory.hpp"
+#include "Actor.hpp"
 
 class Engine{
 public:
