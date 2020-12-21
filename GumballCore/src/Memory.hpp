@@ -62,8 +62,8 @@ public:
 
 
 
-class ExecutronManager : 
-	public Singleton<ExecutronManager>{
+class ObjectManager :
+	public Singleton<ObjectManager>{
 public:
 	ScriptManager scripts;
 	void tick() {
@@ -73,7 +73,7 @@ public:
 
 class gObject :
 	public Scriptable {
-	static ExecutronManager& men;
+	static ObjectManager& men;
 public:
 	virtual void enable() { 
 		if (!isEnable) {
@@ -101,5 +101,5 @@ public:
 		disable();
 	}
 };
-_declspec(selectany) ExecutronManager& gObject::men = ExecutronManager::instance();
+_declspec(selectany) ObjectManager& gObject::men = ObjectManager::instance();
 #endif // !_memory

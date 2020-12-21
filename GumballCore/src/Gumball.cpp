@@ -7,7 +7,7 @@ Engine::Engine() {
 	window = new Window;
 	window->attachRender(render);
 	assetManager = &AssetManager::instance();
-	memoryManager = &ExecutronManager::instance();
+	memoryManager = &ObjectManager::instance();
 
 	assetManager->pushFactory("shader", new ShaderFactory);
 	assetManager->pushFactory("mesh", new MeshFactory);

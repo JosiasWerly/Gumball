@@ -11,7 +11,7 @@ public:
 	Window *window;//responsible for the window, init gla, ....
 	Renderer *render;//manager all drawcalls and camera(s) - for now only 1 camera, depends on window for work
 	AssetManager *assetManager; //responbile for loading assets, also contais all factories
-	ExecutronManager *memoryManager;
+	ObjectManager *memoryManager;
 
 	Engine();
 	~Engine();
@@ -30,5 +30,5 @@ static Engine engine;
 static AssetManager& assetManager = *engine.assetManager;
 static Window& window = *engine.window;
 static Renderer& render = *engine.render;
-static ExecutronManager& memory = *engine.memoryManager;
+static ObjectManager& memory = *engine.memoryManager;
 #endif // !_gumball
