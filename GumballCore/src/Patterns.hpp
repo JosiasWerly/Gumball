@@ -219,6 +219,4 @@ public:
 		toSpawn.clear();
 	}
 };
-
-
 #endif // !_patterns

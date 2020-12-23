@@ -60,8 +60,6 @@ public:
 	}
 };
 
-
-
 class ObjectManager :
 	public Singleton<ObjectManager>{
 public:
@@ -70,7 +68,6 @@ public:
 		scripts.tick();
 	}
 };
-
 class gObject :
 	public Scriptable {
 	static ObjectManager& men;

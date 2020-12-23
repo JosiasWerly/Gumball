@@ -103,6 +103,9 @@ public:
     void unbind() {
         glBindVertexArray(0);
     }
+
+    #pragma warning( push )
+    #pragma warning( disable : 4312 )
     void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
         bind();
         vb.bind();
@@ -116,6 +119,7 @@ public:
             offset += element.count * VertexBufferLayout::getSizeType(element.type);
         }
     }
+    #pragma warning( pop )
 };
 class IndexBuffer {
 public:

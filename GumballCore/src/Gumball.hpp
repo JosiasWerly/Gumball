@@ -6,10 +6,11 @@
 #include "Memory.hpp"
 #include "Actor.hpp"
 
-class Engine{
+class Engine : 
+	public Singleton<Engine>{
 public:
 	Window *window;//responsible for the window, init gla, ....
-	Renderer *render;//manager all drawcalls and camera(s) - for now only 1 camera, depends on window for work
+	RenderManager *renderManager; //resolve my render pipe....
 	AssetManager *assetManager; //responbile for loading assets, also contais all factories
 	ObjectManager *memoryManager;
 
@@ -24,11 +25,11 @@ public:
 		return glfwGetKey(window->getGLFWindow(), key) == GLFW_RELEASE;
 	}
 };
-static Engine engine;
+static Engine& engine = Engine::instance();
 
 //this is just to make it simplier for now... until i have peace in my heart for supporting multiple renderers && cameras
-static AssetManager& assetManager = *engine.assetManager;
 static Window& window = *engine.window;
-static Renderer& render = *engine.render;
+static AssetManager& assetManager = *engine.assetManager;
+static RenderManager& render = *engine.renderManager;
 static ObjectManager& memory = *engine.memoryManager;
 #endif // !_gumball

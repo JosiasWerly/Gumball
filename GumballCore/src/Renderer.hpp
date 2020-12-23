@@ -9,15 +9,9 @@
 
 
 
-class BaseRender {
-protected:
-    friend class Window;
-    class Window* window;
-    class GLFWwindow* glfWindow;
-public:
-    BaseRender(){}
-    virtual void diposeRender() = 0;
-};
+//i`m just too tired and too hungry todo this better//
+
+
 class Window {
     class FpsCounter {
         double lastTime = 0;
@@ -44,7 +38,6 @@ class Window {
     int x, y;
     GLFWwindow* window;
     FpsCounter fpsCounter;
-    BaseRender* render;
 public:
     Window() {
 
@@ -100,11 +93,7 @@ public:
         glfwSetWindowSize(window, x, y);
     }
 
-    void attachRender(BaseRender* render) {
-        this->render = render;
-        this->render->window = this;
-        this->render->glfWindow = window;
-    }
+
     void clearBuffer() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -114,22 +103,52 @@ public:
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    void disposeRender() {
-        clearBuffer();
-        render->diposeRender();
-        swapBuffers();
-    }
 
     bool shouldClose() {
         return glfwWindowShouldClose(window);
     }
-    //this will be moved to Renderer class
+
     double getMS() {
         return fpsCounter.getMsBySec();
     }
 };
 
-class iDrawCall {
+
+class DrawCall {
+public:    
+    virtual void draw(const class Render& renderer) = 0;
+};
+class Render {
+protected:
+    class Window* window;
+    struct GLFWwindow* glfWindow;
+public:
+    Camera* camera;
+    Render(){}
+    Render(Window* window) {
+        attachWindow(window);
+    }
+    void attachWindow(Window* window) {
+        this->window = window;
+        glfWindow = window->getGLFWindow();
+    }
+    virtual void diposeRender() = 0;
+    virtual Render& operator<<(DrawCall* value) { return *this; }
+    virtual Render& operator>>(DrawCall* value) { return *this; }
+};
+class RenderManager :
+    public Singleton<RenderManager> {
+public:
+    Render* currentContext;
+    void disposeRender() {
+        currentContext->diposeRender();
+    }
+};
+
+
+
+class Drawable :
+    public DrawCall {
 public:
     Shader sa;
     VertexBuffer vb; // the guy who contains the data
@@ -137,13 +156,7 @@ public:
     IndexBuffer ib; // data replication
     VertexArray va; //the guys who wrap everything above
     Transform* transform;
-    virtual void draw(const class Renderer& renderer) = 0;
-};
-
-class Drawable :
-    public iDrawCall {
-public:
-    void draw(const class Renderer& renderer) {
+    void draw(const class Render& renderer) {
         va.bind();
         sa.bind();
         sa.params.uploadParams();
@@ -153,13 +166,11 @@ public:
 };
 
 class Renderer : 
-    public BaseRender {
+    public Render {
 public:
-    Camera* camera;
-    set<iDrawCall*> drawcalls;
+    set<Drawable*> drawcalls;    
+    using Render::Render;
 
-    Renderer(){
-    }
     void diposeRender() {
         glm::mat4 camModel = camera->transform.getModel();
         for (auto& d : drawcalls) {
@@ -171,12 +182,12 @@ public:
         }
     }
     
-    Renderer& operator<<(iDrawCall* drawCall) {
-        drawcalls.insert(drawCall);
+    Render& operator<<(DrawCall* value) override{
+        drawcalls.insert((Drawable*)value);
         return *this;
     }
-    Renderer& operator>>(iDrawCall* drawCall) {
-        auto i = drawcalls.find(drawCall);
+    Render& operator>>(DrawCall* value) override {
+        auto i = drawcalls.find((Drawable*)value);
         if (i != drawcalls.end())
             drawcalls.erase(i);
         return *this;

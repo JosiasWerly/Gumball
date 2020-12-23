@@ -46,9 +46,6 @@ public:
 	virtual void tick() {
 	}
 };
-
-
-
 class MeshComponent : 
 	public ActorComponent {
 public:

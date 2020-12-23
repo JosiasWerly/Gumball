@@ -3,11 +3,12 @@
 
 
 Engine::Engine() {
-	render = new Renderer;
 	window = new Window;
-	window->attachRender(render);
 	assetManager = &AssetManager::instance();
 	memoryManager = &ObjectManager::instance();
+	renderManager = &RenderManager::instance();
+
+	renderManager->currentContext = new Renderer(window);
 
 	assetManager->pushFactory("shader", new ShaderFactory);
 	assetManager->pushFactory("mesh", new MeshFactory);

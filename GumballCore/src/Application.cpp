@@ -6,8 +6,8 @@
 int main() {
 	window.create("Gumball", 800, 600);
 	assetManager.loadAssets("res/");
-
-	Camera* mainCamera = render.camera = new Camera();
+	
+	Camera* mainCamera = render.currentContext->camera = new Camera();
 	mainCamera->transform.position += glm::vec3(0, 0, -10);
 
 	constexpr int recSize = 2;
@@ -23,7 +23,7 @@ int main() {
 		else {
 			ac->transform.position += glm::vec3(0, -2, 0);
 		}
-		render << &meshComp->mesh;
+		render.currentContext->operator<<(&meshComp->mesh);
 	}
 	float turnRate = 4;
 
@@ -46,8 +46,10 @@ int main() {
 			else if (engine.keyPressed(GLFW_KEY_D))
 				t->rotation.rotate(0, 0, -turnRate);
 		}
-		window.disposeRender();
 		memory.tick();
+		window.clearBuffer();
+		render.disposeRender();
+		window.swapBuffers();
 	}
 	return 0;
 }
