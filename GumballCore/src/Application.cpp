@@ -8,15 +8,15 @@ int main() {
 	assetManager.loadAssets("res/");
 	
 	Camera* mainCamera = render.currentContext->camera = new Camera();
-	mainCamera->transform.position += glm::vec3(0, 0, -10);
+	mainCamera->transform.position += glm::vec3(0, 0, -100);
 
 	constexpr int recSize = 2;
 	for (size_t i = 0; i < recSize; i++) {
 		Actor* ac = new Actor;
 		MeshComponent *meshComp = new MeshComponent(ac);
 		ac->pushComponent(meshComp);
+		meshComp->mesh.changeMesh("cube");
 		if (i % 2) {
-			meshComp->mesh.changeMesh("cube");
 			ac->transform.position += glm::vec3(0, 2, 0);
 			ac->transform.rotation.rotate(90, 0, 0);
 		}

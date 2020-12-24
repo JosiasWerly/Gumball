@@ -93,7 +93,6 @@ public:
         glfwSetWindowSize(window, x, y);
     }
 
-
     void clearBuffer() {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,11 +102,9 @@ public:
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
     bool shouldClose() {
         return glfwWindowShouldClose(window);
     }
-
     double getMS() {
         return fpsCounter.getMsBySec();
     }
@@ -115,7 +112,7 @@ public:
 
 
 class DrawCall {
-public:    
+public:
     virtual void draw(const class Render& renderer) = 0;
 };
 class Render {
@@ -123,8 +120,9 @@ protected:
     class Window* window;
     struct GLFWwindow* glfWindow;
 public:
+    set<DrawCall*> drawcalls;
     Camera* camera;
-    Render(){}
+    Render() {}
     Render(Window* window) {
         attachWindow(window);
     }
@@ -132,9 +130,22 @@ public:
         this->window = window;
         glfWindow = window->getGLFWindow();
     }
-    virtual void diposeRender() = 0;
-    virtual Render& operator<<(DrawCall* value) { return *this; }
-    virtual Render& operator>>(DrawCall* value) { return *this; }
+
+    virtual void diposeRender() {
+        for (auto& d : drawcalls) {
+            d->draw(*this);
+        }
+    }
+    Render& operator<<(DrawCall* value) {
+        drawcalls.insert(value);
+        return *this;
+    }
+    Render& operator>>(DrawCall* value) {
+        auto i = drawcalls.find(value);
+        if (i != drawcalls.end())
+            drawcalls.erase(i);
+        return *this;
+    }
 };
 class RenderManager :
     public Singleton<RenderManager> {
@@ -146,7 +157,18 @@ public:
 };
 
 
-
+class Renderer :
+    public Render {
+public:
+    using Render::Render;
+    glm::mat4 cameraModelCache;
+    void diposeRender() {
+        cameraModelCache = camera->transform.getModel();
+        for (auto& d : drawcalls) {
+            d->draw(*this);
+        }
+    }
+};
 class Drawable :
     public DrawCall {
 public:
@@ -155,42 +177,19 @@ public:
     VertexBufferLayout vl; //the layout of data
     IndexBuffer ib; // data replication
     VertexArray va; //the guys who wrap everything above
+
     Transform* transform;
     void draw(const class Render& renderer) {
+        Renderer& r = (Renderer&)renderer;
+        sa.params.get<glm::mat4>("uView") = r.cameraModelCache;
+        sa.params.get<glm::mat4>("uProj") = r.camera->viewMode.mProjection;
+        sa.params.get<glm::mat4>("uModel") = transform->getResultModel();
+
         va.bind();
         sa.bind();
         sa.params.uploadParams();
-        sa.params.get<glm::mat4>("uModel") = transform->getResultModel();
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
 
-class Renderer : 
-    public Render {
-public:
-    set<Drawable*> drawcalls;    
-    using Render::Render;
-
-    void diposeRender() {
-        glm::mat4 camModel = camera->transform.getModel();
-        for (auto& d : drawcalls) {
-            if (camera) {
-                d->sa.params.get<glm::mat4>("uProj") = camera->viewMode.mProjection;
-                d->sa.params.get<glm::mat4>("uView") = camModel;
-            }
-            d->draw(*this);
-        }
-    }
-    
-    Render& operator<<(DrawCall* value) override{
-        drawcalls.insert((Drawable*)value);
-        return *this;
-    }
-    Render& operator>>(DrawCall* value) override {
-        auto i = drawcalls.find((Drawable*)value);
-        if (i != drawcalls.end())
-            drawcalls.erase(i);
-        return *this;
-    }
-};
 #endif // !_renderer

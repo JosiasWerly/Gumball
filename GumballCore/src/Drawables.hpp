@@ -28,13 +28,5 @@ public:
         va.addBuffer(vb, vl);
         va.unbind();
     }
-    void draw(const class Renderer& renderer) {
-        va.bind();
-        //tex.bind();
-        sa.bind();
-        sa.params.uploadParams();
-        sa.params.get<glm::mat4>("uModel") = transform->getResultModel();
-        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
-    }
 };
 #endif // !_assetManger
