@@ -12,7 +12,7 @@ public:
 	Window *window;//responsible for the window, init gla, ....
 	RenderManager *renderManager; //resolve my render pipe....
 	AssetManager *assetManager; //responbile for loading assets, also contais all factories
-	ObjectManager *memoryManager;
+	ObjectManager *objectManager;
 
 	Engine();
 	~Engine();
@@ -31,5 +31,5 @@ static Engine& engine = Engine::instance();
 static Window& window = *engine.window;
 static AssetManager& assetManager = *engine.assetManager;
 static RenderManager& render = *engine.renderManager;
-static ObjectManager& memory = *engine.memoryManager;
+static ObjectManager& memory = *engine.objectManager;
 #endif // !_gumball

@@ -32,6 +32,7 @@ public:
 	virtual void tick() {
 	}
 };
+
 class ActorComponent :
 	public gObject{
 public:
