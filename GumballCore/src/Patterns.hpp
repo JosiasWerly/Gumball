@@ -176,47 +176,49 @@ public:
 };
 
 
-class Scriptable {
-protected:
-	bool isEnable;
-public:
-	bool getIsEnable() { return isEnable; }
-	virtual void enable() { isEnable = true; }
-	virtual void disable() { isEnable = false; }
-
-	virtual void constructor() {
-	}
-	virtual void destructor() {
-	}
-	virtual void tick() {
-	}
-};
-class ScriptManager {
-public:
-	list<Scriptable*> current, toDelete, toSpawn;
-	
-	ScriptManager& operator<<(Scriptable* script) {
-		toSpawn.push_back(script);
-		return *this;
-	}
-	ScriptManager& operator>>(Scriptable* script) {
-		toDelete.push_back(script);
-		return *this;
-	}
-	void tick() {
-		for (auto& sc : toSpawn) {
-			sc->constructor();
-			current.push_back(sc);
-		}
-		for (auto& sc : toDelete) {
-			sc->destructor();
-			current.remove(sc);
-		}
-		for (auto& sc : current)
-			sc->tick();
-
-		toDelete.clear();
-		toSpawn.clear();
-	}
-};
+//class Tickable {
+//protected:
+//	bool tickEnable;
+//public:
+//	bool getIsTicking() { return tickEnable; }
+//	virtual void setTick(bool enable) { 
+//		tickEnable = enable;
+//	}
+//	virtual void tick() {
+//	}
+//};
+//
+//class TickHolder {
+//protected:
+//	virtual void addToCurrent(Tickable* value) {
+//		current.push_back(value);
+//	}
+//	virtual void delFromCurrent(Tickable* value) {
+//		current.remove(value);
+//	}
+//public:
+//	list<Tickable*> current, toDelete, toSpawn;
+//	
+//	TickHolder& operator<<(Tickable* script) {
+//		toSpawn.push_back(script);
+//		return *this;
+//	}
+//	TickHolder& operator>>(Tickable* script) {
+//		toDelete.push_back(script);
+//		return *this;
+//	}
+//	void tick() {
+//		for (auto& sc : toSpawn)
+//			addToCurrent(sc);
+//
+//		for (auto& sc : toDelete)
+//			delFromCurrent(sc);
+//
+//		for (auto& sc : current)
+//			sc->tick();
+//
+//		toDelete.clear();
+//		toSpawn.clear();
+//	}
+//};
 #endif // !_patterns

@@ -7,54 +7,61 @@
 #include "Drawables.hpp"
 #include "Memory.hpp"
 
+class ActorComponent;
 class Actor : 
-	public gObject {
-	std::list<class ActorComponent*> components;
+	public gObject{
+protected:
+	friend ActorComponent;
+	std::set<ActorComponent*> components;
 public:
 	Transform transform;
-
-	void pushComponent(class ActorComponent* comp) {
-		components.push_back(comp);
-	}
-	void popComponent(class ActorComponent* comp) {
-		components.remove(comp);
-	}
-	virtual void enable() {
-		gObject::enable();
-	}
-	virtual void disable() {
-		gObject::disable();
-	}
-	virtual void constructor() {
-	}
-	virtual void destructor() {
-	}
-	virtual void tick() {
-	}
+	Actor& operator<<(ActorComponent* comp);
+	Actor& operator>>(ActorComponent* comp);
+	virtual void setEnable(bool enable);
 };
 
-class ActorComponent :
+class ActorComponent : 
 	public gObject{
-public:
+protected:
+	friend Actor;
 	Actor* owner;
-	ActorComponent(Actor* owner) {
+	virtual void attachOwner(Actor* owner) {
+		if (this->owner)
+			detachOwner();
 		this->owner = owner;
 	}
-	virtual void constructor() {
+	virtual void detachOwner() {
 	}
-	virtual void destructor() {
+public:
+	Actor* getOwner() { return owner; }
+
+	ActorComponent() {
 	}
 	virtual void tick() {
 	}
 };
 class MeshComponent : 
 	public ActorComponent {
-public:
-	using ActorComponent::ActorComponent;
-	MeshDrawable mesh;
-	MeshComponent(Actor* owner) : 
-		ActorComponent(owner){		
+	virtual void attachOwner(Actor* owner) {
+		ActorComponent::attachOwner(owner);
 		mesh.transform = &owner->transform;
+		setEnable(true);
+	}
+	virtual void detachOwner() {
+		ActorComponent::detachOwner();
+		setEnable(false);
+	}
+public:
+	MeshDrawable mesh;
+
+	MeshComponent() {
+	}
+	void setEnable(bool enable){
+		gObject::setEnable(enable);
+		if(enable)
+			RenderManager::instance().currentContext->operator<<(&mesh);
+		else
+			RenderManager::instance().currentContext->operator>>(&mesh);
 	}
 };
 

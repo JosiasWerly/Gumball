@@ -60,43 +60,52 @@ public:
 	}
 };
 
+
+class gObject;
 class ObjectManager :
 	public Singleton<ObjectManager>{
+	list<gObject*> 
+		allObjects, //holds references to all objects
+		tickObjects,  // holds references to object that will tick 
+		toDelete; //holds references to objects that will be destroyed
 public:
-	ScriptManager scripts;
-	void tick() {
-		scripts.tick();
-	}
+	ObjectManager& operator<<(gObject* obj);
+	ObjectManager& operator>>(gObject* obj);
+	void enableTick(gObject* obj);
+	void disableTick(gObject* obj);
+	void tick();
+
 };
-class gObject :
-	public Scriptable {
-	static ObjectManager& men;
+
+class gObject {
+	static ObjectManager& objManager;
+protected:
+	bool isTicking, isEnable;
 public:
-	virtual void enable() { 
-		if (!isEnable) {
-			Scriptable::enable();
-			men.scripts << this;
-		}
+	gObject() {
+		objManager << this;
+		if (this->getTick())
+			objManager.enableTick(this);
 	}
-	virtual void disable() {
-		if (isEnable) {
-			Scriptable::disable();
-			men.scripts >> this;
-		}
+	void operator delete(void* obj) {
+		objManager >> (gObject*)obj;
 	}
-	virtual void constructor() {
+
+	bool getEnable() { return isEnable; }
+	bool getTick() { return isTicking; }
+
+	virtual void setEnable(bool enable) {
+		isEnable = enable;
 	}
-	virtual void destructor() {
+	virtual void setTick(bool enable) {
+		isTicking = enable;
+		if (enable)
+			objManager.enableTick(this);
+		else
+			objManager.disableTick(this);
 	}
 	virtual void tick() {
 	}
-
-	gObject() {
-		enable();
-	}
-	virtual ~gObject() {		
-		disable();
-	}
 };
-_declspec(selectany) ObjectManager& gObject::men = ObjectManager::instance();
+_declspec(selectany) ObjectManager& gObject::objManager = ObjectManager::instance();
 #endif // !_memory
