@@ -48,10 +48,7 @@ int main() {
 				delete toTest;
 			}
 		}
-		memory.tick();
-		window.clearBuffer();
-		render.disposeRender();
-		window.swapBuffers();
+		engine.tick();
 	}
 	return 0;
 }

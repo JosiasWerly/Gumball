@@ -17,3 +17,9 @@ Engine::Engine() {
 Engine::~Engine() {
 	glfwTerminate();
 }
+void Engine::tick() {
+	objects.tick();
+	window->clearBuffer();
+	render.disposeRender();
+	window->swapBuffers();
+}

@@ -24,6 +24,8 @@ public:
 	bool keyReleased(int key) {
 		return glfwGetKey(window->getGLFWindow(), key) == GLFW_RELEASE;
 	}
+
+	void tick();
 };
 static Engine& engine = Engine::instance();
 
@@ -31,5 +33,5 @@ static Engine& engine = Engine::instance();
 static Window& window = *engine.window;
 static AssetManager& assetManager = *engine.assetManager;
 static RenderManager& render = *engine.renderManager;
-static ObjectManager& memory = *engine.objectManager;
+static ObjectManager& objects = *engine.objectManager;
 #endif // !_gumball

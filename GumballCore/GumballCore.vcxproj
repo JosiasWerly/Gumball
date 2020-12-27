@@ -190,6 +190,7 @@
     <ClCompile Include="src\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.gitignore" />
     <None Include="packages.config" />
     <None Include="res\shaders\unlit.shader" />
     <None Include="res\shaders\texture.shader" />
@@ -217,6 +218,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="res\models\cube.obj" />
+    <Object Include="res\models\plane.obj" />
+    <Object Include="res\models\sphere.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

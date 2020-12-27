@@ -43,15 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="res\shaders\default.shader">
-      <Filter>res</Filter>
-    </None>
     <None Include="res\shaders\unlit.shader">
-      <Filter>res</Filter>
+      <Filter>res\shaders</Filter>
     </None>
     <None Include="res\shaders\texture.shader">
-      <Filter>res</Filter>
+      <Filter>res\shaders</Filter>
     </None>
+    <None Include="res\shaders\default.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="..\.gitignore" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -62,6 +63,12 @@
     </Filter>
     <Filter Include="src\dependencies">
       <UniqueIdentifier>{a8812706-540e-485b-b8e6-faff01c79c00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\shaders">
+      <UniqueIdentifier>{a6dbc456-f27a-46b4-b952-37d50f378c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\models">
+      <UniqueIdentifier>{b618011e-3b52-4eed-8ff4-ded5f580d255}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,5 +129,16 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="res\models\sphere.obj">
+      <Filter>res\models</Filter>
+    </Object>
+    <Object Include="res\models\cube.obj">
+      <Filter>res\models</Filter>
+    </Object>
+    <Object Include="res\models\plane.obj">
+      <Filter>res\models</Filter>
+    </Object>
   </ItemGroup>
 </Project>
