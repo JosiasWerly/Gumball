@@ -204,6 +204,7 @@
     <ClInclude Include="src\AssetManager.hpp" />
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawables.hpp" />
+    <ClInclude Include="src\Input.hpp" />
     <ClInclude Include="src\Memory.hpp" />
     <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\GFunctionLibrary.hpp" />
@@ -218,11 +219,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="res\models\cube.obj" />
-    <Object Include="res\models\plane.obj" />
-    <Object Include="res\models\sphere.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
