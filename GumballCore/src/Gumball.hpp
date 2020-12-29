@@ -19,12 +19,12 @@ public:
 	~Engine();
 
 	//THIS IS TEMPORARY
-	bool keyPressed(int key) {
-		return glfwGetKey(window->getGLFWindow(), key) == GLFW_PRESS;
-	}
-	bool keyReleased(int key) {
-		return glfwGetKey(window->getGLFWindow(), key) == GLFW_RELEASE;
-	}
+	//bool keyPressed(int key) {
+	//	return glfwGetKey(window->getGLFWindow(), key) == GLFW_PRESS;
+	//}
+	//bool keyReleased(int key) {
+	//	return glfwGetKey(window->getGLFWindow(), key) == GLFW_RELEASE;
+	//}
 
 	void tick();
 };

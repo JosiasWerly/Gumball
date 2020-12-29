@@ -28,22 +28,22 @@ int main() {
 	Transform* t = &mainCamera->transform;
 	while (true) {
 		if (t) {
-			if (engine.keyPressed(GLFW_KEY_W))
+			if (Input::isKeyDown(eKeyboard::W))
 				t->rotation.rotate(turnRate, 0, 0);
-			else if (engine.keyPressed(GLFW_KEY_S))
+			else if (Input::isKeyDown(eKeyboard::S))
 				t->rotation.rotate(-turnRate, 0, 0);
 
-			if (engine.keyPressed(GLFW_KEY_Q))
-				t->rotation.rotate(0, turnRate, 0);
-			else if (engine.keyPressed(GLFW_KEY_E))
-				t->rotation.rotate(0, -turnRate, 0);
+			if (Input::onPressed(eKeyboard::Q))
+				t->rotation.rotate(0, 45, 0);
+			else if (Input::isKeyDown(eKeyboard::E))
+				t->rotation.rotate(0, -45, 0);
 
-			if (engine.keyPressed(GLFW_KEY_A))
+			if (Input::isKeyDown(eKeyboard::A))
 				t->rotation.rotate(0, 0, turnRate);
-			else if (engine.keyPressed(GLFW_KEY_D))
+			else if (Input::isKeyDown(eKeyboard::B))
 				t->rotation.rotate(0, 0, -turnRate);
 
-			if (engine.keyPressed(GLFW_KEY_0) && toTest) {
+			if (Input::isKeyDown(eKeyboard::UP) && toTest) {
 				(*toTest->getOwner()) >> toTest;
 				delete toTest;
 			}

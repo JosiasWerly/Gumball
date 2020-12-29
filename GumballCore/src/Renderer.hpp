@@ -6,14 +6,14 @@
 #include "Transform.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
+#include "Input.hpp"
 
 
 
 //i`m just too tired and too hungry todo this better//
 
 
-class Window {
-    class FpsCounter {
+class FpsCounter {
         double lastTime = 0;
         unsigned int frames = 0;
     public:
@@ -33,81 +33,25 @@ class Window {
         double getMsBySec() {
             return ms;
         }
-    };
-
+};
+class Window {
     int x, y;
     GLFWwindow* window;
     FpsCounter fpsCounter;
 public:
-    Window() {
+    Window();
+    ~Window();
 
-    }
-    ~Window() {
-        glfwTerminate();
-    }
+    GLFWwindow* getGLFWindow();
+    void clearGLStack();
+    float getAspec();
+    void create(string winName, int x, int y);
+    void setSize(int x, int y);
 
-    GLFWwindow* getGLFWindow() {
-        return window;
-    }
-    void clearGLStack() {
-        glUseProgram(0);
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-    float getAspec() {
-        return ((float)x / (float)y);
-    }
-    void create(string winName, int x, int y) {
-        this->x = x;
-        this->y = y;
-        glfwInit();
-        //cout << "glVersion " << glGetString(GL_VERSION) << endl;
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //profile
-
-        window = glfwCreateWindow(x, y, winName.c_str(), NULL, NULL);
-        
-        if (!window) {
-            glfwTerminate();
-            exit(EXIT_FAILURE);
-        }
-        glfwMakeContextCurrent(window);
-
-        if (!gladLoadGL())
-            cout << "fail to load window" << endl;
-
-        glViewport(0, 0, x, y);
-        glEnable(GL_DEPTH_TEST);
-        glfwSwapInterval(1);
-
-
-        ///////////////////Old stuff//////////////////////
-        //textureAlpha
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //endTextureAlpha
-    }
-    void setSize(int x, int y) {
-        glfwSetWindowSize(window, x, y);
-    }
-
-    void clearBuffer() {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-    void swapBuffers() {
-        fpsCounter.fpsTick();
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-    bool shouldClose() {
-        return glfwWindowShouldClose(window);
-    }
-    double getMS() {
-        return fpsCounter.getMsBySec();
-    }
+    void clearBuffer();
+    void swapBuffers();
+    bool shouldClose();
+    double getMS();
 };
 
 
