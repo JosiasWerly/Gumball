@@ -29,7 +29,7 @@ void Window::create(string winName, int x, int y) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //profile
 
     window = glfwCreateWindow(x, y, winName.c_str(), NULL, NULL);
-
+    
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -55,6 +55,12 @@ void Window::create(string winName, int x, int y) {
 }
 void Window::setSize(int x, int y) {
     glfwSetWindowSize(window, x, y);
+    glViewport(0, 0, x, y);
+}
+void Window::config(string winName, int x, int y) {
+    glfwSetWindowTitle(window, winName.c_str());
+    glfwSetWindowSize(window, x, y);
+    glViewport(0, 0, x, y);
 }
 void Window::clearBuffer() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

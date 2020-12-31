@@ -124,7 +124,7 @@ public:
 		glm::mat4 out(1);
 		out = glm::translate(out, position.rawVec());
 		out = out * rotation.rawMat();
-		//out = glm::scale(out, scale.rawVec());
+		//out = glm::scale(out, scale.rawVec()); TODO:whthell with the scale
 		return out;
 	}
 	glm::mat4 getResultModel(glm::mat4 childModel = glm::mat4(1)) {

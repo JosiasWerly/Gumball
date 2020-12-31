@@ -2,10 +2,14 @@
 
 
 int main() {
-	window.create("Gumball", 800, 600);
-	assetManager.loadAssets("res/");
+	engine.setup();
+	engine.window->config("Gameplay test", 800, 600);
+	engine.assetManager->loadAssets("res/");
 	
-	Camera* mainCamera = render.currentContext->camera = new Camera();
+	//Camera* mainCamera = render.currentContext->camera = new Camera();
+	
+	///GAMEPLAY
+	Camera* mainCamera = new Camera();
 	mainCamera->transform.position += glm::vec3(0, 0, -20);
 	MeshComponent* toTest;
 	constexpr int recSize = 2;
@@ -52,8 +56,9 @@ int main() {
 				delete toTest;
 			}
 		}
-		engine.tick();
+		engine.tick(); //this has to go away
 	}
+	///end GAMEPLAY
 	return 0;
 }
 
@@ -68,10 +73,9 @@ int main() {
 
 /*
 ##### Gumball 0.1 #####
-     refator:
-[mk1] uniforms system
-[mk1] texture && UV
-[TODO] input wrapper
+refator:
+[mk3] render and window relation
+[mk2] asset system, that can support runtime load
 [TODO] project sample
 
 [todo] separe gamethread vs drawThread && querrySystem

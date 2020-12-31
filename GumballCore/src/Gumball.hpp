@@ -17,13 +17,10 @@ public:
 
 	Engine();
 	~Engine();
+
+	void setup();
 	void tick();
 };
-static Engine& engine = Engine::instance();
-
 //this is just to make it simplier for now... until i have peace in my heart for supporting multiple renderers && cameras
-static Window& window = *engine.window;
-static AssetManager& assetManager = *engine.assetManager;
-static RenderManager& render = *engine.renderManager;
-static ObjectManager& objects = *engine.objectManager;
+static Engine& engine = Engine::instance();
 #endif // !_gumball

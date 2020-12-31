@@ -58,10 +58,11 @@ public:
 	}
 	void setEnable(bool enable){
 		gObject::setEnable(enable);
-		if(enable)
-			RenderManager::instance().currentContext->operator<<(&mesh);
-		else
-			RenderManager::instance().currentContext->operator>>(&mesh);
+		mesh.setEnableDraw(enable);
+		//if(enable)
+		//	RenderManager::instance().currentContext->operator<<(&mesh);
+		//else
+		//	RenderManager::instance().currentContext->operator>>(&mesh);
 	}
 };
 

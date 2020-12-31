@@ -37,6 +37,5 @@ public:
     Camera() {
         viewMode.setProjectionPerspective();
     }
-
 };
 #endif // !_camera
