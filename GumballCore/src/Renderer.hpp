@@ -34,6 +34,10 @@ class FpsCounter {
             return ms;
         }
 };
+
+
+
+
 class Window {
     int x, y;
     GLFWwindow* window;

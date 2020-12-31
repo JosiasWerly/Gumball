@@ -61,9 +61,10 @@ void Window::clearBuffer() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 void Window::swapBuffers() {
-    fpsCounter.fpsTick();
     glfwSwapBuffers(window);
     glfwPollEvents();
+    Input::poolEvents();
+    fpsCounter.fpsTick();
 }
 bool Window::shouldClose() {
     return glfwWindowShouldClose(window);

@@ -1,41 +1,65 @@
 #include "Input.hpp"
 #include "Renderer.hpp"
 #include <iostream>
+#include <map>
 
-GLFWwindow* Input::currentWin;
-map<eKeyboard, eAction> Input::keysState, Input::pooledKeys;
-bool Input::containKey(map<eKeyboard, eAction>& map, eKeyboard key) {
-	return map.find(key) != map.end();
-}
-bool Input::checkAction(map<eKeyboard, eAction>& map, eKeyboard key, eAction toCheck) {
+//this is just the craziest input system that i ever made... plx joe from the future apologies.
+Input::map Input::poolKeystate, Input::keysToEvaluate;
+bool Input::checkAction(map& map, eKeyboard key, eAction action) {
 	auto k = map.find(key);
-	if (k != map.end())
-		return (*k).second == toCheck;
+	if (k != map.end()) {
+		switch (action)	{
+			case eAction::PRESSED:			return (*k).second.pressed;
+			case eAction::RELEASED:			return (*k).second.released;
+			case eAction::REPEAT:			return (*k).second.repeating;
+		}
+		return false;
+	}
 	return false;
 }
 void Input::setFocus(class Window& focusWin) {
-	Input::currentWin = focusWin.getGLFWindow();
+	glfwSetKeyCallback(focusWin.getGLFWindow(), Input::keyboardCallback);
+}
+void Input::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	eKeyboard k = (eKeyboard)key;
+	eAction a = (eAction)action;
+	if(a == eAction::PRESSED || a == eAction::REPEAT)
+		poolKeystate[k].pressed = true;
+	else if(a == eAction::RELEASED)
+		poolKeystate[k].released = true;
 }
 void Input::poolEvents() {
-	constexpr int eMax = sizeof(eKeyboard);
-	/*keysState = pooledKeys;
-	for (map<eKeyboard, eAction>::iterator it = keysState.begin(); it != keysState.end();){		
-		if ((*it).second == eAction::RELEASED) {
-			keysState.erase(it++);
-			continue;
+	list<eKeyboard> toRemove;
+	for (auto k : keysToEvaluate) {
+		if (k.second.released) {
+			toRemove.push_back(k.first);
 		}
-		else if((*it).second == eAction::PRESSED) {
-			(*it).second = eAction::REPEAT;
+		else if (k.second.pressed) {
+			k.second.pressed = false;
+			k.second.repeating = true;
+			keysToEvaluate[k.first] = k.second;
 		}
-		++it;
-	}*/
+	}
+	for (auto k : toRemove) {
+		keysToEvaluate.erase(k);
+		poolKeystate.erase(k);
+	}
+
+	for (auto pk : poolKeystate) {
+		if (pk.second.released)
+			keysToEvaluate[pk.first].released = true;
+		if (keysToEvaluate.find(pk.first) == keysToEvaluate.end())
+			keysToEvaluate[pk.first] = pk.second;
+	}
+
 }
+
 bool Input::isKeyDown(eKeyboard key) {
-	return glfwGetKey(Input::currentWin, (int)key) == GLFW_PRESS;
+	return checkAction(keysToEvaluate, key, eAction::PRESSED) || checkAction(keysToEvaluate, key, eAction::REPEAT);
 }
 bool Input::onPressed(eKeyboard key) {
-	return false;
+	return checkAction(keysToEvaluate, key, eAction::PRESSED);
 }
 bool Input::onRelease(eKeyboard key) {
-	return false;
+	return checkAction(keysToEvaluate, key, eAction::RELEASED);
 }

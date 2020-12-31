@@ -22,5 +22,4 @@ void Engine::tick() {
 	window->clearBuffer();
 	render.disposeRender();
 	window->swapBuffers();
-	Input::poolEvents();
 }

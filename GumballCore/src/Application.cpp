@@ -33,10 +33,14 @@ int main() {
 			else if (Input::isKeyDown(eKeyboard::S))
 				t->rotation.rotate(-turnRate, 0, 0);
 
-			if (Input::onPressed(eKeyboard::Q))
+			if (Input::onPressed(eKeyboard::Q)) {
 				t->rotation.rotate(0, 45, 0);
-			else if (Input::isKeyDown(eKeyboard::E))
+				cout << "<<" << endl;
+			}
+			else if (Input::onRelease(eKeyboard::Q)) {
 				t->rotation.rotate(0, -45, 0);
+				cout << ">>" << endl;
+			}
 
 			if (Input::isKeyDown(eKeyboard::A))
 				t->rotation.rotate(0, 0, turnRate);

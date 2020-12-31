@@ -7,8 +7,8 @@ using namespace std;
 //TODO: decent Input manager2
 
 //#define keyWrapper(key) key = int(*#key)
-#define keyWrapper(key) key = GLFW_KEY_##key
 
+#define keyWrapper(key) key = GLFW_KEY_##key
 enum class eKeyboard{
 	unknow = -1,
 	keyWrapper(A),	keyWrapper(B),	keyWrapper(C), 
@@ -42,13 +42,17 @@ enum class eAction {
 class Window;
 class Input{
 public:
-	static GLFWwindow* currentWin;
-	static map<eKeyboard, eAction> keysState, pooledKeys;
-	
-	static bool containKey(map<eKeyboard, eAction>& map, eKeyboard key);
-	static bool checkAction(map<eKeyboard, eAction>& map, eKeyboard key, eAction toCheck);
+	struct sAction{
+		bool pressed, released, repeating;
+	};
+	typedef map<eKeyboard, sAction> map;
+	static map poolKeystate, keysToEvaluate;
+
+	static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);	
 	static void setFocus(class Window& focusWin);
 	static void poolEvents();
+
+	static bool checkAction(map& map, eKeyboard key, eAction action);
 	static bool isKeyDown(eKeyboard key);
 	static bool onPressed(eKeyboard key);
 	static bool onRelease(eKeyboard key);
