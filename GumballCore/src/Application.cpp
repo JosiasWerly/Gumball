@@ -9,7 +9,8 @@ int main() {
 	//Camera* mainCamera = render.currentContext->camera = new Camera();
 	
 	///GAMEPLAY
-	Camera* mainCamera = new Camera();
+	
+	Camera* mainCamera = engine.renderManager->render.camera = new Camera();
 	mainCamera->transform.position += glm::vec3(0, 0, -20);
 	MeshComponent* toTest;
 	constexpr int recSize = 2;
@@ -54,6 +55,7 @@ int main() {
 			if (Input::isKeyDown(eKeyboard::UP) && toTest) {
 				(*toTest->getOwner()) >> toTest;
 				delete toTest;
+				toTest = nullptr;
 			}
 		}
 		engine.tick(); //this has to go away

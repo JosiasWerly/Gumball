@@ -60,6 +60,7 @@ public:
 };
 
 
+
 class IDrawCall {
 public:
     virtual void draw(const class IRender& renderer) = 0;
@@ -78,6 +79,7 @@ public:
         for (auto& d : drawcalls)
             d->draw(*this);
     }
+
     IRender& operator<<(IDrawCall* value) {
         drawcalls.insert(value);
         return *this;
@@ -101,64 +103,44 @@ public:
 class RenderManager :
     public Singleton<RenderManager> {
 public:
-    set<IDrawCall*> drawcalls;
-    set<IRender*> renderers;
+    IRender render; //the ideia is to make multiple render: optmization and layers dispose
+    //set<IDrawCall*> drawcalls;
     RenderManager() {
-
     }
     void disposeRender() {
-        for (auto r : renderers)
-            r->diposeRender();
+        render.diposeRender();
     }
 
-    void changeDrawLayer(IRender* obj, unsigned int newLayer) {
-        
-    }
-    void changeDrawLayer(IDrawCall* obj, unsigned int newLayer) {
-
-    }
     RenderManager& operator<<(IDrawCall* value) {
-        drawcalls.insert(value);
+        render << value;
+        //drawcalls.insert(value);
         return *this;
     }
     RenderManager& operator>>(IDrawCall* value) {
-        auto i = drawcalls.find(value);
-        if (i != drawcalls.end())
-            drawcalls.erase(i);
+        render >> value;
+        //auto i = drawcalls.find(value);
+        //if (i != drawcalls.end())
+        //    drawcalls.erase(i);
         return *this;
     }
     
-    RenderManager& operator<<(IRender* value) {
-        renderers.insert(value);
-        return *this;
-    }
-    RenderManager& operator>>(IRender* value) {
-        auto i = renderers.find(value);
-        if (i != renderers.end())
-            renderers.erase(i);
-        return *this;
-    }
+    //RenderManager& operator<<(IRender* value) {
+    //    renderers.insert(value);
+    //    return *this;
+    //}
+    //RenderManager& operator>>(IRender* value) {
+    //    auto i = renderers.find(value);
+    //    if (i != renderers.end())
+    //        renderers.erase(i);
+    //    return *this;
+    //}
 };
 
-
-class Render : 
-    public IRender {
-protected:
-    void setDrawLayer(unsigned int layer) {
-        auto& r = RenderManager::instance();
-        r.changeDrawLayer(this, layer);
-    }
-    void setEnableDraw(bool enable) {
-        auto& r = RenderManager::instance();
-        if (enable)
-            r << this;
-        else
-            r >> this;
-    }
-};
 
 class Drawable :
     public IDrawCall {
+    unsigned int targetLayer;
+
 public:
     Shader sa;
     VertexBuffer vb; // the guy who contains the data
@@ -168,10 +150,6 @@ public:
 
     Transform* transform;
 
-    void setDrawLayer(unsigned int layer) {
-        auto& r = RenderManager::instance();
-        r.changeDrawLayer(this, layer);
-    }
     void setEnableDraw(bool enable) {
         auto& r = RenderManager::instance();
         if(enable)
