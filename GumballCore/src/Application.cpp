@@ -10,7 +10,8 @@ int main() {
 	
 	///GAMEPLAY
 	
-	Camera* mainCamera = engine.renderManager->render.camera = new Camera();
+	Camera* mainCamera = new Camera;
+	engine.renderManager->render[0].operator<<(mainCamera);
 	mainCamera->transform.position += glm::vec3(0, 0, -20);
 	MeshComponent* toTest;
 	constexpr int recSize = 2;

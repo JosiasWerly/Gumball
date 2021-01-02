@@ -14,7 +14,6 @@ void Engine::setup() {
 	assetManager = &AssetManager::instance();
 	objectManager = &ObjectManager::instance();
 	renderManager = &RenderManager::instance();
-	renderManager->render.attachWindow(window);
 
 	assetManager->pushFactory("shader", new ShaderFactory);
 	assetManager->pushFactory("mesh", new MeshFactory);

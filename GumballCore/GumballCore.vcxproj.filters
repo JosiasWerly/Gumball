@@ -46,6 +46,9 @@
     <ClCompile Include="src\Renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -130,6 +133,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Input.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Window.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

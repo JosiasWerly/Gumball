@@ -4,8 +4,8 @@
 class ViewMode {
 public:
     //projection = false ?//just for testing
-    //    glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-    //    glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+    //glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
+    //glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
 
     enum class eProjectionMode {
         Ortho, Perspective, Custom
@@ -33,7 +33,6 @@ class Camera {
 public:
     Transform transform;
     ViewMode viewMode;
-
     Camera() {
         viewMode.setProjectionPerspective();
     }
