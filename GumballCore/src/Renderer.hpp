@@ -104,7 +104,6 @@ class RenderManager :
     public Singleton<RenderManager> {
 public:
     IRender render; //the ideia is to make multiple render: optmization and layers dispose
-    //set<IDrawCall*> drawcalls;
     RenderManager() {
     }
     void disposeRender() {
@@ -113,27 +112,12 @@ public:
 
     RenderManager& operator<<(IDrawCall* value) {
         render << value;
-        //drawcalls.insert(value);
         return *this;
     }
     RenderManager& operator>>(IDrawCall* value) {
         render >> value;
-        //auto i = drawcalls.find(value);
-        //if (i != drawcalls.end())
-        //    drawcalls.erase(i);
         return *this;
     }
-    
-    //RenderManager& operator<<(IRender* value) {
-    //    renderers.insert(value);
-    //    return *this;
-    //}
-    //RenderManager& operator>>(IRender* value) {
-    //    auto i = renderers.find(value);
-    //    if (i != renderers.end())
-    //        renderers.erase(i);
-    //    return *this;
-    //}
 };
 
 
