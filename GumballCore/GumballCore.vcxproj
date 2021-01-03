@@ -186,7 +186,7 @@
     <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
     <ClCompile Include="src\Input.cpp" />
-    <ClCompile Include="src\lang.cpp" />
+    <ClCompile Include="src\Lang.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -211,7 +211,7 @@
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawables.hpp" />
     <ClInclude Include="src\Input.hpp" />
-    <ClInclude Include="src\lang.hpp" />
+    <ClInclude Include="src\Lang.hpp" />
     <ClInclude Include="src\Memory.hpp" />
     <ClInclude Include="src\Script.hpp" />
     <ClInclude Include="src\Texture.hpp" />

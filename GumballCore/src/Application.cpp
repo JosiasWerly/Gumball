@@ -34,11 +34,8 @@ int main() {
 
 	Transform* t = &mainCamera->transform;
 	
-	LuaScript gameplay;
-	gameplay.loadScript("C:\\Users\\ADM\\Downloads\\fun.lua");
-	gameplay.beginPlay();
+	
 	while (true) {
-		gameplay.tick();
 		if (t) {
 			if (Input::isKeyDown(eKeyboard::W))
 				t->rotation.rotate(turnRate, 0, 0);

@@ -143,7 +143,10 @@ public:
 	}
 };
 
-
+//LuaScript gameplay;
+//gameplay.loadScript("C:\\Users\\ADM\\Downloads\\fun.lua");
+//gameplay.beginPlay();
+//gameplay.tick();
 
 
 //	class LuaScripts :

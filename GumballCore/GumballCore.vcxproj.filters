@@ -55,7 +55,7 @@
     <ClCompile Include="src\Script.cpp">
       <Filter>src\scripts</Filter>
     </ClCompile>
-    <ClCompile Include="src\lang.cpp">
+    <ClCompile Include="src\Lang.cpp">
       <Filter>src\scripts</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,7 +156,7 @@
     <ClInclude Include="src\Script.hpp">
       <Filter>src\scripts</Filter>
     </ClInclude>
-    <ClInclude Include="src\lang.hpp">
+    <ClInclude Include="src\Lang.hpp">
       <Filter>src\scripts</Filter>
     </ClInclude>
   </ItemGroup>

@@ -138,4 +138,31 @@ public:
         glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
     }
 };
+class Drawable :
+    public IDrawCall {
+public:
+    Drawable() {
+        setEnableDraw(true);
+    }
+    void setDrawLayer(unsigned int layer) {
+        auto& r = RenderManager::instance();
+        r >> this;
+        IDrawCall::setDrawLayer(layer);
+        r << this;
+    }
+    void setEnableDraw(bool enable) {
+        IDrawCall::setEnableDraw(enable);
+        auto& r = RenderManager::instance();
+        if (enable)
+            r << this;
+        else
+            r >> this;
+    }
+    void draw(const class IRenderDisposer& renderer) {
+        va.bind();
+        sa.bind();
+        sa.params.uploadParams();
+        glDCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+    }
+};
 #endif // !_renderer
