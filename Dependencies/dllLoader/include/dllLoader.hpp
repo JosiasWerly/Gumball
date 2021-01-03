@@ -22,10 +22,10 @@ using namespace std;
 //bs->test();
 class DynamicLibrary {
 public:
-	HINSTANCE instance;
-	string name;
+	const HINSTANCE instance;
+	const string name, filePath;
 
-	DynamicLibrary(string name, HINSTANCE instance);
+	DynamicLibrary(string filePath, string name, HINSTANCE instance);
 	template<class T> T getFunc(string data){
 		T p = nullptr;
 		p = (T)GetProcAddress(instance, (LPCSTR)data.c_str());
@@ -36,6 +36,7 @@ class DynamicLibraryManager {
 	
 	list<DynamicLibrary*> dynamicLibraries;
 public:
+	bool reload(string name);
 	bool load(string fullPath, string name);
 	void free(string name);
 	DynamicLibrary* operator[](string name);

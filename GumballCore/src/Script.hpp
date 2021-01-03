@@ -9,9 +9,60 @@
 #endif
 #define Extern extern "C" DLL
 
-class DLL BaseScript{
+class DLL Project{
 public:
-	virtual void test();
+	Project(){}
+	virtual ~Project(){}
+	virtual void setup(){}
+	virtual void shutdown() {}
+	virtual void tick(){}
 };
-//Extern OnProjectPlay
+typedef Project* (*FnxNewProject)(void);
+
+
+/// GumballSide
+#include "dllLoader.hpp"
+#include <filesystem>
+class ProjectManager {
+	DynamicLibraryManager dllManager;
+	DynamicLibrary* dllProject;
+	FnxNewProject fnxInstance;
+	Project* project;
+public:
+	void attach(string filePath) {
+		dllManager.load(filePath, "p");
+		dllProject = dllManager["p"];
+		if (dllProject) {
+			fnxInstance = dllProject->getFunc<FnxNewProject>("instantiateProject");
+			if (fnxInstance) {
+				project = fnxInstance();
+			}
+		}
+	}
+	void reload() {
+		project->shutdown();
+		delete project;
+		project = nullptr;
+		dllManager.reload(dllProject->name);
+		dllProject = dllManager["p"];
+		if (dllProject) {
+			fnxInstance = dllProject->getFunc<FnxNewProject>("instantiateProject");
+			if (fnxInstance) {
+				project = fnxInstance();
+			}
+		}
+	}
+	void setup() {
+		if (project)
+			project->setup();
+	}
+	void tick() {
+		if (project)
+			project->tick();
+	}
+};
+
+
+//std::filesystem::last_write_time
+//Extern Project* instantiateProject();
 #endif // !_script

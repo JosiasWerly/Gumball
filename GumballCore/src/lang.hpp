@@ -2,6 +2,8 @@
 #ifndef _lang
 #define _lang
 
+
+//http://gamedevgeek.com/tutorials/calling-c-functions-from-lua/
 #ifndef LUA_OK
 #define LUA_OK 0;
 #endif // !LUA_OK

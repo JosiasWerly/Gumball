@@ -4,18 +4,13 @@
     <Filter Include="src">
       <UniqueIdentifier>{a585ab3d-e887-46de-ad66-5d6a64b3d1d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{8df7eda5-dcaa-4d89-86f2-93d458e5e987}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Script.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Script.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #include "dllLoader.hpp"
 
-DynamicLibrary::DynamicLibrary(string name, HINSTANCE instance) :
+DynamicLibrary::DynamicLibrary(string filePath, string name, HINSTANCE instance) :
+	filePath(filePath),
 	name(name),
 	instance(instance){
 }
@@ -8,6 +9,16 @@ DynamicLibrary::DynamicLibrary(string name, HINSTANCE instance) :
 
 #pragma warning( push )
 #pragma warning( disable : 4244 )
+bool DynamicLibraryManager::reload(string name) {
+	auto dll = this->operator[](name);
+	if (dll) {
+		string 
+			filePath = dll->filePath,
+			fileName = dll->name;
+		this->free(fileName);
+		return this->load(filePath, name);
+	}
+}
 bool DynamicLibraryManager::load(string fullPath, string name) {
 	auto WSTRtoSTR = [](wstring& from)->string {
 		string out;
@@ -30,7 +41,7 @@ bool DynamicLibraryManager::load(string fullPath, string name) {
 	if (!instance)
 		return false;
 	
-	dynamicLibraries.push_back(new DynamicLibrary(name, instance));
+	dynamicLibraries.push_back(new DynamicLibrary(fullPath, name, instance));
 	return true;
 }
 #pragma warning( pop )
