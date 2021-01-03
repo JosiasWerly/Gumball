@@ -1,15 +1,16 @@
 #include "Gumball.hpp"
+#include "Script.hpp"
+#include "dllLoader.hpp"
+#include "lang.hpp"
+
 
 
 int main() {
 	engine.setup();
 	engine.window->config("Gameplay test", 800, 600);
 	engine.assetManager->loadAssets("res/");
-	
-	//Camera* mainCamera = render.currentContext->camera = new Camera();
-	
-	///GAMEPLAY
-	
+
+	///GAMEPLAY	
 	Camera* mainCamera = new Camera;
 	engine.renderManager->render[0].operator<<(mainCamera);
 	mainCamera->transform.position += glm::vec3(0, 0, -20);
@@ -32,7 +33,12 @@ int main() {
 
 
 	Transform* t = &mainCamera->transform;
+	
+	LuaScript gameplay;
+	gameplay.loadScript("C:\\Users\\ADM\\Downloads\\fun.lua");
+	gameplay.beginPlay();
 	while (true) {
+		gameplay.tick();
 		if (t) {
 			if (Input::isKeyDown(eKeyboard::W))
 				t->rotation.rotate(turnRate, 0, 0);

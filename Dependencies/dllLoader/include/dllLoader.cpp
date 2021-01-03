@@ -1,34 +1,44 @@
 #include "dllLoader.hpp"
-DynamicLibrary::DynamicLibrary(string name, const HINSTANCE instance) :
+
+DynamicLibrary::DynamicLibrary(string name, HINSTANCE instance) :
 	name(name),
-	instance(instance) {
-}
-template<class T> T DynamicLibrary::getFunc(string data) {
-	T p = nullptr;
-	p = (T)GetProcAddress(instance, (LPCSTR)data.c_str());
-	return p;
+	instance(instance){
 }
 
-bool DynamicLibraryManager::load(wstring fullPath, string name) {
+
+#pragma warning( push )
+#pragma warning( disable : 4244 )
+bool DynamicLibraryManager::load(string fullPath, string name) {
+	auto WSTRtoSTR = [](wstring& from)->string {
+		string out;
+		for (size_t i = 0; i < from.length(); i++)
+			out += from.at(i);
+		return out;
+	};
+	auto STRtoWSTR = [](string& from)->wstring {
+		wstring out;
+		for (size_t i = 0; i < from.length(); i++)
+			out += from.at(i);
+		return out;
+	};
+
 	if (this->operator[](name))
 		return false;
-	HINSTANCE instance = LoadLibrary((LPCWSTR)fullPath.c_str());
+	
+	wstring wFullPath = STRtoWSTR(fullPath);
+	HINSTANCE instance = LoadLibrary((LPCWSTR)wFullPath.c_str());
 	if (!instance)
 		return false;
-	auto converter = [=](wstring& from)->string {
-		string stgName;
-		for (size_t i = 0; i < from.length(); i++)
-			stgName += from.at(i);
-		return stgName;
-	};
+	
 	dynamicLibraries.push_back(new DynamicLibrary(name, instance));
 	return true;
 }
+#pragma warning( pop )
 void DynamicLibraryManager::free(string name) {
 	DynamicLibrary* dll = this->operator[](name);
 	if (dll) {
 		dynamicLibraries.remove(dll);
-		FreeLibrary(dll->instance);
+		FreeLibrary((HINSTANCE)dll->instance);
 		delete dll;
 		dll = nullptr;
 	}

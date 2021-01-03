@@ -140,15 +140,14 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\glad\include;$(solutionDir)Dependencies\ImageLoader\include;$(solutionDir)Dependencies\openGLTutorial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\glad\include;$(solutionDir)Dependencies\ImageLoader\include;$(solutionDir)Dependencies\openGLTutorial\include;$(solutionDir)Dependencies\dllLoader\include;$(solutionDir)Dependencies\lua5.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(solutionDir)Dependencies\lua5.4.0\library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;lua54.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -187,6 +186,7 @@
     <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
     <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\lang.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -211,6 +211,7 @@
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawables.hpp" />
     <ClInclude Include="src\Input.hpp" />
+    <ClInclude Include="src\lang.hpp" />
     <ClInclude Include="src\Memory.hpp" />
     <ClInclude Include="src\Script.hpp" />
     <ClInclude Include="src\Texture.hpp" />

@@ -55,6 +55,9 @@
     <ClCompile Include="src\Script.cpp">
       <Filter>src\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="src\lang.cpp">
+      <Filter>src\scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -151,6 +154,9 @@
       <Filter>src\dependencies</Filter>
     </ClInclude>
     <ClInclude Include="src\Script.hpp">
+      <Filter>src\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lang.hpp">
       <Filter>src\scripts</Filter>
     </ClInclude>
   </ItemGroup>

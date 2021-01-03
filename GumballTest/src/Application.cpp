@@ -1,9 +1,4 @@
-#ifdef expDLL
-#define DLL __declspec(dllexport)
-#else
-#define DLL __declspec(dllimport)
-#endif
-
+#include "Script.hpp"
 int main() {
 	return 0;
 }
