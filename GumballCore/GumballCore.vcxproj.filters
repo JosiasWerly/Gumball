@@ -49,6 +49,12 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependencies\dllLoader\include\dllLoader.cpp">
+      <Filter>src\dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Script.cpp">
+      <Filter>src\scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -76,6 +82,9 @@
     <Filter Include="res\shaders">
       <UniqueIdentifier>{a6dbc456-f27a-46b4-b952-37d50f378c81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\scripts">
+      <UniqueIdentifier>{f71ca8c8-f0c7-4a38-84e5-03e227910a77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Patterns.hpp">
@@ -101,9 +110,6 @@
     </ClInclude>
     <ClInclude Include="src\Mesh.hpp">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GLBuffers.hpp">
-      <Filter>src\dependencies</Filter>
     </ClInclude>
     <ClInclude Include="src\Math.hpp">
       <Filter>src</Filter>
@@ -137,6 +143,15 @@
     </ClInclude>
     <ClInclude Include="src\Window.hpp">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GLBuffers.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\dllLoader\include\dllLoader.hpp">
+      <Filter>src\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Script.hpp">
+      <Filter>src\scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

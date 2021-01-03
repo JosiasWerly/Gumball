@@ -10,8 +10,7 @@
 
 
 
-//i`m just too tired and too hungry todo this better//
-
+//i'm just too tired and too hungry todo this better//
 class IDrawCall {
     bool isEnableDraw;
     unsigned int drawLayer;
@@ -112,7 +111,6 @@ public:
         return *this;
     }
 };
-
 class Drawable :
     public IDrawCall {
 public:
