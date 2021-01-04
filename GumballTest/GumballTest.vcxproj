@@ -124,6 +124,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,9 +149,64 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="..\Dependencies\dllLoader\dllLoader.cpp" />
+    <ClCompile Include="..\Dependencies\glad\glad.c" />
+    <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp" />
+    <ClCompile Include="..\Dependencies\objLoader\objloader.cpp" />
+    <ClCompile Include="..\Dependencies\objLoader\vboindexer.cpp" />
+    <ClCompile Include="gumball\Actor.cpp" />
+    <ClCompile Include="gumball\AssetManager.cpp" />
+    <ClCompile Include="gumball\Drawables.cpp" />
+    <ClCompile Include="gumball\GFunctionLibrary.cpp" />
+    <ClCompile Include="gumball\Gumball.cpp" />
+    <ClCompile Include="gumball\Input.cpp" />
+    <ClCompile Include="gumball\Lang.cpp" />
+    <ClCompile Include="gumball\Math.cpp" />
+    <ClCompile Include="gumball\Memory.cpp" />
+    <ClCompile Include="gumball\Renderer.cpp" />
+    <ClCompile Include="gumball\Script.cpp" />
+    <ClCompile Include="gumball\Shader.cpp" />
+    <ClCompile Include="gumball\Window.cpp" />
+    <ClCompile Include="src\Application.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp" />
+    <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h" />
+    <ClInclude Include="..\Dependencies\objLoader\objloader.hpp" />
+    <ClInclude Include="..\Dependencies\objLoader\vboindexer.hpp" />
+    <ClInclude Include="gumball\Actor.hpp" />
+    <ClInclude Include="gumball\AssetManager.hpp" />
+    <ClInclude Include="gumball\Camera.hpp" />
+    <ClInclude Include="gumball\Drawables.hpp" />
+    <ClInclude Include="gumball\GFunctionLibrary.hpp" />
+    <ClInclude Include="gumball\GLBuffers.hpp" />
+    <ClInclude Include="gumball\Gumball.hpp" />
+    <ClInclude Include="gumball\Input.hpp" />
+    <ClInclude Include="gumball\Lang.hpp" />
+    <ClInclude Include="gumball\Math.hpp" />
+    <ClInclude Include="gumball\Memory.hpp" />
+    <ClInclude Include="gumball\Mesh.hpp" />
+    <ClInclude Include="gumball\Patterns.hpp" />
+    <ClInclude Include="gumball\Renderer.hpp" />
+    <ClInclude Include="gumball\Script.hpp" />
+    <ClInclude Include="gumball\Shader.hpp" />
+    <ClInclude Include="gumball\Texture.hpp" />
+    <ClInclude Include="gumball\Transform.hpp" />
+    <ClInclude Include="gumball\Window.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\glfw.3.3.2\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.2\build\native\glfw.targets')" />
+    <Import Project="..\packages\glm.0.9.9.800\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\glfw.3.3.2\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.2\build\native\glfw.targets'))" />
+    <Error Condition="!Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.9.800\build\native\glm.targets'))" />
+  </Target>
 </Project>

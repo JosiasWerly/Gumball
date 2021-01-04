@@ -140,7 +140,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\glad\include;$(solutionDir)Dependencies\ImageLoader\include;$(solutionDir)Dependencies\openGLTutorial\include;$(solutionDir)Dependencies\dllLoader\include;$(solutionDir)Dependencies\lua5.4.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -174,11 +174,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Dependencies\dllLoader\include\dllLoader.cpp" />
-    <ClCompile Include="..\Dependencies\glad\src\glad.c" />
-    <ClCompile Include="..\Dependencies\ImageLoader\scr\stb_image.cpp" />
-    <ClCompile Include="..\Dependencies\openGLTutorial\scr\objloader.cpp" />
-    <ClCompile Include="..\Dependencies\openGLTutorial\scr\vboindexer.cpp" />
+    <ClCompile Include="..\Dependencies\dllLoader\dllLoader.cpp" />
+    <ClCompile Include="..\Dependencies\glad\glad.c" />
+    <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp" />
+    <ClCompile Include="..\Dependencies\objLoader\objloader.cpp" />
+    <ClCompile Include="..\Dependencies\objLoader\vboindexer.cpp" />
     <ClCompile Include="src\Actor.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\AssetManager.cpp" />
@@ -202,10 +202,10 @@
     <None Include="res\shaders\default.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Dependencies\dllLoader\include\dllLoader.hpp" />
-    <ClInclude Include="..\Dependencies\ImageLoader\include\stb_image.h" />
-    <ClInclude Include="..\Dependencies\openGLTutorial\include\objloader.hpp" />
-    <ClInclude Include="..\Dependencies\openGLTutorial\include\vboindexer.hpp" />
+    <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp" />
+    <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h" />
+    <ClInclude Include="..\Dependencies\objLoader\objloader.hpp" />
+    <ClInclude Include="..\Dependencies\objLoader\vboindexer.hpp" />
     <ClInclude Include="src\Actor.hpp" />
     <ClInclude Include="src\AssetManager.hpp" />
     <ClInclude Include="src\Camera.hpp" />

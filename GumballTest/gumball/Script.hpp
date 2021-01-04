@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _script
 #define _script
-
+#define expDLL
 #ifdef expDLL
 #define DLL __declspec(dllexport)
 #else
@@ -9,16 +9,19 @@
 #endif
 #define Extern extern "C" DLL
 
-
-typedef void (*FnxNewProject)(void);
+class DLL Project{
+public:
+	Project(){}
+	virtual ~Project(){}
+	virtual void setup(){}
+	virtual void shutdown() {}
+	virtual void tick(){}
+};
+typedef Project* (*FnxNewProject)(void);
 
 /// GumballSide
 #include "dllLoader/dllLoader.hpp"
 #include <filesystem>
-
-struct Project{
-
-};
 class ProjectManager {
 	DynamicLibraryManager dllManager;
 	DynamicLibrary* dllProject;
@@ -35,7 +38,8 @@ public:
 			}
 		}
 	}
-	void reload() {		
+	void reload() {
+		project->shutdown();
 		delete project;
 		project = nullptr;
 		dllManager.reload(dllProject->name);
@@ -46,10 +50,6 @@ public:
 				project = fnxInstance();
 			}
 		}
-	}
-	void shutdown() {
-		if (project)
-			project->shutdown();
 	}
 	void setup() {
 		if (project)

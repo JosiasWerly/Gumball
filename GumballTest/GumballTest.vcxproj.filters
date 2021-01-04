@@ -4,13 +4,144 @@
     <Filter Include="src">
       <UniqueIdentifier>{a585ab3d-e887-46de-ad66-5d6a64b3d1d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="res">
+    <Filter Include="Gumball">
       <UniqueIdentifier>{8df7eda5-dcaa-4d89-86f2-93d458e5e987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gumball\dependencies">
+      <UniqueIdentifier>{14a58f3b-8f3c-45b5-be05-c80e8898d546}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp">
+    <ClCompile Include="gumball\Actor.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\AssetManager.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Drawables.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\GFunctionLibrary.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Gumball.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Input.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Lang.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Math.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Memory.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Renderer.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Script.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Shader.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="gumball\Window.cpp">
+      <Filter>Gumball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\dllLoader\dllLoader.cpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\glad\glad.c">
+      <Filter>Gumball\dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\objLoader\objloader.cpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\objLoader\vboindexer.cpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application.hpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gumball\Actor.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\AssetManager.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Camera.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Drawables.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\GFunctionLibrary.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\GLBuffers.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Gumball.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Input.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Lang.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Math.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Memory.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Mesh.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Patterns.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Renderer.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Script.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Shader.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Texture.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Transform.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="gumball\Window.hpp">
+      <Filter>Gumball</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h">
+      <Filter>Gumball\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\objLoader\objloader.hpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\objLoader\vboindexer.hpp">
+      <Filter>Gumball\dependencies</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,19 +1,22 @@
 #include "Gumball.hpp"
 #include "Script.hpp"
-#include "dllLoader.hpp"
+#include "dllLoader/dllLoader.hpp"
 #include "lang.hpp"
 
 
 
 int main() {
+	Engine& engine = Engine::instance();
 	engine.setup();
 	engine.window->config("Gameplay test", 800, 600);
 	engine.assetManager->loadAssets("res/");
 	
 	ProjectManager proj;
 	proj.attach("C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\Build\\Debug\\x64\\GumballTest\\GumballTest.dll");
+	proj.setup();
 	while (true) {
 		if (Input::onRelease(eKeyboard::Q)) {
+			proj.shutdown();
 			proj.reload();
 			proj.setup();
 		}
