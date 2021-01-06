@@ -20,8 +20,13 @@ void Engine::setup() {
 	assetManager->pushFactory("texture", new TextureFactory);
 }
 void Engine::tick() {
-	objectManager->tick();
-	window->clearBuffer();
-	renderManager->disposeRender();
-	window->swapBuffers();
+	projectManager.currentProject.beginPlay();
+	while (true) {
+		projectManager.currentProject.tick();
+
+		objectManager->tick();
+		window->clearBuffer();
+		renderManager->disposeRender();
+		window->swapBuffers();
+	}
 }

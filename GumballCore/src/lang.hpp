@@ -4,9 +4,9 @@
 
 
 //http://gamedevgeek.com/tutorials/calling-c-functions-from-lua/
-#ifndef LUA_OK
-#define LUA_OK 0;
-#endif // !LUA_OK
+//#ifndef LUA_OK
+//#define LUA_OK 0;
+//#endif // !LUA_OK
 #include <string>
 #include "lua5.4.0/lua.hpp"
 using namespace std;
@@ -73,14 +73,14 @@ public:
 	template<> int getValue(string name) {
 		lua_getglobal(L, name.c_str());
 		if (lua_isnumber(L, -1)) {
-			return lua_tointeger(L, -1);;
+			return (int)lua_tointeger(L, -1);;
 		}
 		return 0;
 	}
 	template<> double getValue(string name) {
 		lua_getglobal(L, name.c_str());
 		if (lua_isnumber(L, -1)) {
-			return lua_tonumber(L, -1);
+			return (double)lua_tonumber(L, -1);
 		}
 		return 0;
 	}
@@ -121,7 +121,7 @@ static int Test(lua_State* L) {
 
 	float sum = 0;
 	for(int x=1; x<=arguments; x++)
-		sum += lua_tonumber(L, x);
+		sum += (float)lua_tonumber(L, x);
 	//std::cout << args << std::endl;
 	lua_pushstring(L, "ret1");
 	lua_pushnumber(L, sum);

@@ -6,6 +6,8 @@
 #include "Memory.hpp"
 #include "Input.hpp"
 #include "Actor.hpp"
+#include "Script.hpp"
+#include "dllLoader/dllLoader.hpp"
 
 class Engine : 
 	public Singleton<Engine>{
@@ -14,6 +16,8 @@ public:
 	RenderManager *renderManager; //resolve my render pipe....
 	AssetManager *assetManager; //responbile for loading assets, also contais all factories
 	ObjectManager *objectManager;
+	ProjectManager projectManager;
+
 
 	Engine();
 	~Engine();

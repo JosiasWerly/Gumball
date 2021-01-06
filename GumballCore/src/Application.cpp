@@ -1,6 +1,4 @@
 #include "Gumball.hpp"
-#include "Script.hpp"
-#include "dllLoader/dllLoader.hpp"
 #include "lang.hpp"
 
 
@@ -10,20 +8,8 @@ int main() {
 	engine.setup();
 	engine.window->config("Gameplay test", 800, 600);
 	engine.assetManager->loadAssets("res/");
-	
-	ProjectManager proj;
-	proj.attach("C:\\Users\\ADM\\Desktop\\Projects\\Gumball\\Build\\Debug\\x64\\GumballTest\\GumballTest.dll");
-	proj.setup();
-	while (true) {
-		if (Input::onRelease(eKeyboard::Q)) {
-			proj.shutdown();
-			proj.reload();
-			proj.setup();
-		}
-		proj.tick();
-		engine.tick();
-	}
-	///end GAMEPLAY
+	engine.projectManager.attach("C:\\Users\\josia\\Desktop\\Bard\\Gumball\\Build\\Debug\\x64\\GumballTest\\GumballTest.dll");
+	engine.tick();
 	return 0;
 }
 
@@ -41,9 +27,9 @@ int main() {
 refator:
 [mk3] render and window relation
 [mk2] asset system, that can support runtime load
-[TODO] project sample
+[mk1] project sample
+[mk1] separe gamethread vs drawThread && querrySystem
 
-[todo] separe gamethread vs drawThread && querrySystem
 [todo] collision detection
 [todo] traces, lines
 */

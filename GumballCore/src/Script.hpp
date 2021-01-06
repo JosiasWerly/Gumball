@@ -10,54 +10,51 @@
 #define Extern extern "C" DLL
 
 
-typedef void (*FnxNewProject)(void);
-
 /// GumballSide
 #include "dllLoader/dllLoader.hpp"
 #include <filesystem>
 
-struct Project{
 
+typedef void (*FnxProject)(void);
+
+struct Project {
+	FnxProject beginPlay;
+	FnxProject endPlay;
+	FnxProject tick;
+	bool validFunctions() {
+		return beginPlay && endPlay && tick;
+	}
 };
+
 class ProjectManager {
 	DynamicLibraryManager dllManager;
 	DynamicLibrary* dllProject;
-	FnxNewProject fnxInstance;
-	Project* project;
+	
+	bool updateReferences() {
+		if (dllProject) {
+			currentProject = {
+				dllProject->getFunc<FnxProject>("beginPlay"),
+				dllProject->getFunc<FnxProject>("endPlay"),
+				dllProject->getFunc<FnxProject>("tick")
+			};
+			return currentProject.validFunctions();
+		}
+		return false;
+	}
 public:
+	Project currentProject;
 	void attach(string filePath) {
 		dllManager.load(filePath, "p");
 		dllProject = dllManager["p"];
-		if (dllProject) {
-			fnxInstance = dllProject->getFunc<FnxNewProject>("instantiateProject");
-			if (fnxInstance) {
-				project = fnxInstance();
-			}
-		}
+		if (dllProject)
+			updateReferences();
 	}
-	void reload() {		
-		delete project;
-		project = nullptr;
+	void reload() {
 		dllManager.reload(dllProject->name);
 		dllProject = dllManager["p"];
-		if (dllProject) {
-			fnxInstance = dllProject->getFunc<FnxNewProject>("instantiateProject");
-			if (fnxInstance) {
-				project = fnxInstance();
-			}
-		}
-	}
-	void shutdown() {
-		if (project)
-			project->shutdown();
-	}
-	void setup() {
-		if (project)
-			project->setup();
-	}
-	void tick() {
-		if (project)
-			project->tick();
+		if (dllProject)
+			updateReferences();
+		
 	}
 };
 

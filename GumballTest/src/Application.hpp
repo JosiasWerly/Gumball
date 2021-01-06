@@ -3,5 +3,5 @@
 
 
 Extern Project* instantiateProject() {
-	return new Level;
+	return new Project;
 }
