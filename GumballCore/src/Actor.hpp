@@ -19,7 +19,6 @@ public:
 	Actor& operator>>(ActorComponent* comp);
 	virtual void setEnable(bool enable);
 };
-
 class ActorComponent : 
 	public gObject{
 protected:
@@ -65,5 +64,4 @@ public:
 		//	RenderManager::instance().currentContext->operator>>(&mesh);
 	}
 };
-
 #endif // !_actor

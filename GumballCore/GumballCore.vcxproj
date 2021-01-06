@@ -177,6 +177,13 @@
     <ClCompile Include="..\Dependencies\dllLoader\dllLoader.cpp" />
     <ClCompile Include="..\Dependencies\glad\glad.c" />
     <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_demo.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_draw.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_tables.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="..\Dependencies\objLoader\objloader.cpp" />
     <ClCompile Include="..\Dependencies\objLoader\vboindexer.cpp" />
     <ClCompile Include="src\Actor.cpp" />
@@ -204,6 +211,14 @@
   <ItemGroup>
     <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp" />
     <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imconfig.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imgui.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imgui_impl_glfw.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imgui_internal.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imstb_rectpack.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imstb_textedit.h" />
+    <ClInclude Include="..\Dependencies\ImGUI\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\objLoader\objloader.hpp" />
     <ClInclude Include="..\Dependencies\objLoader\vboindexer.hpp" />
     <ClInclude Include="src\Actor.hpp" />

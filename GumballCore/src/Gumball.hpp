@@ -9,9 +9,19 @@
 #include "Script.hpp"
 #include "dllLoader/dllLoader.hpp"
 
+
+struct iProject{
+	virtual void setup() {
+
+	}
+	virtual void tick() {
+
+	}
+};
 class Engine : 
 	public Singleton<Engine>{
 public:
+	iProject* proj;
 	Window *window;//responsible for the window, init gla, ....
 	RenderManager *renderManager; //resolve my render pipe....
 	AssetManager *assetManager; //responbile for loading assets, also contais all factories

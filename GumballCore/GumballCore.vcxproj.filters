@@ -40,22 +40,43 @@
     <ClCompile Include="src\Lang.cpp">
       <Filter>src\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_demo.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_draw.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_tables.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_widgets.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Dependencies\dllLoader\dllLoader.cpp">
-      <Filter>src\dependencies</Filter>
+      <Filter>src\dependencies\dllLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\glad\glad.c">
-      <Filter>src\dependencies</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp">
-      <Filter>src\dependencies</Filter>
+      <Filter>src\dependencies\glad</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\objLoader\objloader.cpp">
-      <Filter>src\dependencies</Filter>
+      <Filter>src\dependencies\objectLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp">
+      <Filter>src\dependencies\imageLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\objLoader\vboindexer.cpp">
-      <Filter>src\dependencies</Filter>
+      <Filter>src\dependencies\objectLoader</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_impl_glfw.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\ImGUI\imgui_impl_opengl3.cpp">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -85,6 +106,21 @@
     </Filter>
     <Filter Include="src\scripts">
       <UniqueIdentifier>{f71ca8c8-f0c7-4a38-84e5-03e227910a77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dependencies\imGUI">
+      <UniqueIdentifier>{2ec478d7-1bd2-4530-ae52-dbc4ea761e1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dependencies\dllLoader">
+      <UniqueIdentifier>{9ce9665f-af1e-47a3-a8b8-0b67310cb920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dependencies\glad">
+      <UniqueIdentifier>{77c86083-f7a3-4408-9c3a-c7169a0e79e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dependencies\objectLoader">
+      <UniqueIdentifier>{3e67a5f5-afd4-4bcd-b430-6dfadfe498a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dependencies\imageLoader">
+      <UniqueIdentifier>{85238bb8-a1a7-4e09-9eae-a05953ddea1a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -145,17 +181,41 @@
     <ClInclude Include="src\Lang.hpp">
       <Filter>src\scripts</Filter>
     </ClInclude>
-    <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp">
-      <Filter>src\dependencies</Filter>
+    <ClInclude Include="..\Dependencies\ImGUI\imconfig.h">
+      <Filter>src\dependencies\imGUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h">
-      <Filter>src\dependencies</Filter>
+    <ClInclude Include="..\Dependencies\ImGUI\imgui.h">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImGUI\imgui_internal.h">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImGUI\imstb_rectpack.h">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImGUI\imstb_textedit.h">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImGUI\imstb_truetype.h">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp">
+      <Filter>src\dependencies\dllLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\objLoader\objloader.hpp">
-      <Filter>src\dependencies</Filter>
+      <Filter>src\dependencies\objectLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h">
+      <Filter>src\dependencies\imageLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\objLoader\vboindexer.hpp">
-      <Filter>src\dependencies</Filter>
+      <Filter>src\dependencies\objectLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImGUI\imgui_impl_glfw.h">
+      <Filter>src\dependencies\imGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\ImGUI\imgui_impl_opengl3.h">
+      <Filter>src\dependencies\imGUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

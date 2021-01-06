@@ -18,12 +18,16 @@ void Engine::setup() {
 	assetManager->pushFactory("shader", new ShaderFactory);
 	assetManager->pushFactory("mesh", new MeshFactory);
 	assetManager->pushFactory("texture", new TextureFactory);
+
+
+	//engine.projectManager.attach("C:\\Users\\josia\\Desktop\\Bard\\Gumball\\Build\\Debug\\x64\\GumballTest\\GumballTest.dll");
 }
 void Engine::tick() {
-	projectManager.currentProject.beginPlay();
+	//projectManager.currentProject.beginPlay();
+	proj->setup();
 	while (true) {
-		projectManager.currentProject.tick();
-
+		//projectManager.currentProject.tick();
+		proj->tick();
 		objectManager->tick();
 		window->clearBuffer();
 		renderManager->disposeRender();

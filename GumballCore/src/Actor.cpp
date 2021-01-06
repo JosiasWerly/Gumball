@@ -5,7 +5,6 @@ void Actor::setEnable(bool enable) {
 	for (auto& ac : components)
 		ac->setEnable(enable);
 }
-
 Actor& Actor::operator<<(ActorComponent* comp){
 	components.insert(comp);
 	comp->attachOwner(this);
