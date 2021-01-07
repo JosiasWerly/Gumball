@@ -30,8 +30,19 @@ public:
         return ms;
     }
 };
+
+
+class Imgui {
+public:
+    void initialize(GLFWwindow* window);
+    void shutdown();
+    void requestNewFrame();
+    void disposeFrame();
+};
+
 class Window {
     int x, y;
+    Imgui imgui;
     GLFWwindow* window;
     FpsCounter fpsCounter;
 public:
