@@ -140,14 +140,14 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\Glad\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\Lua;$(SolutionDir)Dependencies\Misc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(solutionDir)Dependencies\lua5.4.0\library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,7 +160,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(solutionDir)Dependencies\glad\include;$(solutionDir)Dependencies\ImageLoader\include;$(solutionDir)Dependencies\openGLTutorial\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\Glad\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\Lua;$(SolutionDir)Dependencies\Misc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -174,18 +174,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Dependencies\dllLoader\dllLoader.cpp" />
-    <ClCompile Include="..\Dependencies\glad\glad.c" />
-    <ClCompile Include="..\Dependencies\ImageLoader\stb_image.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui_demo.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui_draw.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui_tables.cpp" />
-    <ClCompile Include="..\Dependencies\ImGUI\imgui_widgets.cpp" />
-    <ClCompile Include="..\Dependencies\objLoader\objloader.cpp" />
-    <ClCompile Include="..\Dependencies\objLoader\vboindexer.cpp" />
     <ClCompile Include="src\Actor.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\AssetManager.cpp" />
@@ -203,24 +191,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.gitignore" />
-    <None Include="packages.config" />
     <None Include="res\shaders\unlit.shader" />
     <None Include="res\shaders\texture.shader" />
     <None Include="res\shaders\default.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Dependencies\dllLoader\dllLoader.hpp" />
-    <ClInclude Include="..\Dependencies\ImageLoader\stb_image.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imconfig.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imgui.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imgui_impl_glfw.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imgui_impl_opengl3.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imgui_internal.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imstb_rectpack.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imstb_textedit.h" />
-    <ClInclude Include="..\Dependencies\ImGUI\imstb_truetype.h" />
-    <ClInclude Include="..\Dependencies\objLoader\objloader.hpp" />
-    <ClInclude Include="..\Dependencies\objLoader\vboindexer.hpp" />
     <ClInclude Include="src\Actor.hpp" />
     <ClInclude Include="src\AssetManager.hpp" />
     <ClInclude Include="src\Camera.hpp" />
@@ -244,16 +219,23 @@
   <ItemGroup>
     <Text Include="readme.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
+      <Project>{bdd6857c-a90d-870d-52fa-6c103e10030f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Dependencies\GLFW\GLFW.vcxproj">
+      <Project>{154b857c-0182-860d-aa6e-6c109684020f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Glm\Glm.vcxproj">
+      <Project>{75271621-68d9-487f-b099-88342dec72ed}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Dependencies\imgui\ImGui.vcxproj">
+      <Project>{c0ff640d-2c14-8dbe-f595-301e616989ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Misc\Misc.vcxproj">
+      <Project>{d67974f0-22e7-4fc0-b32c-4499279db0ad}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\glfw.3.3.2\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.2\build\native\glfw.targets')" />
-    <Import Project="..\packages\glm.0.9.9.800\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\glfw.3.3.2\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.2\build\native\glfw.targets'))" />
-    <Error Condition="!Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.9.800\build\native\glm.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

@@ -1,12 +1,15 @@
 #ifndef _window
 #define _window
 
+
+
 #include "GLBuffers.hpp"
 #include "GFunctionLibrary.hpp"
 #include "Input.hpp"
-#include "ImGUI/imgui.h"
-#include "ImGUI/imgui_impl_glfw.h"
-#include "ImGUI/imgui_impl_opengl3.h"
+
+#include <imgui.h>
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
 
 class FpsCounter {

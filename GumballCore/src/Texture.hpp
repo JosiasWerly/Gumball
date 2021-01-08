@@ -7,9 +7,7 @@
 #include "GFunctionLibrary.hpp"
 #include "Shader.hpp"
 
-
-
-#include "ImageLoader/stb_image.h"
+#include <stb_image/stb_image.h>
 struct TextureReference {
     unsigned int glBufferId;
     unsigned char* memoryBuffer;

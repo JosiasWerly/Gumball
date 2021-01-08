@@ -38,12 +38,12 @@ public:
         eProjectionMode eProjection;
         glm::mat4 mProjection = glm::mat4(1.0f);
 
-        void setProjectionPerspective(float fovy = glm::radians(45.0f), float aspect = 1.3333333730697632, float near = 0.1f, float far = 500.0f) {
-            mProjection = glm::perspective(fovy, aspect, near, far);
+        void setProjectionPerspective(float fovy = glm::radians(45.0f), float aspect = 1.3333333730697632, float zNear = 0.1f, float zFar = 500.0f) {
+            mProjection = glm::perspective(fovy, aspect, zNear, zFar);
             eProjection = eProjectionMode::Perspective;
         }
-        void setProjectionOrtho(float left, float right, float bottom, float top, float near = .1f, float far = 200.0f) {
-            mProjection = glm::ortho(left, right, bottom, top, near, far);
+        void setProjectionOrtho(float left, float right, float bottom, float top, float zNear = .1f, float zFar = 200.0f) {
+            mProjection = glm::ortho(left, right, bottom, top, zNear, zFar);
             eProjection = eProjectionMode::Perspective;
         }
         void setProjectionCustom(glm::mat4 customProj) {

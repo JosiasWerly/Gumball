@@ -1,14 +1,15 @@
 #pragma once
 #ifndef _lang
 #define _lang
-
+/*
 
 //http://gamedevgeek.com/tutorials/calling-c-functions-from-lua/
 //#ifndef LUA_OK
 //#define LUA_OK 0;
 //#endif // !LUA_OK
 #include <string>
-#include "lua5.4.0/lua.hpp"
+
+#include <lua/lua.hpp>
 using namespace std;
 class LuaVirtualMachine {
 private:
@@ -144,6 +145,19 @@ public:
 		luaTarget->runFunction("tick");
 	}
 };
+*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 //LuaScript gameplay;
 //gameplay.loadScript("C:\\Users\\ADM\\Downloads\\fun.lua");
