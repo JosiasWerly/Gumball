@@ -7,9 +7,9 @@
 #include "GFunctionLibrary.hpp"
 #include "Input.hpp"
 
-//#include <imgui.h>
-//#include <examples/imgui_impl_opengl3.h>
-//#include <examples/imgui_impl_glfw.h>
+#include <imgui.h>
+#include <examples/imgui_impl_opengl3.h>
+#include <examples/imgui_impl_glfw.h>
 
 
 class FpsCounter {
@@ -35,17 +35,17 @@ public:
 };
 
 
-//class Imgui {
-//public:
-//    void initialize(GLFWwindow* window);
-//    void shutdown();
-//    void requestNewFrame();
-//    void disposeFrame();
-//};
+class Imgui {
+public:
+    void initialize(GLFWwindow* window);
+    void shutdown();
+    void requestNewFrame();
+    void disposeFrame();
+};
 
 class Window {
     int x, y;
-    //Imgui imgui;
+    Imgui imgui;
     GLFWwindow* window;
     FpsCounter fpsCounter;
 public:

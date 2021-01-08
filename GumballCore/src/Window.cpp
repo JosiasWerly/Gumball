@@ -1,6 +1,5 @@
 #include "Window.hpp"
 
-
 //void Imgui::initialize(GLFWwindow* window) {
 //    IMGUI_CHECKVERSION();
 //    ImGui::CreateContext();
