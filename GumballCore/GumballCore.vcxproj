@@ -147,7 +147,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -228,9 +228,6 @@
     </ProjectReference>
     <ProjectReference Include="..\Dependencies\Glm\Glm.vcxproj">
       <Project>{75271621-68d9-487f-b099-88342dec72ed}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\imgui\ImGui.vcxproj">
-      <Project>{c0ff640d-2c14-8dbe-f595-301e616989ef}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Dependencies\Misc\Misc.vcxproj">
       <Project>{d67974f0-22e7-4fc0-b32c-4499279db0ad}</Project>
