@@ -49,7 +49,7 @@ Window::Window() {
     
 }
 Window::~Window() {
-    //imgui.shutdown();
+    glfwDestroyWindow(window);
     glfwTerminate();
 }
 GLFWwindow* Window::getGLFWindow() {
@@ -84,9 +84,6 @@ void Window::create(string winName, int x, int y) {
     if (!gladLoadGL())
         cout << "fail to load window" << endl;
 
-    //imgui.initialize(window);
-    
-
     glViewport(0, 0, x, y);
     glEnable(GL_DEPTH_TEST);
     glfwSwapInterval(1);
@@ -100,6 +97,8 @@ void Window::create(string winName, int x, int y) {
 
     //TODO: decent Input manager
     Input::setFocus(*this);
+
+    imgui.initialize(window);
 }
 void Window::setSize(int x, int y) {
     glfwSetWindowSize(window, x, y);
@@ -114,16 +113,18 @@ void Window::clearBuffer() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwPollEvents();
-    Input::poolEvents();    
-    //imgui.requestNewFrame();
+    Input::poolEvents();
+    
 }
 void Window::swapBuffers() {
-    //imgui.disposeFrame();
+    imgui.requestNewFrame();
+    imgui.disposeFrame();
     glfwSwapBuffers(window);
     fpsCounter.fpsTick();
 }
 bool Window::shouldClose() {
     return glfwWindowShouldClose(window);
+    
 }
 double Window::getMS() {
     return fpsCounter.getMsBySec();

@@ -18,6 +18,7 @@ bool DynamicLibraryManager::reload(string name) {
 		this->free(fileName);
 		return this->load(filePath, name);
 	}
+	return false;
 }
 bool DynamicLibraryManager::load(string fullPath, string name) {
 	auto WSTRtoSTR = [](wstring& from)->string {

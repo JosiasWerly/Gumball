@@ -7,11 +7,6 @@
 #include "GFunctionLibrary.hpp"
 #include "Input.hpp"
 
-#include <imgui.h>
-#include <examples/imgui_impl_opengl3.h>
-#include <examples/imgui_impl_glfw.h>
-
-
 
 class FpsCounter {
     double lastTime = 0;

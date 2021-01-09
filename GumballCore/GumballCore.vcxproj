@@ -85,8 +85,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
-    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)</OutDir>
-    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate</IntDir>
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -140,7 +140,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalUsingDirectories>
       </AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\Glad\include\;$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\glm\;$(SolutionDir)Dependencies\Lua\;$(SolutionDir)Dependencies\Misc\;$(SolutionDir)Dependencies\imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\glm\;$(SolutionDir)Dependencies\Glad\include\;$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\Imgui\;$(SolutionDir)Dependencies\Imgui\libs\glfw\include;$(SolutionDir)Dependencies\Imgui\libs\gl3w;$(SolutionDir)Dependencies\Misc\;$(SolutionDir)Dependencies\Lua\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -148,6 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -229,8 +230,8 @@
     <ProjectReference Include="..\Dependencies\Glm\Glm.vcxproj">
       <Project>{75271621-68d9-487f-b099-88342dec72ed}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Dependencies\imgui\ImGui.vcxproj">
-      <Project>{c0ff640d-2c14-8dbe-f595-301e616989ef}</Project>
+    <ProjectReference Include="..\Dependencies\Imgui\Imgui.vcxproj">
+      <Project>{8b09e2a0-12b9-4fef-b858-f208dfec5607}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Dependencies\Misc\Misc.vcxproj">
       <Project>{d67974f0-22e7-4fc0-b32c-4499279db0ad}</Project>

@@ -1,9 +1,18 @@
 #pragma once
 #ifndef _gFunctionLibrary
 #define _gFunctionLibrary
-#include <glad/glad.h>
-#define GLFW_INCLUDE_NONE
+//#include <glad/glad.h>
+//#define GLFW_INCLUDE_NONE
+//#include <GLFW/glfw3.h>
+
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
+
+#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 #include <iostream>
 #include <filesystem>
 
