@@ -54,20 +54,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)</OutDir>
-    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate</IntDir>
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)</OutDir>
-    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate</IntDir>
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)</OutDir>
-    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate</IntDir>
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(Platform)\$(ProjectName)\Intermediate\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
