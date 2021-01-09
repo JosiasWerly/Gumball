@@ -1,12 +1,16 @@
 #ifndef _gumball
 #define _gumball
+
 #include "Patterns.hpp"
-#include "Renderer.hpp"
 #include "Drawables.hpp"
-#include "Memory.hpp"
-#include "Input.hpp"
 #include "Actor.hpp"
 #include "Script.hpp"
+
+
+#include "RenderManager.hpp"
+#include "ObjectManager.hpp"
+#include "InputManager.hpp"
+#include "AssetManager.hpp"
 #include "dllLoader/dllLoader.hpp"
 
 

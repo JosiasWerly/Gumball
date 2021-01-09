@@ -1,5 +1,5 @@
-#include "Input.hpp"
-#include "Renderer.hpp"
+#include "InputManager.hpp"
+#include "RenderManager.hpp"
 #include <iostream>
 #include <map>
 

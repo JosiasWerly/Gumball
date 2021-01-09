@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -181,11 +181,11 @@
     <ClCompile Include="src\Drawables.cpp" />
     <ClCompile Include="src\GFunctionLibrary.cpp" />
     <ClCompile Include="src\Gumball.cpp" />
-    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\Lang.cpp" />
     <ClCompile Include="src\Math.cpp" />
-    <ClCompile Include="src\Memory.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\ObjectManager.cpp" />
+    <ClCompile Include="src\RenderManager.cpp" />
     <ClCompile Include="src\Script.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Window.cpp" />
@@ -201,9 +201,9 @@
     <ClInclude Include="src\AssetManager.hpp" />
     <ClInclude Include="src\Camera.hpp" />
     <ClInclude Include="src\Drawables.hpp" />
-    <ClInclude Include="src\Input.hpp" />
+    <ClInclude Include="src\InputManager.hpp" />
     <ClInclude Include="src\Lang.hpp" />
-    <ClInclude Include="src\Memory.hpp" />
+    <ClInclude Include="src\ObjectManager.hpp" />
     <ClInclude Include="src\Script.hpp" />
     <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\GFunctionLibrary.hpp" />
@@ -212,7 +212,7 @@
     <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\Patterns.hpp" />
-    <ClInclude Include="src\Renderer.hpp" />
+    <ClInclude Include="src\RenderManager.hpp" />
     <ClInclude Include="src\Shader.hpp" />
     <ClInclude Include="src\Transform.hpp" />
     <ClInclude Include="src\Window.hpp" />

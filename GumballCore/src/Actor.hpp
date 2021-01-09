@@ -5,7 +5,7 @@
 #include "Actor.hpp"
 #include "Transform.hpp"
 #include "Drawables.hpp"
-#include "Memory.hpp"
+#include "ObjectManager.hpp"
 
 class ActorComponent;
 class Actor : 

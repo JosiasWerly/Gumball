@@ -1,5 +1,5 @@
-#ifndef _input
-#define _input
+#ifndef _inputManager
+#define _inputManager
 #include "GLBuffers.hpp"
 #include "GFunctionLibrary.hpp"
 #include <map>
@@ -57,4 +57,4 @@ public:
 	static bool onPressed(eKeyboard key);
 	static bool onRelease(eKeyboard key);
 };
-#endif // !_input
+#endif // !_inputManager

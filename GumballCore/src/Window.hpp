@@ -5,7 +5,6 @@
 
 #include "GLBuffers.hpp"
 #include "GFunctionLibrary.hpp"
-#include "Input.hpp"
 
 
 class FpsCounter {

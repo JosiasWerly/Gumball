@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "InputManager.hpp"
 
 void Imgui::initialize(GLFWwindow* window) {
     IMGUI_CHECKVERSION();
@@ -129,13 +130,3 @@ bool Window::shouldClose() {
 double Window::getMS() {
     return fpsCounter.getMsBySec();
 }
-
-
-
-//ImGui::Render();
-//int display_w, display_h;
-//glfwGetFramebufferSize(window, &display_w, &display_h);
-//glViewport(0, 0, display_w, display_h);
-//glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-//glClear(GL_COLOR_BUFFER_BIT);
-//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

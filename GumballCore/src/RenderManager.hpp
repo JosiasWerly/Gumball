@@ -1,5 +1,5 @@
-#ifndef _renderer
-#define _renderer
+#ifndef _renderManager
+#define _renderManager
 
 #include "GLBuffers.hpp"
 #include "GFunctionLibrary.hpp"
@@ -226,4 +226,4 @@ public:
             r >> this;
     }
 };
-#endif // !_renderer
+#endif // !_renderManager

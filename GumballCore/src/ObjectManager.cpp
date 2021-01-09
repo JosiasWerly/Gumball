@@ -1,4 +1,4 @@
-#include "Memory.hpp"
+#include "ObjectManager.hpp"
 
 ObjectManager& ObjectManager::operator<<(gObject* obj) {
 	allObjects.push_back(obj);

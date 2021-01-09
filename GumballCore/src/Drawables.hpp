@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _drawables
 #define _drawables
-#include "Renderer.hpp"
+#include "RenderManager.hpp"
 #include "Texture.hpp"
 #include "Mesh.hpp"
 

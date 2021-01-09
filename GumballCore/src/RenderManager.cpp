@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "RenderManager.hpp"
 
 
 void IRenderDisposer::disposeRender() {
