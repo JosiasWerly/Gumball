@@ -14,9 +14,6 @@
     <ClCompile Include="src\Shader.cpp">
       <Filter>src\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\GFunctionLibrary.cpp">
-      <Filter>src\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="src\AssetManager.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
@@ -40,6 +37,9 @@
     </ClCompile>
     <ClCompile Include="src\InputManager.cpp">
       <Filter>src\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GFunctionLibrary.cpp">
+      <Filter>src\EngineCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,9 +105,6 @@
     <ClInclude Include="src\Camera.hpp">
       <Filter>src\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="src\GFunctionLibrary.hpp">
-      <Filter>src\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="src\Patterns.hpp">
       <Filter>src\Modules</Filter>
     </ClInclude>
@@ -140,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="src\InputManager.hpp">
       <Filter>src\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GFunctionLibrary.hpp">
+      <Filter>src\EngineCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -12,53 +12,39 @@
 
 /// GumballSide
 #include "dllLoader/dllLoader.hpp"
-#include <filesystem>
-
 
 typedef void (*FnxProject)(void);
-
-struct Project {
+class Project {
+public:
+	DynamicLibrary* dllProject;
 	FnxProject beginPlay;
 	FnxProject endPlay;
 	FnxProject tick;
-	bool validFunctions() {
+
+
+	void attach(DynamicLibrary* newDll) {
+		dllProject = newDll;
+		if (dllProject) {			
+			beginPlay = dllProject->getFunc<FnxProject>("beginPlay");
+			endPlay = dllProject->getFunc<FnxProject>("endPlay");
+			tick = dllProject->getFunc<FnxProject>("tick");
+		}
+	}
+	bool isValid() {
 		return beginPlay && endPlay && tick;
 	}
 };
-
-class ProjectManager {
+class ProjectManager {	
 	DynamicLibraryManager dllManager;
-	DynamicLibrary* dllProject;
-	
-	bool updateReferences() {
-		if (dllProject) {
-			currentProject = {
-				dllProject->getFunc<FnxProject>("beginPlay"),
-				dllProject->getFunc<FnxProject>("endPlay"),
-				dllProject->getFunc<FnxProject>("tick")
-			};
-			return currentProject.validFunctions();
-		}
-		return false;
-	}
 public:
+	bool hasSetup;
+	string projectPath;
 	Project currentProject;
-	void attach(string filePath) {
-		dllManager.load(filePath, "p");
-		dllProject = dllManager["p"];
-		if (dllProject)
-			updateReferences();
-	}
-	void reload() {
-		dllManager.reload(dllProject->name);
-		dllProject = dllManager["p"];
-		if (dllProject)
-			updateReferences();
-		
-	}
-};
 
 
-//std::filesystem::last_write_time
-//Extern Project* instantiateProject();
+	void attach(string filePath); 
+	void load();
+	void tick();	
+};  
+
 #endif // !_script
