@@ -18,12 +18,9 @@ void Engine::setup() {
 	assetManager->pushFactory("shader", new ShaderFactory);
 	assetManager->pushFactory("mesh", new MeshFactory);
 	assetManager->pushFactory("texture", new TextureFactory);
-
-	project.attach("..\\Build\\Debug\\x64\\GumballTest\\GumballTest.dll");
 }
 void Engine::tick() {
-	while (true) {		
-		project.tick();
+	while (true) {
 		objectManager->tick();
 		window->clearBuffer();
 		renderManager->disposeRender();

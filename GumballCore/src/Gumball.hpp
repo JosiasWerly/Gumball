@@ -21,7 +21,6 @@ public:
 	RenderManager *renderManager; //resolve my render pipe....
 	AssetManager *assetManager; //responbile for loading assets, also contais all factories
 	ObjectManager *objectManager;
-	ProjectManager project;
 	
 	Engine();
 	~Engine();

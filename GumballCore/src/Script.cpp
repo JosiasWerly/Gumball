@@ -6,15 +6,14 @@
 
 
 void ProjectManager::attach(string filePath) {
-	projectPath = filePath;	
+	currentProject.dllProject.setup(filePath, "project");
 }
 void ProjectManager::load() {
-	std::filesystem::copy(this->projectPath, "res\\project\\project.dll", std::filesystem::copy_options::recursive);
-	if (dllManager["project"])
+	std::filesystem::copy(currentProject.dllProject.getPath(), "res\\project\\project.dll", std::filesystem::copy_options::recursive);
+	if (currentProject.isValid())
 		currentProject.endPlay();
-	dllManager.free("project");
-	dllManager.load("res\\project\\project.dll", "project");
-	currentProject.attach(dllManager["project"]);
+	currentProject.dllProject.reload();
+	currentProject.bindFunctions();
 	hasSetup = false;
 }
 void ProjectManager::tick() {
@@ -28,6 +27,3 @@ void ProjectManager::tick() {
 		currentProject.tick();
 	}
 }
-
-//
-//Extern Project* instantiateProject();
