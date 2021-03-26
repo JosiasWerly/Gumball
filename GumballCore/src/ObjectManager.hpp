@@ -19,7 +19,6 @@ public:
 	void tick();
 
 };
-
 class gObject {
 	static ObjectManager& objManager;
 protected:

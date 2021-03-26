@@ -2,7 +2,6 @@
 #include "lang.hpp"
 
 
-
 int main() {
 	Engine& engine = Engine::instance();
 	engine.setup();

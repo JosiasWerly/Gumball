@@ -1,10 +1,6 @@
 #include "Window.hpp"
 #include "InputManager.hpp"
 
-
-
-
-
 Window::Window() {
     
 }
