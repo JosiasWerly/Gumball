@@ -3,6 +3,44 @@
 #include <GLFW/glfw3.h>
 
 using namespace std;
+
+unsigned compileShader(unsigned int type, const string& source) {
+	unsigned int id = glCreateShader(type);
+	const char* src = source.c_str();
+	glShaderSource(id, 1, &src, nullptr);
+	glCompileShader(id);
+
+	int result;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE) {
+		int length;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char* message = (char*)alloca(length * sizeof(char));
+		glGetShaderInfoLog(id, length, &length, message);
+		cout << "#Error " 
+			<< (type == GL_VERTEX_SHADER ? "vertex" : "fragment") 
+			<< message <<
+			endl;
+		glDeleteShader(id);
+		return 0;
+	}
+	return id;
+}
+unsigned createShader(const string& vertex, const string& fragment) {
+	auto 
+		vs = compileShader(GL_VERTEX_SHADER, vertex),
+		vf = compileShader(GL_FRAGMENT_SHADER, fragment);	
+	unsigned sProg = glCreateProgram();
+	glAttachShader(sProg, vs);
+	glAttachShader(sProg, vf);
+	glLinkProgram(sProg);
+	glValidateProgram(sProg);
+
+	glDeleteShader(vs);
+	glDeleteShader(vf);
+	return sProg;
+}
+
 int main() {
 	glfwInit();
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -23,6 +61,22 @@ int main() {
 	cout << glGetString(GL_VERSION) << endl;
 	glfwMakeContextCurrent(window);
 	
+	string vs = 
+		"#version 330 core\n"
+		"layout (location = 0) in vec4 pos;\n"
+		"out vec4 vColor;\n"
+		"void main(){\n"
+		"vColor = pos;\n"
+		"gl_Position = pos;\n"
+		"}\n";
+	string vf =
+		"#version 330 core\n"
+		"in vec4 vColor;\n"		
+		"void main(){\n"
+		"gl_FragColor = vColor;\n"
+		"}\n";
+	unsigned sh = createShader(vs, vf);
+	
 	unsigned int i;
 	float pos[6] = {
 		-0.5, -0.5,
@@ -35,6 +89,8 @@ int main() {
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	glUseProgram(sh);
+
 
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
