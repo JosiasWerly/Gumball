@@ -152,6 +152,9 @@
     <ProjectReference Include="..\Dependencies\GLFW\GLFW.vcxproj">
       <Project>{c1212ac0-593b-4aeb-a010-27c4d3718de5}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Glm\Glm.vcxproj">
+      <Project>{dfa4a950-90b6-4427-b5f7-4652ffdde6f3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shaders.hpp" />

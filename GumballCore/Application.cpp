@@ -46,7 +46,7 @@ int main() {
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 	glEnableVertexAttribArray(0);
 
-	
+
 
 	//float pos[] = {
 	//-0.1, -0.1, 0.0,
