@@ -87,8 +87,8 @@ int main() {
 			inline void setBuffer(void* data, unsigned dataSize) {				
 				glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
 			}
-			inline void attribLayout(unsigned attribID, unsigned size, unsigned stride, unsigned type = GL_FLOAT) {
-				glVertexAttribPointer(attribID, size, type, GL_FALSE, stride, 0);
+			inline void attribLayout(unsigned attribID, unsigned size, unsigned stride, unsigned int pointer = 0, unsigned type = GL_FLOAT) {
+				glVertexAttribPointer(attribID, size, type, GL_FALSE, stride, (void*)pointer);
 				glEnableVertexAttribArray(attribID);
 			}
 		};
@@ -117,14 +117,15 @@ int main() {
 			vao.bind();
 			vbo.bind();
 			vbo.setBuffer(
-				new float[12]{
-					0, 0, 0,
-					0.1, 0.0, 0,
-					0.1, 0.1, 0.0,
-					0, 0.1, 0.0
+				new float[16]{
+					0, 0, 0,		0.0,
+					0.1, 0.0, 0,	0.1,
+					0.1, 0.1, 0.0,	0.2,
+					0, 0.1, 0.0,	0.3
 				},
-				12 * sizeof(float));
-			vbo.attribLayout(0, 3, 3 * sizeof(float));
+				16 * sizeof(float));
+			vbo.attribLayout(0, 3, 4 * sizeof(float));
+			vbo.attribLayout(1, 1, 4 * sizeof(float), 3 * sizeof(float));
 			
 
 			ibo.bind();
@@ -145,36 +146,13 @@ int main() {
 		}
 	};
 
-	//unsigned vao;
-	//glGenVertexArrays(1, &vao);
-	//glBindVertexArray(vao);
-	//
-	//
-	//
-	//unsigned vbo;
-	//glGenBuffers(1, &vbo);
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(pos), pos, GL_STATIC_DRAW);
-	//
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-	//glEnableVertexAttribArray(0);
-	//
-	//
-	//unsigned ibo;
-	//glGenBuffers(1, &ibo);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
+
 	Draw d;
 
 	auto sh = shaders["default"];
-	glUseProgram(sh);
-
-
-	
-	glVertexAttrib1f(glGetAttribLocation(sh, "test"), 0.5);
+	glUseProgram(sh);	
+	//glVertexAttrib1f(glGetAttribLocation(sh, "test"), 0.5);
 	glUniform4f(glGetUniformLocation(sh, "color"), 0, 1, 0, 0);
-
-
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -192,3 +170,25 @@ int main() {
 	glfwTerminate();
 	return 0;
 }
+
+
+
+//unsigned vao;
+//glGenVertexArrays(1, &vao);
+//glBindVertexArray(vao);
+//
+//
+//
+//unsigned vbo;
+//glGenBuffers(1, &vbo);
+//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//glBufferData(GL_ARRAY_BUFFER, sizeof(pos), pos, GL_STATIC_DRAW);
+//
+//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+//glEnableVertexAttribArray(0);
+//
+//
+//unsigned ibo;
+//glGenBuffers(1, &ibo);
+//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
