@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Engine.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -10,6 +13,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shaders.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>

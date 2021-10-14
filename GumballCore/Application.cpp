@@ -145,13 +145,19 @@ int main() {
 			glDrawElements(GL_TRIANGLES, ibo.size, GL_UNSIGNED_INT, nullptr);
 		}
 	};
-
-
 	Draw d;
 
+
+	class Draw2{
+	public:
+		inline void draw() {
+
+		}
+	};
+
+
 	auto sh = shaders["default"];
-	glUseProgram(sh);	
-	//glVertexAttrib1f(glGetAttribLocation(sh, "test"), 0.5);
+	glUseProgram(sh);
 	glUniform4f(glGetUniformLocation(sh, "color"), 0, 1, 0, 0);
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
