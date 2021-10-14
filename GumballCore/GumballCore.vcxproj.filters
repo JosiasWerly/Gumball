@@ -4,6 +4,13 @@
     <ClCompile Include="Application.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shaders.hpp" />
+    <Filter Include="scr">
+      <UniqueIdentifier>{a376b295-a0d0-4afe-8dfe-d3bab72c0fff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shaders.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

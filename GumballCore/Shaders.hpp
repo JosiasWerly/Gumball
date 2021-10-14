@@ -44,6 +44,9 @@ static unsigned createShader(const string& vertex, const string& fragment) {
 
 	glDeleteShader(vs);
 	glDeleteShader(vf);
+
+	
+
 	return sProg;
 }
 
