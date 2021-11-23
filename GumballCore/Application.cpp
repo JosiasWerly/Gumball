@@ -3,9 +3,31 @@
 #include <GLFW/glfw3.h>
 
 #include "Shaders.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 int main() {
+	Var<void> v;
+	Var<int> 
+		a = new int(1),
+		b = new int(2),
+		c = new int(3);
+	Var<int> _a = a;
+
+
+	a = b;
+	c = b;
+
+	auto t = a.convertTo<void>();
+	v = t;
+
+
+
+
+
+
+
+
 	glfwInit();
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -155,6 +177,12 @@ int main() {
 		}
 	};
 
+	
+	
+
+
+
+
 
 	auto sh = shaders["default"];
 	glUseProgram(sh);
@@ -174,6 +202,12 @@ int main() {
 	}
 
 	glfwTerminate();
+
+
+
+	
+
+
 	return 0;
 }
 
