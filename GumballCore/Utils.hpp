@@ -9,6 +9,9 @@ struct PtrData{
 
 template<class T>
 class Var{
+	template<class t> friend class Var;
+	template<class t> friend Var<t> &&convertTo();
+
 	PtrData *data = new PtrData;
 	T **ptrCasted = (T **)&data->ptr;
 protected:
@@ -28,6 +31,7 @@ protected:
 		ptrCasted = (T **)&data->ptr;
 		ref();
 	}
+	
 public:
 	~Var() {
 		unRef();
@@ -37,11 +41,16 @@ public:
 		ptrCasted = (T**)&data->ptr;
 		cout << "new: " << &data << endl;
 	}
-	Var(Var &other) {
-		this->operator=(other);
+	Var(const Var &other) {
+		setRef(other.data);
 	}
+	template<class t>Var(const Var<t>&other){
+		setRef(other.data);
+	}
+
+
 	
-	Var& operator=(Var &other) {
+	Var& operator=(const Var &other) {
 		setRef(other.data);
 		return *this;
 	}
@@ -52,9 +61,4 @@ public:
 	T *operator->() { return data->ptr; }
 	operator bool() { return data->ptr;	}
 	bool operator ==(Var &other) { return data == other.data; }
-
-	template<class t> Var<t>& convertTo() {
-		Var<t> out;
-		return out;
-	}
 };
