@@ -1,8 +1,10 @@
 #vert
 #version 330 core
+
 in vec4 pos;
+in float value;
 void main(){
-    gl_Position = pos;
+    gl_Position = pos + value;
 };
 
 
