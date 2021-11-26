@@ -220,6 +220,20 @@ int main() {
 	return 0;
 }
 
+/*
+* Engine class: Modules
+* Asset Factory: shader
+* Windown: Viewport, drawcalls
+* Gameplay: Actor, Component, GarbageCollector
+* UI
+*/
+
+// asset factory
+// widown
+// Gameplay classes: 
+//Actor, Component, GarbageCollector
+// UI
+
 
 
 //unsigned vao;
