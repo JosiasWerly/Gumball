@@ -2,12 +2,13 @@
 #ifndef __utils
 #define __utils
 
+#include <iostream>
+using namespace std;
 
 struct PtrData{
 	void *ptr = nullptr;
 	unsigned int refCounter = 1;
 };
-
 template<class T>
 class Var{
 	template<class t> friend class Var;
@@ -21,7 +22,6 @@ protected:
 	}
 	inline void unRef() {
 		if (--data->refCounter == 0) {
-			cout << "del: " << &data << endl;
 			delete *ptrCasted;
 			delete data;
 		}
@@ -40,7 +40,6 @@ public:
 	Var(T *init = nullptr){
 		data->ptr = init;
 		ptrCasted = (T**)&data->ptr;
-		cout << "new: " << &data << endl;
 	}
 	Var(const Var &other) {
 		setRef(other.data);
@@ -65,6 +64,22 @@ public:
 };
 
 
+template<typename T>
+class Singleton {
+protected:
+	Singleton() {
+	}
+	~Singleton() {
+	}
+	Singleton(Singleton &other) = delete;
+	void operator=(Singleton &other) = delete;
+public:
+	static T &instance() {
+		static T instance;
+		return instance;
+	}
+};
+
 
 
 #include <glad/glad.h>
@@ -81,6 +96,7 @@ pushType(int, GL_INT)
 pushType(float, GL_FLOAT)
 
 
+#undef pushType
 template<int> constexpr unsigned sizeGLToC() = delete;
 #define pushType(GLType, CSize)template<> constexpr unsigned sizeGLToC<GLType>() { return CSize; }
 pushType(GL_FLOAT, 4)

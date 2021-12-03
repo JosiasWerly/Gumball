@@ -1,15 +1,17 @@
-#include <iostream>
+
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Shaders.hpp"
 #include "Utils.hpp"
+#include "AssetManager.hpp"
+#include "Engine.hpp"
 
 using namespace std;
 
 
 
-
+#pragma warning( disable : 4312)
 struct Draw {
 private:
 	struct Ibo {
@@ -103,7 +105,8 @@ private:
 			return *this;
 		}
 		VboLayout &addAttrib(unsigned attribID, unsigned componentSize, unsigned stride, unsigned int pointer = 0, unsigned type = GL_FLOAT, bool glNormalized = false) {
-			glVertexAttribPointer(attribID, componentSize, type, glNormalized, stride, (void *)pointer);
+			
+			glVertexAttribPointer(attribID, componentSize, type, glNormalized, stride, (void*)pointer);
 			glEnableVertexAttribArray(attribID);
 			return *this;
 		}
@@ -162,7 +165,16 @@ public:
 	}
 };
 
+
+
 int main() {
+	auto &engine = Engine::instance();
+	engine.Initialize();
+	
+	//AssetsSystem *asset = engine.getSystem<AssetsSystem>();
+	
+	//engine.OnPlay();
+	
 
 	glfwInit();
 	
