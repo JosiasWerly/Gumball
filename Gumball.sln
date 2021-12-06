@@ -20,7 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glad", "Dependencies\Glad\G
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glm", "Dependencies\Glm\Glm.vcxproj", "{DFA4A950-90B6-4427-B5F7-4652FFDDE6F3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Misc", "Misc\Misc.vcxproj", "{3DF93520-1AD9-4C17-B093-AA09DCA834AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Misc", "Dependencies\Misc\Misc.vcxproj", "{3DF93520-1AD9-4C17-B093-AA09DCA834AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

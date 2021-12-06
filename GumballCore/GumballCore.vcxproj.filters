@@ -8,6 +8,9 @@
     <ClCompile Include="AssetManager.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="Drawable.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -28,6 +31,9 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="EngineSystem.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>
