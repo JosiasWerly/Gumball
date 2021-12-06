@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="std_image">
+      <UniqueIdentifier>{daa669d4-f986-41d1-958b-b45cf266c076}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="objLoader">
+      <UniqueIdentifier>{3c4698b4-d921-4ec8-8ff5-2e6dee14be01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dllLoader">
+      <UniqueIdentifier>{36f0ab5f-ee7f-467e-92b7-f9c0fa29ba91}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Dependencies\Misc\stb_image\stb_image.cpp">
+      <Filter>std_image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\Misc\objLoader\objloader.cpp">
+      <Filter>objLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\Misc\objLoader\vboindexer.cpp">
+      <Filter>objLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\Misc\dllLoader\dllLoader.cpp">
+      <Filter>dllLoader</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Dependencies\Misc\stb_image\stb_image.h">
+      <Filter>std_image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\Misc\objLoader\objloader.hpp">
+      <Filter>objLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\Misc\objLoader\vboindexer.hpp">
+      <Filter>objLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\Misc\dllLoader\dllLoader.hpp">
+      <Filter>dllLoader</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -24,7 +24,6 @@ public:
 	void OnEndplay() override;
 
 	template<class T> T *getSystem();
-
 };
 
 
