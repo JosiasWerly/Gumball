@@ -68,21 +68,50 @@ public:
 		glBindVertexArray(0);
 	}
 };
-
-
 struct Tbo {
-	string filePath;
+protected:
+	char slot = 0;
+	int width = 0, height = 0;
+	unsigned char *memoryBuffer = nullptr;
+public:
 	unsigned id = 0;
-
-
+	Tbo() {
+		glGenTextures(1, &id);
+		glBindTexture(GL_TEXTURE_2D, id);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	virtual ~Tbo() {
+		glDeleteTextures(1, &id);
+	}
+	void setPixel(int x, int y, int color) {
+		int p = ((y * height) + x) * 4;
+		if (!memoryBuffer || p > width * height)
+			return;
+		memoryBuffer[p] = (color >> 24);
+		memoryBuffer[p + 1] = (color >> 16);
+		memoryBuffer[p + 2] = (color >> 8);
+		memoryBuffer[p + 3] = color;
+	}
 	void loadTexture(string path);
-	void bind() {
+	void loadToGPU() {
+		this->bind();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, memoryBuffer);
+		glBindTexture(GL_TEXTURE_2D, id);
+	}
+	void bind() {		
+		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, id);
 	}
 	void unbind() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	inline bool isValid() { return !filePath.empty(); }
+	inline bool isValid() { return memoryBuffer; }
+	inline void setSlot(int newSlot) { slot = newSlot; }	
+	inline int getSlot() { return slot; }
 };
 
 struct VboBuilder {
@@ -139,10 +168,6 @@ public:
 	}
 };
 
-
-
-
-
 class DrawInstance{
 	Vao vao;
 	Vbo vbo;
@@ -155,19 +180,19 @@ public:
 		ibo.bind();
 
 		struct SuperFoo {
-			float x, y, z;
-			float displace;
+			float x, y, z, w;
+			float xv, yv;
 		};
 		SuperFoo data[] = {
-			{0, 0, 0,			0.0},
-			{0.1, 0.0, 0,		0.1},
-			{0.1, 0.1, 0.0,		0.2},
-			{0, 0.1, 0.0,		0.3}
+			{0, 0, 0, 1,				0, 0},
+			{0.5, 0.0, 0, 1,			1, 0},
+			{0.5, 0.5, 0.0, 1,			1, 1},
+			{0, 0.5, 0.0, 1,			0, 1}
 		};
 		VboBuilder()
 			.setBuffer<SuperFoo>(data, 4)
-			.addAttrib<float>(3)
-			.addAttrib<float>(1)
+			.addAttrib<float>(4)
+			.addAttrib<float>(2)
 			.build();
 
 		unsigned IndexBuffer[5]{
@@ -200,39 +225,6 @@ public:
 		glDrawElements(GL_TRIANGLES, ibo.size, GL_UNSIGNED_INT, nullptr);
 	}
 };
-
-
-
-//
-//unsigned int texture1, texture2;
-//// texture 1
-//// ---------
-//glGenTextures(1, &texture1);
-//glBindTexture(GL_TEXTURE_2D, texture1);
-//// set the texture wrapping parameters
-//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//// set texture filtering parameters
-//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//// load image, create texture and generate mipmaps
-//int width, height, nrChannels;
-//stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-//// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-//unsigned char *data = stbi_load(FileSystem::getPath("resources/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
-//if (data)
-//{
-//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-//	glGenerateMipmap(GL_TEXTURE_2D);
-//}
-//else
-//{
-//	std::cout << "Failed to load texture" << std::endl;
-//}
-//stbi_image_free(data);
-
-
-
 
 //unsigned vao;
 //glGenVertexArrays(1, &vao);

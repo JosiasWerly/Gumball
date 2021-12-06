@@ -23,6 +23,7 @@ int main() {
 
 	glfwInit();
 	
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -44,21 +45,23 @@ int main() {
 	loadShaders("res\\");
 
 	
+	Tbo tex;
 	DrawInstance d;
-
-
-
-
+	d.Bind();
+	tex.loadTexture("res\\textures\\logo.png");
+	tex.loadToGPU();
 
 	auto sh = shaders["default"];
 	glUseProgram(sh);
-	glUniform4f(glGetUniformLocation(sh, "color"), 0, 1, 0, 0);
-	glUniform4f(glGetUniformLocation(sh, "color"), 0, 1, 0, 0);
+	glUniform4f(glGetUniformLocation(sh, "u_color"), 1, 1, 1, 0);
+	glUniform1i(glGetUniformLocation(sh, "u_texture"), 0);
 	while (!glfwWindowShouldClose(window)) {
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		d.draw();
 
+		tex.bind();
+		d.draw();
 		//glDrawArrays(GL_TRIANGLES, 0, sizeof(pos));
 		//glDrawElements(GL_TRIANGLES, sizeof(id), GL_UNSIGNED_INT, nullptr);
 
