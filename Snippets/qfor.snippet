@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets  xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>qforrange</Title>
+			<Shortcut>qforrange</Shortcut>
+			<Author>Josias W.</Author>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>it</ID>
+					<Default>it</Default>
+				</Literal>
+				<Literal>
+					<ID>range</ID>
+					<Default>range</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="cpp"><![CDATA[for(unsigned $it$ = 0; $it$<$range$; $it$++){
+				$selected$$end$
+			}]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

@@ -11,6 +11,11 @@ using namespace std;
 
 #pragma warning( disable : 4312)
 
+/*
+* As there is many buffers per VertexArray,
+* perhaps I could think of something to address this pattern
+*/
+
 struct Ibo {
 	unsigned id, size;
 
@@ -63,7 +68,24 @@ public:
 		glBindVertexArray(0);
 	}
 };
-struct VboLayout {
+
+
+struct Tbo {
+	string filePath;
+	unsigned id = 0;
+
+
+	void loadTexture(string path);
+	void bind() {
+		glBindTexture(GL_TEXTURE_2D, id);
+	}
+	void unbind() {
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	inline bool isValid() { return !filePath.empty(); }
+};
+
+struct VboBuilder {
 private:
 	struct EntityData {
 		unsigned
@@ -77,7 +99,7 @@ private:
 	list<EntityData> Entities;
 	unsigned stride = 0;
 public:
-	template<class T>VboLayout &addAttrib(unsigned componentSize, bool glNormalized = false) {
+	template<class T>VboBuilder &addAttrib(unsigned componentSize, bool glNormalized = false) {
 		EntityData newAttribute = {
 				Entities.size(),
 				componentSize,
@@ -91,16 +113,16 @@ public:
 		stride += newAttribute.subBufferSize;
 		return *this;
 	}
-	template<class T>VboLayout &setBuffer(T *buffer, unsigned rows) {
+	template<class T>VboBuilder &setBuffer(T *buffer, unsigned rows) {
 		glBufferData(GL_ARRAY_BUFFER, rows * sizeof(T), buffer, GL_STATIC_DRAW);
 		return *this;
 	}
 
-	VboLayout &setBuffer(void *data, unsigned dataSize) {
+	VboBuilder &setBuffer(void *data, unsigned dataSize) {
 		glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
 		return *this;
 	}
-	VboLayout &addAttrib(unsigned attribID, unsigned componentSize, unsigned stride, unsigned int pointer = 0, unsigned type = GL_FLOAT, bool glNormalized = false) {
+	VboBuilder &addAttrib(unsigned attribID, unsigned componentSize, unsigned stride, unsigned int pointer = 0, unsigned type = GL_FLOAT, bool glNormalized = false) {
 
 		glVertexAttribPointer(attribID, componentSize, type, glNormalized, stride, (void *)pointer);
 		glEnableVertexAttribArray(attribID);
@@ -117,15 +139,20 @@ public:
 	}
 };
 
+
+
+
+
 class DrawInstance{
-public:
 	Vao vao;
 	Vbo vbo;
 	Ibo ibo;
+public:
 
 	DrawInstance() {
 		vao.bind();
 		vbo.bind();
+		ibo.bind();
 
 		struct SuperFoo {
 			float x, y, z;
@@ -137,20 +164,32 @@ public:
 			{0.1, 0.1, 0.0,		0.2},
 			{0, 0.1, 0.0,		0.3}
 		};
-		VboLayout()
+		VboBuilder()
 			.setBuffer<SuperFoo>(data, 4)
 			.addAttrib<float>(3)
 			.addAttrib<float>(1)
 			.build();
 
-
-		ibo.bind();
+		unsigned IndexBuffer[5]{
+			0, 1, 2,
+			2, 3
+		};
 		ibo.setBuffer(
-			new unsigned[5]{
-				0, 1, 2,
-				2, 3
-			},
+			IndexBuffer,
 			5 * sizeof(float));
+
+
+		vao.unBind();
+		vbo.unbind();
+		ibo.unbind();
+	}
+
+	inline void Bind() {
+		vao.bind();
+		vbo.bind();
+		ibo.bind();
+	}
+	inline void Unbind() {
 		vao.unBind();
 		vbo.unbind();
 		ibo.unbind();
@@ -162,4 +201,58 @@ public:
 	}
 };
 
+
+
+//
+//unsigned int texture1, texture2;
+//// texture 1
+//// ---------
+//glGenTextures(1, &texture1);
+//glBindTexture(GL_TEXTURE_2D, texture1);
+//// set the texture wrapping parameters
+//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//// set texture filtering parameters
+//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//// load image, create texture and generate mipmaps
+//int width, height, nrChannels;
+//stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+//// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+//unsigned char *data = stbi_load(FileSystem::getPath("resources/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
+//if (data)
+//{
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+//	glGenerateMipmap(GL_TEXTURE_2D);
+//}
+//else
+//{
+//	std::cout << "Failed to load texture" << std::endl;
+//}
+//stbi_image_free(data);
+
+
+
+
+//unsigned vao;
+//glGenVertexArrays(1, &vao);
+//glBindVertexArray(vao);
+
+
+//unsigned vbo;
+//glGenBuffers(1, &vbo);
+//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//glBufferData(GL_ARRAY_BUFFER, sizeof(pos), pos, GL_STATIC_DRAW);
+//
+//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+//glEnableVertexAttribArray(0);
+
+
+//unsigned ibo;
+//glGenBuffers(1, &ibo);
+//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
+
+
+#pragma warning( default : 4312)
 #endif

@@ -164,6 +164,9 @@
     <ProjectReference Include="..\Dependencies\Glm\Glm.vcxproj">
       <Project>{dfa4a950-90b6-4427-b5f7-4652ffdde6f3}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Misc\Misc.vcxproj">
+      <Project>{3df93520-1ad9-4c17-b093-aa09dca834af}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.hpp" />

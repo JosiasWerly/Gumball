@@ -1,5 +1,6 @@
 #vert
 #version 330 core
+
 in vec4 pos;
 void main(){
     //_color = col;
