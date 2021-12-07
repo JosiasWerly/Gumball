@@ -11,6 +11,9 @@
     <ClCompile Include="Drawable.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">

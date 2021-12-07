@@ -229,8 +229,7 @@ public:
 //unsigned vao;
 //glGenVertexArrays(1, &vao);
 //glBindVertexArray(vao);
-
-
+//
 //unsigned vbo;
 //glGenBuffers(1, &vbo);
 //glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -238,8 +237,7 @@ public:
 //
 //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 //glEnableVertexAttribArray(0);
-
-
+//
 //unsigned ibo;
 //glGenBuffers(1, &ibo);
 //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
