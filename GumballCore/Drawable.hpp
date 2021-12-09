@@ -2,14 +2,12 @@
 #ifndef __drawable
 #define __drawable
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "GLUtils.hpp"
 #include <list>
-#include "Utils.hpp"
 using namespace std;
 
 
-#pragma warning( disable : 4312)
+#pragma warning( disable : 4312 4267 4838)
 
 /*
 * As there is many buffers per VertexArray,
@@ -134,8 +132,7 @@ public:
 				componentSize,
 				componentSize * sizeof(T),
 				Conversors::typeCToGL<T>(),
-				glNormalized,
-
+				glNormalized
 		};
 
 		Entities.push_back(newAttribute);
@@ -226,6 +223,13 @@ public:
 	}
 };
 
+
+
+
+
+
+
+
 //unsigned vao;
 //glGenVertexArrays(1, &vao);
 //glBindVertexArray(vao);
@@ -244,5 +248,5 @@ public:
 //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
 
 
-#pragma warning( default : 4312)
+#pragma warning( default : 4312 4267 4838)
 #endif

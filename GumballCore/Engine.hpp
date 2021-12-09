@@ -1,11 +1,11 @@
 #pragma once
 #ifndef __engine
 #define __engine
-#include <iostream>
-#include "Utils.hpp"
+#include "Patterns.hpp"
 #include "EngineSystem.hpp"
-#include "AssetManager.hpp"
 
+#include <iostream>
+#include <map>
 
 
 
@@ -18,12 +18,10 @@ public:
 	Engine();
 	~Engine();
 
-	void Initialize() override;
-	void Shutdown() override;
-	void OnPlay() override;
-	void OnEndplay() override;
-
-	template<class T> T *getSystem();
+	void initialize() override;
+	void shutdown() override;
+	void onPlay() override;
+	void onEndplay() override;
 };
 
 

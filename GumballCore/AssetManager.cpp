@@ -1,16 +1,32 @@
 #include "AssetManager.hpp"
+#include "FunctionLibrary.hpp"
+
 #include <iostream>
 #include <filesystem>
 
-void AssetsSystem::Initialize() {
+
+bool IAssetFactory::canBuild(const string &filePath) {
+	string extension = Files::getExtOfFilePath(filePath);
+	for (auto &ex : extensions)	{
+		if (ex == extension)
+			return true;
+	}
+	return false;
+}
+
+void AssetsSystem::initialize() {
 
 }
-void AssetsSystem::Shutdown() {
+void AssetsSystem::shutdown() {
 
 }
 void AssetsSystem::loadAsset(const string &assetPath) {
+	Asset *asset = new Asset();
 	if (auto factory = findFactory(assetPath)) {
-		factory->load(assetPath);
+		if (factory->load(assetPath, asset))
+			assets.push_back(asset);
+		else
+			delete asset;
 	}
 }
 void AssetsSystem::loadAllAssets(string root) {

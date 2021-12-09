@@ -7,11 +7,11 @@ public:
 	IEngineSystem() {}
 	virtual ~IEngineSystem() {}
 
-	virtual void Initialize() {}
-	virtual void Shutdown() {}
+	virtual void initialize() {}
+	virtual void shutdown() {}
 
-	virtual void OnPlay() {}
-	virtual void OnEndplay() {}
+	virtual void onPlay() {}
+	virtual void onEndplay() {}
 };
 
 #endif // !__enginesystem

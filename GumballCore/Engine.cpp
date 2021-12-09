@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 #include "AssetManager.hpp"
+
 #include <string>
 using namespace std;
 
@@ -14,27 +15,19 @@ Engine::Engine() {
 Engine::~Engine(){
 
 }
-void Engine::Initialize() {
+void Engine::initialize() {
 	for (auto &kv : Systems)
-		kv.second->Initialize();
+		kv.second->initialize();
 }
-void Engine::Shutdown() {
+void Engine::shutdown() {
 	for (auto &kv : Systems)
-		kv.second->Shutdown();
+		kv.second->shutdown();
 }
-void Engine::OnPlay() {
+void Engine::onPlay() {
 	for (auto &kv : Systems)
-		kv.second->OnPlay();
+		kv.second->onPlay();
 }
-void Engine::OnEndplay() {
+void Engine::onEndplay() {
 	for (auto &kv : Systems)
-		kv.second->OnEndplay();
-}
-
-
-template<class T> T *Engine::getSystem() {
-	string name = getClassName<T>();
-	if (Systems.count(name))
-		return reinterpret_cast<T*>(Systems[name]);
-	return nullptr;
+		kv.second->onEndplay();
 }

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __utils
-#define __utils
+#ifndef __patterns
+#define __patterns
 
 #include <iostream>
 using namespace std;
@@ -80,35 +80,4 @@ public:
 	}
 };
 
-
-////////////////////////////////////////////////////////////////////////////
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include "Shaders.hpp"
-
-namespace Conversors {
-
-	template<class T> constexpr unsigned typeCToGL() = delete;
-	#define pushType(CType, GLType)template<> constexpr unsigned typeCToGL<CType>() { return GLType; }
-	pushType(char *, GL_BYTE)
-	pushType(bool, GL_BOOL)
-	pushType(int, GL_INT)
-	pushType(float, GL_FLOAT)
-	
-	
-	#undef pushType
-	template<int> constexpr unsigned sizeGLToC() = delete;
-	#define pushType(GLType, CSize)template<> constexpr unsigned sizeGLToC<GLType>() { return CSize; }
-	pushType(GL_FLOAT, 4)
-	pushType(GL_INT, 4)
-	pushType(GL_BYTE, 1)
-	#undef pushType
-};
-
-////////////////////////////////////////////////////////////////////////////
-
-string getExtOfFilePath(string path);
-string getNameOfFilePath(string path);
-
-
-#endif // !__utils
+#endif // !__patterns

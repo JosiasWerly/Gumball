@@ -114,6 +114,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,7 +154,9 @@
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="FunctionLibrary.cpp" />
+    <ClCompile Include="GLUtils.cpp" />
+    <ClCompile Include="Patterns.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
@@ -174,8 +177,10 @@
     <ClInclude Include="Drawable.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="EngineSystem.hpp" />
+    <ClInclude Include="FunctionLibrary.hpp" />
+    <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="Shaders.hpp" />
-    <ClInclude Include="Utils.hpp" />
+    <ClInclude Include="Patterns.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -11,7 +11,13 @@
     <ClCompile Include="Drawable.cpp">
       <Filter>scr</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
+    <ClCompile Include="Patterns.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
+    <ClCompile Include="GLUtils.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionLibrary.cpp">
       <Filter>scr</Filter>
     </ClCompile>
   </ItemGroup>
@@ -27,9 +33,6 @@
     <ClInclude Include="Engine.hpp">
       <Filter>scr</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
     <ClInclude Include="AssetManager.hpp">
       <Filter>scr</Filter>
     </ClInclude>
@@ -37,6 +40,15 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="Drawable.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionLibrary.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="GLUtils.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Patterns.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>
