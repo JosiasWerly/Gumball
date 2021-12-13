@@ -16,25 +16,7 @@ public:
 	struct ShaderSource {
 		string vertex, fragment;
 	};
-	static ShaderSource loadShaderCodeFromFile(string filePath) {
-		ifstream fileStream(filePath);
-		string line;
-		ShaderSource out;
-		string outString[2];
-		enum eShaderType {
-			none = -1, vertex, fragment
-		} eShType;
-		while (getline(fileStream, line)) {
-			if (line.find("#vert") != string::npos)
-				eShType = eShaderType::vertex;
-			else if (line.find("#frag") != string::npos)
-				eShType = eShaderType::fragment;
-			else if (line.find("//") == string::npos)
-				outString[eShType] += line + "\n";
-		}
-		return { outString[eShaderType::vertex], outString[eShaderType::fragment] };
-	}
-	static int compileShader(unsigned int ShaderType, const string &code) {
+	static int compile(unsigned int ShaderType, const string &code) {
 		unsigned int id = glCreateShader(ShaderType);
 		const char *src = code.c_str();
 		glDCall(glShaderSource(id, 1, &src, 0));
@@ -53,11 +35,11 @@ public:
 		}
 		return id;
 	}
-	static int buildShader(const string &vertexShader, const string &fragmentShader) {
+	static int build(const string &vertexShader, const string &fragmentShader) {
 		unsigned int
 			p = glCreateProgram(),
-			vs = compileShader(GL_VERTEX_SHADER, vertexShader),
-			fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
+			vs = compile(GL_VERTEX_SHADER, vertexShader),
+			fs = compile(GL_FRAGMENT_SHADER, fragmentShader);
 
 		glAttachShader(p, vs);
 		glAttachShader(p, fs);
@@ -72,10 +54,29 @@ public:
 		glDeleteShader(fs);
 		return p;
 	}
-	static int buildShaderFile(string filePath) {
-		auto shaderCode = loadShaderCodeFromFile(filePath);
-		return buildShader(shaderCode.vertex, shaderCode.fragment);
+	static ShaderSource makeSourceFromArchive(Archive &ar) {
+		ShaderSource out;
+		string outString[2];
+		enum eShaderType {
+			none = -1, vertex, fragment
+		} eShType;
+		
+		string line;
+		while (ar.getLine(line)) {
+			if (line.find("#vert") != string::npos)
+				eShType = eShaderType::vertex;
+			else if (line.find("#frag") != string::npos)
+				eShType = eShaderType::fragment;
+			else if (line.find("//") == string::npos)
+				outString[eShType] += line + "\n";
+		}
+		return { outString[eShaderType::vertex], outString[eShaderType::fragment] };
 	}
+	static int loadFromArchive(Archive &archive) {
+		auto shaderCode = makeSourceFromArchive(archive);
+		return build(shaderCode.vertex, shaderCode.fragment);
+	}
+	
 	static map<string, int *> getActiveUniforms(const unsigned int shaderProgram) {
 		map<string, int *> out;
 		return out;
@@ -105,46 +106,30 @@ public:
 
 
 
-
-class ShaderFactory : public IAssetFactory {
+struct ShaderAsset {
+	int program;
+};
+class ShaderFactory : 
+	public IAssetFactory {
 public:
 	ShaderFactory() : 
 		IAssetFactory("ShaderFactory") {
 		this->extensions = { "shader", "glsl" };
 	}
-	virtual bool load(const string &fileExt, Asset *&Asset) {
-		
+	virtual bool assemble(Asset &asset, Archive &ar) {
+		if (int sh = ShaderFunctionsLibrary::loadFromArchive(ar) > 0) {
+			asset << new int(sh);
+			return true;
+		}
+		return false;
 	}
-	virtual bool unload(const string &fileExt, Asset *&Asset) {
+	virtual bool disassemble(Asset &asset, Archive &ar) {
+		return true;
 	}
 };
+
+
 #endif // !__shaders
-//static void loadShaders(string path) {
-//    namespace fs = std::filesystem;
-//    for (fs::recursive_directory_iterator i(path), end; i != end; ++i) {
-//        if (!is_directory(i->path())) {
-//            if (i->path().extension().string() == ".shader") {
-//                cout << i->path().filename().string() << endl;
-//                ifstream fileStream(i->path());
-//                string outString[2];
-//                string line;
-//
-//                string shaderSrc[2];
-//                enum eShaderType { none = -1, vertex, fragment } eShaderType;
-//                while (getline(fileStream, line)) {
-//                    if (line.find("#vert") != string::npos)
-//                        eShaderType = eShaderType::vertex;
-//                    else if (line.find("#frag") != string::npos)
-//                        eShaderType = eShaderType::fragment;
-//                    else if (line.find("//") == string::npos)
-//                        shaderSrc[eShaderType] += line + "\n";
-//                }
-//                if (unsigned shaderId = buildShader(shaderSrc[eShaderType::vertex], shaderSrc[eShaderType::fragment]))
-//                    shaders.emplace(i->path().filename().string().substr(0, i->path().filename().string().find_last_of(".")), shaderId);
-//            }
-//        }
-//    }
-//}
 
 
 

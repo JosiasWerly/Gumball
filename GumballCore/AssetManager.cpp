@@ -5,7 +5,9 @@
 #include <filesystem>
 
 
-bool IAssetFactory::canBuild(const string &filePath) {
+#include "Shaders.hpp"
+
+bool IAssetFactory::probeFile(const string &filePath) {
 	string extension = Files::getExtOfFilePath(filePath);
 	for (auto &ex : extensions)	{
 		if (ex == extension)
@@ -15,15 +17,16 @@ bool IAssetFactory::canBuild(const string &filePath) {
 }
 
 void AssetsSystem::initialize() {
-
+	factories.push_back(new ShaderFactory);
 }
 void AssetsSystem::shutdown() {
-
 }
 void AssetsSystem::loadAsset(const string &assetPath) {
 	Asset *asset = new Asset();
 	if (auto factory = findFactory(assetPath)) {
-		if (factory->load(assetPath, asset))
+		Archive ar;
+		ar.open(assetPath);
+		if (factory->assemble(*asset, ar))
 			assets.push_back(asset);
 		else
 			delete asset;
@@ -38,7 +41,7 @@ void AssetsSystem::loadAllAssets(string root) {
 }
 IAssetFactory *AssetsSystem::findFactory(const string &ext) {
 	for (auto i : factories) {
-		if (i->canBuild(ext))
+		if (i->probeFile(ext))
 			return i;
 	}
 	return nullptr;
