@@ -22,14 +22,17 @@ void AssetsSystem::initialize() {
 void AssetsSystem::shutdown() {
 }
 void AssetsSystem::loadAsset(const string &assetPath) {
-	Asset *asset = new Asset();
-	if (auto factory = findFactory(assetPath)) {
-		Archive ar;
-		ar.open(assetPath);
-		if (factory->assemble(*asset, ar))
-			assets.push_back(asset);
-		else
-			delete asset;
+	string assetName = Files::getNameOfFilePath(assetPath);
+	if (!this->operator[](assetName)) {
+		if (auto factory = findFactory(assetPath)) {
+			Asset *asset = new Asset(assetName);
+			Archive ar(assetPath);
+			if (factory->assemble(*asset, ar)) {
+				assets.push_back(asset);
+			}
+			else
+				delete asset;
+		}
 	}
 }
 void AssetsSystem::loadAllAssets(string root) {

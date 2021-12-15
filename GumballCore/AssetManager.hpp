@@ -17,29 +17,32 @@ using namespace std;
 
 class IAssetContent {
 public:
+	void * const dataPtr = nullptr;
+	IAssetContent(void *dataPtr) : dataPtr(dataPtr) {}
 };
 template<class T> class TAssetContent : 
 	public IAssetContent{
 public:
-	T *Data;
-	TAssetContent(T *Data) : Data(Data){}
-	~TAssetContent() { delete Data;	}
+	T *data;
+	TAssetContent(T *data) : IAssetContent(data), data(data){}
+	~TAssetContent() { delete data;	}
 };
 class Asset {
 	string filePath;
+	string name;
 	IAssetContent *content = nullptr;
 public:
-	template<class T> void operator>>(T *&out) {
-		if (TAssetContent<T> tContent = dynamic_cast<TAssetContent<T>>(content))
-			out = tContent.Data;
-		out = nullptr;
+	Asset(string name) : name(name) {}
+	template<class T> void operator>>(T *&data) {
+		data = static_cast<T*>(content->dataPtr);
 	}
 	template<class T> void operator<<(T *data) {
 		if (content)
 			delete content;
-		content = new TAssetContent<T>(content);
+		content = new TAssetContent<T>(data);
 	}
-	inline bool isValid() { return content; }
+	Inline bool isValid() { return content; }
+	Inline string getName() { return name; }
 };
 
 //for now this is just "adaptor" for the fstream, but in the future this will become a more autonomous class.
@@ -48,6 +51,9 @@ class Archive{
 	fstream *fs = nullptr;
 public:
 	Archive() {}
+	Archive(string filePath) {
+		open(filePath);
+	}
 	Archive(const Archive &other) {
 		fs = other.fs;
 	}
@@ -67,7 +73,7 @@ public:
 		delete fs;
 	}
 	bool getLine(string &str) {
-		return (Long &&)std::getline(*fs, str) > 0;
+		return (bool)std::getline(*fs, str);
 	}
 	void writeLine(string strg) {
 		*fs << strg + '\n';		
@@ -83,11 +89,11 @@ public:
 	}
 
 
-	__forceinline void setg(Long newPos) { fs->seekg(newPos); }
-	__forceinline void setp(Long newPos) { fs->seekp(newPos); }	
-	__forceinline Long tellg() { return fs->tellg(); }
-	__forceinline Long tellp() { return fs->tellp(); }
-	__forceinline bool isOpen() { return fs->is_open(); }
+	Inline void setg(Long newPos) { fs->seekg(newPos); }
+	Inline void setp(Long newPos) { fs->seekp(newPos); }	
+	Inline Long tellg() { return fs->tellg(); }
+	Inline Long tellp() { return fs->tellp(); }
+	Inline bool isOpen() { return fs->is_open(); }
 };
 
 class IAssetFactory {
@@ -110,10 +116,20 @@ class AssetsSystem :
 
 	list<IAssetFactory*> factories;
 	list<Asset*> assets;
-public:
+protected:
 	virtual void initialize() override;
 	virtual void shutdown() override;
+
+public:
 	
+	Asset *operator[](string name) {
+		for (auto &a : assets) {
+			if (a->getName() == name)
+				return a;
+		}
+		return nullptr;
+	}
+
 	void loadAsset(const string& assetPath);	
 	void loadAllAssets(string root);
 	IAssetFactory *findFactory(const string &ext);

@@ -2,8 +2,12 @@
 #ifndef __enginesystem
 #define __enginesystem
 
+
+class Engine;
 class IEngineSystem {
-public:
+protected:
+	friend Engine;
+
 	IEngineSystem() {}
 	virtual ~IEngineSystem() {}
 

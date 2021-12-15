@@ -104,11 +104,6 @@ public:
 	}*/
 };
 
-
-
-struct ShaderAsset {
-	int program;
-};
 class ShaderFactory : 
 	public IAssetFactory {
 public:

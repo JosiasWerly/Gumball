@@ -51,5 +51,8 @@
     <ClInclude Include="Patterns.hpp">
       <Filter>scr</Filter>
     </ClInclude>
+    <ClInclude Include="Definitions.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

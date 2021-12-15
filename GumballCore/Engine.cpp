@@ -10,7 +10,7 @@ template<class T>string getClassName(){
 }
 
 Engine::Engine() {
-	Systems.emplace(getClassName<AssetsSystem>(), new AssetsSystem);
+	Systems.emplace(getClassName<AssetsSystem>(), &AssetsSystem::instance());
 }
 Engine::~Engine(){
 
