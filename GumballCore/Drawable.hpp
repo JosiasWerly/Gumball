@@ -67,6 +67,7 @@ public:
 	}
 };
 struct Tbo {
+	//https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
 protected:
 	char slot = 0;
 	int width = 0, height = 0;

@@ -6,6 +6,7 @@
 
 
 #include "Shaders.hpp"
+#include "Texture.hpp"
 
 bool IAssetFactory::probeFile(const string &filePath) {
 	string extension = Files::getExtOfFilePath(filePath);
@@ -18,6 +19,7 @@ bool IAssetFactory::probeFile(const string &filePath) {
 
 void AssetsSystem::initialize() {
 	factories.push_back(new ShaderFactory);
+	factories.push_back(new TextureFactory);
 }
 void AssetsSystem::shutdown() {
 }
@@ -30,8 +32,11 @@ void AssetsSystem::loadAsset(const string &assetPath) {
 			if (factory->assemble(*asset, ar)) {
 				assets.push_back(asset);
 			}
-			else
+			else {				
 				delete asset;
+				asset = nullptr;
+			}
+			cout << assetPath << " --- " << (asset ? "ok" : "fail") << endl;
 		}
 	}
 }

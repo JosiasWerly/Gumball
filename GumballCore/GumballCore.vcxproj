@@ -158,6 +158,8 @@
     <ClCompile Include="FunctionLibrary.cpp" />
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Patterns.cpp" />
+    <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
@@ -183,6 +185,7 @@
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="Shaders.hpp" />
     <ClInclude Include="Patterns.hpp" />
+    <ClInclude Include="Texture.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

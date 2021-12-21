@@ -47,20 +47,19 @@ public:
 	template<class t>Var(const Var<t>&other){
 		setRef(other.data);
 	}
-
-
-	
 	Var& operator=(const Var &other) {
 		setRef(other.data);
 		return *this;
 	}
 	
-	unsigned int referenceCount() { return data->refCounter; }
 
 	T *operator*() { return data->ptr; }
 	T *operator->() { return data->ptr; }
-	operator bool() { return data->ptr;	}
-	bool operator ==(Var &other) { return data == other.data; }
+	//T &operator()() { return *static_cast<T*>(*data->ptr); }
+	operator bool() const { return data->ptr;	}
+	bool operator==(const Var &other) const { return data == other.data; }
+	
+	unsigned int referenceCount() const { return data->refCounter; }
 };
 
 

@@ -1,7 +1,9 @@
-#include "Shaders.hpp"
 #include "Engine.hpp"
 #include "AssetManager.hpp"
+
+#include "Shaders.hpp"
 #include "Drawable.hpp"
+#include "Texture.hpp"
 
 using namespace std;
 
@@ -36,18 +38,18 @@ int main() {
 	assetSystem.loadAllAssets("res\\");
 
 
-	Tbo tex;
 	DrawInstance d;
 	d.Bind();
-	tex.loadTexture("res\\textures\\logo.png");
-	tex.loadToGPU();
+	Archive ar("res\\textures\\logo.png");
+	Texture tex;
+	tex.loadTexture(ar);
+	tex.uploadBuffer();
 	
 	int *sh;
 	*assetSystem["default"] >> sh;
-	////auto sh = shaders["default"];
 	glUseProgram(*sh);
-	glUniform4f(glGetUniformLocation(*sh, "u_color"), 1, 1, 1, 0);
-	glUniform1i(glGetUniformLocation(*sh, "u_texture"), 0);
+	glUniform4f(glGetUniformLocation(*sh, "uColor"), 1, 1, 1, 0);
+	glUniform1i(glGetUniformLocation(*sh, "uTexture"), 0);
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -65,7 +67,6 @@ int main() {
 
 /*
 * Engine class: Modules
-* Asset Factory: shader
 * Windown: Viewport, drawcalls
 * Gameplay: Actor, Component, GarbageCollector
 * UI

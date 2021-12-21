@@ -72,8 +72,8 @@ public:
 		}
 		return { outString[eShaderType::vertex], outString[eShaderType::fragment] };
 	}
-	static int loadFromArchive(Archive &archive) {
-		auto shaderCode = makeSourceFromArchive(archive);
+	static int loadFromArchive(Archive &ar) {
+		auto shaderCode = makeSourceFromArchive(ar);
 		return build(shaderCode.vertex, shaderCode.fragment);
 	}
 	

@@ -9,11 +9,7 @@
 #include <fstream>
 using namespace std;
 
-/*this will become async load in some time in the future
-*/
-
-
-
+/*this will become async load in some time in the future*/
 
 class IAssetContent {
 public:
@@ -49,36 +45,60 @@ public:
 class Archive{
 	using Long = long long;
 	fstream *fs = nullptr;
+	string fsPath = "";
 public:
 	Archive() {}
 	Archive(string filePath) {
 		open(filePath);
 	}
+	Archive(const char* filePath) {
+		open(filePath);
+	}
 	Archive(const Archive &other) {
 		fs = other.fs;
 	}
-	Archive &operator=(const Archive &other) = delete;
-	~Archive() {
-		fs->close();
-		delete fs;
+	virtual ~Archive() {
+		close();
 	}
-
+	Archive &operator=(const Archive &other) = delete;
+	Archive &operator=(Archive other) = delete;
 
 	void open(string filePath) {
+		if (fs) {
+			fs->close();
+			delete fs;
+		}
+
 		fs = new fstream();
 		fs->open(filePath, std::fstream::in | std::fstream::out);
-	}
-	void close() {
-		fs->close();
-		delete fs;
-	}
-	bool getLine(string &str) {
-		return (bool)std::getline(*fs, str);
+		
+		if (fs->is_open())
+			fsPath = filePath;
+		else
+			delete fs;
 	}
 	void writeLine(string strg) {
 		*fs << strg + '\n';		
 	}
+	Inline void close() {
+		if (fs) {
+			fs->close();
+			delete fs;
+			fs = nullptr;
+			fsPath = "";
+		}
+	}
+	bool getLine(string &str) {
+		return (bool)std::getline(*fs, str);
+	}
 
+	Inline void setg(Long newPos) const { fs->seekg(newPos); }
+	Inline void setp(Long newPos) const { fs->seekp(newPos); }
+	Inline Long tellg() const { return fs->tellg(); }
+	Inline Long tellp() const { return fs->tellp(); }
+	Inline bool isOpen() const { return fs->is_open(); }
+	Inline const string& filePath() { return fsPath; }
+	
 	template<class T>Archive &operator<<(T &val) {
 		fs.operator<<<T>(val);
 		return *this;
@@ -87,13 +107,13 @@ public:
 		fs.operator>><T>(val);
 		return *this;
 	}
-
-
-	Inline void setg(Long newPos) { fs->seekg(newPos); }
-	Inline void setp(Long newPos) { fs->seekp(newPos); }	
-	Inline Long tellg() { return fs->tellg(); }
-	Inline Long tellp() { return fs->tellp(); }
-	Inline bool isOpen() { return fs->is_open(); }
+	
+	Archive &operator=(const string filePath) {
+		open(filePath);
+	}
+	bool operator==(const Archive &other) const {
+		return (fs && fs == other.fs);
+	}
 };
 
 class IAssetFactory {
@@ -109,7 +129,6 @@ public:
 	virtual bool assemble(Asset &asset, Archive &ar) = 0;
 	virtual bool disassemble(Asset &asset, Archive &ar) = 0;
 };
-
 class AssetsSystem :
 	public IEngineSystem,
 	public Singleton<AssetsSystem> {
@@ -136,31 +155,3 @@ public:
 };
 
 #endif
-
-
-/*
-
-class Asset:
-	setContent(T)
-	T getContent()
-
-	bool load() {
-		fac->load()
-	}
-
-class IAssetFactory:
-	bool assemble(Asset*&, FArchive):
-	bool disassemble(Asset*&, FArchive):
-
-class AssetSystem:
-	loadAssets(string root):
-		for (it; root):
-			if (fac = findFactory):
-				as = new Asset
-				ar = readData(it)
-				if(fac->assemble(as, ar)):
-					assets.add(as)
-				else:
-					delete as
-
-*/
