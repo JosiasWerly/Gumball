@@ -41,7 +41,6 @@ public:
 	Inline string getName() { return name; }
 };
 
-//for now this is just "adaptor" for the fstream, but in the future this will become a more autonomous class.
 class Archive{
 	using Long = long long;
 	fstream *fs = nullptr;
@@ -142,15 +141,21 @@ protected:
 public:
 	
 	Asset *operator[](string name) {
-		for (auto &a : assets) {
+		for (auto a : assets) {
 			if (a->getName() == name)
 				return a;
 		}
 		return nullptr;
 	}
+	template<class T>T* getAssetContent(string name) {
+		T *out = nullptr;
+		if (auto asset = this->operator[](name))
+			*asset >> out;
+		return out;
+	}
 
-	void loadAsset(const string& assetPath);	
-	void loadAllAssets(string root);
+	void loadFile(const string& assetPath);	
+	void loadAllFiles(string root);
 	IAssetFactory *findFactory(const string &ext);
 };
 

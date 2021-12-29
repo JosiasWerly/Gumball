@@ -124,6 +124,18 @@ public:
 };
 
 
+class ShaderParameters {
+public:
+	
+};
+
+class Shader {
+	const int shaderBind = 0;
+public:
+	ShaderParameters parameters;
+
+};
+
 #endif // !__shaders
 
 

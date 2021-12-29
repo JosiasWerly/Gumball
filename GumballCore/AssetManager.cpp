@@ -23,7 +23,7 @@ void AssetsSystem::initialize() {
 }
 void AssetsSystem::shutdown() {
 }
-void AssetsSystem::loadAsset(const string &assetPath) {
+void AssetsSystem::loadFile(const string &assetPath) {
 	string assetName = Files::getNameOfFilePath(assetPath);
 	if (!this->operator[](assetName)) {
 		if (auto factory = findFactory(assetPath)) {
@@ -40,11 +40,11 @@ void AssetsSystem::loadAsset(const string &assetPath) {
 		}
 	}
 }
-void AssetsSystem::loadAllAssets(string root) {
+void AssetsSystem::loadAllFiles(string root) {
 	namespace fs = std::filesystem;
 	for (fs::recursive_directory_iterator i(root), end; i != end; ++i) {
 		if (!is_directory(i->path()))
-			loadAsset(i->path().string());
+			loadFile(i->path().string());
 	}
 }
 IAssetFactory *AssetsSystem::findFactory(const string &ext) {

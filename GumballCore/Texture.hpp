@@ -9,6 +9,12 @@
 using namespace std;
 
 
+
+struct TextureData {
+	int width = 0, height = 0;
+	unsigned char *memoryBuffer = nullptr;
+};
+
 class Texture {
 protected:
 	char slot = 0;
@@ -58,6 +64,8 @@ public:
 	inline void setSlot(int newSlot) { slot = newSlot; }
 	inline int getSlot() { return slot; }
 };
+
+
 
 class TextureFactory : 
 	public IAssetFactory {

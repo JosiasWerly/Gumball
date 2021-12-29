@@ -35,18 +35,18 @@ int main() {
 	engine.onPlay();
 
 	auto &assetSystem = AssetsSystem::instance();
-	assetSystem.loadAllAssets("res\\");
+	assetSystem.loadAllFiles("res\\");
 
+
+	Texture *tex = nullptr;
+	*assetSystem["logo"] >> tex;
 
 	DrawInstance d;
 	d.Bind();
-	Archive ar("res\\textures\\logo.png");
-	Texture tex;
-	tex.loadTexture(ar);
-	tex.uploadBuffer();
 	
 	int *sh;
 	*assetSystem["default"] >> sh;
+
 	glUseProgram(*sh);
 	glUniform4f(glGetUniformLocation(*sh, "uColor"), 1, 1, 1, 0);
 	glUniform1i(glGetUniformLocation(*sh, "uTexture"), 0);
@@ -55,7 +55,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	
-		tex.bind();
+		tex->bind();
 		d.draw();		
 	
 		glfwSwapBuffers(window);
