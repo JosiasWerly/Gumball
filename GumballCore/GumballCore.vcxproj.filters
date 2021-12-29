@@ -63,5 +63,8 @@
     <ClInclude Include="Texture.hpp">
       <Filter>scr</Filter>
     </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

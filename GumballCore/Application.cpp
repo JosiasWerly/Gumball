@@ -4,6 +4,7 @@
 #include "Shaders.hpp"
 #include "Drawable.hpp"
 #include "Texture.hpp"
+#include "Math.hpp"
 
 using namespace std;
 
@@ -38,8 +39,8 @@ int main() {
 	assetSystem.loadAllFiles("res\\");
 
 
-	Texture *tex = nullptr;
-	*assetSystem["logo"] >> tex;
+	Texture tex;
+	tex.setImage("logo");
 
 	DrawInstance d;
 	d.Bind();
@@ -55,7 +56,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	
-		tex->bind();
+		tex.bind();
 		d.draw();		
 	
 		glfwSwapBuffers(window);
@@ -66,7 +67,7 @@ int main() {
 }
 
 /*
-* Engine class: Modules
+* clone assets
 * Windown: Viewport, drawcalls
 * Gameplay: Actor, Component, GarbageCollector
 * UI
@@ -75,7 +76,7 @@ int main() {
 // asset factory
 // widown
 // Gameplay classes: 
-//Actor, Component, GarbageCollector
+// Actor, Component, GarbageCollector
 // UI
 
 

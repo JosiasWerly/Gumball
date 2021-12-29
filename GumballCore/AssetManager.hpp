@@ -147,13 +147,12 @@ public:
 		}
 		return nullptr;
 	}
-	template<class T>T* getAssetContent(string name) {
-		T *out = nullptr;
+	template<class T>bool operator()(string name, T *&target) {
 		if (auto asset = this->operator[](name))
-			*asset >> out;
-		return out;
+			*asset >> target;
+		return target;
 	}
-
+	Asset* createAsset(string name);
 	void loadFile(const string& assetPath);	
 	void loadAllFiles(string root);
 	IAssetFactory *findFactory(const string &ext);

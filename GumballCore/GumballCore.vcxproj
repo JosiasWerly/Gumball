@@ -181,6 +181,7 @@
     <ClInclude Include="Drawable.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="EngineSystem.hpp" />
+    <ClInclude Include="Math.hpp" />
     <ClInclude Include="FunctionLibrary.hpp" />
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="Shaders.hpp" />

@@ -23,6 +23,12 @@ void AssetsSystem::initialize() {
 }
 void AssetsSystem::shutdown() {
 }
+Asset* AssetsSystem::createAsset(string name) {
+	Asset *newAsset = this->operator[](name);
+	if (!newAsset)
+		newAsset = new Asset(name);
+	return newAsset;
+}
 void AssetsSystem::loadFile(const string &assetPath) {
 	string assetName = Files::getNameOfFilePath(assetPath);
 	if (!this->operator[](assetName)) {
