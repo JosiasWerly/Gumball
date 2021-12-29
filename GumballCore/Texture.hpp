@@ -14,16 +14,16 @@ using namespace std;
 class Image {
 	unsigned id = 0;
 	int width = 0, height = 0;
-	unsigned char *memoryBuffer = nullptr;
+	Color *imageBuffer = nullptr;
 public:
 	//code bloat? but is purple beauty! \o/
 	~Image() {
 		destroy();
 	}
-	Inline void create(int width, int height, unsigned char *memoryBuffer) {
+	Inline void create(int width, int height, Color *imageBuffer) {
 		this->width = width;
 		this->height = height;
-		this->memoryBuffer = memoryBuffer;
+		this->imageBuffer = imageBuffer;
 
 		glGenTextures(1, &id);
 		glBindTexture(GL_TEXTURE_2D, id);
@@ -31,7 +31,7 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->memoryBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->imageBuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -41,8 +41,8 @@ public:
 			id = 0;
 			width = 0;
 			height = 0;
-			delete[] memoryBuffer;
-			memoryBuffer = nullptr;
+			delete[] imageBuffer;
+			imageBuffer = nullptr;
 		}
 	}
 	Inline void bind() {
@@ -53,8 +53,8 @@ public:
 	}
 	Inline void uploadBuffer() {
 		glBindTexture(GL_TEXTURE_2D, id);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, memoryBuffer);
-		glBindTexture(GL_TEXTURE_2D, id);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	Inline void downloadBuffer() {
 		throw 1;
@@ -63,22 +63,17 @@ public:
 		return width > 0 || height > 0;
 	}
 
-	void setPixel(unsigned x, unsigned y, int color) {
+	void setPixel(unsigned x, unsigned y, Color color) {
 		const int p = ((y * height) + x) * 4;
 		if (p > width * height)
 			return;
-		memoryBuffer[p] = (color >> 24);
-		memoryBuffer[p + 1] = (color >> 16);
-		memoryBuffer[p + 2] = (color >> 8);
-		memoryBuffer[p + 3] = color;
+		imageBuffer[p] = color;
 	}
-	int getPixel(unsigned x, unsigned y) {
+	Color getPixel(unsigned x, unsigned y) {
 		const int p = ((y * height) + x) * 4;
-		//memoryBuffer[p] = (color >> 24);
-		//memoryBuffer[p + 1] = (color >> 16);
-		//memoryBuffer[p + 2] = (color >> 8);
-		//memoryBuffer[p + 3] = color;
+		return imageBuffer[p];
 	}
+	Color *&getBuffer() { return imageBuffer; }
 };
 
 class Texture {

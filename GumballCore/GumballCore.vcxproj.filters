@@ -26,6 +26,9 @@
     <ClCompile Include="Shaders.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">

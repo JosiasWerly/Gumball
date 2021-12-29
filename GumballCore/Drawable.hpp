@@ -71,7 +71,7 @@ struct Tbo {
 protected:
 	char slot = 0;
 	int width = 0, height = 0;
-	unsigned char *memoryBuffer = nullptr;
+	unsigned char *imageBuffer = nullptr;
 public:
 	unsigned id = 0;
 	Tbo() {
@@ -88,17 +88,17 @@ public:
 	}
 	void setPixel(int x, int y, int color) {
 		int p = ((y * height) + x) * 4;
-		if (!memoryBuffer || p > width * height)
+		if (!imageBuffer || p > width * height)
 			return;
-		memoryBuffer[p] = (color >> 24);
-		memoryBuffer[p + 1] = (color >> 16);
-		memoryBuffer[p + 2] = (color >> 8);
-		memoryBuffer[p + 3] = color;
+		imageBuffer[p] = (color >> 24);
+		imageBuffer[p + 1] = (color >> 16);
+		imageBuffer[p + 2] = (color >> 8);
+		imageBuffer[p + 3] = color;
 	}
 	void loadTexture(string path);
 	void loadToGPU() {
 		this->bind();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, memoryBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
 		glBindTexture(GL_TEXTURE_2D, id);
 	}
 	void bind() {		
@@ -108,7 +108,7 @@ public:
 	void unbind() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	inline bool isValid() { return memoryBuffer; }
+	inline bool isValid() { return imageBuffer; }
 	inline void setSlot(int newSlot) { slot = newSlot; }	
 	inline int getSlot() { return slot; }
 };

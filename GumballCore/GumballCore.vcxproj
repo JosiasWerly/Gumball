@@ -157,6 +157,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FunctionLibrary.cpp" />
     <ClCompile Include="GLUtils.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="Texture.cpp" />
