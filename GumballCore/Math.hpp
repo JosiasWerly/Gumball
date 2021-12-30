@@ -167,7 +167,7 @@ public:
 
 	Vector2i() = default;
 	Vector2i(int x, int y) :
-		TParent(TVec(x, y, z)) {
+		TParent(TVec(x, y)) {
 	}
 	Vector2i(TParent && init) :
 		TParent(init) {
