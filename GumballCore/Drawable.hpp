@@ -15,7 +15,7 @@ using namespace std;
 */
 
 struct Ibo {
-	unsigned id, size;
+	unsigned id = 0, size = 0;
 
 	Ibo() {
 		glGenBuffers(1, &id);
@@ -112,7 +112,6 @@ public:
 	inline void setSlot(int newSlot) { slot = newSlot; }	
 	inline int getSlot() { return slot; }
 };
-
 struct VboBuilder {
 private:
 	struct EntityData {

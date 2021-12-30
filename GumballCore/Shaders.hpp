@@ -76,10 +76,16 @@ public:
 		auto shaderCode = makeSourceFromArchive(ar);
 		return build(shaderCode.vertex, shaderCode.fragment);
 	}
-	
-	static map<string, int *> getActiveUniforms(const unsigned int shaderProgram) {
-		map<string, int *> out;
-		return out;
+	static void getActiveUniforms(int shaderProgram) {
+		int uniformsSize = 0;
+		glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &uniformsSize);
+
+
+		for (size_t i = 0; i < uniformsSize; i++) {
+			unsigned type;
+			char uName[32] = {0};
+			glGetActiveUniform(shaderProgram, i, 32, nullptr, nullptr, &type, uName);
+		}
 	}
 	/*static iParamStorage *reflectGLEnum(GLenum type) {
 		iParamStorage *out = 0;
@@ -111,29 +117,28 @@ public:
 		IAssetFactory("ShaderFactory") {
 		this->extensions = { "shader", "glsl" };
 	}
-	virtual bool assemble(Asset &asset, Archive &ar) {
-		if (int sh = ShaderFunctionsLibrary::loadFromArchive(ar) > 0) {
-			asset << new int(sh);
-			return true;
-		}
-		return false;
-	}
+	virtual bool assemble(Asset &asset, Archive &ar);
 	virtual bool disassemble(Asset &asset, Archive &ar) {
 		return true;
 	}
 };
 
 
-class ShaderParameters {
-public:
-	
+struct ShaderParam {
+	string name;
+	unsigned type;
+	unsigned id;
 };
 
 class Shader {
+public:
+	unsigned shaderId;
+	map<string, ShaderParam> uniforms, attributes;
+};
+
+class Material {
 	const int shaderBind = 0;
 public:
-	ShaderParameters parameters;
-
 };
 
 #endif // !__shaders
