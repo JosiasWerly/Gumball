@@ -8,107 +8,7 @@
 #include <sstream>
 #include <map>
 using namespace std;
-
-
-class ShaderFunctionsLibrary {
-	ShaderFunctionsLibrary(const ShaderFunctionsLibrary &) = delete;
-public:
-	struct ShaderSource {
-		string vertex, fragment;
-	};
-	static int compile(unsigned int ShaderType, const string &code) {
-		unsigned int id = glCreateShader(ShaderType);
-		const char *src = code.c_str();
-		glDCall(glShaderSource(id, 1, &src, 0));
-		glDCall(glCompileShader(id));
-
-		int result;
-		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-		if (result == GL_FALSE) {
-			int length;
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-			char *msg = (char *)alloca(length * sizeof(char));
-			glGetShaderInfoLog(id, length, &length, msg);
-
-			cout << (ShaderType == GL_VERTEX_SHADER ? "vert" : "frag") << msg << endl;
-			return 0;
-		}
-		return id;
-	}
-	static int build(const string &vertexShader, const string &fragmentShader) {
-		unsigned int
-			p = glCreateProgram(),
-			vs = compile(GL_VERTEX_SHADER, vertexShader),
-			fs = compile(GL_FRAGMENT_SHADER, fragmentShader);
-
-		glAttachShader(p, vs);
-		glAttachShader(p, fs);
-		glLinkProgram(p);
-		glValidateProgram(p);
-
-		int valid;
-		glGetProgramiv(p, GL_LINK_STATUS, &valid);
-		if (!valid)
-			cout << "program shader error" << endl;
-		glDeleteShader(vs);
-		glDeleteShader(fs);
-		return p;
-	}
-	static ShaderSource makeSourceFromArchive(Archive &ar) {
-		ShaderSource out;
-		string outString[2];
-		enum eShaderType {
-			none = -1, vertex, fragment
-		} eShType;
-		
-		string line;
-		while (ar.getLine(line)) {
-			if (line.find("#vert") != string::npos)
-				eShType = eShaderType::vertex;
-			else if (line.find("#frag") != string::npos)
-				eShType = eShaderType::fragment;
-			else if (line.find("//") == string::npos)
-				outString[eShType] += line + "\n";
-		}
-		return { outString[eShaderType::vertex], outString[eShaderType::fragment] };
-	}
-	static int loadFromArchive(Archive &ar) {
-		auto shaderCode = makeSourceFromArchive(ar);
-		return build(shaderCode.vertex, shaderCode.fragment);
-	}
-	static void getActiveUniforms(int shaderProgram) {
-		int uniformsSize = 0;
-		glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &uniformsSize);
-
-
-		for (size_t i = 0; i < uniformsSize; i++) {
-			unsigned type;
-			char uName[32] = {0};
-			glGetActiveUniform(shaderProgram, i, 32, nullptr, nullptr, &type, uName);
-		}
-	}
-	/*static iParamStorage *reflectGLEnum(GLenum type) {
-		iParamStorage *out = 0;
-		switch (type) {
-		case GL_FLOAT:          out = new Uniform<float>;       break;
-		case GL_INT:            out = new Uniform<int>;         break;
-		case GL_SAMPLER_2D:     out = new Uniform<int>;         break;
-
-
-		case GL_FLOAT_VEC2:     out = new Uniform<glm::fvec2>;      break;
-		case GL_FLOAT_VEC3:     out = new Uniform<glm::fvec3>;      break;
-		case GL_FLOAT_VEC4:     out = new Uniform<glm::fvec4>;      break;
-		case GL_INT_VEC4:       out = new Uniform<glm::ivec4>;      break;
-		case GL_INT_VEC3:       out = new Uniform<glm::ivec3>;      break;
-		case GL_INT_VEC2:       out = new Uniform<glm::ivec2>;      break;
-		case GL_FLOAT_MAT4:     out = new Uniform<glm::mat4>;       break;
-		default:
-			cout << "reflectGLEnumError" << endl;
-			throw;
-		}
-		return out;
-	}*/
-};
+class Shader;
 
 class ShaderFactory : 
 	public IAssetFactory {
@@ -121,30 +21,95 @@ public:
 	virtual bool disassemble(Asset &asset, Archive &ar) {
 		return true;
 	}
+
+	Inline void makeSourceFromArchive(Archive& ar, string &vertexCode, string &fragmentCode) {
+		string outString[2];
+		enum ESType{
+			none = -1, vertex, fragment
+		} shType;
+		string line;
+		while (ar.getLine(line)) {
+			if (line.find("#vert") != string::npos)
+				shType = ESType::vertex;
+			else if (line.find("#frag") != string::npos)
+				shType = ESType::fragment;
+			else if (line.find("//") == string::npos)
+				outString[static_cast<int>(shType)] += line + "\n";
+		}
+		vertexCode = outString[ESType::vertex];
+		fragmentCode = outString[ESType::fragment];
+	}
 };
 
 
-struct ShaderParam {
-	string name;
-	unsigned type;
-	unsigned id;
+
+
+
+class ShaderParamData {
+public:
+	const unsigned location;
+	const unsigned type;
 };
+class ShaderParamFunctionoid {
+public:
+	virtual void upload() = 0;
+};
+class ShaderParam {
+	virtual void upload() = 0;
+};
+class ShaderParameters{
+private:
+	ShaderParamBind* newShaderBind(unsigned type);
+	Inline void clearUniform();
+public:
+	const Shader& owner;
+	map<string, ShaderParam> uniforms;
+	ShaderParameters(const Shader& owner) :
+		owner(owner) {
+
+	}
+	Inline void updateUniforms();
+
+};
+
 
 class Shader {
 public:
-	unsigned shaderId;
-	map<string, ShaderParam> uniforms, attributes;
+	enum class EShaderType {
+		Vertex = GL_VERTEX_SHADER,
+		Fragment = GL_FRAGMENT_SHADER
+	};
+
+	unsigned shaderId = 0;
+	ShaderParameters parameters;
+	
+	Shader() : 
+		parameters(*this) {}
+	bool create(const string &vertex, const string &fragment);
+	bool compile(EShaderType eShaderType, const string& code, int& id);
+
+	inline void bind(){
+		glUseProgram(shaderId);
+	}
+	inline void unBind() {
+		glUseProgram(0);
+	}
 };
 
 class Material {
-	const int shaderBind = 0;
+	Shader* shader = nullptr;
 public:
+
+	bool setShader(string name) {
+		Shader* sh = nullptr;
+		if (AssetsSystem::instance()(name, sh))
+			shader = sh;
+		return shader;
+	}
+	bool isInstance() { return false; }
 };
 
 #endif // !__shaders
-
-
-
 
 //#shader vertex
 //#version 330 core

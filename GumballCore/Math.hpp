@@ -164,7 +164,7 @@ public:
 	using TParent::TParent;
 	int	&x = rawVector.x,
 		&y = rawVector.y;
-
+	
 	Vector2i() = default;
 	Vector2i(int x, int y) :
 		TParent(TVec(x, y)) {
