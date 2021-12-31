@@ -43,23 +43,20 @@ int main() {
 
 	Material m;
 	m.setShader("default");
+	m.setParameter<int>("uTexture", 0);
+	m.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 
 	DrawInstance d;
-	d.Bind();
+	d.bind();
 	
-	//int *sh;
-	//*assetSystem["default"] >> sh;
-
-	//glUseProgram(*sh);
-	//glUniform4f(glGetUniformLocation(*sh, "uColor"), 1, 1, 1, 0);
-	//glUniform1i(glGetUniformLocation(*sh, "uTexture"), 0);
+	
+	m.use();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	
 		tex.bind();
-		d.draw();		
+		d.draw();
 	
 		glfwSwapBuffers(window);
 		glfwPollEvents();

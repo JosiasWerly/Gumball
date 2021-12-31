@@ -1,7 +1,7 @@
 #include "Shaders.hpp"
 #include "Math.hpp"
 
-bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
+bool ShaderFactory::assemble(Asset& asset, Archive& ar) {
 	string vertex, fragment;
 	makeSourceFromArchive(ar, vertex, fragment);
 	Shader* shader = new Shader;
@@ -13,106 +13,103 @@ bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 	return false;
 }
 
-template<class T> 
-class Uniform : 
-	public ShaderParamBind {
-public:
-	using ShaderParamBind::upload;
-	Uniform() = delete;
+
+
+template<typename T>
+class UniformIO :
+	public IShaderParamIO {
+	using IShaderParamIO::upload;
+	using IShaderParamIO::getData;
 };
 
-#define UniformDecl(Type, Exp)\
-template<> class Uniform<Type> : public ShaderParamBind {\
-    public:\
-    Type data = Type();\
-    void upload() override { Exp; }\
-	Uniform(){}
-};
+//specific case
+#define UniformIODelc(Type, Expression) \
+template<> class UniformIO<Type> : public IShaderParamIO { \
+public: \
+	Type value = Type(); \
+	using IShaderParamIO::IShaderParamIO; \
+	void upload() override { Expression; } \
+	void* getData() override { return &value; } \
+}; 
 
-UniformDecl(int, glUniform1iv(location, 1, &data));
-UniformDecl(float, glUniform1fv(location, 1, &data));
-UniformDecl(glm::mat4, glUniformMatrix4fv(location, 1, GL_FALSE, &data[0][0]));
-UniformDecl(glm::fvec2, glUniform2fv(location, 1, glm::value_ptr(data)));
-UniformDecl(glm::fvec3, glUniform3fv(location, 1, glm::value_ptr(data)));
-UniformDecl(glm::fvec4, glUniform4fv(location, 1, glm::value_ptr(data)));
-UniformDecl(glm::ivec2, glUniform2iv(location, 1, glm::value_ptr(data)));
-UniformDecl(glm::ivec3, glUniform3iv(location, 1, glm::value_ptr(data)));
-UniformDecl(glm::ivec4, glUniform4iv(location, 1, glm::value_ptr(data)));
-#undef UniformDecl
+UniformIODelc(int, glUniform1iv(owner.location, 1, &value))
+UniformIODelc(float, glUniform1fv(owner.location, 1, &value));
+UniformIODelc(glm::mat4, glUniformMatrix4fv(owner.location, 1, GL_FALSE, &value[0][0]));
+UniformIODelc(glm::fvec2, glUniform2fv(owner.location, 1, glm::value_ptr(value)));
+UniformIODelc(glm::fvec3, glUniform3fv(owner.location, 1, glm::value_ptr(value)));
+UniformIODelc(glm::fvec4, glUniform4fv(owner.location, 1, glm::value_ptr(value)));
+UniformIODelc(glm::ivec2, glUniform2iv(owner.location, 1, glm::value_ptr(value)));
+UniformIODelc(glm::ivec3, glUniform3iv(owner.location, 1, glm::value_ptr(value)));
+UniformIODelc(glm::ivec4, glUniform4iv(owner.location, 1, glm::value_ptr(value)));
 
-static iParamStorage* reflectGLEnum(GLenum type) {
-	
+
+ShaderParam::ShaderParam(unsigned location, unsigned type) :
+	location(location),
+	type(type) {
+
+	switch (type) {
+	case GL_INT:            paramIO = new UniformIO<int>(*this); break;
+	case GL_FLOAT:          paramIO = new UniformIO<float>(*this); break;
+	case GL_SAMPLER_2D:     paramIO = new UniformIO<int>(*this); break;
+	case GL_FLOAT_VEC2:     paramIO = new UniformIO<glm::fvec2>(*this); break;
+	case GL_FLOAT_VEC3:     paramIO = new UniformIO<glm::fvec3>(*this); break;
+	case GL_FLOAT_VEC4:     paramIO = new UniformIO<glm::fvec4>(*this); break;
+	case GL_INT_VEC4:       paramIO = new UniformIO<glm::ivec4>(*this); break;
+	case GL_INT_VEC3:       paramIO = new UniformIO<glm::ivec3>(*this); break;
+	case GL_INT_VEC2:       paramIO = new UniformIO<glm::ivec2>(*this); break;
+	case GL_FLOAT_MAT4:     paramIO = new UniformIO<glm::mat4>(*this); break;
+	default: throw; //not found;
+	}
+}
+ShaderParam::~ShaderParam() {
+	delete paramIO;
 }
 
-void ShaderParameters::updateUniforms() {
+void ShaderParameters::clearUniforms() {
+	for (auto& u : uniforms)
+		delete u.second;
 	uniforms.clear();
+}
+void ShaderParameters::captureUniforms() {
+	clearUniforms();
 	int uniformsSize = 0;
 	glGetProgramiv(owner.shaderId, GL_ACTIVE_UNIFORMS, &uniformsSize);
 	for (int i = 0; i < uniformsSize; i++) {
 		unsigned type;
+		int len, size;
 		char name[32] = "";
-		glGetActiveUniform(owner.shaderId, i, 32, nullptr, nullptr, &type, name);
-		uniforms.emplace(name, ShaderParamBind(i, type));
+		glGetActiveUniform(owner.shaderId, i, 32, &len, &size, &type, name);
+		uniforms[name] = new ShaderParam(i, type);
 	}
 }
-ShaderParamBind* ShaderParameters::newShaderBind(unsigned type) {
-	switch (type) {
-	case GL_FLOAT:          return new Uniform<float>;
-	case GL_INT:            return new Uniform<int>;
-	case GL_SAMPLER_2D:     return new Uniform<int>;
-	case GL_FLOAT_VEC2:     return new Uniform<glm::fvec2>;
-	case GL_FLOAT_VEC3:     return new Uniform<glm::fvec3>;
-	case GL_FLOAT_VEC4:     return new Uniform<glm::fvec4>;
-	case GL_INT_VEC4:       return new Uniform<glm::ivec4>;
-	case GL_INT_VEC3:       return new Uniform<glm::ivec3>;
-	case GL_INT_VEC2:       return new Uniform<glm::ivec2>;
-	case GL_FLOAT_MAT4:     return new Uniform<glm::mat4>; 
-	default:
-		cout << "reflectGLEnumError" << endl;
-		throw;
-	}
-	return out;
+void ShaderParameters::uploadUniforms() {
+	for (auto& u : uniforms)
+		u.second->paramIO->upload();
 }
-void ShaderParameters::clearUniform() {
-
-}
-//void ShaderParameters::updateAttributes() {
-//	attributes.clear();
-//	int uniformsSize = 0;
-//	glGetProgramiv(owner.shaderId, GL_ACTIVE_ATTRIBUTES, &uniformsSize);
-//	for (int i = 0; i < uniformsSize; i++) {
-//		unsigned type;
-//		char name[32] = "";
-//		glGetActiveAttrib(owner.shaderId, i, 32, nullptr, nullptr, &type, name);
-//		attributes.emplace(name, ShaderParamBind(i, type));
-//	}
-//}
 
 bool Shader::create(const string& vertex, const string& fragment) {
-	int	p = glCreateProgram(),
-		vs, fs;
+	shaderId = glCreateProgram();
+	int	vs, fs;
 
 	if (!compile(EShaderType::Vertex, vertex, vs))
 		return false;
 	if (!compile(EShaderType::Fragment, fragment, fs))
 		return false;
 
-	glAttachShader(p, vs);
-	glAttachShader(p, fs);
-	glLinkProgram(p);
-	glValidateProgram(p);
+	glAttachShader(shaderId, vs);
+	glAttachShader(shaderId, fs);
+	glLinkProgram(shaderId);
+	glValidateProgram(shaderId);
 
 	int valid;
-	glGetProgramiv(p, GL_LINK_STATUS, &valid);
+	glGetProgramiv(shaderId, GL_LINK_STATUS, &valid);
 	if (!valid) {
 		cout << "program shader error" << endl;
 		return false;
 	}
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-
-	updateUniforms();
-	updateAttributes();
+	parameters.captureUniforms();
 	return true;
 }
 bool Shader::compile(EShaderType eShaderType, const string& code, int& id) {

@@ -170,7 +170,6 @@ class DrawInstance{
 	Vbo vbo;
 	Ibo ibo;
 public:
-
 	DrawInstance() {
 		vao.bind();
 		vbo.bind();
@@ -206,17 +205,16 @@ public:
 		ibo.unbind();
 	}
 
-	inline void Bind() {
+	inline void bind() {
 		vao.bind();
 		vbo.bind();
 		ibo.bind();
 	}
-	inline void Unbind() {
+	inline void unbind() {
 		vao.unBind();
 		vbo.unbind();
 		ibo.unbind();
 	}
-
 	inline void draw() {
 		vao.bind();
 		glDrawElements(GL_TRIANGLES, ibo.size, GL_UNSIGNED_INT, nullptr);

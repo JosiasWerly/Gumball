@@ -8,6 +8,9 @@
 #include <sstream>
 #include <map>
 using namespace std;
+
+class ShaderParam;
+class IShaderParamIO;
 class Shader;
 
 class ShaderFactory : 
@@ -42,36 +45,46 @@ public:
 };
 
 
-
-
-
-class ShaderParamData {
+class IShaderParamIO {
+public:
+	const ShaderParam& owner;
+	IShaderParamIO(const ShaderParam& owner) : 
+		owner(owner) {
+	};
+	virtual void upload() = 0;
+	virtual void* getData() = 0;
+};
+class ShaderParam {	
 public:
 	const unsigned location;
 	const unsigned type;
-};
-class ShaderParamFunctionoid {
-public:
-	virtual void upload() = 0;
-};
-class ShaderParam {
-	virtual void upload() = 0;
+	IShaderParamIO* paramIO;
+
+	ShaderParam(unsigned location, unsigned type);
+	~ShaderParam();
 };
 class ShaderParameters{
-private:
-	ShaderParamBind* newShaderBind(unsigned type);
-	Inline void clearUniform();
 public:
 	const Shader& owner;
-	map<string, ShaderParam> uniforms;
+	map<string, ShaderParam*> uniforms;
+
 	ShaderParameters(const Shader& owner) :
-		owner(owner) {
-
+		owner(owner) {}
+	~ShaderParameters() {
+		clearUniforms();
 	}
-	Inline void updateUniforms();
+	void clearUniforms();
+	void captureUniforms();
+	void uploadUniforms();
 
+	template<class T> 
+	T* getParamValue(string name) {
+		if (uniforms.contains(name)) {
+			return reinterpret_cast<T*>(uniforms[name]->paramIO->getData());
+		}
+		return nullptr;
+	}
 };
-
 
 class Shader {
 public:
@@ -88,18 +101,33 @@ public:
 	bool create(const string &vertex, const string &fragment);
 	bool compile(EShaderType eShaderType, const string& code, int& id);
 
-	inline void bind(){
-		glUseProgram(shaderId);
+	Inline void bind() {
+		glUseProgram(shaderId);		
 	}
-	inline void unBind() {
+	Inline void unBind() const {
 		glUseProgram(0);
+	}
+	Inline void uploadUniforms() {
+		parameters.uploadUniforms();
 	}
 };
 
 class Material {
 	Shader* shader = nullptr;
 public:
-
+	template<class T> 
+	void setParameter(string name, T value) {
+		if (shader) {
+			shader->parameters.getParamValue<T>(name);
+			if (T* param = shader->parameters.getParamValue<T>(name))
+				*param = value;
+		}
+	}
+	void use() {
+		shader->bind();
+		shader->uploadUniforms();
+		
+	}
 	bool setShader(string name) {
 		Shader* sh = nullptr;
 		if (AssetsSystem::instance()(name, sh))
@@ -107,7 +135,10 @@ public:
 		return shader;
 	}
 	bool isInstance() { return false; }
+	
 };
+
+
 
 #endif // !__shaders
 
