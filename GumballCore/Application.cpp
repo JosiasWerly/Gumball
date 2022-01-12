@@ -5,63 +5,32 @@
 #include "Drawable.hpp"
 #include "Texture.hpp"
 #include "Math.hpp"
+#include "RenderSystem.hpp"
+#include "GameSystem.hpp"
+#include "Event.hpp"
 
 using namespace std;
 
-int main() {
-	glfwInit();
-	
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-	if (window == NULL) {
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-	cout << glGetString(GL_VERSION) << endl;
-	glfwMakeContextCurrent(window);
 
-	
+
+int main() {	
 	auto &engine = Engine::instance();
 	engine.initialize();
-	engine.onPlay();
 
+	auto &renderSystem = RenderSystem::instance();
 	auto &assetSystem = AssetsSystem::instance();
 	assetSystem.loadAllFiles("res\\");
-
-
-	Texture tex;
-	tex.setImage("logo");
-
-	Material m;
-	m.setShader("default");
-	m.setParameter<int>("uTexture", 0);
-	m.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
+	
 
 	DrawInstance d;
-	d.bind();
-	
-	
-	m.use();
-	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-		tex.bind();
-		d.draw();
-	
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+	renderSystem.drawInstances.push_back(&d);
+	engine.onPlay();
+
+	while (1) {	
+		renderSystem.tick();
 	}
-	glfwTerminate();
+	engine.shutdown();
 	return 0;
 }
 
@@ -79,4 +48,27 @@ int main() {
 // UI
 
 
+//!glfwWindowShouldClose(window)
 
+
+
+
+	//glfwInit();
+	//
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//
+	//GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+	//if (window == NULL) {
+	//	std::cout << "Failed to create GLFW window" << std::endl;
+	//	glfwTerminate();
+	//	return -1;
+	//}
+	//glfwMakeContextCurrent(window);
+	//if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+	//	std::cout << "Failed to initialize GLAD" << std::endl;
+	//	return -1;
+	//}
+	//cout << glGetString(GL_VERSION) << endl;
+	//glfwMakeContextCurrent(window);

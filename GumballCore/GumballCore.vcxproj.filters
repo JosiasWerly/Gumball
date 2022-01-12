@@ -29,6 +29,12 @@
     <ClCompile Include="Math.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystem.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -69,9 +75,17 @@
     <ClInclude Include="Math.hpp">
       <Filter>scr</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="cpp.hint" />
+    <ClInclude Include="Transform.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystem.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -17,3 +17,4 @@ void Tbo::loadTexture(string path) {
 	}
 	unbind();
 }
+

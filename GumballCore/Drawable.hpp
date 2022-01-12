@@ -3,16 +3,13 @@
 #define __drawable
 
 #include "GLUtils.hpp"
+#include "Shaders.hpp"
+#include "Texture.hpp"
 #include <list>
 using namespace std;
 
 
 #pragma warning( disable : 4312 4267 4838)
-
-/*
-* As there is many buffers per VertexArray,
-* perhaps I could think of something to address this pattern
-*/
 
 struct Ibo {
 	unsigned id = 0, size = 0;
@@ -165,15 +162,24 @@ public:
 	}
 };
 
-class DrawInstance{
+class DrawInstance {
 	Vao vao;
 	Vbo vbo;
 	Ibo ibo;
+
+	Material material;
+	Texture texture;
 public:
 	DrawInstance() {
 		vao.bind();
 		vbo.bind();
 		ibo.bind();
+
+		texture.setImage("logo");
+
+		material.setShader("default");
+		material.setParameter<int>("uTexture", 0);
+		material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 
 		struct SuperFoo {
 			float x, y, z, w;
@@ -216,17 +222,12 @@ public:
 		ibo.unbind();
 	}
 	inline void draw() {
+		material.use();
+		texture.bind();
 		vao.bind();
 		glDrawElements(GL_TRIANGLES, ibo.size, GL_UNSIGNED_INT, nullptr);
 	}
 };
-
-
-
-
-
-
-
 
 //unsigned vao;
 //glGenVertexArrays(1, &vao);

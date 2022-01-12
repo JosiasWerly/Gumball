@@ -8,14 +8,16 @@ class IEngineSystem {
 protected:
 	friend Engine;
 
-	IEngineSystem() {}
-	virtual ~IEngineSystem() {}
+	IEngineSystem() { }
+	virtual ~IEngineSystem() { }
 
 	virtual void initialize() {}
 	virtual void shutdown() {}
+	virtual void tick() {}
 
 	virtual void onPlay() {}
 	virtual void onEndplay() {}
+
 };
 
 #endif // !__enginesystem

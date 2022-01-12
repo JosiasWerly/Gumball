@@ -156,11 +156,13 @@
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="FunctionLibrary.cpp" />
+    <ClCompile Include="GameSystem.cpp" />
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
@@ -182,16 +184,16 @@
     <ClInclude Include="Drawable.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="EngineSystem.hpp" />
+    <ClInclude Include="Event.hpp" />
+    <ClInclude Include="GameSystem.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="FunctionLibrary.hpp" />
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="Shaders.hpp" />
     <ClInclude Include="Patterns.hpp" />
     <ClInclude Include="Texture.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="cpp.hint" />
+    <ClInclude Include="Transform.hpp" />
+    <ClInclude Include="RenderSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
