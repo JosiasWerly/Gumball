@@ -32,9 +32,6 @@ public:
     }
 };
 
-
-
-
 class Window {
     MSCounter msCounter;
     GLFWwindow* window = nullptr;
@@ -51,10 +48,17 @@ public:
     GLFWwindow* getWindowReference();
 };
 
+struct DrawOrder {
+    Material material;
+    list<DrawInstance*> drawInstances;
+};
+
 class RenderSystem :
     public IEngineSystem,
     public Singleton<RenderSystem> {
 
+
+    
 public:
     list<DrawInstance*> drawInstances;
     Window mainWindow;

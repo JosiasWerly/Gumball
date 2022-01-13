@@ -6,11 +6,18 @@
 #include "Texture.hpp"
 #include "Math.hpp"
 #include "RenderSystem.hpp"
-#include "GameSystem.hpp"
 #include "Event.hpp"
 
 using namespace std;
 
+
+
+/*
+* GarbageCollector
+*	newObject
+*	destroyObject
+*	getObject
+*/
 
 
 
@@ -33,6 +40,11 @@ int main() {
 	engine.shutdown();
 	return 0;
 }
+
+
+
+
+
 
 /*
 * clone assets
