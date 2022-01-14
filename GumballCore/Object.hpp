@@ -29,9 +29,9 @@ class ObjectSystem :
 	unordered_map<ObjAddrs, list<Var<Object>>>  objects;
 public:
 	Var<Object> newObject(Object* newObject) {
-		Var<Object> newInstance = newObject;
-		objects[newInstance->getAddress()].push_back(newInstance);
-		return newInstance;
+		//Var<Object> newInstance = newObject;
+		//objects[newInstance->getAddress()].push_back(newInstance);
+		return Var<Object>();
 	}
 	void destroyObject(Var<Object>& other) {
 		delete *other;
@@ -43,7 +43,7 @@ public:
 					return &obj;
 			}
 		}
-		return false;
+		return nullptr;
 	}
 };
 

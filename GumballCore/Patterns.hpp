@@ -53,9 +53,8 @@ public:
 	}
 	
 
-	T *operator*() { return data->ptr; }
-	T *operator->() { return data->ptr; }
-	//T &operator()() { return *static_cast<T*>(*data->ptr); }
+	T *operator*() { return *ptrCasted; }
+	T *operator->() { return *ptrCasted; }
 	operator bool() const { return data->ptr;	}
 	bool operator==(const Var &other) const { return data == other.data; }
 	

@@ -1,17 +1,27 @@
 #vert
-#version 330 core
+#version 440 core
 
 in vec4 pos;
+in vec2 texCoord;
+
+out vec2 vTexCoord;
+
 void main(){
-    //_color = col;
+    vTexCoord = texCoord;
     gl_Position = pos;
 };
 
 
 #frag
-#version 330 core
+#version 440 core
 
-uniform vec4 color = vec4(1, 1, 1, 1);
+in vec2 vTexCoord;
+
+uniform vec4 uColor;
+uniform sampler2D uTexture;
+
+out vec4 gl_FragColor;
 void main(){
-    gl_FragColor = color;
+    //gl_FragColor = vec4(sin(vTexCoord.x), cos(vTexCoord.y), atan(vTexCoord.x/vTexCoord.y), 0);
+    gl_FragColor = texture(uTexture, vTexCoord) * uColor;
 };

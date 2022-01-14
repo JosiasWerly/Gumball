@@ -76,6 +76,7 @@ public:
 	Color *&getBuffer() { return imageBuffer; }
 };
 
+//TODO: texture should be a material parameter
 class Texture {
 protected:
 	Image *image = nullptr;

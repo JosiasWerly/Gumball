@@ -46,16 +46,43 @@ void RenderSystem::initialize() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		throw 1;
 	}
-	
 }
 void RenderSystem::shutdown() {
-	drawInstances.clear();
+	
 	glfwTerminate();
 }
 void RenderSystem::tick() {
 	mainWindow.clearRender();
-	for (auto &d : drawInstances)
-		d->draw();
+
+	for (auto& view : drawboard.views)
+	{
+		auto viewMat = view->transform.getMat();
+		for (auto& draw : drawboard.drawInstances)
+		{
+			draw->material.setParameter<glm::mat4>("uView", viewMat);
+			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
+			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
+			draw->draw();
+		}
+	}
+
+	//TODO: LAYER
+	//for (auto &kv : drawboards)
+	//{
+	//	auto& drawboard = kv.second;
+	//	for (auto &view : drawboard.views)
+	//	{
+	//		auto viewMat = view->transform.getMat();
+	//		for (auto& draw : drawboard.drawInstances)
+	//		{
+	//			draw->material.setParameter<glm::mat4>("uView", viewMat);
+	//			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
+	//			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
+	//		}
+	//	}
+	//}
+
+	//d->draw();
 	mainWindow.render();
 }
 

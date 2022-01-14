@@ -220,9 +220,35 @@ public:
 	Vector3 eulerAngles() {
 		return Vector3(glm::eulerAngles(glm::quat_cast(_rot)));
 	}
-	glm::mat4 &rawMat() {
+	glm::mat4 &getMat() {
 		return _rot;
 	}
 };
+
+class Transform {
+	Transform* parent = nullptr;
+public:
+	Vector3 position;
+	Vector3 scale;
+	Rotator rotator;
+
+	glm::mat4 getMat() {
+		glm::mat4 out(1);
+		out = glm::translate(out, position.rawVector);
+		out = out * rotator.getMat();
+		//out = glm::scale(out, scale.rawVec()); TODO:whthell with the scale
+		return out;
+	}
+	glm::mat4 getRelativeMat(glm::mat4 mat) {
+		if (parent)
+			return parent->getRelativeMat(getMat());
+		else
+			return getMat() * mat;
+	}
+
+	void setParent(Transform* newParent) { parent = newParent; }
+	Transform* getParent() { return parent; }
+};
+
 
 #endif // !__math

@@ -167,9 +167,11 @@ class DrawInstance {
 	Vbo vbo;
 	Ibo ibo;
 
+public:	
 	Material material;
 	Texture texture;
-public:
+	Transform transform;
+
 	DrawInstance() {
 		vao.bind();
 		vbo.bind();

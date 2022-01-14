@@ -29,9 +29,12 @@ int main() {
 	auto &assetSystem = AssetsSystem::instance();
 	assetSystem.loadAllFiles("res\\");
 	
-
+	View v;
+	v.viewMode.setProjectionOrtho(-1, 1, -1, 1);
+	v.transform.position.z -= 5;
 	DrawInstance d;
-	renderSystem.drawInstances.push_back(&d);
+	renderSystem.drawboard.drawInstances.push_back(&d);
+	renderSystem.drawboard.views.push_back(&v);
 	engine.onPlay();
 
 	while (1) {	

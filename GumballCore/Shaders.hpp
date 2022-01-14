@@ -135,7 +135,6 @@ public:
 		return shader;
 	}
 	bool isInstance() { return false; }
-	
 };
 
 
