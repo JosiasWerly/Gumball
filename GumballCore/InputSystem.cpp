@@ -12,38 +12,43 @@ void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, in
 		return;
 	if(type == EType::pressed)
 		keyPool[keyCode].pressed = true;
-	else 
+	else
 		keyPool[keyCode].released = true;
 }
 void InputSystem::processInputs() {
 	for (auto &kv : keyPool) {
-		auto& newKeyStatus = kv.second;
-		auto& targetKeyStatus = keysStatus[kv.first];
+		auto& nKeyStatus = kv.second;
+		auto& tKeyStatus = keysStatus[kv.first];
 
-		if (newKeyStatus.pressed) {
-			targetKeyStatus.pressed = true;
+		if (nKeyStatus.released) {
+			tKeyStatus.pressed = false;
+			tKeyStatus.repeat = false;
+			tKeyStatus.released = true;
 		}
-		else if (newKeyStatus.released) {
-			targetKeyStatus.released = true;
+		else if (nKeyStatus.pressed) {
+			tKeyStatus.pressed = true;			
 		}
-		else if (targetKeyStatus.released && !newKeyStatus.released)
-			targetKeyStatus.released = targetKeyStatus.pressed = false;
-
-		newKeyStatus.pressed = newKeyStatus.released = false;
+		else if (tKeyStatus.pressed) {
+			tKeyStatus.pressed = false;
+			tKeyStatus.repeat = true;
+		}
+		else if (tKeyStatus.released) {
+			tKeyStatus.released = false;
+		}
+		nKeyStatus.released = nKeyStatus.pressed = false;
 	}
 }
 
 bool InputSystem::isKeyDown(Input::EKeyCode Key) {
 	const auto &KeyStatus = keysStatus[Key];
-	return KeyStatus.pressed && !KeyStatus.released;
+	return KeyStatus.repeat || KeyStatus.pressed;
 }
-//this is broken TODO: add new KeyStatus::isRepeating
 bool InputSystem::onKeyPressed(Input::EKeyCode Key) {
 	const auto& KeyStatus = keysStatus[Key];
-	return KeyStatus.pressed && KeyStatus.released;
+	return KeyStatus.pressed;
 }
 bool InputSystem::onKeyReleased(Input::EKeyCode Key) {
 	const auto& KeyStatus = keysStatus[Key];
-	return KeyStatus.pressed && KeyStatus.released;
+	return KeyStatus.released;
 }
 

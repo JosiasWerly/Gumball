@@ -45,7 +45,7 @@ namespace Input {
 class InputSystem {
 public:
 	struct KeyCodeStatus {
-		bool pressed, released; 
+		bool pressed, released, repeat; 
 	};	
 	static std::map<Input::EKeyCode, KeyCodeStatus> keysStatus, keyPool;
 

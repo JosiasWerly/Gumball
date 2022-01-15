@@ -50,6 +50,7 @@ public:
 
 template<class ...TArgs>
 class Dispatcher {
+protected:
 	typedef IEvent<TArgs...> TEvent;
 	list<TEvent*> boundEvents;
 public:
@@ -59,11 +60,9 @@ public:
 	void bind(TEvent* newEvent) {
 		boundEvents.push_back(newEvent);
 	}
-	void dispatch(TArgs ...args) {
+	virtual void broadcast(TArgs ...args) {
 		for (auto& e : boundEvents)
 			e->call(args...);
 	}
 };
-
-
 #endif // !_event
