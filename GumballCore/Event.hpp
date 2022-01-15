@@ -91,3 +91,39 @@ public:
 };
 
 #endif // !_event
+
+
+// ######ByChecking######
+//if (InputSystem::isKeyDown(Input::EKeyCode::W))
+//	v.transform.position.y += 0.01;
+//else if (InputSystem::isKeyDown(Input::EKeyCode::S))
+//	v.transform.position.y -= 0.01;
+//
+//if (InputSystem::onKeyReleased(Input::EKeyCode::Q))
+//	v.transform.rotator.rotate(0.f, 5.f, 0.f);
+//else if (InputSystem::onKeyPressed(Input::EKeyCode::E))
+//	v.transform.rotator.rotate(0.f, -5.f, 0.f);
+//
+// 
+// ######ByPooling######
+//Input::Event e;
+//while (InputSystem::eventPool >> e) {
+//	if (e.eventType == Input::EventType::keyboard) {
+//		if (e.actionType == Input::EActionType::pressed) {
+//			switch (e.keycode) {
+//			case Input::EKeyCode::A:
+//				v.transform.position.x -= 0.01f;
+//				break;
+//			case Input::EKeyCode::D:
+//				v.transform.position.x += 0.01f;
+//				break;
+//			case Input::EKeyCode::W:
+//				v.transform.position.y += 0.01f;
+//				break;
+//			case Input::EKeyCode::S:
+//				v.transform.position.y -= 0.01f;
+//				break;
+//			}
+//		}
+//	}
+//}

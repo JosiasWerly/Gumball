@@ -12,77 +12,45 @@ using namespace std;
 
 
 
-void foo(int v) {
-	cout << "foo" << v << endl;
-}
-void bar(int v) {
-	cout << "bar" << v << endl;
-}
 
 int main() {
-	//EventFnx<int> ea(&foo), eb(&bar);
-	//Dispatcher<int> dis;
-	//dis.bind(&ea);
-	//dis.bind(&eb);
-	//dis.broadcast(2);
-
-
-
 	auto &engine = Engine::instance();
 	engine.initialize();
 
 	auto &renderSystem = RenderSystem::instance();
 	auto &assetSystem = AssetsSystem::instance();
+	auto &inputSystem = InputSystem::instance();
 	assetSystem.loadAllFiles("res\\");
 	
 	View v;
-	v.viewMode.setProjectionOrtho(-1, 1, -1, 1);
+	v.viewMode.setProjectionPerspective();
 	v.transform.position.z -= 5;
 	DrawInstance d;
+
 	renderSystem.drawboard.drawInstances.push_back(&d);
 	renderSystem.drawboard.views.push_back(&v);
 	engine.onPlay();
 
 	while (1) {	
 		renderSystem.tick();
-		//if (InputSystem::isKeyDown(Input::EKeyCode::W))
-		//	v.transform.position.y += 0.01;
-		//else if (InputSystem::isKeyDown(Input::EKeyCode::S))
-		//	v.transform.position.y -= 0.01;
-		//
-		//if (InputSystem::onKeyReleased(Input::EKeyCode::Q)) {
-		//	v.transform.rotator.rotate(0.f, 5.f, 0.f);
-		//	cout << ">" << endl;
-		//}
-		//else if (InputSystem::onKeyPressed(Input::EKeyCode::E)) {
-		//	v.transform.rotator.rotate(0.f, -5.f, 0.f);
-		//	cout << "<" << endl;
-		//}
+		inputSystem.tick();
 
 
-		Input::Event e;
-		while (InputSystem::eventPool >> e) {
-			if (e.eventType == Input::EventType::keyboard) {
-				if (e.actionType == Input::EActionType::pressed) {
-					switch(e.keycode) {
-					case Input::EKeyCode::A:
-						v.transform.position.x -= 0.01f;
-						break;
-					case Input::EKeyCode::D:
-						v.transform.position.x += 0.01f;
-						break;
-					case Input::EKeyCode::W:
-						v.transform.position.y += 0.01f;
-						break;
-					case Input::EKeyCode::S:
-						v.transform.position.y -= 0.01f;
-						break;
-					}
-				}
-			}
 
-		}
-		InputSystem::processInputs();
+		if (inputSystem.isKeyDown(Input::EKeyCode::W))
+			v.transform.position += v.transform.rotator.forward() * 0.01f;
+		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
+			v.transform.position += v.transform.rotator.forward() * -0.01f;
+
+		if (inputSystem.isKeyDown(Input::EKeyCode::A))
+			v.transform.position += v.transform.rotator.right() * 0.01f;
+		else if (inputSystem.isKeyDown(Input::EKeyCode::D))
+			v.transform.position += v.transform.rotator.right() * -0.01f;
+
+		if (inputSystem.isKeyDown(Input::EKeyCode::Q))
+			v.transform.rotator.rotate(0, 0, 1);
+		else if (inputSystem.isKeyDown(Input::EKeyCode::E))
+			v.transform.rotator.rotate(0, 0, -1);
 	}
 	engine.shutdown();
 	return 0;

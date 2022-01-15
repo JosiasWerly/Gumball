@@ -63,6 +63,37 @@ public:
 		return TVector(rawVector / v.rawVector);
 	}
 
+
+	TVector& operator+=(float v) {
+		rawVector += v;
+		return *this;
+	}
+	TVector& operator-=(float v) {
+		rawVector -= v;
+		return *this;
+	}
+	TVector& operator*=(float v) {
+		rawVector *= v;
+		return *this;
+	}
+	TVector& operator/=(float v) {
+		rawVector /= v;
+		return *this;
+	}
+
+	TVector operator+(float v) {
+		return TVector(rawVector + v);
+	}
+	TVector operator-(float v) {
+		return TVector(rawVector - v);
+	}
+	TVector operator*(float v) {
+		return TVector(rawVector * v);
+	}
+	TVector operator/(float v) {
+		return TVector(rawVector / v);
+	}
+
 	Inline TVector normalize() const {
 		return glm::normalize(rawVector);
 	}

@@ -16,8 +16,10 @@ template<class T> string getClassName(){
 Engine::Engine() {
 	Systems.push_back(&AssetsSystem::instance());
 	Systems.push_back(&RenderSystem::instance());
+	Systems.push_back(&InputSystem::instance());
 
 	TickingSystems.push_back(&RenderSystem::instance());
+	TickingSystems.push_back(&InputSystem::instance());
 }
 Engine::~Engine(){
 }

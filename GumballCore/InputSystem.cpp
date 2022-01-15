@@ -2,33 +2,35 @@
 
 using namespace Input;
 
-std::map<Input::EKeyCode, InputSystem::KeyCodeStatus> InputSystem::keyPool, InputSystem::keysStatus;
-EventPool<Input::Event> InputSystem::eventPool;
+//std::map<Input::EKeyCode, InputSystem::KeyCodeStatus> InputSystem::keyPool, InputSystem::keysStatus;
+//EventPool<Input::Event> InputSystem::eventPool;
 
 //just need to capture when the state changed
 void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	static InputSystem& inst = InputSystem::instance();
 	const EKeyCode keyCode = static_cast<EKeyCode>(key);
 	const EActionType type = static_cast<EActionType>(action);
+
 	if (type == EActionType::repeat)
 		return;
 	if(type == EActionType::pressed)
-		keyPool[keyCode].pressed = true;
+		inst.keyPool[keyCode].pressed = true;
 	else
-		keyPool[keyCode].released = true;
+		inst.keyPool[keyCode].released = true;
 }
-void InputSystem::processInputs() {
+void InputSystem::tick() {
 	eventPool.clearPool();
 	Input::Event e;
-	for (auto &kv : keyPool) {
+	for (auto& kv : keyPool) {
 		auto& nKeyStatus = kv.second;
 		auto& tKeyStatus = keysStatus[kv.first];
 
-		
+
 		if (nKeyStatus.released) { //onRelease
 			tKeyStatus.pressed = false;
 			tKeyStatus.repeat = false;
 			tKeyStatus.released = true;
-			
+
 			e.actionType = EActionType::released;
 			e.eventType = EventType::keyboard;
 			e.keycode = kv.first;
@@ -58,6 +60,7 @@ void InputSystem::processInputs() {
 	}
 }
 
+
 bool InputSystem::isKeyDown(Input::EKeyCode Key) {
 	const auto &KeyStatus = keysStatus[Key];
 	return KeyStatus.repeat || KeyStatus.pressed;
@@ -70,4 +73,3 @@ bool InputSystem::onKeyReleased(Input::EKeyCode Key) {
 	const auto& KeyStatus = keysStatus[Key];
 	return KeyStatus.released;
 }
-

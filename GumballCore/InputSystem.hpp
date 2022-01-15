@@ -7,6 +7,7 @@
 
 #include "GLUtils.hpp"
 #include "Patterns.hpp"
+#include "EngineSystem.hpp"
 #include "Event.hpp"
 
 
@@ -55,28 +56,25 @@ namespace Input {
 	};
 };
 
-
-
-//TODO: for now there is only one window, so this can be static
-
-
-class InputSystem {
+class InputSystem : 
+	public IEngineSystem,
+	public Singleton<InputSystem> {
 public:
 	struct KeyCodeStatus {
 		bool pressed, released, repeat; 
 	};	
-	static std::map<Input::EKeyCode, KeyCodeStatus> keysStatus, keyPool;
-	static EventPool<Input::Event> eventPool;
-
+	
+	std::map<Input::EKeyCode, KeyCodeStatus> keysStatus, keyPool;
+	EventPool<Input::Event> eventPool;
 
 	static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void processInputs();
 
-	static bool isKeyDown(Input::EKeyCode Key);
-	static bool onKeyPressed(Input::EKeyCode Key);
-	static bool onKeyReleased(Input::EKeyCode Key);
+	bool isKeyDown(Input::EKeyCode Key);
+	bool onKeyPressed(Input::EKeyCode Key);
+	bool onKeyReleased(Input::EKeyCode Key);
+
+	void tick() override;
 };
-
 
 #undef keyWrapper
 #endif // !_transform
