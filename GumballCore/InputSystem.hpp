@@ -1,11 +1,13 @@
 #pragma once
 #ifndef _inputsystem
 #define _inputsystem
-#include "GLUtils.hpp"
-#include "Patterns.hpp"
 #include <map>
 #include <unordered_map>
 #include <list>
+
+#include "GLUtils.hpp"
+#include "Patterns.hpp"
+#include "Event.hpp"
 
 
 #define keyWrapper(key) key = GLFW_KEY_##key
@@ -32,22 +34,39 @@ namespace Input {
 		spec1 = 3,
 		spec2 = 4,
 	};
-	enum class EType {
+	enum class EActionType {
 		pressed = GLFW_PRESS,
 		released = GLFW_RELEASE,
 		repeat = GLFW_REPEAT,
+	};
+
+	enum class EventType {
+		keyboard, mouse
+	};
+
+	struct Event {
+		EActionType actionType;
+		EventType eventType;
+
+		union {
+			EKeyCode keycode;
+			EMouseCode mouseCode;
+		};
 	};
 };
 
 
 
 //TODO: for now there is only one window, so this can be static
+
+
 class InputSystem {
 public:
 	struct KeyCodeStatus {
 		bool pressed, released, repeat; 
 	};	
 	static std::map<Input::EKeyCode, KeyCodeStatus> keysStatus, keyPool;
+	static EventPool<Input::Event> eventPool;
 
 
 	static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

@@ -7,23 +7,22 @@ using namespace std;
 
 
 template<class ...TArgs>
-class IEvent {
+class IForwardBind {
 protected:
-	IEvent(){}
+	IForwardBind(){}
 public:
 	virtual void call(TArgs ...args) {}
 };
 
 template<class ...TArgs>
-class EventFnx : 
-	public IEvent <TArgs...> {
+class ForwardFunction : 
+	public IForwardBind <TArgs...> {
 
 	typedef void(*TFnx)(TArgs...);
 	TFnx fnx = nullptr;
 public:
-	EventFnx(TFnx fnx) :
+	ForwardFunction(TFnx fnx) :
 		fnx(fnx) {
-
 	}
 	virtual void call(TArgs ...args) override {
 		fnx(args...);
@@ -31,15 +30,15 @@ public:
 };
 
 template<class TObj, class ...TArgs>
-class EventMember :
-	public IEvent <TArgs...> {
+class ForwardMethod :
+	public IForwardBind <TArgs...> {
 
 	typedef void(TObj::*TMethod)(TArgs...);
 
 	TObj* obj = nullptr;
 	TMethod method = nullptr;
 public:
-	EventMember(TObj *obj, TMethod method) :
+	ForwardMethod(TObj *obj, TMethod method) :
 		obj(obj),
 		method(method) {
 	}
@@ -49,20 +48,46 @@ public:
 };
 
 template<class ...TArgs>
-class Dispatcher {
+class ForwardDispatcher {
 protected:
-	typedef IEvent<TArgs...> TEvent;
-	list<TEvent*> boundEvents;
+	typedef IForwardBind<TArgs...> TForward;
+	list<TForward*> boundProcs;
 public:
-	void unbind(TEvent* newEvent) {
-		boundEvents.remove(newEvent);
+	~ForwardDispatcher() {
 	}
-	void bind(TEvent* newEvent) {
-		boundEvents.push_back(newEvent);
+	void unbind(TForward* newEvent) {
+		boundProcs.remove(newEvent);
 	}
-	virtual void broadcast(TArgs ...args) {
-		for (auto& e : boundEvents)
+	void bind(TForward* newEvent) {
+		boundProcs.push_back(newEvent);
+	}
+	
+	void broadcast(TArgs ...args) {
+		for (auto& e : boundProcs)
 			e->call(args...);
 	}
 };
+
+template<class TEvent>
+class EventPool {
+	list<TEvent> events;
+public:
+	EventPool& operator<<(TEvent data) {
+		events.push_back(data);
+		return *this;
+	}
+	bool operator>>(TEvent &data) {
+		if (hasEvents()) {
+			data = events.back();
+			events.pop_back();
+			return true;
+		}
+		return false;
+	}
+	void clearPool() {
+		events.clear();
+	}
+	Inline bool hasEvents() { return events.size(); }
+};
+
 #endif // !_event

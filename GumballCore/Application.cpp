@@ -20,14 +20,11 @@ void bar(int v) {
 }
 
 int main() {
-
-	EventFnx<int> ea(&foo), eb(&bar);
-
-	Dispatcher<int> dis;
-	dis.bind(&ea);
-	dis.bind(&eb);
-
-	dis.broadcast(2);
+	//EventFnx<int> ea(&foo), eb(&bar);
+	//Dispatcher<int> dis;
+	//dis.bind(&ea);
+	//dis.bind(&eb);
+	//dis.broadcast(2);
 
 
 
@@ -48,20 +45,43 @@ int main() {
 
 	while (1) {	
 		renderSystem.tick();
-		if (InputSystem::isKeyDown(Input::EKeyCode::W))
-			v.transform.position.y += 0.01;
-		else if (InputSystem::isKeyDown(Input::EKeyCode::S))
-			v.transform.position.y -= 0.01;
+		//if (InputSystem::isKeyDown(Input::EKeyCode::W))
+		//	v.transform.position.y += 0.01;
+		//else if (InputSystem::isKeyDown(Input::EKeyCode::S))
+		//	v.transform.position.y -= 0.01;
+		//
+		//if (InputSystem::onKeyReleased(Input::EKeyCode::Q)) {
+		//	v.transform.rotator.rotate(0.f, 5.f, 0.f);
+		//	cout << ">" << endl;
+		//}
+		//else if (InputSystem::onKeyPressed(Input::EKeyCode::E)) {
+		//	v.transform.rotator.rotate(0.f, -5.f, 0.f);
+		//	cout << "<" << endl;
+		//}
 
-		if (InputSystem::onKeyReleased(Input::EKeyCode::Q)) {
-			v.transform.rotator.rotate(0.f, 5.f, 0.f);
-			cout << ">" << endl;
-		}
-		else if (InputSystem::onKeyPressed(Input::EKeyCode::E)) {
-			v.transform.rotator.rotate(0.f, -5.f, 0.f);
-			cout << "<" << endl;
-		}
 
+		Input::Event e;
+		while (InputSystem::eventPool >> e) {
+			if (e.eventType == Input::EventType::keyboard) {
+				if (e.actionType == Input::EActionType::pressed) {
+					switch(e.keycode) {
+					case Input::EKeyCode::A:
+						v.transform.position.x -= 0.01f;
+						break;
+					case Input::EKeyCode::D:
+						v.transform.position.x += 0.01f;
+						break;
+					case Input::EKeyCode::W:
+						v.transform.position.y += 0.01f;
+						break;
+					case Input::EKeyCode::S:
+						v.transform.position.y -= 0.01f;
+						break;
+					}
+				}
+			}
+
+		}
 		InputSystem::processInputs();
 	}
 	engine.shutdown();

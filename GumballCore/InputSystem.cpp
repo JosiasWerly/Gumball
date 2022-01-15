@@ -3,36 +3,55 @@
 using namespace Input;
 
 std::map<Input::EKeyCode, InputSystem::KeyCodeStatus> InputSystem::keyPool, InputSystem::keysStatus;
+EventPool<Input::Event> InputSystem::eventPool;
 
 //just need to capture when the state changed
 void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	const EKeyCode keyCode = static_cast<EKeyCode>(key);
-	const EType type = static_cast<EType>(action);
-	if (type == EType::repeat)
+	const EActionType type = static_cast<EActionType>(action);
+	if (type == EActionType::repeat)
 		return;
-	if(type == EType::pressed)
+	if(type == EActionType::pressed)
 		keyPool[keyCode].pressed = true;
 	else
 		keyPool[keyCode].released = true;
 }
 void InputSystem::processInputs() {
+	eventPool.clearPool();
+	Input::Event e;
 	for (auto &kv : keyPool) {
 		auto& nKeyStatus = kv.second;
 		auto& tKeyStatus = keysStatus[kv.first];
 
-		if (nKeyStatus.released) {
+		
+		if (nKeyStatus.released) { //onRelease
 			tKeyStatus.pressed = false;
 			tKeyStatus.repeat = false;
 			tKeyStatus.released = true;
+			
+			e.actionType = EActionType::released;
+			e.eventType = EventType::keyboard;
+			e.keycode = kv.first;
+			eventPool << e;
 		}
-		else if (nKeyStatus.pressed) {
-			tKeyStatus.pressed = true;			
+		else if (nKeyStatus.pressed) { //onPressed
+			tKeyStatus.pressed = true;
+
+			e.actionType = EActionType::pressed;
+			e.eventType = EventType::keyboard;
+			e.keycode = kv.first;
+			eventPool << e;
 		}
-		else if (tKeyStatus.pressed) {
+		else if (tKeyStatus.pressed) { //onRepeat
 			tKeyStatus.pressed = false;
 			tKeyStatus.repeat = true;
+
+			e.actionType = EActionType::repeat;
+			e.eventType = EventType::keyboard;
+			e.keycode = kv.first;
+			eventPool << e;
 		}
-		else if (tKeyStatus.released) {
+		else if (tKeyStatus.released) { //release states
 			tKeyStatus.released = false;
 		}
 		nKeyStatus.released = nKeyStatus.pressed = false;
