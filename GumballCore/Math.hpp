@@ -1,5 +1,5 @@
-#ifndef __math
-#define __math
+#ifndef _math
+#define _math
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -9,8 +9,8 @@ const float PI = glm::pi<float>();
 const float PIRad = PI / 180.f;
 const float RadPI = 180.f / PI;
 
-Inline void fRadToDegree(float &value);
-Inline void fDegreeToRad(float &value);
+void fRadToDegree(float &value);
+void fDegreeToRad(float &value);
 
 
 struct Color {

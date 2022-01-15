@@ -18,7 +18,6 @@ void Window::clearRender() {
 void Window::render() {
 	glfwPollEvents();
 	glfwSwapBuffers(window);
-	msCounter.tick();
 }
 void Window::setSize(Vector2i newSize) {
 	winSize = newSize;
@@ -28,11 +27,8 @@ void Window::setSize(Vector2i newSize) {
 const Vector2i& Window::getSize() {
 	return winSize;
 }
-GLFWwindow* Window::getWindowReference() {
+GLFWwindow* Window::GetGLWindow() {
 	return window;
-}
-const double& Window::getMS() {
-	return msCounter.getMS();
 }
 
 void RenderSystem::initialize() {
@@ -42,6 +38,9 @@ void RenderSystem::initialize() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	mainWindow.create("Gumball", { 800, 600 });
+
+	
+	glfwSetKeyCallback(mainWindow.GetGLWindow(), &InputSystem::keyboardCallback);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		throw 1;

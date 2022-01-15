@@ -19,9 +19,7 @@ using namespace std;
 *	getObject
 */
 
-
-
-int main() {	
+int main() {
 	auto &engine = Engine::instance();
 	engine.initialize();
 
@@ -39,6 +37,17 @@ int main() {
 
 	while (1) {	
 		renderSystem.tick();
+		if (InputSystem::isKeyDown(Input::EKeyCode::W))
+			v.transform.position.y += 0.01;
+		else if (InputSystem::isKeyDown(Input::EKeyCode::S))
+			v.transform.position.y -= 0.01;
+
+		if (InputSystem::onKeyPressed(Input::EKeyCode::Q)) {
+			v.transform.rotator.rotate(0.f, 5.f, 0.f);
+			cout << "@" << endl;
+		}
+
+		InputSystem::processInputs();
 	}
 	engine.shutdown();
 	return 0;

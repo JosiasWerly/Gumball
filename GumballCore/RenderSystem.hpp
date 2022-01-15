@@ -10,27 +10,45 @@ using namespace std;
 #include "EngineSystem.hpp"
 #include "Patterns.hpp"
 #include "Drawable.hpp"
+#include "InputSystem.hpp"
 #include "Math.hpp"
 
-class MSCounter {
-    double lastTime = 0;
+class TimeStats {
+    double lastRegister = 0;
+    
     double ms = 0;
+    double deltaTime = 0;
+
+    double fpsTime = 0;
     unsigned frames = 0;
 public:
-    MSCounter() {
-        lastTime = glfwGetTime();
+    TimeStats() {
+        lastRegister = glfwGetTime();
     }
-    void tick() {
-        double actualTime = glfwGetTime();
-        frames++;
-        if (actualTime - lastTime >= 1.0) {
-            ms = 1000 / frames;
+
+    void capture() {
+        const double actualTime = glfwGetTime();
+        const double delta = actualTime - lastRegister;
+
+        ms = delta * 1000.0;
+        deltaTime = delta / 1000.0;
+
+        fpsTime += delta;
+        if (fpsTime >= 1000.) {
+            fpsTime = 0;
             frames = 0;
-            lastTime += 1.0f;
         }
+        else
+            frames++;
     }
-    const double& getMS() const {
+    Inline const double& getDeltaTime() const {
+        return deltaTime;
+    }
+    Inline const double& getMS() const {
         return ms;
+    }
+    Inline char getFPS() const {
+        return char(1000/ms);
     }
 };
 
@@ -38,7 +56,6 @@ public:
 
 
 class Window {
-    MSCounter msCounter;
     GLFWwindow* window = nullptr;
     Vector2i winSize;
 public:
@@ -47,10 +64,9 @@ public:
     void clearRender();
     void render();
 
-    const double& getMS();
     void setSize(Vector2i size);
     const Vector2i& getSize();
-    GLFWwindow* getWindowReference();
+    GLFWwindow* GetGLWindow();
 };
 
 
