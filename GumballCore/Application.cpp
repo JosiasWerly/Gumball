@@ -36,6 +36,20 @@ int main() {
 		inputSystem.tick();
 
 		if (inputSystem.isKeyDown(Input::EKeyCode::W))
+			v.transform.position.z += 0.01f;
+		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
+			v.transform.position.z -= 0.01f;
+
+
+		if (inputSystem.isKeyDown(Input::EKeyCode::UP))
+			d.transform.position.z += 0.01f;
+		else if (inputSystem.isKeyDown(Input::EKeyCode::DOWN))
+			d.transform.position.z -= 0.01f;
+
+		cout << d.transform.position.z << endl;
+
+		/*
+		if (inputSystem.isKeyDown(Input::EKeyCode::W))
 			v.transform.position += v.transform.rotator.forward() * 0.01f;
 		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
 			v.transform.position += v.transform.rotator.forward() * -0.01f;
@@ -49,6 +63,7 @@ int main() {
 			v.transform.rotator.rotate(0, 0, 1);
 		else if (inputSystem.isKeyDown(Input::EKeyCode::E))
 			v.transform.rotator.rotate(0, 0, -1);
+		*/
 	}
 	engine.shutdown();
 	return 0;

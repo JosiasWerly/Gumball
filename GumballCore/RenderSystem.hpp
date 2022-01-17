@@ -1,9 +1,9 @@
 #pragma once
 #ifndef _viewport
+
 #include <iostream>
 #include <list>
 #include <unordered_map>
-
 using namespace std;
 
 #include "GLUtils.hpp"
@@ -52,9 +52,6 @@ public:
     }
 };
 
-
-
-
 class Window {
     GLFWwindow* window = nullptr;
     Vector2i winSize;
@@ -68,8 +65,6 @@ public:
     const Vector2i& getSize();
     GLFWwindow* GetGLWindow();
 };
-
-
 
 class View {
 public:
@@ -110,29 +105,27 @@ public:
     Transform transform;
 };
 
-
-class IRenderLayer {
+class IRenderOverlay {
 public:
     const string name;
     list<View*> views;
     list<DrawInstance*> drawInstances;
 
 
-    IRenderLayer(string name) : 
+    IRenderOverlay(string name) :
         name(name) {
     }
-    virtual ~IRenderLayer() = default;
+    virtual ~IRenderOverlay() = default;
     virtual void onAttach() {}
     virtual void onDetach() {}
     virtual void onRender(float deltaTime);
 };
 
-
 class RenderSystem :
     public IEngineSystem,
     public Singleton<RenderSystem> {
     
-    list<IRenderLayer*> layers;
+    list<IRenderOverlay*> layers;
 public:
     Window mainWindow;
 
@@ -160,14 +153,14 @@ public:
         if (layers.size() > layerId)
             (layers.front() + layerId)->drawInstances.remove(drawInstance);
     }
-    void pushLayer(IRenderLayer *layer, bool pushBack = true) {
+    void pushLayer(IRenderOverlay*layer, bool pushBack = true) {
         if(pushBack)
             layers.emplace_back(layer);
         else
             layers.emplace_front(layer);
         layer->onAttach();
     }
-    Inline list<IRenderLayer*>& getLayerList() { return layers; }
+    Inline list<IRenderOverlay*>& getLayerList() { return layers; }
 };
 
 #endif // !_viewport

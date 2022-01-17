@@ -1,5 +1,5 @@
 #include "RenderSystem.hpp"
-
+#include "EditorOverlay.hpp"
 
 void Window::create(string Name, Vector2i size) {
 	winSize = size;
@@ -32,10 +32,14 @@ GLFWwindow* Window::GetGLWindow() {
 }
 
 
-void IRenderLayer::onRender(float deltaTime) {
+void IRenderOverlay::onRender(float deltaTime) {
 	for (auto& view : views) {
 		auto viewMat = view->transform.getMat();
 		for (auto& draw : drawInstances) {
+			//draw->material.setParameter<glm::mat4>("uView", viewMat);
+			//draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
+			//draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
+
 			draw->material.setParameter<glm::mat4>("uView", viewMat);
 			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
 			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
@@ -60,8 +64,8 @@ void RenderSystem::initialize() {
 	}
 
 	
-	pushLayer(new IRenderLayer("game"));
-	pushLayer(new IRenderLayer("ui"));
+	pushLayer(new IRenderOverlay("game"));
+	pushLayer(new EditorOverlay);
 }
 void RenderSystem::shutdown() {
 	

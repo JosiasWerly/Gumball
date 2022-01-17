@@ -231,6 +231,9 @@ public:
 	}
 };
 
+
+
+
 //unsigned vao;
 //glGenVertexArrays(1, &vao);
 //glBindVertexArray(vao);

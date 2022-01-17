@@ -41,6 +41,9 @@
     <ClCompile Include="InputSystem.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="EditorOverlay.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -94,6 +97,9 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="InputSystem.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorOverlay.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>
