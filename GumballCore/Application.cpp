@@ -11,7 +11,9 @@
 using namespace std;
 
 
-
+static void printVector(Vector3 v) {
+	cout << "x:" << v.x << " y:" << v.y << " z:" << v.z << endl;
+}
 
 int main() {
 	auto &engine = Engine::instance();
@@ -24,46 +26,50 @@ int main() {
 	
 	View v;
 	v.viewMode.setProjectionPerspective();
-	v.transform.position.z -= 5;
-	DrawInstance d;
+	v.transform.position.z = 0;
+	renderSystem.pushView(0, &v);
 
-	renderSystem.pushDrawInstance(0, &d);
-	renderSystem.pushView(0, &v);	
 
+	DrawInstance *draws[40];
+	float i = 0;
+	for (auto &d : draws) {
+		d = new DrawInstance;
+		d->transform.position.z = -5 + rand() % 10;
+		d->transform.position.x = -5 + rand() % 10;
+		d->transform.position.y = -5 + rand() % 10;
+		renderSystem.pushDrawInstance(0, d);
+		d->setup();
+		i+=1.0;
+	}
 	engine.onPlay();
 	while (1) {	
 		renderSystem.tick();
 		inputSystem.tick();
+
+		i = 0;
+		for (auto& d : draws) {
+			i+= 0.2;
+			d->transform.rotator.rotate(0, 0, i);
+		}
 
 		if (inputSystem.isKeyDown(Input::EKeyCode::W))
 			v.transform.position.z += 0.01f;
 		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
 			v.transform.position.z -= 0.01f;
 
-
-		if (inputSystem.isKeyDown(Input::EKeyCode::UP))
-			d.transform.position.z += 0.01f;
-		else if (inputSystem.isKeyDown(Input::EKeyCode::DOWN))
-			d.transform.position.z -= 0.01f;
-
-		cout << d.transform.position.z << endl;
-
-		/*
-		if (inputSystem.isKeyDown(Input::EKeyCode::W))
-			v.transform.position += v.transform.rotator.forward() * 0.01f;
-		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
-			v.transform.position += v.transform.rotator.forward() * -0.01f;
-
-		if (inputSystem.isKeyDown(Input::EKeyCode::A))
-			v.transform.position += v.transform.rotator.right() * 0.01f;
-		else if (inputSystem.isKeyDown(Input::EKeyCode::D))
-			v.transform.position += v.transform.rotator.right() * -0.01f;
+		if (inputSystem.isKeyDown(Input::EKeyCode::D))
+			v.transform.position.x += 0.01f;
+		else if (inputSystem.isKeyDown(Input::EKeyCode::A))
+			v.transform.position.x -= 0.01f;
 
 		if (inputSystem.isKeyDown(Input::EKeyCode::Q))
 			v.transform.rotator.rotate(0, 0, 1);
 		else if (inputSystem.isKeyDown(Input::EKeyCode::E))
 			v.transform.rotator.rotate(0, 0, -1);
-		*/
+
+		//printVector(v.transform.position);
+		printVector(v.transform.rotator.eulerAngles());
+		cout << "-";
 	}
 	engine.shutdown();
 	return 0;

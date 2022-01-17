@@ -216,40 +216,41 @@ public:
 
 class Rotator {
 protected:
-	glm::mat4 _rot = glm::mat4(1);
+	glm::mat4 mat = glm::mat4(1);
 public:
 	Rotator() {
 	}
 
 	Vector3 forward() {
-		return Vector3(normalize(glm::vec3(glm::inverse(_rot)[2])));
+		return Vector3(normalize(glm::vec3(glm::inverse(mat)[2])));
 	}
 	Vector3 right() {
-		return Vector3(normalize(glm::vec3(glm::inverse(_rot)[0])));
+		return Vector3(normalize(glm::vec3(glm::inverse(mat)[0])));
 	}
 	Vector3 up() {
-		return Vector3(normalize(glm::vec3(glm::inverse(_rot)[1])));
+		return Vector3(normalize(glm::vec3(glm::inverse(mat)[1])));
 	}
 
 	Rotator &rotate(float pitch, float roll, float yaw) {
 		fDegreeToRad(pitch);
 		fDegreeToRad(roll);
 		fDegreeToRad(yaw);
-		_rot = glm::rotate(_rot, pitch, right().rawVector);
-		_rot = glm::rotate(_rot, roll, forward().rawVector);
-		_rot = glm::rotate(_rot, yaw, up().rawVector);
+		mat = glm::rotate(mat, pitch, right().rawVector);
+		mat = glm::rotate(mat, roll, forward().rawVector);
+		mat = glm::rotate(mat, yaw, up().rawVector);
 		return *this;
 	}
 	Rotator &rotateAround(float angle, Vector3 axis) {
-		_rot = glm::rotate(_rot, angle, axis.rawVector);
+		mat = glm::rotate(mat, angle, axis.rawVector);
 		return *this;
 	}
 
 	Vector3 eulerAngles() {
-		return Vector3(glm::eulerAngles(glm::quat_cast(_rot)));
+		auto quat = glm::quat_cast(mat);
+		return Vector3(glm::pitch(quat), glm::roll(quat), glm::yaw(quat));
 	}
 	glm::mat4 &getMat() {
-		return _rot;
+		return mat;
 	}
 };
 
@@ -264,7 +265,7 @@ public:
 		glm::mat4 out(1);
 		out = glm::translate(out, position.rawVector);
 		out = out * rotator.getMat();
-		//out = glm::scale(out, scale.rawVec()); TODO:whthell with the scale
+		//out = glm::scale(out, scale.rawVec()); //TODO:whthell with the scale
 		return out;
 	}
 	glm::mat4 getRelativeMat(glm::mat4 mat) {

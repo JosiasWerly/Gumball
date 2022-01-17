@@ -172,7 +172,8 @@ public:
 	Texture texture;
 	Transform transform;
 
-	DrawInstance() {
+	DrawInstance(){}
+	void setup() {
 		vao.bind();
 		vbo.bind();
 		ibo.bind();
@@ -188,24 +189,30 @@ public:
 			float xv, yv;
 		};
 		SuperFoo data[] = {
-			{0, 0, 0, 1,				0, 0},
-			{0.5, 0.0, 0, 1,			1, 0},
-			{0.5, 0.5, 0.0, 1,			1, 1},
-			{0, 0.5, 0.0, 1,			0, 1}
+			{-0.2, -0.2, 0.0, 1.0,				0, 0},
+			{0.2, -0.2, 0.0, 1.0,				1, 0},
+			{0.2, 0.2, 0.0, 1.0,				1, 1},
+			{-0.2, 0.2, 0.0, 1.0,				0, 1},
+			{0.0, 0.0, 0.4, 1.0,				0, 1}
 		};
 		VboBuilder()
-			.setBuffer<SuperFoo>(data, 4)
+			.setBuffer<SuperFoo>(data, 5)
 			.addAttrib<float>(4)
 			.addAttrib<float>(2)
 			.build();
 
-		unsigned IndexBuffer[5]{
+		unsigned IndexBuffer[]{
 			0, 1, 2,
-			2, 3
+			2, 3, 0,
+
+			0, 1, 4,
+			0, 3, 4,
+			1, 2, 4,
+			2, 3, 4
 		};
 		ibo.setBuffer(
 			IndexBuffer,
-			5 * sizeof(float));
+			18 * sizeof(float));
 
 
 		vao.unBind();
