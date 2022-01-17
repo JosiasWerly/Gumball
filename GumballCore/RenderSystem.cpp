@@ -31,6 +31,19 @@ GLFWwindow* Window::GetGLWindow() {
 	return window;
 }
 
+
+void IRenderLayer::onRender(float deltaTime) {
+	for (auto& view : views) {
+		auto viewMat = view->transform.getMat();
+		for (auto& draw : drawInstances) {
+			draw->material.setParameter<glm::mat4>("uView", viewMat);
+			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
+			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
+			draw->draw();
+		}
+	}
+}
+
 void RenderSystem::initialize() {
 	glfwInit();
 
@@ -45,6 +58,10 @@ void RenderSystem::initialize() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		throw 1;
 	}
+
+	
+	pushLayer(new IRenderLayer("game"));
+	pushLayer(new IRenderLayer("ui"));
 }
 void RenderSystem::shutdown() {
 	
@@ -53,35 +70,9 @@ void RenderSystem::shutdown() {
 void RenderSystem::tick() {
 	mainWindow.clearRender();
 
-	for (auto& view : drawboard.views)
-	{
-		auto viewMat = view->transform.getMat();
-		for (auto& draw : drawboard.drawInstances)
-		{
-			draw->material.setParameter<glm::mat4>("uView", viewMat);
-			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
-			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
-			draw->draw();
-		}
-	}
-
-	//TODO: LAYER
-	//for (auto &kv : drawboards)
-	//{
-	//	auto& drawboard = kv.second;
-	//	for (auto &view : drawboard.views)
-	//	{
-	//		auto viewMat = view->transform.getMat();
-	//		for (auto& draw : drawboard.drawInstances)
-	//		{
-	//			draw->material.setParameter<glm::mat4>("uView", viewMat);
-	//			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
-	//			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
-	//		}
-	//	}
-	//}
-
-	//d->draw();
+	for (auto &layer : layers)
+		layer->onRender(0);
+	
 	mainWindow.render();
 }
 

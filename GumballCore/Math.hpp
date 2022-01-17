@@ -214,9 +214,6 @@ public:
 	operator Vector2();
 };
 
-
-
-
 class Rotator {
 protected:
 	glm::mat4 _rot = glm::mat4(1);

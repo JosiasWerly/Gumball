@@ -27,15 +27,13 @@ int main() {
 	v.transform.position.z -= 5;
 	DrawInstance d;
 
-	renderSystem.drawboard.drawInstances.push_back(&d);
-	renderSystem.drawboard.views.push_back(&v);
-	engine.onPlay();
+	renderSystem.pushDrawInstance(0, &d);
+	renderSystem.pushView(0, &v);	
 
+	engine.onPlay();
 	while (1) {	
 		renderSystem.tick();
 		inputSystem.tick();
-
-
 
 		if (inputSystem.isKeyDown(Input::EKeyCode::W))
 			v.transform.position += v.transform.rotator.forward() * 0.01f;
