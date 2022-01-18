@@ -7,6 +7,7 @@
 
 #include "Shaders.hpp"
 #include "Texture.hpp"
+#include "Mesh.hpp"
 
 bool IAssetFactory::probeFile(const string &filePath) {
 	string extension = Files::getExtOfFilePath(filePath);
@@ -20,6 +21,7 @@ bool IAssetFactory::probeFile(const string &filePath) {
 void AssetsSystem::initialize() {
 	factories.push_back(new ShaderFactory);
 	factories.push_back(new TextureFactory);
+	factories.push_back(new MeshFactory);
 }
 void AssetsSystem::shutdown() {
 }

@@ -35,7 +35,7 @@
     <ClCompile Include="Object.cpp">
       <Filter>scr</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="Mesh.cpp">
       <Filter>scr</Filter>
     </ClCompile>
     <ClCompile Include="InputSystem.cpp">
@@ -93,7 +93,7 @@
     <ClInclude Include="Event.hpp">
       <Filter>scr</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.hpp">
+    <ClInclude Include="Mesh.hpp">
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="InputSystem.hpp">

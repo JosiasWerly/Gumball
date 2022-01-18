@@ -26,27 +26,14 @@ int main() {
 	
 	View v;
 	v.viewMode.setProjectionPerspective();
-	v.transform.position.z = -5;
+	v.transform.position.z = -10;
 	renderSystem.pushView(0, &v);
 
 	DrawInstance dd;
-	dd.setup();
+	dd.setMesh("cube");
+	
 	renderSystem.pushDrawInstance(0, &dd);
 
-
-	//DrawInstance *draws[40];
-	//float i = 0;
-	//for (auto &d : draws) {
-	//	d = new DrawInstance;
-	//	d->transform.position.z = -5 + rand() % 10;
-	//	d->transform.position.x = -5 + rand() % 10;
-	//	d->transform.position.y = -5 + rand() % 10;
-	//	renderSystem.pushDrawInstance(0, d);
-	//	d->setup();
-	//	i+=1.0;
-	//}
-	Vector3 w (1, 0, 0);
-	w += w * 0.1;
 
 	engine.onPlay();
 
@@ -55,15 +42,9 @@ int main() {
 		renderSystem.tick();
 		inputSystem.tick();
 
-		//i = 0;
-		//for (auto& d : draws) {
-		//	i+= 0.2;
-		//	d->transform.rotator.rotate(0.1, 0, 0);
-		//}
 
-		if (inputSystem.isKeyDown(Input::EKeyCode::W)) {
+		if (inputSystem.isKeyDown(Input::EKeyCode::W))
 			dd.transform.position += dd.transform.rotator.forward() * vel;
-		}
 		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
 			dd.transform.position -= dd.transform.rotator.forward() * vel;
 
@@ -81,13 +62,6 @@ int main() {
 			dd.transform.rotator.rotate(0, 0, -1);
 		else if (inputSystem.isKeyDown(Input::EKeyCode::RIGHT))
 			dd.transform.rotator.rotate(0, 0, 1);
-
-		//printVector(v.transform.position);
-		//printVector(dd.transform.rotator.eulerAngles());
-		//printVector(dd.transform.rotator.forward());
-		//printVector(dd.transform.rotator.right());
-		//printVector(dd.transform.rotator.up());
-		//cout << "---------------------------" << endl;
 	}
 	engine.shutdown();
 	return 0;

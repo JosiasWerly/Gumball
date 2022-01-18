@@ -9,11 +9,9 @@ bool ShaderFactory::assemble(Asset& asset, Archive& ar) {
 		asset << shader;
 		return true;
 	}
-
+	delete shader;
 	return false;
 }
-
-
 
 template<typename T>
 class UniformIO :

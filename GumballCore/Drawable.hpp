@@ -5,6 +5,7 @@
 #include "GLUtils.hpp"
 #include "Shaders.hpp"
 #include "Texture.hpp"
+#include "Mesh.hpp"
 #include <list>
 using namespace std;
 
@@ -21,14 +22,14 @@ struct Ibo {
 		glDeleteBuffers(1, &id);
 	}
 	inline void bind() {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
+		glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 	}
 	inline void unbind() {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	}
 	inline void setBuffer(void *data, unsigned dataSize) {
 		size = dataSize;
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
+		glDCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW));
 	}
 };
 struct Vbo {
@@ -40,10 +41,10 @@ struct Vbo {
 		glDeleteBuffers(1, &id);
 	}
 	inline void bind() {
-		glBindBuffer(GL_ARRAY_BUFFER, id);
+		glDCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 	}
 	inline void unbind() {
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 };
 struct Vao {
@@ -57,10 +58,10 @@ public:
 		glDeleteVertexArrays(1, &vao);
 	}
 	inline void bind() {
-		glBindVertexArray(vao);
+		glDCall(glBindVertexArray(vao));
 	}
 	inline void unBind() {
-		glBindVertexArray(0);
+		glDCall(glBindVertexArray(0));
 	}
 };
 struct Tbo {
@@ -72,13 +73,13 @@ protected:
 public:
 	unsigned id = 0;
 	Tbo() {
-		glGenTextures(1, &id);
-		glBindTexture(GL_TEXTURE_2D, id);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glDCall(glGenTextures(1, &id));
+		glDCall(glBindTexture(GL_TEXTURE_2D, id));
+		glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+		glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		glDCall(glBindTexture(GL_TEXTURE_2D, 0));
 	}
 	virtual ~Tbo() {
 		glDeleteTextures(1, &id);
@@ -137,104 +138,124 @@ public:
 		return *this;
 	}
 	template<class T>VboBuilder &setBuffer(T *buffer, unsigned rows) {
-		glBufferData(GL_ARRAY_BUFFER, rows * sizeof(T), buffer, GL_STATIC_DRAW);
+		glDCall(glBufferData(GL_ARRAY_BUFFER, rows * sizeof(T), buffer, GL_STATIC_DRAW));
 		return *this;
 	}
-
-	VboBuilder &setBuffer(void *data, unsigned dataSize) {
-		glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
+	template<> VboBuilder &setBuffer(void *data, unsigned dataSize) {
+		glDCall(glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW));
 		return *this;
 	}
 	VboBuilder &addAttrib(unsigned attribID, unsigned componentSize, unsigned stride, unsigned int pointer = 0, unsigned type = GL_FLOAT, bool glNormalized = false) {
-
-		glVertexAttribPointer(attribID, componentSize, type, glNormalized, stride, (void *)pointer);
-		glEnableVertexAttribArray(attribID);
+		glDCall(glVertexAttribPointer(attribID, componentSize, type, glNormalized, stride, (void *)pointer));
+		glDCall(glEnableVertexAttribArray(attribID));
 		return *this;
 	}
 
 	void build() {
 		unsigned pointer = 0;
 		for (auto &e : Entities) {
-			glVertexAttribPointer(e.attribID, e.componentSize, e.glType, e.glNormalized, stride, (void *)pointer);
-			glEnableVertexAttribArray(e.attribID);
+			glDCall(glVertexAttribPointer(e.attribID, e.componentSize, e.glType, e.glNormalized, stride, (void *)pointer));
+			glDCall(glEnableVertexAttribArray(e.attribID));
 			pointer += e.subBufferSize;
 		}
 	}
 };
 
 class DrawInstance {
-	Vao vao;
-	Vbo vbo;
-	Ibo ibo;
+	Vao *vao = nullptr;
+	Vbo *vbo = nullptr;
+	Ibo *ibo = nullptr;
 
-public:	
+public:
+	MeshData* meshData;
 	Material material;
 	Texture texture;
+
 	Transform transform;
 
-	DrawInstance(){}
-	void setup() {
-		vao.bind();
-		vbo.bind();
-		ibo.bind();
+	DrawInstance() {
+		vao = new Vao;
+		vao->bind();
+		vbo = new Vbo;
+		vbo->bind();
+		ibo = new Ibo();
+		ibo->bind();
+
+		vao->unBind();
+		vbo->unbind();
+		ibo->unbind();		
 
 		texture.setImage("logo");
-
 		material.setShader("default");
 		material.setParameter<int>("uTexture", 0);
 		material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 
-		struct SuperFoo {
-			float x, y, z, w;
-			float xv, yv;
-		};
-		SuperFoo data[] = {
-			{-0.2, -0.2, 0.0, 1.0,				0, 0},
-			{0.2, -0.2, 0.0, 1.0,				1, 0},
-			{0.2, 0.2, 0.0, 1.0,				1, 1},
-			{-0.2, 0.2, 0.0, 1.0,				0, 1},
-			{0.0, 0.0, 0.4, 1.0,				0, 1}
-		};
-		VboBuilder()
-			.setBuffer<SuperFoo>(data, 5)
-			.addAttrib<float>(4)
-			.addAttrib<float>(2)
-			.build();
 
-		unsigned IndexBuffer[]{
-			0, 1, 2,
-			2, 3, 0,
-
-			0, 1, 4,
-			0, 3, 4,
-			1, 2, 4,
-			2, 3, 4
-		};
-		ibo.setBuffer(
-			IndexBuffer,
-			18 * sizeof(float));
-
-
-		vao.unBind();
-		vbo.unbind();
-		ibo.unbind();
 	}
+	bool setMesh(string name) {
+		bind();
+
+		if (AssetsSystem::instance()(name, meshData)) {
+
+			/*struct SuperFoo {
+				float x, y, z, w;
+				float xn, yn, zn, wn;
+				float xv, yv;
+			};
+			SuperFoo data[] = {
+				{0.0, 0.0, 0.0, 1.0,		0.0, 0.0, 0.0, 1.0,				0, 0},
+				{0.3, 0.0, 0.0, 1.0,		0.0, 0.0, 0.0, 1.0,				1, 0},
+				{0.3, 0.3, 0.0, 1.0,		0.0, 0.0, 0.0, 1.0,				1, 1},
+				{0.0, 0.3, 0.0, 1.0,		0.0, 0.0, 0.0, 1.0,				0, 1}
+			};
+			VboBuilder()
+				.setBuffer<SuperFoo>(data, 4)
+				.addAttrib<float>(4)
+				.addAttrib<float>(4)
+				.addAttrib<float>(2)
+				.build();
+
+			unsigned IndexBuffer[]{
+				0, 1, 2,
+				2, 3, 0
+			};
+			ibo->setBuffer(
+				IndexBuffer,
+				6 * sizeof(float));*/
+
+
+			VboBuilder()
+				.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))
+				.addAttrib<float>(3)//pos
+				.addAttrib<float>(3)//normal
+				.addAttrib<float>(2)//uv
+				.build();
+			
+			ibo->setBuffer(
+				meshData->index.data(),
+				meshData->index.size() * sizeof(unsigned));
+			unbind();
+			return true;
+		}
+		return false;
+	}
+
 
 	inline void bind() {
-		vao.bind();
-		vbo.bind();
-		ibo.bind();
+		vao->bind();
+		vbo->bind();
+		ibo->bind();
 	}
 	inline void unbind() {
-		vao.unBind();
-		vbo.unbind();
-		ibo.unbind();
+		vao->unBind();
+		vbo->unbind();
+		ibo->unbind();
 	}
 	inline void draw() {
 		material.use();
 		texture.bind();
-		vao.bind();
-		glDrawElements(GL_TRIANGLES, ibo.size, GL_UNSIGNED_INT, nullptr);
+		vao->bind();
+		glDrawElements(GL_TRIANGLES, ibo->size, GL_UNSIGNED_INT, nullptr);
 	}
 };
 
@@ -258,6 +279,53 @@ public:
 //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
 
+
+
+/*
+	vao.bind();
+	vbo.bind();
+	ibo.bind();
+
+	texture.setImage("logo");
+
+	material.setShader("default");
+	material.setParameter<int>("uTexture", 0);
+	material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
+
+	struct SuperFoo {
+		float x, y, z, w;
+		float xv, yv;
+	};
+	SuperFoo data[] = {
+		{-0.2, -0.2, 0.0, 1.0,				0, 0},
+		{0.2, -0.2, 0.0, 1.0,				1, 0},
+		{0.2, 0.2, 0.0, 1.0,				1, 1},
+		{-0.2, 0.2, 0.0, 1.0,				0, 1},
+		{0.0, 0.0, 0.4, 1.0,				0, 1}
+	};
+	VboBuilder()
+		.setBuffer<SuperFoo>(data, 5)
+		.addAttrib<float>(4)
+		.addAttrib<float>(2)
+		.build();
+
+	unsigned IndexBuffer[]{
+		0, 1, 2,
+		2, 3, 0,
+
+		0, 1, 4,
+		0, 3, 4,
+		1, 2, 4,
+		2, 3, 4
+	};
+	ibo.setBuffer(
+		IndexBuffer,
+		18 * sizeof(float));
+
+
+	vao.unBind();
+	vbo.unbind();
+	ibo.unbind();*/
 
 #pragma warning( default : 4312 4267 4838)
 #endif

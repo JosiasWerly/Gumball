@@ -1,27 +1,33 @@
 #vert
 #version 440 core
 
-in vec4 pos;
-in vec2 texCoord;
+in vec3 pos;
+in vec3 normal;
+in vec2 uv;
 
-out vec2 fTexCoord;
+out vec2 f_uv;
+out vec3 f_normal;
 
 uniform mat4 uProj, uView, uModel;
+
 void main(){
-    fTexCoord = texCoord;
-    gl_Position = uProj * uView * uModel * pos;
+	f_normal = normal;
+    f_uv = uv;
+    gl_Position = uProj * uView * uModel * vec4(pos, 1);
 };
 
 
 #frag
 #version 440 core
 
-in vec2 fTexCoord;
+in vec2 f_uv;
+in vec3 f_normal;
+
+out vec4 gl_FragColor;
 
 uniform vec4 uColor;
 uniform sampler2D uTexture;
 
-out vec4 gl_FragColor;
 void main(){
-    gl_FragColor = texture(uTexture, fTexCoord) * uColor;
+    gl_FragColor = texture(uTexture, f_uv) * uColor;
 };
