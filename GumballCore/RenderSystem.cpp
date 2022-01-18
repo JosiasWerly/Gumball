@@ -54,16 +54,25 @@ void RenderSystem::initialize() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	mainWindow.create("Gumball", { 800, 600 });
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
+
+	mainWindow.create("Gumball", { 800, 600 });
 	
 	glfwSetKeyCallback(mainWindow.GetGLWindow(), &InputSystem::keyboardCallback);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		throw 1;
 	}
-
 	
+	glEnable(GL_DEPTH_TEST);
+	glDepthRange(0.1f, 100.0f);
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+	// Cull triangles which normal is not towards the camera
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
 	pushLayer(new IRenderOverlay("game"));
 	pushLayer(new EditorOverlay);
 }
