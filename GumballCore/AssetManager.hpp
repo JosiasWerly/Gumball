@@ -148,9 +148,12 @@ public:
 		return nullptr;
 	}
 	template<class T>bool operator()(string name, T *&target) {
-		if (auto asset = this->operator[](name))
+		if (auto asset = this->operator[](name)) {
 			*asset >> target;
-		return target;
+			return true;			
+		}
+		target = nullptr;
+		return false;
 	}
 	Asset* createAsset(string name);
 	void loadFile(const string& assetPath);	

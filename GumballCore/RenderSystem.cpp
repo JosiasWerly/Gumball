@@ -1,6 +1,9 @@
 #include "RenderSystem.hpp"
 #include "EditorOverlay.hpp"
 
+
+
+
 void Window::create(string Name, Vector2i size) {
 	winSize = size;
 	window = glfwCreateWindow(size.x, size.y, Name.c_str(), NULL, NULL);
@@ -55,7 +58,7 @@ void RenderSystem::initialize() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
-
+	cout << "glVersion" << glfwGetVersionString() << endl;
 
 	mainWindow.create("Gumball", { 800, 600 });
 	

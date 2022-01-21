@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30320.27
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{414D642E-7E81-4342-9F1E-00CE2D1E1AD0}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,6 +21,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glm", "Dependencies\Glm\Glm.vcxproj", "{DFA4A950-90B6-4427-B5F7-4652FFDDE6F3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Misc", "Dependencies\Misc\Misc.vcxproj", "{3DF93520-1AD9-4C17-B093-AA09DCA834AF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Imgui", "Dependencies\Imgui\Imgui.vcxproj", "{701A2CFE-B159-48F9-BF51-004BFAFABF17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,14 @@ Global
 		{3DF93520-1AD9-4C17-B093-AA09DCA834AF}.Release|x64.Build.0 = Release|x64
 		{3DF93520-1AD9-4C17-B093-AA09DCA834AF}.Release|x86.ActiveCfg = Release|Win32
 		{3DF93520-1AD9-4C17-B093-AA09DCA834AF}.Release|x86.Build.0 = Release|Win32
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Debug|x64.ActiveCfg = Debug|x64
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Debug|x64.Build.0 = Debug|x64
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Debug|x86.ActiveCfg = Debug|Win32
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Debug|x86.Build.0 = Debug|Win32
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x64.ActiveCfg = Release|x64
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x64.Build.0 = Release|x64
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x86.ActiveCfg = Release|Win32
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +89,7 @@ Global
 		{C078DB5C-59BF-41AD-8E97-B916639DC407} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
 		{DFA4A950-90B6-4427-B5F7-4652FFDDE6F3} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
 		{3DF93520-1AD9-4C17-B093-AA09DCA834AF} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
+		{701A2CFE-B159-48F9-BF51-004BFAFABF17} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB71E745-1606-4B19-AE34-95519547452B}
