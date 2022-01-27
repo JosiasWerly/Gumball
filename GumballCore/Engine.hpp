@@ -8,14 +8,12 @@
 #include <iostream>
 #include <map>
 
-
-
 class Engine :
 	private IEngineSystem,
 	public Singleton<Engine> {
 
-	list<IEngineSystem*> Systems, TickingSystems;
 public:
+	list<IEngineSystem*> Systems, TickingSystems;
 	Engine();
 	~Engine();
 

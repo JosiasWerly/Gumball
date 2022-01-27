@@ -14,19 +14,15 @@ using namespace std;
 typedef long long ObjAddrs;
 class Object {
 public:
-	virtual ~Object() {}
-
+	//Object
+		virtual ~Object() {}
 	virtual string getName() = 0;
-	virtual ObjAddrs getAddress() = 0;
 };
 
-#define ObjectImpl(Target)\
-virtual string getName() override { return #Target; }\
-virtual ObjAddrs getAddress() override { return Target; }
-
 class ObjectSystem :
+	public IEngineSystem,
 	public Singleton<ObjectSystem> {
-	unordered_map<ObjAddrs, list<Var<Object>>>  objects;
+	list<Var<Object>>  objects;
 public:
 	Var<Object> newObject(Object* newObject) {
 		//Var<Object> newInstance = newObject;
@@ -34,16 +30,17 @@ public:
 		return Var<Object>();
 	}
 	void destroyObject(Var<Object>& other) {
-		delete *other;
+		delete* other;
 	}
-	Var<Object>* getObject(ObjAddrs address, string name) {
-		if (objects.contains(address)) {
-			for (auto &obj : objects[address]) {
-				if (obj->getName() == name)
-					return &obj;
-			}
+	Var<Object>* findObject(string name) {
+		for (auto& obj : objects) {
+			if (obj->getName() == name)
+				return &obj;
 		}
 		return nullptr;
+	}
+	void tick() override {
+
 	}
 };
 

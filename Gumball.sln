@@ -24,6 +24,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Misc", "Dependencies\Misc\M
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Imgui", "Dependencies\Imgui\Imgui.vcxproj", "{701A2CFE-B159-48F9-BF51-004BFAFABF17}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Json", "Dependencies\Json\Json.vcxproj", "{DF8B281E-C0B4-4885-B3C2-CEE906953806}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -80,6 +82,14 @@ Global
 		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x64.Build.0 = Release|x64
 		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x86.ActiveCfg = Release|Win32
 		{701A2CFE-B159-48F9-BF51-004BFAFABF17}.Release|x86.Build.0 = Release|Win32
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Debug|x64.ActiveCfg = Debug|x64
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Debug|x64.Build.0 = Debug|x64
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Debug|x86.ActiveCfg = Debug|Win32
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Debug|x86.Build.0 = Debug|Win32
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x64.ActiveCfg = Release|x64
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x64.Build.0 = Release|x64
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x86.ActiveCfg = Release|Win32
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +100,7 @@ Global
 		{DFA4A950-90B6-4427-B5F7-4652FFDDE6F3} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
 		{3DF93520-1AD9-4C17-B093-AA09DCA834AF} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
 		{701A2CFE-B159-48F9-BF51-004BFAFABF17} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
+		{DF8B281E-C0B4-4885-B3C2-CEE906953806} = {40319865-5BBC-48C5-BF7A-0C0D0CEA889C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB71E745-1606-4B19-AE34-95519547452B}

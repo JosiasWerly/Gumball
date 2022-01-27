@@ -7,6 +7,7 @@
 
 class EditorOverlay : 
     public IRenderOverlay {
+    ImGuiIO *guiIO = nullptr;
 public:
     EditorOverlay() :
         IRenderOverlay("editor") {

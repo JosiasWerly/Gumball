@@ -97,8 +97,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\Build\$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)\Build\$(Configuration)\$(ProjectName)\Intermediate\</IntDir>
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\Dependencies\</OutDir>
+    <IntDir>$(SolutionDir)\Build\$(Configuration)\Dependencies\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -146,7 +146,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\Imgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\Imgui\;$(SolutionDir)Dependencies\Json\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
