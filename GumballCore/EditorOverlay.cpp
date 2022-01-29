@@ -21,12 +21,10 @@ void EditorOverlay::onRender(float deltaTime) {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Demo0");
-    ImGui::Button("Hello!");
-    ImGui::End();
-
-    ImGui::Begin("Demo1");
-    ImGui::Button("world!");
+    ImGui::Begin("Debug");
+    for (auto &kv : msStats) {
+        ImGui::Text((kv.first + " : %.4f").c_str(), kv.second);
+    }
     ImGui::End();
 
     ImGui::Render();

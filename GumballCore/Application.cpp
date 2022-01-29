@@ -1,20 +1,15 @@
 #include "Engine.hpp"
-#include "AssetManager.hpp"
-#include "RenderSystem.hpp"
-#include "Object.hpp"
 
-#include "Shaders.hpp"
-#include "Drawable.hpp"
-#include "Texture.hpp"
-#include "Math.hpp"
-#include "Event.hpp"
-
+#include <iostream>
 using namespace std;
 
 
 
 int main() {
 	auto &engine = Engine::instance();
+	engine.initialize();
+
+
 	engine.assetSystem.loadAllFiles("res\\");
 	
 	View v;
@@ -30,7 +25,6 @@ int main() {
 
 	engine.onPlay();
 	while (1) {
-
 
 		if (engine.inputSystem.isKeyDown(Input::EKeyCode::W))
 			dd.transform.position += dd.transform.rotator.forward() * vel;
@@ -52,9 +46,7 @@ int main() {
 		else if (engine.inputSystem.isKeyDown(Input::EKeyCode::RIGHT))
 			dd.transform.rotator.rotate(0, 0, 1);
 
-
-
-		engine.tick();
+		engine.tick(0.f);
 	}
 	engine.shutdown();
 	return 0;

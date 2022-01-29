@@ -47,6 +47,9 @@
     <ClCompile Include="Var.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="TimeStat.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -106,6 +109,9 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="Var.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeStat.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>

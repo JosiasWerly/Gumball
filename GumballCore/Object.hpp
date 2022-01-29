@@ -53,7 +53,7 @@ public:
 		}
 		return nullptr;
 	}
-	void tick() override {
+	void tick(float deltaTime) override {
 		if (starting.size()) {
 
 			for (auto& obj : starting) {
@@ -70,7 +70,7 @@ public:
 			deleting.clear();
 		}
 		for (auto& obj : objects)
-			obj->tick(0.f);
+			obj->tick(deltaTime);
 	}
 };
 
@@ -88,13 +88,16 @@ static void Destroy(Var<Object> obj) {
 }
 
 
-
+class IComponent :
+	public Object {
+public:
+};
 class Actor :
 	public Object {
 public:
 };
 
 
-#endif // !_gameobject
+#endif // !_object
 
 

@@ -1,7 +1,6 @@
 #pragma once
-#ifndef __enginesystem
-#define __enginesystem
-
+#ifndef _enginesystem
+#define _enginesystem
 
 class Engine;
 class IEngineSystem {
@@ -13,11 +12,10 @@ protected:
 
 	virtual void initialize() {}
 	virtual void shutdown() {}
-	virtual void tick() {}
+	virtual void tick(float deltaTime) {}
 
 	virtual void onPlay() {}
 	virtual void onEndplay() {}
-
 };
 
-#endif // !__enginesystem
+#endif // !_enginesystem

@@ -2,8 +2,6 @@
 #include "EditorOverlay.hpp"
 #include "Engine.hpp"
 
-
-
 void Window::create(string Name, Vector2i size) {
 	winSize = size;
 	window = glfwCreateWindow(size.x, size.y, Name.c_str(), NULL, NULL);
@@ -76,6 +74,7 @@ void RenderSystem::initialize() {
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 
+	//pushLayer(new IRenderOverlay("debug"));
 	pushLayer(new IRenderOverlay("game"));
 	pushLayer(new EditorOverlay);
 }
@@ -83,7 +82,7 @@ void RenderSystem::shutdown() {
 	
 	glfwTerminate();
 }
-void RenderSystem::tick() {
+void RenderSystem::tick(float deltaTime) {
 	mainWindow.clearRender();
 
 	for (auto &layer : layers)

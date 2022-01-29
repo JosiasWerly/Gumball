@@ -9,6 +9,10 @@ class EditorOverlay :
     public IRenderOverlay {
     ImGuiIO *guiIO = nullptr;
 public:
+    //crap but it'll help me debug stuff
+    std::unordered_map<string, double> msStats;
+    
+
     EditorOverlay() :
         IRenderOverlay("editor") {
     }
@@ -18,5 +22,6 @@ public:
     void onRender(float deltaTime) override;
 };
 
-
 #endif // _editoroverlay
+
+

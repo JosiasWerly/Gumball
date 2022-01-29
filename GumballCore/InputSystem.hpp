@@ -73,7 +73,7 @@ public:
 	bool onKeyPressed(Input::EKeyCode Key);
 	bool onKeyReleased(Input::EKeyCode Key);
 
-	void tick() override;
+	void tick(float deltaTime) override;
 };
 
 #undef keyWrapper

@@ -189,8 +189,6 @@ public:
 		material.setShader("default");
 		material.setParameter<int>("uTexture", 0);
 		material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
-
-
 	}
 	bool setMesh(string name) {
 		bind();

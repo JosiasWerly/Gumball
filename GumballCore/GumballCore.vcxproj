@@ -166,6 +166,7 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="TimeStat.cpp" />
     <ClCompile Include="Var.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +204,7 @@
     <ClInclude Include="Patterns.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="RenderSystem.hpp" />
+    <ClInclude Include="TimeStat.hpp" />
     <ClInclude Include="Var.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

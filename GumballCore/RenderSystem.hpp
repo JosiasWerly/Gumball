@@ -13,46 +13,6 @@ using namespace std;
 #include "InputSystem.hpp"
 #include "Math.hpp"
 
-//TODO: move to its own file
-class TimeStats {
-    double lastRegister = 0;
-    
-    double ms = 0;
-    double deltaTime = 0;
-
-    double fpsTime = 0;
-    unsigned frames = 0;
-public:
-    TimeStats() {
-        lastRegister = glfwGetTime();
-    }
-
-    void capture() {
-        const double actualTime = glfwGetTime();
-        const double delta = actualTime - lastRegister;
-
-        ms = delta * 1000.0;
-        deltaTime = delta / 1000.0;
-
-        fpsTime += delta;
-        if (fpsTime >= 1000.) {
-            fpsTime = 0;
-            frames = 0;
-        }
-        else
-            frames++;
-    }
-    Inline const double& getDeltaTime() const {
-        return deltaTime;
-    }
-    Inline const double& getMS() const {
-        return ms;
-    }
-    Inline char getFPS() const {
-        return char(1000/ms);
-    }
-};
-
 class Window {
     GLFWwindow* window = nullptr;
     Vector2i winSize;
@@ -106,7 +66,6 @@ public:
     Transform transform;
 };
 
-
 class IRenderOverlay {
 public:
     const string name;
@@ -137,7 +96,7 @@ public:
     }
     void initialize() override;
     void shutdown() override;
-    void tick() override;
+    void tick(float deltaTime) override;
 
     void pushView(int layerId, View* view) {
         if (layers.size() > layerId)
@@ -161,6 +120,14 @@ public:
         else
             layers.emplace_front(layer);
         layer->onAttach();
+    }
+
+    Inline IRenderOverlay *getLayer(string name) {
+        for (auto &l : layers) {
+            if (l->name == name)
+                return l;
+        }
+        return nullptr;
     }
     Inline list<IRenderOverlay*>& getLayerList() { return layers; }
 };
