@@ -4,7 +4,7 @@
 
 #include <iostream>
 using namespace std;
-
+//TODO: create .hpp for Var && PtrData
 struct PtrData{
 	void *ptr = nullptr;
 	unsigned int refCounter = 1;
@@ -12,7 +12,7 @@ struct PtrData{
 template<class T>
 class Var{
 	template<class t> friend class Var;
-	template<class t> friend Var<t> &&convertTo();
+	//template<class t> friend Var<t> &&convertTo();
 
 	PtrData *data = new PtrData;
 	T **ptrCasted = (T **)&data->ptr;
@@ -53,12 +53,17 @@ public:
 	}
 	
 
-	T *operator*() { return *ptrCasted; }
-	T *operator->() { return *ptrCasted; }
+	T *&operator*() { return *ptrCasted; }
+	T *&operator->() { return *ptrCasted; }
 	operator bool() const { return data->ptr;	}
 	bool operator==(const Var &other) const { return data == other.data; }
 	
 	unsigned int referenceCount() const { return data->refCounter; }
+	template<class t> operator Var<t>() {
+		Var<t> out;
+		out.setRef(data);
+		return out;
+	}
 };
 
 

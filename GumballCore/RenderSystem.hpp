@@ -13,6 +13,7 @@ using namespace std;
 #include "InputSystem.hpp"
 #include "Math.hpp"
 
+//TODO: move to its own file
 class TimeStats {
     double lastRegister = 0;
     

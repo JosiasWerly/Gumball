@@ -13,7 +13,7 @@ class Engine :
 	public Singleton<Engine> {
 
 public:
-	list<IEngineSystem*> Systems, TickingSystems;
+	list<IEngineSystem*> systems, tickingSystems;
 	Engine();
 	~Engine();
 

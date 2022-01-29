@@ -14,6 +14,7 @@ void EditorOverlay::onAttach() {
 
 }
 void EditorOverlay::onDetach() {
+
 }
 void EditorOverlay::onRender(float deltaTime) {
     ImGui_ImplOpenGL3_NewFrame();

@@ -1,11 +1,12 @@
 #include "Engine.hpp"
 #include "AssetManager.hpp"
+#include "RenderSystem.hpp"
+#include "Object.hpp"
 
 #include "Shaders.hpp"
 #include "Drawable.hpp"
 #include "Texture.hpp"
 #include "Math.hpp"
-#include "RenderSystem.hpp"
 #include "Event.hpp"
 
 using namespace std;
@@ -13,11 +14,17 @@ using namespace std;
 
 
 int main() {
+	Var<Object> o;
+	Var<Actor> ac = o;
+	*ac = new Actor();
+
+
 	auto &engine = Engine::instance();
 	engine.initialize();
-	auto &renderSystem = RenderSystem::instance();
-	auto &assetSystem = AssetsSystem::instance();
-	auto &inputSystem = InputSystem::instance();
+	auto& renderSystem = RenderSystem::instance();
+	auto& assetSystem = AssetsSystem::instance();
+	auto& inputSystem = InputSystem::instance();
+	auto& objectSystem = ObjectSystem::instance();
 	assetSystem.loadAllFiles("res\\");
 	
 	
@@ -28,17 +35,16 @@ int main() {
 	renderSystem.pushView(0, &v);
 	 
 	DrawInstance dd;
-	dd.setMesh("cube");
-	
+	dd.setMesh("cube");	
 	renderSystem.pushDrawInstance(0, &dd);
-
-
 	engine.onPlay();
 
 	const float vel = 0.01f;
 	while (1) {	
+		objectSystem.tick();
 		renderSystem.tick();
 		inputSystem.tick();
+
 
 		if (inputSystem.isKeyDown(Input::EKeyCode::W))
 			dd.transform.position += dd.transform.rotator.forward() * vel;
