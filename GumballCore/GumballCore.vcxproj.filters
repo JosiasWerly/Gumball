@@ -44,6 +44,9 @@
     <ClCompile Include="EditorOverlay.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="Var.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -100,6 +103,9 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="EditorOverlay.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Var.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>

@@ -166,6 +166,7 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="Var.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
@@ -202,6 +203,7 @@
     <ClInclude Include="Patterns.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="RenderSystem.hpp" />
+    <ClInclude Include="Var.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,118 +14,48 @@ using namespace std;
 
 
 int main() {
-	Var<Object> o;
-	Var<Actor> ac = o;
-	*ac = new Actor();
-
-
 	auto &engine = Engine::instance();
-	engine.initialize();
-	auto& renderSystem = RenderSystem::instance();
-	auto& assetSystem = AssetsSystem::instance();
-	auto& inputSystem = InputSystem::instance();
-	auto& objectSystem = ObjectSystem::instance();
-	assetSystem.loadAllFiles("res\\");
-	
-	
+	engine.assetSystem.loadAllFiles("res\\");
 	
 	View v;
 	v.viewMode.setProjectionPerspective();
 	v.transform.position.z = -10;
-	renderSystem.pushView(0, &v);
+	engine.renderSystem.pushView(0, &v);
 	 
 	DrawInstance dd;
-	dd.setMesh("cube");	
-	renderSystem.pushDrawInstance(0, &dd);
-	engine.onPlay();
+	dd.setMesh("cube");
+	engine.renderSystem.pushDrawInstance(0, &dd);
 
 	const float vel = 0.01f;
-	while (1) {	
-		objectSystem.tick();
-		renderSystem.tick();
-		inputSystem.tick();
+
+	engine.onPlay();
+	while (1) {
 
 
-		if (inputSystem.isKeyDown(Input::EKeyCode::W))
+		if (engine.inputSystem.isKeyDown(Input::EKeyCode::W))
 			dd.transform.position += dd.transform.rotator.forward() * vel;
-		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
+		else if (engine.inputSystem.isKeyDown(Input::EKeyCode::S))
 			dd.transform.position -= dd.transform.rotator.forward() * vel;
 
-		if (inputSystem.isKeyDown(Input::EKeyCode::D))
+		if (engine.inputSystem.isKeyDown(Input::EKeyCode::D))
 			dd.transform.position += dd.transform.rotator.right() * vel;
-		else if (inputSystem.isKeyDown(Input::EKeyCode::A))
+		else if (engine.inputSystem.isKeyDown(Input::EKeyCode::A))
 			dd.transform.position -= dd.transform.rotator.right() * vel;
 
-		if (inputSystem.isKeyDown(Input::EKeyCode::UP))
+		if (engine.inputSystem.isKeyDown(Input::EKeyCode::UP))
 			dd.transform.rotator.rotate(1, 0, 0);
-		else if (inputSystem.isKeyDown(Input::EKeyCode::DOWN))
+		else if (engine.inputSystem.isKeyDown(Input::EKeyCode::DOWN))
 			dd.transform.rotator.rotate(-1, 0, 0);
 
-		if (inputSystem.isKeyDown(Input::EKeyCode::LEFT))
+		if (engine.inputSystem.isKeyDown(Input::EKeyCode::LEFT))
 			dd.transform.rotator.rotate(0, 0, -1);
-		else if (inputSystem.isKeyDown(Input::EKeyCode::RIGHT))
+		else if (engine.inputSystem.isKeyDown(Input::EKeyCode::RIGHT))
 			dd.transform.rotator.rotate(0, 0, 1);
+
+
+
+		engine.tick();
 	}
 	engine.shutdown();
 	return 0;
 }
-
-
-
-//int main() {
-//	auto& engine = Engine::instance();
-//	engine.initialize();
-//	auto& renderSystem = RenderSystem::instance();
-//	auto& assetSystem = AssetsSystem::instance();
-//	auto& inputSystem = InputSystem::instance();
-//	assetSystem.loadAllFiles("res\\");
-//
-//
-//
-//	View v;
-//	v.viewMode.setProjectionPerspective();
-//	v.transform.position.z = -10;
-//	renderSystem.pushView(0, &v);
-//
-//	DrawInstance dd;
-//	dd.setMesh("cube");
-//
-//	renderSystem.pushDrawInstance(0, &dd);
-//
-//
-//	engine.onPlay();
-//
-//	const float vel = 0.01f;
-//	while (1) {
-//		renderSystem.tick();
-//		inputSystem.tick();
-//
-//		if (inputSystem.isKeyDown(Input::EKeyCode::W))
-//			dd.transform.position += dd.transform.rotator.forward() * vel;
-//		else if (inputSystem.isKeyDown(Input::EKeyCode::S))
-//			dd.transform.position -= dd.transform.rotator.forward() * vel;
-//
-//		if (inputSystem.isKeyDown(Input::EKeyCode::D))
-//			dd.transform.position += dd.transform.rotator.right() * vel;
-//		else if (inputSystem.isKeyDown(Input::EKeyCode::A))
-//			dd.transform.position -= dd.transform.rotator.right() * vel;
-//
-//		if (inputSystem.isKeyDown(Input::EKeyCode::UP))
-//			dd.transform.rotator.rotate(1, 0, 0);
-//		else if (inputSystem.isKeyDown(Input::EKeyCode::DOWN))
-//			dd.transform.rotator.rotate(-1, 0, 0);
-//
-//		if (inputSystem.isKeyDown(Input::EKeyCode::LEFT))
-//			dd.transform.rotator.rotate(0, 0, -1);
-//		else if (inputSystem.isKeyDown(Input::EKeyCode::RIGHT))
-//			dd.transform.rotator.rotate(0, 0, 1);
-//	}
-//
-//
-//
-//
-//
-//
-//	engine.shutdown();
-//	return 0;
-//}

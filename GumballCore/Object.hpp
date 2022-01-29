@@ -9,6 +9,7 @@
 using namespace std;
 
 #include "EngineSystem.hpp"
+#include "Var.hpp"
 #include "Patterns.hpp"
 
 typedef long long ObjAddrs;
@@ -85,6 +86,7 @@ static void Destroy(Var<Object> obj) {
 	obj->lifecycle = EObjectLifecycle::beingDeleted;
 	ObjectSystem::instance().deleting.push_back(obj);
 }
+
 
 
 class Actor :

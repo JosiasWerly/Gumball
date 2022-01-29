@@ -1,7 +1,4 @@
 #include "Engine.hpp"
-#include "AssetManager.hpp"
-#include "RenderSystem.hpp"
-#include "Object.hpp"
 
 #include <string>
 using namespace std;
@@ -15,14 +12,20 @@ template<class T> string getClassName(){
 
 
 Engine::Engine() {
-	systems.push_back(&AssetsSystem::instance());
-	systems.push_back(&RenderSystem::instance());
-	systems.push_back(&InputSystem::instance());
-	systems.push_back(&ObjectSystem::instance());
 
-	tickingSystems.push_back(&RenderSystem::instance());
-	tickingSystems.push_back(&InputSystem::instance());
-	tickingSystems.push_back(&ObjectSystem::instance());
+	//RenderSystem &renderSystem = RenderSystem::instance();
+	//AssetsSystem &assetSystem = AssetsSystem::instance();
+	//InputSystem &inputSystem = InputSystem::instance();
+	//ObjectSystem &objectSystem = ObjectSystem::instance();
+
+	systems.push_back(&renderSystem);
+	systems.push_back(&assetSystem);
+	systems.push_back(&inputSystem);
+	systems.push_back(&objectSystem);
+
+	tickingSystems.push_back(&renderSystem);
+	tickingSystems.push_back(&inputSystem);
+	tickingSystems.push_back(&objectSystem);
 }
 Engine::~Engine(){
 }
@@ -43,12 +46,6 @@ void Engine::onEndplay() {
 		s->onEndplay();
 }
 void Engine::tick() {
-	initialize();	
-	onPlay();
-	while (true) {
-		for (auto& s : tickingSystems)
-			s->tick();
-	}
-	onEndplay();
-	shutdown();
+	for (auto &s : tickingSystems)
+		s->tick();
 }
