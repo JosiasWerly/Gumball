@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllLoader\dllLoader.cpp" />
+    <ClCompile Include="dllLoader\DynamicLibrary.cpp" />
     <ClCompile Include="objLoader\objloader.cpp" />
     <ClCompile Include="objLoader\vboindexer.cpp" />
     <ClCompile Include="stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dllLoader\dllLoader.hpp" />
+    <ClInclude Include="dllLoader\DynamicLibrary.hpp" />
     <ClInclude Include="objLoader\objloader.hpp" />
     <ClInclude Include="objLoader\vboindexer.hpp" />
     <ClInclude Include="stb_image\stb_image.h" />

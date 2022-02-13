@@ -8,8 +8,14 @@ using namespace std;
 int main() {
 	auto &engine = Engine::instance();
 	engine.initialize();
+	while (true) {
 
-
+	}
+	return 0;
+}
+/*
+	auto &engine = Engine::instance();
+	engine.initialize();
 	engine.assetSystem.loadAllFiles("res\\");
 	
 	View v;
@@ -50,4 +56,4 @@ int main() {
 	}
 	engine.shutdown();
 	return 0;
-}
+*/

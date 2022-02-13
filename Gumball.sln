@@ -26,6 +26,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Imgui", "Dependencies\Imgui
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Json", "Dependencies\Json\Json.vcxproj", "{DF8B281E-C0B4-4885-B3C2-CEE906953806}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GumballProject", "GumballProject\GumballProject.vcxproj", "{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -90,6 +92,14 @@ Global
 		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x64.Build.0 = Release|x64
 		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x86.ActiveCfg = Release|Win32
 		{DF8B281E-C0B4-4885-B3C2-CEE906953806}.Release|x86.Build.0 = Release|Win32
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Debug|x64.ActiveCfg = Debug|x64
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Debug|x64.Build.0 = Debug|x64
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Debug|x86.ActiveCfg = Debug|Win32
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Debug|x86.Build.0 = Debug|Win32
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Release|x64.ActiveCfg = Release|x64
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Release|x64.Build.0 = Release|x64
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Release|x86.ActiveCfg = Release|Win32
+		{0817C44A-7E55-4D55-8B7C-6E4CB3175B3D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

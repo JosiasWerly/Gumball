@@ -12,7 +12,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllLoader\dllLoader.cpp">
+    <ClCompile Include="dllLoader\DynamicLibrary.cpp">
       <Filter>dllLoader</Filter>
     </ClCompile>
     <ClCompile Include="objLoader\objloader.cpp">
@@ -26,7 +26,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dllLoader\dllLoader.hpp">
+    <ClInclude Include="dllLoader\DynamicLibrary.hpp">
       <Filter>dllLoader</Filter>
     </ClInclude>
     <ClInclude Include="objLoader\objloader.hpp">

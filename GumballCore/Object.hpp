@@ -55,7 +55,6 @@ public:
 	}
 	void tick(float deltaTime) override {
 		if (starting.size()) {
-
 			for (auto& obj : starting) {
 				obj->start();
 				obj->lifecycle = EObjectLifecycle::nominal;
