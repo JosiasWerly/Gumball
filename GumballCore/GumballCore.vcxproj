@@ -163,7 +163,7 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="EditorOverlay.cpp" />
-    <ClCompile Include="ProjectSystem.cpp" />
+    <ClCompile Include="ProjectLinker.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
@@ -202,7 +202,6 @@
     <ClInclude Include="GLUtils.hpp" />
     <ClInclude Include="EditorOverlay.hpp" />
     <ClInclude Include="ProjectLinker.hpp" />
-    <ClInclude Include="ProjectSystem.hpp" />
     <ClInclude Include="Shaders.hpp" />
     <ClInclude Include="Patterns.hpp" />
     <ClInclude Include="Texture.hpp" />

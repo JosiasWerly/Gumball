@@ -1,18 +1,19 @@
 #include "Engine.hpp"
-
 #include <iostream>
 using namespace std;
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
 	auto &engine = Engine::instance();
-	engine.initialize();
-	while (true) {
-
-	}
+	engine.args(argc, argv);
+	engine.tick();
 	return 0;
 }
+
+
+
+
 /*
 	auto &engine = Engine::instance();
 	engine.initialize();

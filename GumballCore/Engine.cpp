@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include "ProjectLinker.hpp"
 
 #include <string>
 using namespace std;
@@ -11,6 +12,9 @@ template<class T> string getClassName(){
 
 
 Engine::Engine() {
+	project = new ProjectLinker;
+	project->dllPath = "C:\\Users\\ADM\\source\\repos\\Base\\Gumball\\Build\\Debug\\GumballProject\\GumballProject.dll";
+
 	systems.push_back(&renderSystem);
 	systems.push_back(&assetSystem);
 	systems.push_back(&inputSystem);
@@ -22,35 +26,93 @@ Engine::Engine() {
 }
 Engine::~Engine(){
 }
-void Engine::initialize() {
-	for (auto &s : systems)
-		s->initialize();
-
-	editor = dynamic_cast<EditorOverlay *>(renderSystem.getLayer("editor"));
+void Engine::args(int argc, char *argv[]) {
+	project->enginePath = argv[0];
+	project->enginePath = project->enginePath.substr(0, project->enginePath.find_last_of("\\"));
 }
-void Engine::shutdown() {
-	for (auto& s : systems)
+void Engine::tick() {
+	for (auto &s : systems) 
+		s->initialize();
+	editor = dynamic_cast<EditorOverlay *>(renderSystem.getLayer("editor"));
+	
+	while (true) {
+		if (project->hasToLoad()) {
+			if (project->isLoaded()) {
+				for (auto &s : systems)
+					s->onEndplay();
+			}
+			project->load();
+			if (project->isLoaded()) {
+				for (auto &s : systems)
+					s->onPlay();
+			}
+		}
+
+
+		static string names[] = { "render", "input", "object" };
+		timeStats.capture();
+		editor->msStats["fps"] = timeStats.getFPS();
+
+		int id = 0;
+		TimeStat debugTimeStats;
+		for (auto &s : tickingSystems) {
+			debugTimeStats.capture();
+			s->tick((float)timeStats.getDeltaTime());
+			debugTimeStats.capture();
+			editor->msStats[names[id++]] = debugTimeStats.getMS();
+		}
+	}
+
+	for (auto &s : systems) 
+		s->onEndplay();
+
+	for (auto &s : systems)
 		s->shutdown();
 }
-void Engine::onPlay() {
-	for (auto& s : systems)
-		s->onPlay();
-}
-void Engine::onEndplay() {
-	for (auto& s : systems)
-		s->onEndplay();
-}
-void Engine::tick(float deltaTime) {
-	static string names[] = { "render", "input", "object"};
-	timeStats.capture();
-	editor->msStats["fps"] = timeStats.getFPS();
-	
-	int id = 0;
-	TimeStat debugTimeStats;
-	for (auto &s : tickingSystems) {
-		debugTimeStats.capture();
-		s->tick(timeStats.getDeltaTime());
-		debugTimeStats.capture();
-		editor->msStats[names[id++]] = debugTimeStats.getMS();
-	}	
-}
+
+
+
+//Engine::Engine() {
+//	systems.push_back(&renderSystem);
+//	systems.push_back(&assetSystem);
+//	systems.push_back(&inputSystem);
+//	systems.push_back(&objectSystem);
+//
+//	tickingSystems.push_back(&renderSystem);
+//	tickingSystems.push_back(&inputSystem);
+//	tickingSystems.push_back(&objectSystem);	
+//}
+//Engine::~Engine(){
+//}
+//void Engine::initialize() {
+//	for (auto &s : systems)
+//		s->initialize();
+//
+//	editor = dynamic_cast<EditorOverlay *>(renderSystem.getLayer("editor"));
+//}
+//void Engine::shutdown() {
+//	for (auto& s : systems)
+//		s->shutdown();
+//}
+//void Engine::onPlay() {
+//	for (auto& s : systems)
+//		s->onPlay();
+//}
+//void Engine::onEndplay() {
+//	for (auto& s : systems)
+//		s->onEndplay();
+//}
+//void Engine::tick(float deltaTime) {
+//	static string names[] = { "render", "input", "object"};
+//	timeStats.capture();
+//	editor->msStats["fps"] = timeStats.getFPS();
+//	
+//	int id = 0;
+//	TimeStat debugTimeStats;
+//	for (auto &s : tickingSystems) {
+//		debugTimeStats.capture();
+//		s->tick(timeStats.getDeltaTime());
+//		debugTimeStats.capture();
+//		editor->msStats[names[id++]] = debugTimeStats.getMS();
+//	}	
+//}

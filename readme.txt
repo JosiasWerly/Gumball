@@ -3,12 +3,16 @@ This project was rebooted in 11/2021, secundary branch is the old version
 	~~~~dependencies~~~~
 GLAD, GLFW, Opengl, GLSL
 GLM, IMGUI, PicoJson, LUA(embeded)
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	~~~~General Points~~~~
 Currently gumballCore is the Engine and generates an .exe. 
 The user can create it's onw project by cloning GumballProject
-as the engine is looking for a DLL for hotreload;
+as the engine is looking for a DLL for hotreload; In other words:
+-execute the engine .exe.
+-extend your own version of GumballProject.
+
 
 Editor part is very crap(editorOverlay.hpp/cpp), 
 I'll have to remake everything soon.

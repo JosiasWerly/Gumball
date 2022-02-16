@@ -50,7 +50,7 @@
     <ClCompile Include="TimeStat.cpp">
       <Filter>scr</Filter>
     </ClCompile>
-    <ClCompile Include="ProjectSystem.cpp">
+    <ClCompile Include="ProjectLinker.cpp">
       <Filter>scr</Filter>
     </ClCompile>
   </ItemGroup>
@@ -118,9 +118,6 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="ProjectLinker.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectSystem.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>
