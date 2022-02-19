@@ -4,7 +4,7 @@ This project was rebooted in 11/2021, secundary branch is the old version
 GLAD, GLFW, Opengl, GLSL
 GLM, IMGUI, PicoJson, LUA(embeded)
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	~~~~General Points~~~~
 Currently gumballCore is the Engine and generates an .exe. 
@@ -26,7 +26,7 @@ its "instance". So most likely I'll rewrite the render system to
 support this relation.
 
 LUA is removed for the time being.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 Gumball Objective:

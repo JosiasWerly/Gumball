@@ -129,8 +129,7 @@ public:
 	virtual bool disassemble(Asset &asset, Archive &ar) = 0;
 };
 class AssetsSystem :
-	public IEngineSystem,
-	public Singleton<AssetsSystem> {
+	public IEngineSystem {
 
 	list<IAssetFactory*> factories;
 	list<Asset*> assets;

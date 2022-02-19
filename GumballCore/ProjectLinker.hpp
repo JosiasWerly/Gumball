@@ -11,7 +11,7 @@ class ProjectLinker {
 	DynamicLibrary dll;
 	std::time_t fileModifiedTime;
 
-	typedef void(*FnxOnProjectAttached)(ProjectLinker &project);
+	typedef void(*FnxOnProjectAttached)(Engine &engineRef);
 	typedef void(*FnxOnProjectDettached)();
 
 	FnxOnProjectAttached onAttached;
@@ -28,8 +28,8 @@ public:
 	}
 };
 
-
-Extern void OnProjectAttached(ProjectLinker &project);
+//TODO: perhaps I should use inherance for extending this points
+Extern void OnProjectAttached(Engine &engineRef);
 Extern void OnProjectDettached();
 
 #endif // !_projectLinker

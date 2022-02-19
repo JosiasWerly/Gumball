@@ -1,5 +1,5 @@
 #include "EditorOverlay.hpp"
-
+#include "Engine.hpp"
 void EditorOverlay::onAttach() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -8,7 +8,8 @@ void EditorOverlay::onAttach() {
     guiIO->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     guiIO->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     
-    ImGui_ImplGlfw_InitForOpenGL(RenderSystem::instance().mainWindow.GetGLWindow(), true);
+    auto &RenderSys = *Engine::instance()->getSystem<RenderSystem>();
+    ImGui_ImplGlfw_InitForOpenGL(RenderSys.mainWindow.GetGLWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 440");
     ImGui::StyleColorsDark();
 

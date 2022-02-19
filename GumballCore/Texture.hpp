@@ -82,34 +82,13 @@ protected:
 	Image *image = nullptr;
 	unsigned slot = 0;
 public:
-	Texture() {}
-	/*void setPixel(int x, int y, int color) {
-		int p = ((y * height) + x) * 4;
-		if (!memoryBuffer || p > width * height)
-			return;
-		memoryBuffer[p] = (color >> 24);
-		memoryBuffer[p + 1] = (color >> 16);
-		memoryBuffer[p + 2] = (color >> 8);
-		memoryBuffer[p + 3] = color;
-	}*/
-
-	bool setImage(string name) {
-		Image *img = nullptr;
-		if (AssetsSystem::instance()(name, img))
-			image = img;
-		return image;
-	}
-
-	void bind() {
-		glActiveTexture(GL_TEXTURE0 + slot);
-		image->bind();
-	}
-	void unbind() {
-		//glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	inline bool isValid() { return image; }
-	inline void setSlot(int newSlot) { slot = newSlot; }
-	inline int getSlot() { return slot; }
+	Texture();
+	bool setImage(string name);
+	void bind();
+	void unbind();
+	Inline bool isValid() { return image; }
+	Inline void setSlot(int newSlot) { slot = newSlot; }
+	Inline int getSlot() { return slot; }
 };
 
 class TextureFactory : 

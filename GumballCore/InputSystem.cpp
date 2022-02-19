@@ -1,5 +1,5 @@
 #include "InputSystem.hpp"
-
+#include "Engine.hpp"
 using namespace Input;
 
 //std::map<Input::EKeyCode, InputSystem::KeyCodeStatus> InputSystem::keyPool, InputSystem::keysStatus;
@@ -7,16 +7,16 @@ using namespace Input;
 
 //just need to capture when the state changed
 void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	static InputSystem& inst = InputSystem::instance();
+	static auto &inputSys = *Engine::instance()->getSystem<InputSystem>();
 	const EKeyCode keyCode = static_cast<EKeyCode>(key);
 	const EActionType type = static_cast<EActionType>(action);
 
 	if (type == EActionType::repeat)
 		return;
 	if(type == EActionType::pressed)
-		inst.keyPool[keyCode].pressed = true;
+		inputSys.keyPool[keyCode].pressed = true;
 	else
-		inst.keyPool[keyCode].released = true;
+		inputSys.keyPool[keyCode].released = true;
 }
 void InputSystem::tick(float deltaTime) {
 	eventPool.clearPool();

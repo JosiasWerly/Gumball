@@ -96,47 +96,33 @@ public:
 	unsigned shaderId = 0;
 	ShaderParameters parameters;
 	
-	Shader() : 
-		parameters(*this) {}
+	Shader();
 	bool create(const string &vertex, const string &fragment);
 	bool compile(EShaderType eShaderType, const string& code, int& id);
 
-	Inline void bind() {
-		glUseProgram(shaderId);		
-	}
-	Inline void unBind() const {
-		glUseProgram(0);
-	}
-	Inline void uploadUniforms() {
-		parameters.uploadUniforms();
-	}
+	Inline void bind();
+	Inline void unBind() const;
+	Inline void uploadUniforms();
 };
 
 class Material {
 	Shader* shader = nullptr;
 public:
 	template<class T> 
-	void setParameter(string name, T value) {
-		if (shader) {
-			shader->parameters.getParamValue<T>(name);
-			if (T* param = shader->parameters.getParamValue<T>(name))
-				*param = value;
-		}
-	}
-	void use() {
-		shader->bind();
-		shader->uploadUniforms();
-		
-	}
-	bool setShader(string name) {
-		Shader* sh = nullptr;
-		if (AssetsSystem::instance()(name, sh))
-			shader = sh;
-		return shader;
-	}
-	bool isInstance() { return false; }
+	void setParameter(string name, T value);
+	void use();
+	bool setShader(string name);
+	bool isInstance();
 };
 
+template<class T>
+void Material::setParameter(string name, T value) {
+	if (shader) {
+		shader->parameters.getParamValue<T>(name);
+		if (T *param = shader->parameters.getParamValue<T>(name))
+			*param = value;
+	}
+}
 
 
 #endif // !__shaders

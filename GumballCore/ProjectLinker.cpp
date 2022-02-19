@@ -1,9 +1,11 @@
 #include "ProjectLinker.hpp"
+#include <iostream>
+#include <fstream>
 #include <filesystem>
 #include <string>
 #include <chrono>
 
-
+using namespace std;
 namespace fs = std::filesystem;
 using namespace std::chrono_literals;
 
@@ -19,7 +21,14 @@ void ProjectLinker::load() {
 		onAttached = dll.getFunc<FnxOnProjectAttached>("OnProjectAttached");
 		onDettached = dll.getFunc<FnxOnProjectDettached>("OnProjectDettached");
 
-		onAttached(*this);
+		onAttached(*Engine::instance());
+		
+		{
+			fs::path p = dllPath;
+			const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
+			const auto curModifiedTime = std::chrono::system_clock::to_time_t(systemTime);
+			fileModifiedTime = curModifiedTime;
+		}
 	}
 	else {
 		cout << "fail to load" << endl;
@@ -31,14 +40,14 @@ bool ProjectLinker::hasToLoad() {
 			return true;
 
 		fs::path p = dllPath;
-		ifstream  probeDLL(dllPath);
+		ifstream probeDLL(dllPath);
 		if (probeDLL.is_open()) {
 			probeDLL.close();
-			const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
-			const auto curModifiedTime = std::chrono::system_clock::to_time_t(systemTime);
-			if (fileModifiedTime != curModifiedTime) {
-				fileModifiedTime = curModifiedTime;
-				return true;
+			{
+				const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
+				const auto curModifiedTime = std::chrono::system_clock::to_time_t(systemTime);
+				if (fileModifiedTime != curModifiedTime)
+					return true;
 			}
 		}
 	}

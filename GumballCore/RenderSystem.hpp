@@ -83,8 +83,7 @@ public:
 };
 
 class RenderSystem :
-    public IEngineSystem,
-    public Singleton<RenderSystem> {
+    public IEngineSystem {
     
     list<IRenderOverlay*> layers;
 public:

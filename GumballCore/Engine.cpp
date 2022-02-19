@@ -1,8 +1,19 @@
 #include "Engine.hpp"
+#include "EngineSystem.hpp"
+#include "AssetManager.hpp"
+#include "RenderSystem.hpp"
+#include "EditorOverlay.hpp"
 #include "ProjectLinker.hpp"
 
+#include <iostream>
 #include <string>
+
+//#include "Object.hpp"
+//#include "Event.hpp"
 using namespace std;
+
+//Engine * Engine::inst = nullptr;
+
 
 template<class T> string getClassName(){
 	string out = typeid(T).name();
@@ -15,14 +26,19 @@ Engine::Engine() {
 	project = new ProjectLinker;
 	project->dllPath = "C:\\Users\\ADM\\source\\repos\\Base\\Gumball\\Build\\Debug\\GumballProject\\GumballProject.dll";
 
-	systems.push_back(&renderSystem);
-	systems.push_back(&assetSystem);
-	systems.push_back(&inputSystem);
-	systems.push_back(&objectSystem);
 
-	tickingSystems.push_back(&renderSystem);
-	tickingSystems.push_back(&inputSystem);
-	tickingSystems.push_back(&objectSystem);	
+	RenderSystem *renderSystem = new RenderSystem;
+	AssetsSystem *assetSystem = new AssetsSystem;
+	InputSystem *inputSystem = new InputSystem;
+
+	systems.push_back(renderSystem);
+	systems.push_back(assetSystem);
+	systems.push_back(inputSystem);
+	//systems.push_back(objectSystem);
+
+	tickingSystems.push_back(renderSystem);
+	tickingSystems.push_back(inputSystem);
+	//tickingSystems.push_back(objectSystem);	
 }
 Engine::~Engine(){
 }
@@ -31,9 +47,11 @@ void Engine::args(int argc, char *argv[]) {
 	project->enginePath = project->enginePath.substr(0, project->enginePath.find_last_of("\\"));
 }
 void Engine::tick() {
-	for (auto &s : systems) 
+	for (auto &s : systems)
 		s->initialize();
-	editor = dynamic_cast<EditorOverlay *>(renderSystem.getLayer("editor"));
+	cout << "&" << (long)&*Engine::instance() << endl;
+	
+	editor = dynamic_cast<EditorOverlay *>(getSystem<RenderSystem>()->getLayer("editor"));
 	
 	while (true) {
 		if (project->hasToLoad()) {

@@ -57,8 +57,7 @@ namespace Input {
 };
 
 class InputSystem : 
-	public IEngineSystem,
-	public Singleton<InputSystem> {
+	public IEngineSystem {
 public:
 	struct KeyCodeStatus {
 		bool pressed, released, repeat; 

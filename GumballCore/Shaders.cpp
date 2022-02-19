@@ -1,10 +1,11 @@
 #include "Shaders.hpp"
+#include "Engine.hpp"
 #include "Math.hpp"
 
-bool ShaderFactory::assemble(Asset& asset, Archive& ar) {
+bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 	string vertex, fragment;
 	makeSourceFromArchive(ar, vertex, fragment);
-	Shader* shader = new Shader;
+	Shader *shader = new Shader;
 	if (shader->create(vertex, fragment)) {
 		asset << shader;
 		return true;
@@ -64,7 +65,7 @@ ShaderParam::~ShaderParam() {
 }
 
 void ShaderParameters::clearUniforms() {
-	for (auto& u : uniforms)
+	for (auto &u : uniforms)
 		delete u.second;
 	uniforms.clear();
 }
@@ -81,11 +82,14 @@ void ShaderParameters::captureUniforms() {
 	}
 }
 void ShaderParameters::uploadUniforms() {
-	for (auto& u : uniforms)
+	for (auto &u : uniforms)
 		u.second->paramIO->upload();
 }
 
-bool Shader::create(const string& vertex, const string& fragment) {
+Shader::Shader() :
+	parameters(*this) {
+}
+bool Shader::create(const string &vertex, const string &fragment) {
 	shaderId = glCreateProgram();
 	int	vs, fs;
 
@@ -110,9 +114,9 @@ bool Shader::create(const string& vertex, const string& fragment) {
 	parameters.captureUniforms();
 	return true;
 }
-bool Shader::compile(EShaderType eShaderType, const string& code, int& id) {
+bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {
 	id = glCreateShader(static_cast<unsigned>(eShaderType));
-	const char* src = code.c_str();
+	const char *src = code.c_str();
 	glDCall(glShaderSource(id, 1, &src, 0));
 	glDCall(glCompileShader(id));
 
@@ -121,7 +125,7 @@ bool Shader::compile(EShaderType eShaderType, const string& code, int& id) {
 	if (result == GL_FALSE) {
 		int length;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char* msg = (char*)alloca(length * sizeof(char));
+		char *msg = (char *)alloca(length * sizeof(char));
 		glGetShaderInfoLog(id, length, &length, msg);
 
 		cout << (eShaderType == EShaderType::Vertex ? "vert" : "frag") << msg << endl;
@@ -129,3 +133,28 @@ bool Shader::compile(EShaderType eShaderType, const string& code, int& id) {
 	}
 	return true;
 }
+Inline void Shader::bind() {
+	glUseProgram(shaderId);
+}
+Inline void Shader::unBind() const {
+	glUseProgram(0);
+}
+Inline void Shader::uploadUniforms() {
+	parameters.uploadUniforms();
+}
+
+
+void Material::use() {
+	shader->bind();
+	shader->uploadUniforms();
+
+}
+bool Material::setShader(string name) {
+
+	auto &assetSys = *Engine::instance()->getSystem<AssetsSystem>();
+	Shader *sh = nullptr;
+	if (assetSys(name, sh))
+		shader = sh;
+	return shader;
+}
+bool Material::isInstance() { return false; }
