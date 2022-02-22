@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Archive.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -188,6 +189,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Archive.hpp" />
     <ClInclude Include="AssetManager.hpp" />
     <ClInclude Include="Definitions.hpp" />
     <ClInclude Include="Drawable.hpp" />

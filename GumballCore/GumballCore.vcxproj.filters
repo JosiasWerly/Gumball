@@ -53,6 +53,9 @@
     <ClCompile Include="ProjectLinker.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="Archive.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -118,6 +121,9 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="ProjectLinker.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="Archive.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>

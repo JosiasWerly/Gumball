@@ -57,6 +57,7 @@ ShaderParam::ShaderParam(unsigned location, unsigned type) :
 	case GL_INT_VEC3:       paramIO = new UniformIO<glm::ivec3>(*this); break;
 	case GL_INT_VEC2:       paramIO = new UniformIO<glm::ivec2>(*this); break;
 	case GL_FLOAT_MAT4:     paramIO = new UniformIO<glm::mat4>(*this); break;
+	case GL_TEXTURE_2D:		cout << "trying to load TEXTURE"; break;
 	default: throw; //not found;
 	}
 }

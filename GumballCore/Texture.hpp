@@ -16,7 +16,7 @@ class Image {
 	int width = 0, height = 0;
 	Color *imageBuffer = nullptr;
 public:
-	//code bloat? but is purple beauty! \o/
+	//code bloat? but purple is beauty! \o/
 	~Image() {
 		destroy();
 	}

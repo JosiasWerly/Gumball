@@ -2,15 +2,58 @@
 #ifndef _object
 #define _object
 
-#include <iostream>
+#include "Definitions.hpp"
+#include "EngineSystem.hpp"
+
+#include <string>
 #include <list>
-#include <map>
-#include <unordered_map>
 using namespace std;
 
-#include "EngineSystem.hpp"
-#include "Var.hpp"
-#include "Patterns.hpp"
+class Object;
+class ObjectPackage;
+class MemorySystem;
+class IEngineSystem;
+
+
+enum class EObjectPackage {
+	asset,
+	game
+};
+
+class Object {
+	const string name;
+protected:
+	Object(string name) {}
+public:
+	void setName(string newName) {
+	}
+	const string &getName() { 
+		return name; 
+	}
+};
+
+class IObjectPackage {
+	list<Object> objects;
+public:
+
+};
+
+
+class MemorySystem :
+	public IEngineSystem {
+public:
+};
+
+
+//#include <iostream>
+//#include <list>
+//#include <map>
+//#include <unordered_map>
+//using namespace std;
+//
+//#include "EngineSystem.hpp"
+//#include "Var.hpp"
+//#include "Patterns.hpp"
 
 //typedef long long ObjAddrs;
 //

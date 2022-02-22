@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __drawable
-#define __drawable
+#ifndef _drawable
+#define _drawable
 
 #include "GLUtils.hpp"
 #include "Shaders.hpp"
