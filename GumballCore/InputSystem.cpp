@@ -7,6 +7,8 @@ using namespace Input;
 
 //just need to capture when the state changed
 void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	//REMOVE: input system disable for the time being
+	return;
 	static auto &inputSys = *Engine::instance()->getSystem<InputSystem>();
 	const EKeyCode keyCode = static_cast<EKeyCode>(key);
 	const EActionType type = static_cast<EActionType>(action);

@@ -7,7 +7,7 @@ bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 	makeSourceFromArchive(ar, vertex, fragment);
 	Shader *shader = new Shader;
 	if (shader->create(vertex, fragment)) {
-		asset << shader;
+		asset.setContent(shader);
 		return true;
 	}
 	delete shader;
@@ -144,17 +144,7 @@ Inline void Shader::uploadUniforms() {
 	parameters.uploadUniforms();
 }
 
-
 void Material::use() {
 	shader->bind();
 	shader->uploadUniforms();
-
 }
-bool Material::setShader(string name) {
-	//auto &assetSys = *Engine::instance()->getSystem<AssetsSystem>();
-	//if (Shader * sh = assetSys.getAsset<Shader>(name))
-	//	shader = sh;
-	//return shader;
-	return false;
-}
-bool Material::isInstance() { return false; }

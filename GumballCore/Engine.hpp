@@ -6,19 +6,14 @@
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
 
-//#include "EngineSystem.hpp"
-//#include "AssetManager.hpp"
-//#include "RenderSystem.hpp"
-//#include "EditorOverlay.hpp"
-//#include "Object.hpp"
-//#include "Event.hpp"
-
-
-
-
 class EditorOverlay;
 class IEngineSystem;
 class ProjectLinker;
+
+class RenderSystem;
+class AssetsSystem;
+class InputSystem;
+
 
 class Engine : 
 	public Singleton<Engine>{
@@ -33,6 +28,11 @@ class Engine :
 	Engine();
 	~Engine();
 public:
+	RenderSystem *renderSystem;
+	AssetsSystem *assetSystem;
+	InputSystem *inputSystem;
+
+
 
 	void args(int argc, char *argv[]);
 	void tick();

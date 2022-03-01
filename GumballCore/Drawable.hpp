@@ -161,6 +161,9 @@ public:
 	}
 };
 
+
+#include "Engine.hpp"
+#include "AssetManager.hpp"
 class DrawInstance {
 	Vao *vao = nullptr;
 	Vbo *vbo = nullptr;
@@ -185,8 +188,9 @@ public:
 		vbo->unbind();
 		ibo->unbind();		
 
-		texture.setImage("logo");
-		material.setShader("default");
+		texture.image = Engine::instance()->assetSystem->getAsset("logo")->getContent();
+		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent();
+		
 		material.setParameter<int>("uTexture", 0);
 		material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 	}

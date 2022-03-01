@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __shaders
-#define __shaders
+#ifndef _shaders
+#define _shaders
 #include "AssetManager.hpp"
 #include "GLUtils.hpp"
 
@@ -44,7 +44,6 @@ public:
 	}
 };
 
-
 class IShaderParamIO {
 public:
 	const ShaderParam& owner;
@@ -85,48 +84,49 @@ public:
 		return nullptr;
 	}
 };
-
-class Shader {
+class Shader : 
+	public Object {
 public:
 	enum class EShaderType {
 		Vertex = GL_VERTEX_SHADER,
 		Fragment = GL_FRAGMENT_SHADER
 	};
 
+protected:
+	bool compile(EShaderType eShaderType, const string& code, int& id);
+
+public:
 	unsigned shaderId = 0;
 	ShaderParameters parameters;
 	
 	Shader();
 	bool create(const string &vertex, const string &fragment);
-	bool compile(EShaderType eShaderType, const string& code, int& id);
 
 	Inline void bind();
 	Inline void unBind() const;
 	Inline void uploadUniforms();
 };
 
+
 class Material {
-	Shader* shader = nullptr;
 public:
-	template<class T> 
-	void setParameter(string name, T value);
+	Var<Shader> shader;
 	void use();
-	bool setShader(string name);
-	bool isInstance();
+	
+	template<class T> 
+	void setParameter(string name, T value) {
+		if (shader) {
+			shader->parameters.getParamValue<T>(name);
+			if (T *param = shader->parameters.getParamValue<T>(name))
+				*param = value;
+		}
+	}
 };
 
-template<class T>
-void Material::setParameter(string name, T value) {
-	if (shader) {
-		shader->parameters.getParamValue<T>(name);
-		if (T *param = shader->parameters.getParamValue<T>(name))
-			*param = value;
-	}
-}
+#endif // !_shaders
 
 
-#endif // !__shaders
-
+//TODO: REMOVE
 //#shader vertex
 //#version 330 core
 //in vec4 pos;

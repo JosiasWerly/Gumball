@@ -5,9 +5,7 @@
 
 
 class Object {
-public:	
-
-	virtual void test() = 0;
+public:
 };
 
 

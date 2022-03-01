@@ -26,15 +26,13 @@ private:
 protected:
 	Var<Object> content;
 public:
+	Inline Var<Object>& getContent(){
+		return content;
+	}
+	Inline void setContent(Object *newContent) {
+		content.set(newContent);
+	}
 
-	template<class T> void operator>>(T *&data) {		
-		data = dynamic_cast<T *>((*content));
-	}
-	template<class T> void operator<<(T *data) {
-		//delete *content;
-		//*content = data;
-	}
-	
 	Inline bool isValid() { return content; }
 	Inline const string& getName() { return name; }
 	Inline const string& getPath() { return filePath; }

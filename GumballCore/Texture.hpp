@@ -80,14 +80,13 @@ public:
 //TODO: texture should be a material parameter
 class Texture {
 protected:
-	Image *image = nullptr;
 	unsigned slot = 0;
 public:
+	Var<Image> image;
+	
 	Texture();
-	bool setImage(string name);
 	void bind();
 	void unbind();
-	Inline bool isValid() { return image; }
 	Inline void setSlot(int newSlot) { slot = newSlot; }
 	Inline int getSlot() { return slot; }
 };

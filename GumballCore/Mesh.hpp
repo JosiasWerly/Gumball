@@ -26,9 +26,15 @@ struct MeshVertexData {
 	glm::vec3 pos, normal;
 	glm::vec2 uv;
 };
-struct MeshData {
+class MeshData :
+	public Object {
+public:
 	vector<MeshVertexData> mesh;
-	vector<unsigned> index;
+	vector<unsigned int> index;
+	MeshData(const vector<MeshVertexData> &mesh, const vector<unsigned> &index) :
+		mesh(mesh),
+		index(index) {
+	}
 };
 class MeshFunctionsLibrary {
 public:
