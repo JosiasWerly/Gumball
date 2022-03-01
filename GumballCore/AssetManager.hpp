@@ -3,45 +3,42 @@
 #define _assetManager
 
 #include "Patterns.hpp"
+#include "Object.hpp"
+#include "Var.hpp"
 #include "EngineSystem.hpp"
 #include "Archive.hpp"
+
 #include <list>
 #include <string>
 using namespace std;
 
-/*this will become async load in some time in the future*/
+class Asset;
+class IAssetFactory;
+class AssetsSystem;
 
-class IAssetContent {
-public:
-	void * const dataPtr = nullptr;
-	IAssetContent(void *dataPtr) : dataPtr(dataPtr) {}
-};
-template<class T> class TAssetContent : 
-	public IAssetContent{
-public:
-	T *data;
-	TAssetContent(T *data) : IAssetContent(data), data(data){}
-	~TAssetContent() { delete data;	}
-};
+
 class Asset {
-	string filePath;
-	string name;
-	IAssetContent *content = nullptr;
+	friend class AssetsSystem;
+private:
+	string filePath = "";
+	string name = "";
+
+protected:
+	Var<Object> content;
 public:
-	Asset(string name) : name(name) {}
-	template<class T> void operator>>(T *&data) {
-		data = static_cast<T*>(content->dataPtr);
+
+	template<class T> void operator>>(T *&data) {		
+		data = dynamic_cast<T *>((*content));
 	}
 	template<class T> void operator<<(T *data) {
-		if (content)
-			delete content;
-		content = new TAssetContent<T>(data);
+		//delete *content;
+		//*content = data;
 	}
+	
 	Inline bool isValid() { return content; }
-	Inline string getName() { return name; }
+	Inline const string& getName() { return name; }
+	Inline const string& getPath() { return filePath; }
 };
-
-
 class IAssetFactory {
 protected:
 	list<string> extensions;
@@ -51,40 +48,40 @@ public:
 	IAssetFactory(string name = "") : 
 		name(name) {
 	}
-	virtual bool probeFile(const string &filePath);
+	bool hasExtension(const string &extention);
 	virtual bool assemble(Asset &asset, Archive &ar) = 0;
 	virtual bool disassemble(Asset &asset, Archive &ar) = 0;
 };
 class AssetsSystem :
 	public IEngineSystem {
 
-	list<IAssetFactory*> factories;
-	list<Asset*> assets;
+	list<IAssetFactory *> factories;
+	list<Asset *> assets;
+
 protected:
 	virtual void initialize() override;
 	virtual void shutdown() override;
 
 public:
-	
-	Asset *operator[](string name) {
-		for (auto a : assets) {
-			if (a->getName() == name)
-				return a;
+	Asset *getAsset(string name);
+	template<class T> T *getAsset(string name) {
+		T *target;
+		if (auto asset = getAsset(name)) {
+			*asset >> target;
+			return target;
 		}
 		return nullptr;
 	}
-	template<class T>bool operator()(string name, T *&target) {
-		if (auto asset = this->operator[](name)) {
-			*asset >> target;
-			return true;			
-		}
-		target = nullptr;
-		return false;
-	}
-	Asset* createAsset(string name);
-	void loadFile(const string& assetPath);	
-	void loadAllFiles(string root);
-	IAssetFactory *findFactory(const string &ext);
+
+
+	Asset *createAsset(string name);
+	void unloadAsset(string name);
+	void loadAssetFromFile(const string &assetPath);
+	void loadAssetsFromFolder(string root);
+	void reloadAsset(string name);
+	
+	IAssetFactory *findFactory(const string &extension);
+	void createFactory(IAssetFactory *newFactory);
 };
 
 #endif // !_assetManager

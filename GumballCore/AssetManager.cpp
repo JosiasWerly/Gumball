@@ -9,38 +9,56 @@
 #include "Texture.hpp"
 #include "Mesh.hpp"
 
-bool IAssetFactory::probeFile(const string &filePath) {
-	string extension = Files::getExtOfFilePath(filePath);
-	for (auto &ex : extensions)	{
-		if (ex == extension)
+bool IAssetFactory::hasExtension(const string &extention) {
+	for (auto &ex : extensions) {
+		if (ex == extention)
 			return true;
 	}
 	return false;
 }
 
 void AssetsSystem::initialize() {
-	factories.push_back(new ShaderFactory);
-	factories.push_back(new TextureFactory);
-	factories.push_back(new MeshFactory);
+	factories = {
+		new ShaderFactory,
+		new TextureFactory,
+		new MeshFactory,
+	};
 }
 void AssetsSystem::shutdown() {
 }
-Asset* AssetsSystem::createAsset(string name) {
-	Asset *newAsset = this->operator[](name);
-	if (!newAsset)
-		newAsset = new Asset(name);
+Asset *AssetsSystem::getAsset(string name) {
+	for (auto a : assets) {
+		if (a->getName() == name)
+			return a;
+	}
+	return nullptr;
+}
+Asset *AssetsSystem::createAsset(string name) {
+	Asset *newAsset = getAsset(name);
+	if (!newAsset) {
+		newAsset = new Asset;
+		newAsset->name = name;
+		assets.push_back(newAsset);
+	}
 	return newAsset;
 }
-void AssetsSystem::loadFile(const string &assetPath) {
+void AssetsSystem::unloadAsset(string name) {
+	if (auto a = getAsset(name)) {
+		delete *a->content;
+	}
+}
+void AssetsSystem::loadAssetFromFile(const string &assetPath) {
 	string assetName = Files::getNameOfFilePath(assetPath);
-	if (!this->operator[](assetName)) {
+	if (!getAsset(assetName)) {
 		if (auto factory = findFactory(assetPath)) {
-			Asset *asset = new Asset(assetName);
+			Asset *asset = new Asset;
+			asset->name = assetName;
+			asset->filePath = assetPath;
 			Archive ar(assetPath);
 			if (factory->assemble(*asset, ar)) {
 				assets.push_back(asset);
 			}
-			else {				
+			else {
 				delete asset;
 				asset = nullptr;
 			}
@@ -48,17 +66,23 @@ void AssetsSystem::loadFile(const string &assetPath) {
 		}
 	}
 }
-void AssetsSystem::loadAllFiles(string root) {
+void AssetsSystem::loadAssetsFromFolder(string root) {
 	namespace fs = std::filesystem;
 	for (fs::recursive_directory_iterator i(root), end; i != end; ++i) {
 		if (!is_directory(i->path()))
-			loadFile(i->path().string());
+			loadAssetFromFile(i->path().string());
 	}
 }
-IAssetFactory *AssetsSystem::findFactory(const string &ext) {
-	for (auto i : factories) {
-		if (i->probeFile(ext))
-			return i;
+void AssetsSystem::reloadAsset(string name) {
+
+}
+IAssetFactory *AssetsSystem::findFactory(const string &extension) {
+	for (auto f : factories) {
+		if (f->hasExtension(extension))
+			return f;
 	}
 	return nullptr;
+}
+void AssetsSystem::createFactory(IAssetFactory *newFactory) {
+	factories.push_back(newFactory);
 }

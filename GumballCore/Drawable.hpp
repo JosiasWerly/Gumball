@@ -231,8 +231,6 @@ public:
 //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
 
-
-
 /*
 	vao.bind();
 	vbo.bind();

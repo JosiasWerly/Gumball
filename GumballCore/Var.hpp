@@ -2,65 +2,83 @@
 #ifndef _var
 #define _var
 
-#include <iostream>
-struct PtrData {
-	void *ptr = nullptr;
+#include <iostream> 
+using namespace std;
+
+struct PContainer {
 	unsigned int refCounter = 1;
+	void *ptr;
+	PContainer(void *ptr = nullptr) : 
+		ptr(ptr) {
+		cout << "()" << this << endl;
+	}
+	~PContainer() {
+		cout << "~" << this << endl;
+	}
 };
 template<class T>
 class Var {
 	template<class t> friend class Var;
-	//template<class t> friend Var<t> &&convertTo();
 
-	PtrData *data = new PtrData;
-	T **ptrCasted = (T **)&data->ptr;
+	PContainer *container;
+	T *tptr;
 protected:
-	inline void ref() {
-		data->refCounter++;
-	}
-	inline void unRef() {
-		if (--data->refCounter == 0) {
-			delete *ptrCasted;
-			delete data;
+	inline void release() {
+		if (--container->refCounter == 0) {
+			delete tptr;
+			delete container;
+			tptr = nullptr;
+			container = nullptr;
 		}
 	}
-	inline void setRef(PtrData *newData) {
-		unRef();
-		data = newData;
-		ptrCasted = (T **)&data->ptr;
-		ref();
+	inline void changeRef(PContainer *newContainer) {
+		release();
+		container = newContainer;
+		tptr = (T *)container->ptr;
+		container->refCounter++;
 	}
 
 public:
 	~Var() {
-		unRef();
+		release();
 	}
-	Var(T *init = nullptr) {
-		data->ptr = init;
-		ptrCasted = (T **)&data->ptr;
+	Var(T *init = nullptr) :
+		container(new PContainer(init)),
+		tptr((T *)container->ptr) {
 	}
-	Var(const Var &other) {
-		setRef(other.data);
+	Var(const Var &other) :
+		container(other.container),
+		tptr((T *)container->ptr) {
+		++container->refCounter;
 	}
+	Var(Var &&other) : 
+		container(other.container),
+		tptr((T *)container->ptr) {
+		++container->refCounter;
+	}
+
 	template<class t>Var(const Var<t> &other) {
-		setRef(other.data);
+		changeRef(other.container);
 	}
 	Var &operator=(const Var &other) {
-		setRef(other.data);
+		changeRef(other.container);
 		return *this;
 	}
 
 
-	T *&operator*() { return *ptrCasted; }
-	T *&operator->() { return *ptrCasted; }
-	operator bool() const { return data->ptr; }
-	bool operator==(const Var &other) const { return data == other.data; }
+	T *&operator*() { return tptr; }
+	T *&operator->() { return tptr; }
+	operator bool() const { return tptr; }
+	bool operator==(const Var &other) const { return container == other.container; }
 
-	unsigned int referenceCount() const { return data->refCounter; }
+	unsigned int referenceCount() const { return container->refCounter; }
 	template<class t> operator Var<t>() {
 		Var<t> out;
-		out.setRef(data);
+		out.changeRef(container);
 		return out;
+	}
+	template<class t> t* As() {
+		return dynamic_cast<t*>(tptr);
 	}
 };
 #endif // !_var

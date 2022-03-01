@@ -5,7 +5,42 @@ using namespace std;
 
 
 
+
+#include "Object.hpp"
+#include "Var.hpp"
+
+
+
+class Foo : 
+	public Object {
+public:
+	int a;
+	float b;
+
+	void test() override {
+		std::cout << a << b << std::endl;
+	}
+};
+
 int main(int argc, char *argv[]) {
+	Var<Object> b;
+	{
+		Var<Object> a, c = b;
+		a = new Foo;
+		b = a;
+		{
+			Var<Foo> af = a;
+			a.As<Foo>()->test();
+		}
+	}
+	
+	//Var<Object> obj;
+	//obj = new Foo;
+	
+
+
+
+
 	Engine::setInstance(new Engine);
 	Engine::inst->args(argc, argv);
 	Engine::inst->tick();

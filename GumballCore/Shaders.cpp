@@ -151,11 +151,10 @@ void Material::use() {
 
 }
 bool Material::setShader(string name) {
-
-	auto &assetSys = *Engine::instance()->getSystem<AssetsSystem>();
-	Shader *sh = nullptr;
-	if (assetSys(name, sh))
-		shader = sh;
-	return shader;
+	//auto &assetSys = *Engine::instance()->getSystem<AssetsSystem>();
+	//if (Shader * sh = assetSys.getAsset<Shader>(name))
+	//	shader = sh;
+	//return shader;
+	return false;
 }
 bool Material::isInstance() { return false; }

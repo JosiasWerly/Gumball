@@ -11,7 +11,8 @@ using namespace std;
 
 
 
-class Image {
+class Image :
+	public Object {
 	unsigned id = 0;
 	int width = 0, height = 0;
 	Color *imageBuffer = nullptr;
@@ -91,7 +92,7 @@ public:
 	Inline int getSlot() { return slot; }
 };
 
-class TextureFactory : 
+class TextureFactory :
 	public IAssetFactory {
 public:
 	TextureFactory() :

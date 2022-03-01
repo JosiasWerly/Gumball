@@ -1,47 +1,13 @@
 #pragma once
 #ifndef _object
 #define _object
-
 #include "Definitions.hpp"
-#include "EngineSystem.hpp"
 
-#include <string>
-#include <list>
-using namespace std;
-
-class Object;
-class ObjectPackage;
-class MemorySystem;
-class IEngineSystem;
-
-
-enum class EObjectPackage {
-	asset,
-	game
-};
 
 class Object {
-	const string name;
-protected:
-	Object(string name) {}
-public:
-	void setName(string newName) {
-	}
-	const string &getName() { 
-		return name; 
-	}
-};
+public:	
 
-class IObjectPackage {
-	list<Object> objects;
-public:
-
-};
-
-
-class MemorySystem :
-	public IEngineSystem {
-public:
+	virtual void test() = 0;
 };
 
 
