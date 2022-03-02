@@ -2,14 +2,8 @@
 #include "Engine.hpp"
 using namespace Input;
 
-//std::map<Input::EKeyCode, InputSystem::KeyCodeStatus> InputSystem::keyPool, InputSystem::keysStatus;
-//EventPool<Input::Event> InputSystem::eventPool;
-
-//just need to capture when the state changed
 void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	//REMOVE: input system disable for the time being
-	return;
-	static auto &inputSys = *Engine::instance()->getSystem<InputSystem>();
+	static auto &inputSys = *Engine::instance()->inputSystem;
 	const EKeyCode keyCode = static_cast<EKeyCode>(key);
 	const EActionType type = static_cast<EActionType>(action);
 

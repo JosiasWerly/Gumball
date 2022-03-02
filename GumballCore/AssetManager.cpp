@@ -48,7 +48,6 @@ void AssetsSystem::unloadAsset(string name) {
 	}
 }
 void AssetsSystem::loadAssetFromFile(const string &assetPath) {
-
 	bool loaded = false;
 	string assetName = Files::getNameOfFilePath(assetPath);
 	string assetExt = Files::getExtOfFilePath(assetPath);

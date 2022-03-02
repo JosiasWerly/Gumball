@@ -16,7 +16,15 @@ class Asset;
 class IAssetFactory;
 class AssetsSystem;
 
-
+/*
+* TODO: 
+* "minor" rework, today for talking an asset you need to:
+* Engine::instance()->assetSystem->getAsset("logo")->getContent();
+* 
+* and should be
+* Engine::instance()->assetSystem.getAsset<T>(Name)->getContent();
+* in this manner we can avoid searching all the list of assets.
+*/
 class Asset {
 	friend class AssetsSystem;
 private:
@@ -24,6 +32,7 @@ private:
 	string name = "";
 
 protected:
+	//TODO: perhaps this reference should be indirect and not a extention of Object.
 	Var<Object> content;
 public:
 	Inline Var<Object>& getContent(){
