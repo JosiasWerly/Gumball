@@ -54,7 +54,7 @@ public:
 		return *this;
 	}
 	
-	//HACK: i think this is wrong or not used anymore
+	//HACK: i think this is wrong nor used anymore
 	template<class t> Var(const Var<t> &other) {
 		changeRef(other.container);
 	}
@@ -107,3 +107,203 @@ public:
 //	*b = nullptr;
 //	*b = new Foo;
 //}
+
+
+//TO EVALUATE
+
+//namespace x {
+//	class Data {
+//	public:
+//		Data() = default;
+//		virtual ~Data() {}
+//	};
+//	template<class T>
+//	class TData :
+//		public Data {
+//	public:
+//		T *traw;
+//		TData(T *init) {
+//			traw = init;
+//		}
+//		~TData() {
+//			delete traw;
+//		}
+//	};
+//
+//	struct Target {
+//		Data *data = nullptr;
+//		unsigned references = 1;
+//
+//		Target() {
+//			cout << this << endl;
+//		}
+//		~Target() {
+//			cout << "~" << this << endl;
+//			delete data;
+//		}
+//	};
+//
+//	template<class T>
+//	class TVar {
+//	protected:
+//		Target *target;
+//		TData<T> *tData;
+//
+//		inline void release() {
+//			if (--target->references == 0) {
+//				delete target;
+//				target = nullptr;
+//			}
+//		}
+//		inline void changeRef(Target *newTarget) {
+//			release();
+//			target = newTarget;
+//			++target->references;
+//			traw = dynamic_cast<TData<T>*>(target->data);
+//		}
+//	public:
+//		virtual ~TVar() {
+//			release();
+//		}
+//		TVar(T *init = nullptr) {
+//			target->data = new TData<T>(init);
+//		}
+//		TVar(const TVar &other) {
+//			target = other.target;
+//			++target->references;
+//		}
+//		TVar(TVar &&other) {
+//			target = other.target;
+//			++target->references;
+//		}
+//		TVar &operator=(const TVar &other) {
+//			changeRef(other.target);
+//			return *this;
+//		}
+//
+//		template<class t> TVar<t> convert() {
+//			TVar<t> out;
+//			out.target = target;
+//			out.tData = dynamic_cast<TData<T>*>(target->data);
+//			++target->references;
+//			return out;
+//		}
+//		
+//		T *&operator->() {
+//			return traw->traw;
+//		}
+//		inline T *&set(T *newT) {
+//			delete tData->traw;
+//			tData->traw = newT;
+//		}
+//		inline T *&get() {
+//			return tData->traw;
+//		}
+//		
+//		operator bool() const {
+//			return tData && tData->traw;
+//		}
+//		bool operator==(const TVar<T> &other) {
+//
+//		}
+//	};
+//
+//	class Var : 
+//		public TVar<void> {
+//	public:
+//		using TVar::TVar;
+//		Var(void *init) = delete;
+//		Var() = default;
+//	};
+//};
+//
+//namespace y {
+//	class Data {
+//	public:
+//		Data() = default;
+//		virtual ~Data() {}
+//	};
+//	template<class T>
+//	class TData :
+//		public Data {
+//	public:
+//		T *traw;
+//		TData(T *init) {
+//			traw = init;
+//		}
+//		~TData() {
+//			delete traw;
+//		}
+//
+//	};
+//
+//	struct Target {
+//		Data *data = nullptr;
+//		unsigned references = 1;
+//
+//		Target() {
+//			cout << this << endl;
+//		}
+//		~Target() {
+//			cout << "~" << this << endl;
+//			delete data;
+//		}
+//	};
+//
+//	class Var {
+//	protected:
+//		Target *target;
+//
+//		inline void release() {
+//			if (--target->references == 0) {
+//				delete target;
+//				target = nullptr;
+//			}
+//		}
+//		inline void changeRef(Target *newTarget) {
+//			release();
+//			target = newTarget;
+//			++target->references;
+//		}
+//	public:
+//		virtual ~Var() {
+//			release();
+//		}
+//		Var() {
+//			target = new Target();
+//		}
+//		Var(const Var &other) {
+//			target = other.target;
+//			++target->references;
+//		}
+//		Var(Var &&other) {
+//			target = other.target;
+//			++target->references;
+//		}
+//		Var &operator=(const Var &other) {
+//			changeRef(other.target);
+//			return *this;
+//		}
+//	};
+//
+//	template<class T>
+//	class TVar : 
+//		public Var {
+//	public:
+//		TVar(T *init = nullptr) {
+//			target->data = new TData<T>(init);
+//		}
+//		TVar(const TVar &other) {
+//			target = other.target;
+//			++target->references;
+//		}
+//		TVar(TVar &&other) {
+//			target = other.target;
+//			++target->references;
+//		}
+//		TVar &operator=(const TVar &other) {
+//			changeRef(other.target);
+//			return *this;
+//		}
+//	};
+//};

@@ -16,7 +16,7 @@ void fDegreeToRad(float &value);
 struct Color {
 	union {
 		unsigned char R, G, B, A;
-		int hexColor;	
+		int hexColor;
 	};
 };
 
