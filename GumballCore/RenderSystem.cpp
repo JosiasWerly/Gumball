@@ -55,8 +55,9 @@ void RenderSystem::initialize() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
-	cout << "glVersion" << glfwGetVersionString() << endl;
+
 
 	mainWindow.create("Gumball", { 800, 600 });
 	
@@ -66,6 +67,9 @@ void RenderSystem::initialize() {
 		throw 1;
 	}
 	
+	cout << "glfwVersion " << glfwGetVersionString() << endl;
+	cout << "glVersion " << glGetString(GL_VERSION) << endl;
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthRange(0.1f, 100.0f);
 	glDepthFunc(GL_LESS);

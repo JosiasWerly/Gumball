@@ -23,11 +23,11 @@ void main(){
 in vec2 f_uv;
 in vec3 f_normal;
 
-out vec4 gl_FragColor;
+out vec4 fColor;
 
 uniform vec4 uColor;
 uniform sampler2D uTexture;
 
 void main(){
-    gl_FragColor = texture(uTexture, f_uv) * uColor;
+    fColor = texture(uTexture, f_uv) * uColor;
 };

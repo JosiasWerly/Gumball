@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _var
 #define _var
-
+#include <iostream>
 struct PContainer {
 	unsigned int refCounter = 1;
 	void *ptr;
@@ -88,25 +88,9 @@ public:
 		return out;
 	}
 };
-#endif // !_var
 
 
-//Var<Object> b;
-//{
-//	Var<Object> a, c = b;
-//	a = new Foo;
-//	a.As<Foo>()->a = 1;
-//	a.As<Foo>()->b = 2.2;
-//
-//	b = a;
-//	{
-//		Var<Foo> af = a;
-//		a.As<Foo>()->test();
-//	}
-//	delete *b;
-//	*b = nullptr;
-//	*b = new Foo;
-//}
+
 
 
 //TO EVALUATE
@@ -135,10 +119,8 @@ public:
 //		unsigned references = 1;
 //
 //		Target() {
-//			cout << this << endl;
 //		}
 //		~Target() {
-//			cout << "~" << this << endl;
 //			delete data;
 //		}
 //	};
@@ -188,7 +170,7 @@ public:
 //			++target->references;
 //			return out;
 //		}
-//		
+//
 //		T *&operator->() {
 //			return traw->traw;
 //		}
@@ -199,7 +181,7 @@ public:
 //		inline T *&get() {
 //			return tData->traw;
 //		}
-//		
+//
 //		operator bool() const {
 //			return tData && tData->traw;
 //		}
@@ -208,7 +190,7 @@ public:
 //		}
 //	};
 //
-//	class Var : 
+//	class Var :
 //		public TVar<void> {
 //	public:
 //		using TVar::TVar;
@@ -254,14 +236,18 @@ public:
 //	protected:
 //		Target *target;
 //
-//		inline void release() {
+//		Inline void release() {
 //			if (--target->references == 0) {
 //				delete target;
 //				target = nullptr;
 //			}
 //		}
-//		inline void changeRef(Target *newTarget) {
+//		Inline void changeRef(Target *newTarget) {
 //			release();
+//			target = newTarget;
+//			++target->references;
+//		}
+//		Inline void setRef(Target *newTarget) {
 //			target = newTarget;
 //			++target->references;
 //		}
@@ -273,12 +259,10 @@ public:
 //			target = new Target();
 //		}
 //		Var(const Var &other) {
-//			target = other.target;
-//			++target->references;
+//			setRef(other.target);
 //		}
 //		Var(Var &&other) {
-//			target = other.target;
-//			++target->references;
+//			setRef(other.target);
 //		}
 //		Var &operator=(const Var &other) {
 //			changeRef(other.target);
@@ -287,19 +271,17 @@ public:
 //	};
 //
 //	template<class T>
-//	class TVar : 
+//	class TVar :
 //		public Var {
 //	public:
 //		TVar(T *init = nullptr) {
 //			target->data = new TData<T>(init);
 //		}
 //		TVar(const TVar &other) {
-//			target = other.target;
-//			++target->references;
+//			setRef(other.target);
 //		}
 //		TVar(TVar &&other) {
-//			target = other.target;
-//			++target->references;
+//			setRef(other.target);
 //		}
 //		TVar &operator=(const TVar &other) {
 //			changeRef(other.target);
@@ -307,3 +289,147 @@ public:
 //		}
 //	};
 //};
+
+namespace z {
+	class IVarData {
+	public:
+		IVarData() = default;
+		virtual ~IVarData() = default;
+		virtual void *getPtrRef() = 0;
+	};
+	
+	template<class T>
+	class TVarData :
+		public IVarData {
+	public:
+		T *raw;
+		TVarData(T *init) {
+			raw = init;
+		}
+		~TVarData() {
+			delete raw;
+		}
+		void* getPtrRef() { return &raw; }
+	};
+
+
+	struct VarTarget {
+		IVarData *data = nullptr;
+		unsigned references = 1;
+
+		VarTarget(IVarData *init) : 
+			data(init) {
+			std::cout << int(this) << std::endl;
+		}		
+		~VarTarget() {
+			std::cout << "~" << int(this) << std::endl;
+		}
+	};
+
+	template<class T>
+	class TVar {
+		template<class t> friend class TVar;
+
+	protected:
+		VarTarget *target = nullptr;
+		T **targetValue = nullptr;
+		
+		Inline void release() {
+			if (--target->references == 0) {
+				delete target->data;
+				delete target;
+				target = nullptr;
+			}
+		}
+		Inline void changeRef(VarTarget *newTarget) {
+			release();
+			setRef(newTarget);
+			++target->references;
+		}
+		Inline void setRef(VarTarget *newTarget) {
+			target = newTarget;			
+
+			if (auto dCast = dynamic_cast<TVarData<T>*>(target->data))
+				targetValue = &dCast->raw;
+			else if (targetValue = reinterpret_cast<T **>(target->data->getPtrRef()))
+				;
+			else
+				throw;
+		}		
+
+	public:
+		virtual ~TVar() {
+			release();
+		}
+		TVar(T *newValue = new T) {
+			setRef(new VarTarget(new TVarData<T>(newValue)));
+		}
+		TVar(const TVar &other) {
+			setRef(other.target);
+			++target->references;
+		}
+		TVar(TVar &&other) {
+			setRef(other.target);
+			++target->references;
+		}
+		TVar &operator=(const TVar &other) {
+			changeRef(other.target);			
+			return *this;
+		}
+
+		T &operator*() {
+			return **targetValue;
+		}
+		T *operator->() {
+			return *targetValue;
+		}
+		operator bool() {
+			return target && targetValue;
+		}
+		bool operator==(const TVar &other) const {
+			return target == other.target;
+		}
+
+
+		Inline unsigned references() { target->references; }
+		Inline T *pin() { return *targetValue; }
+		template<class t> t *pin() { return dynamic_cast<t*>(*targetValue); }
+
+		template<class t>
+		TVar<t> as() {
+			TVar<t> out;
+			out.release();
+			out.target = this->target;
+			++out.target->references;
+			if (auto castedTarget = dynamic_cast<TVarData<T>*>(target->data)) {
+				out.targetValue = reinterpret_cast<t **>(&castedTarget->raw);
+				if (!out.targetValue)
+					throw;
+			}
+			else
+				throw;
+			return out;
+		}
+	};
+};
+#endif // !_var
+
+
+//Var<Object> b;
+//{
+//	Var<Object> a, c = b;
+//	a = new Foo;
+//	a.As<Foo>()->a = 1;
+//	a.As<Foo>()->b = 2.2;
+//
+//	b = a;
+//	{
+//		Var<Foo> af = a;
+//		a.As<Foo>()->test();
+//	}
+//	delete *b;
+//	*b = nullptr;
+//	*b = new Foo;
+//}
+
+

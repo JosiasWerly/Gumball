@@ -18,10 +18,12 @@ void main(){
 
 in vec2 fTexCoord;
 
+out vec4 fColor;
+
 uniform vec4 uColor;
 uniform sampler2D uTexture;
 
-out vec4 gl_FragColor;
+
 void main(){
-    gl_FragColor = texture(uTexture, fTexCoord) * uColor;
+    fColor = texture(uTexture, fTexCoord) * uColor;
 };
