@@ -40,3 +40,8 @@ bool DrawInstance::setMesh(string name) {
 	}
 	return false;
 }
+bool DrawInstance::setTexture(string name) {
+	Var<Image> img = Engine::instance()->assetSystem->getAsset(name)->getContent().as<Image>();
+	(*material.getParameter<Var<Image>>("uTexture")) = img;
+	return true;
+}

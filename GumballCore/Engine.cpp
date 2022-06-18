@@ -29,11 +29,9 @@ Engine::Engine() {
 	systems.push_back(renderSystem);
 	systems.push_back(assetSystem);
 	systems.push_back(inputSystem);
-	//systems.push_back(objectSystem);
 
 	tickingSystems.push_back(renderSystem);
 	tickingSystems.push_back(inputSystem);
-	//tickingSystems.push_back(objectSystem);	
 }
 Engine::~Engine(){
 }
@@ -62,9 +60,21 @@ void Engine::tick() {
 	v.transform.position.z = -10;
 	renderSystem->pushView(0, &v);
 
-	DrawInstance dd;
-	dd.setMesh("cube");
-	renderSystem->pushDrawInstance(0, &dd);
+	DrawInstance a;
+	a.setMesh("cube");
+	a.setTexture("logo");
+	a.transform.position.x = -1;
+	renderSystem->pushDrawInstance(0, &a);
+
+
+	DrawInstance b;
+	b.setMesh("cube");
+	b.setTexture("scotty");
+	b.transform.position.x = 1;
+	renderSystem->pushDrawInstance(0, &b);
+
+
+
 
 	while (true) {
 		//if (project->hasToLoad()) {
@@ -78,6 +88,8 @@ void Engine::tick() {
 		//			s->onPlay();
 		//	}
 		//}
+
+
 
 
 		static string names[] = { "render", "input", "object" };

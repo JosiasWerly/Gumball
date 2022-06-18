@@ -1,6 +1,7 @@
 #include "Shaders.hpp"
 #include "Engine.hpp"
 #include "Math.hpp"
+#include "Texture.hpp"
 
 bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 	string vertex, fragment;
@@ -29,7 +30,7 @@ public: \
 	using IShaderParamIO::IShaderParamIO; \
 	void upload() override { Expression; } \
 	void* getData() override { return &value; } \
-}; 
+};
 
 UniformIODelc(int, glUniform1iv(owner.location, 1, &value))
 UniformIODelc(float, glUniform1fv(owner.location, 1, &value));
@@ -41,6 +42,25 @@ UniformIODelc(glm::ivec2, glUniform2iv(owner.location, 1, glm::value_ptr(value))
 UniformIODelc(glm::ivec3, glUniform3iv(owner.location, 1, glm::value_ptr(value)));
 UniformIODelc(glm::ivec4, glUniform4iv(owner.location, 1, glm::value_ptr(value)));
 
+class Sampler2D : 
+	public IShaderParamIO {
+public:
+	unsigned slot = 0;
+	Var<Image> image;
+
+	using IShaderParamIO::IShaderParamIO;
+	void upload() override {
+		if (!image)
+			return;
+		glActiveTexture(GL_TEXTURE0 + slot);
+		image->bind();
+	}
+	void *getData() override {
+		return &image;
+	}
+};
+
+
 
 ShaderParam::ShaderParam(unsigned location, unsigned type) :
 	location(location),
@@ -49,7 +69,7 @@ ShaderParam::ShaderParam(unsigned location, unsigned type) :
 	switch (type) {
 	case GL_INT:            paramIO = new UniformIO<int>(*this); break;
 	case GL_FLOAT:          paramIO = new UniformIO<float>(*this); break;
-	case GL_SAMPLER_2D:     paramIO = new UniformIO<int>(*this); break;
+	case GL_SAMPLER_2D:     paramIO = new Sampler2D(*this); break;
 	case GL_FLOAT_VEC2:     paramIO = new UniformIO<glm::fvec2>(*this); break;
 	case GL_FLOAT_VEC3:     paramIO = new UniformIO<glm::fvec3>(*this); break;
 	case GL_FLOAT_VEC4:     paramIO = new UniformIO<glm::fvec4>(*this); break;

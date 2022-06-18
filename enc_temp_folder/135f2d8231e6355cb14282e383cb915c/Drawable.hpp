@@ -205,6 +205,7 @@ public:
 	}
 	inline void draw() {
 		material.use();
+		//texture.bind();
 		vao->bind();
 		glDrawElements(GL_TRIANGLES, ibo->size, GL_UNSIGNED_INT, nullptr);
 	}

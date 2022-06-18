@@ -10,18 +10,18 @@
 using namespace std;
 
 
-
+//TODO: change name to Texture
+//TODO: methods are kinda of crappy, Image::create should instantiate the internal buffer.
 class Image :
 	public Object {
 	unsigned id = 0;
 	int width = 0, height = 0;
 	Color *imageBuffer = nullptr;
 public:
-	//code bloat? but purple is beauty! \o/
 	~Image() {
 		destroy();
 	}
-	Inline void create(int width, int height, Color *imageBuffer) {
+	void create(int width, int height, Color *imageBuffer) {
 		this->width = width;
 		this->height = height;
 		this->imageBuffer = imageBuffer;
@@ -36,7 +36,7 @@ public:
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	Inline void destroy() {
+	void destroy() {
 		if (width > 0 || height > 0) {
 			glDeleteTextures(1, &id);
 			id = 0;
@@ -75,20 +75,6 @@ public:
 		return imageBuffer[p];
 	}
 	Color *&getBuffer() { return imageBuffer; }
-};
-
-//TODO: texture should be a material parameter
-class Texture {
-protected:
-	unsigned slot = 0;
-public:
-	Var<Image> image;
-	
-	Texture();
-	void bind();
-	void unbind();
-	Inline void setSlot(int newSlot) { slot = newSlot; }
-	Inline int getSlot() { return slot; }
 };
 
 class TextureFactory :

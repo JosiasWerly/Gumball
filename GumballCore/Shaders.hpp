@@ -121,6 +121,12 @@ public:
 				*param = value;
 		}
 	}
+	template<class T>
+	T* getParameter(string name) {
+		if (shader) {
+			return shader->parameters.getParamValue<T>(name);
+		}
+	}
 };
 
 #endif // !_shaders

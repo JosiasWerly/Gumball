@@ -22,16 +22,15 @@ bool TextureFactory::assemble(Asset &asset, Archive &ar) {
 		delete img;
 		return false;
 	}
-
 	return false;
 }
 
 
-Texture::Texture() {}
-void Texture::bind() {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	image->bind();
-}
-void Texture::unbind() {
-	//glBindTexture(GL_TEXTURE_2D, 0);
-}
+//Texture::Texture() {}
+//void Texture::bind() {
+//	glActiveTexture(GL_TEXTURE0 + slot);
+//	image->bind();
+//}
+//void Texture::unbind() {
+//	//glBindTexture(GL_TEXTURE_2D, 0);
+//}
