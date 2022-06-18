@@ -43,9 +43,8 @@ Asset *AssetsSystem::createAsset(string name) {
 	return newAsset;
 }
 void AssetsSystem::unloadAsset(string name) {
-	if (auto a = getAsset(name)) {
-		delete *a->content;
-	}
+	if (auto a = getAsset(name))
+		a->content.free();
 }
 void AssetsSystem::loadAssetFromFile(const string &assetPath) {
 	bool loaded = false;

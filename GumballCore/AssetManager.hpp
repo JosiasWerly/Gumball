@@ -39,7 +39,7 @@ public:
 		return content;
 	}
 	Inline void setContent(Object *newContent) {
-		content.set(newContent);
+		content.assign(newContent);
 	}
 
 	Inline bool isValid() { return content; }

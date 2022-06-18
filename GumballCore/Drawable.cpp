@@ -23,7 +23,7 @@ void Tbo::loadTexture(string path) {
 
 bool DrawInstance::setMesh(string name) {
 	bind();
-	Var<MeshData> meshData = Engine::instance()->assetSystem->getAsset(name)->getContent();
+	Var<MeshData> meshData = Engine::instance()->assetSystem->getAsset(name)->getContent().as<MeshData>();
 	if (meshData) {
 		VboBuilder()
 			.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))

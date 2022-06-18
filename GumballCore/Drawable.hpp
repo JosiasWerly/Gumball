@@ -188,8 +188,8 @@ public:
 		vbo->unbind();
 		ibo->unbind();		
 
-		texture.image = Engine::instance()->assetSystem->getAsset("logo")->getContent();
-		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent();
+		texture.image = Engine::instance()->assetSystem->getAsset("logo")->getContent().as<Image>();
+		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent().as<Shader>();
 		
 		material.setParameter<int>("uTexture", 0);
 		material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
