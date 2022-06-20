@@ -15,6 +15,9 @@ bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 	return false;
 }
 
+
+//TODO: i need to remake all this part of the code.
+
 template<typename T>
 class UniformIO :
 	public IShaderParamIO {

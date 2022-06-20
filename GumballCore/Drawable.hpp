@@ -231,50 +231,50 @@ public:
 //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
 
 /*
-	vao.bind();
-	vbo.bind();
-	ibo.bind();
+vao.bind();
+vbo.bind();
+ibo.bind();
 
-	texture.setImage("logo");
+texture.setImage("logo");
 
-	material.setShader("default");
-	material.setParameter<int>("uTexture", 0);
-	material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
+material.setShader("default");
+material.setParameter<int>("uTexture", 0);
+material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 
-	struct SuperFoo {
-		float x, y, z, w;
-		float xv, yv;
-	};
-	SuperFoo data[] = {
-		{-0.2, -0.2, 0.0, 1.0,				0, 0},
-		{0.2, -0.2, 0.0, 1.0,				1, 0},
-		{0.2, 0.2, 0.0, 1.0,				1, 1},
-		{-0.2, 0.2, 0.0, 1.0,				0, 1},
-		{0.0, 0.0, 0.4, 1.0,				0, 1}
-	};
-	VboBuilder()
-		.setBuffer<SuperFoo>(data, 5)
-		.addAttrib<float>(4)
-		.addAttrib<float>(2)
-		.build();
+struct SuperFoo {
+	float x, y, z, w;
+	float xv, yv;
+};
+SuperFoo data[] = {
+	{-0.2, -0.2, 0.0, 1.0,				0, 0},
+	{0.2, -0.2, 0.0, 1.0,				1, 0},
+	{0.2, 0.2, 0.0, 1.0,				1, 1},
+	{-0.2, 0.2, 0.0, 1.0,				0, 1},
+	{0.0, 0.0, 0.4, 1.0,				0, 1}
+};
+VboBuilder()
+	.setBuffer<SuperFoo>(data, 5)
+	.addAttrib<float>(4)
+	.addAttrib<float>(2)
+	.build();
 
-	unsigned IndexBuffer[]{
-		0, 1, 2,
-		2, 3, 0,
+unsigned IndexBuffer[]{
+	0, 1, 2,
+	2, 3, 0,
 
-		0, 1, 4,
-		0, 3, 4,
-		1, 2, 4,
-		2, 3, 4
-	};
-	ibo.setBuffer(
-		IndexBuffer,
-		18 * sizeof(float));
+	0, 1, 4,
+	0, 3, 4,
+	1, 2, 4,
+	2, 3, 4
+};
+ibo.setBuffer(
+	IndexBuffer,
+	18 * sizeof(float));
 
 
-	vao.unBind();
-	vbo.unbind();
-	ibo.unbind();*/
+vao.unBind();
+vbo.unbind();
+ibo.unbind();*/
 
 #pragma warning( default : 4312 4267 4838)
 #endif
