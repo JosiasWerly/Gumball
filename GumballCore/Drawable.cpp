@@ -42,6 +42,6 @@ bool DrawInstance::setMesh(string name) {
 }
 bool DrawInstance::setTexture(string name) {
 	Var<Image> img = Engine::instance()->assetSystem->getAsset(name)->getContent().as<Image>();
-	(*material.getParameter<Var<Image>>("uTexture")) = img;
+	material.shader->getUniform<EUniformType::u_stexture>("uTexture")->image = img;
 	return true;
 }

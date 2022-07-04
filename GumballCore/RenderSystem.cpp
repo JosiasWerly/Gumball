@@ -40,10 +40,12 @@ void IRenderOverlay::onRender(float deltaTime) {
 			//draw->material.setParameter<glm::mat4>("uView", viewMat);
 			//draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
 			//draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
-
-			draw->material.setParameter<glm::mat4>("uView", viewMat);
-			draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
-			draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
+			draw->material.shader->getUniform<EUniformType::u_mat>("uView")->value = viewMat;
+			draw->material.shader->getUniform<EUniformType::u_mat>("uProj")->value = view->viewMode.mProjection;
+			draw->material.shader->getUniform<EUniformType::u_mat>("uModel")->value = draw->transform.getMat();
+			//draw->material.setParameter<glm::mat4>("uView", viewMat);
+			//draw->material.setParameter<glm::mat4>("uProj", view->viewMode.mProjection);
+			//draw->material.setParameter<glm::mat4>("uModel", draw->transform.getMat());
 			draw->draw();
 		}
 	}

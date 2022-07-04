@@ -179,7 +179,7 @@ public:
 		vao->bind();
 		vbo = new Vbo;
 		vbo->bind();
-		ibo = new Ibo();
+		ibo = new Ibo;
 		ibo->bind();
 
 		vao->unBind();
@@ -187,13 +187,14 @@ public:
 		ibo->unbind();		
 
 		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent().as<Shader>();
-		material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
+		//material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 	}
 	bool setMesh(string name);
 	bool setTexture(string name);
 
 
 	inline void bind() {
+		material.use();
 		vao->bind();
 		vbo->bind();
 		ibo->bind();

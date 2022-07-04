@@ -3,16 +3,95 @@
 #define _shaders
 #include "AssetManager.hpp"
 #include "GLUtils.hpp"
+#include "Math.hpp"
+#include "Texture.hpp"
 
 #include <fstream>
 #include <sstream>
 #include <map>
 using namespace std;
 
+class ShaderUniform;
 class ShaderParam;
-class IShaderParamIO;
 class Shader;
+class Material;
+class ShaderFactory;
 
+enum class EUniformType {
+	u_int = GL_INT,
+	u_float = GL_FLOAT,
+	u_mat = GL_FLOAT_MAT4,
+	u_stexture = GL_SAMPLER_2D,
+	u_fvec2 = GL_FLOAT_VEC2,
+	u_fvec3 = GL_FLOAT_VEC3,
+	u_fvec4 = GL_FLOAT_VEC4,
+	u_ivec2 = GL_INT_VEC2,
+	u_ivec3 = GL_INT_VEC3,
+	u_ivec4 = GL_INT_VEC4,
+};
+
+class ShaderParam {	//TODO: transform into attribute
+public:
+	const unsigned location;
+	const EUniformType type;
+	ShaderUniform *param;
+
+	ShaderParam(unsigned location, EUniformType type);
+	virtual ~ShaderParam();
+};
+class ShaderUniform {
+	friend class Shader;
+protected:
+	const ShaderParam &owner;
+	virtual void upload() = 0;
+public:
+	ShaderUniform(const ShaderParam &owner) : 
+		owner(owner) {
+	}
+};
+template<EUniformType Type>
+class TShaderUniform :
+	public ShaderUniform {
+protected:
+	using ShaderUniform::upload;
+public:
+	using ShaderUniform::ShaderUniform;
+};
+
+class Shader : 
+	public Object {
+public:
+	enum class EShaderType {
+		Vertex = GL_VERTEX_SHADER,
+		Fragment = GL_FRAGMENT_SHADER
+	};
+protected:
+	bool compile(EShaderType eShaderType, const string& code, int& id);
+	map<string, ShaderParam*> uniforms;
+public:
+	unsigned shaderId = 0;
+
+	Shader();
+	virtual ~Shader();
+	bool create(const string &vertex, const string &fragment);
+
+	void clearUniforms();
+	void captureUniforms();
+	void uploadUniforms();
+	bool hasUniform(string name);
+	template<EUniformType etype> TShaderUniform<etype> *getUniform(string name) {
+		return dynamic_cast<TShaderUniform<etype>*>(uniforms[name]->param);
+	}
+
+
+	Inline void bind();
+	Inline void unBind() const;
+};
+class Material {
+public:
+	Var<Shader> shader;
+	void use();
+};
 class ShaderFactory : 
 	public IAssetFactory {
 public:
@@ -44,121 +123,42 @@ public:
 	}
 };
 
-class IShaderParamIO {
-public:
-	const ShaderParam& owner;
-	IShaderParamIO(const ShaderParam& owner) : 
-		owner(owner) {
-	};
-	virtual void upload() = 0;
-	virtual void* getData() = 0;
+
+
+#define UniformParamDelc(Type, ValueType, Expression) \
+template<> class TShaderUniform<Type> : \
+	public ShaderUniform {\
+protected:\
+	void upload() override { Expression; }\
+public:\
+	ValueType value = ValueType();\
+	using ShaderUniform::ShaderUniform;\
 };
-class ShaderParam {	
-public:
-	const unsigned location;
-	const unsigned type;
-	IShaderParamIO* paramIO;
 
-	ShaderParam(unsigned location, unsigned type);
-	~ShaderParam();
-};
-class ShaderParameters{
-public:
-	const Shader& owner;
-	map<string, ShaderParam*> uniforms;
+UniformParamDelc(EUniformType::u_int, int, glUniform1iv(owner.location, 1, &value))
+UniformParamDelc(EUniformType::u_float, float, glUniform1fv(owner.location, 1, &value));
+UniformParamDelc(EUniformType::u_mat, glm::mat4, glUniformMatrix4fv(owner.location, 1, GL_FALSE, &value[0][0]));
+UniformParamDelc(EUniformType::u_fvec2, glm::fvec2, glUniform2fv(owner.location, 1, glm::value_ptr(value)));
+UniformParamDelc(EUniformType::u_fvec3, glm::fvec3, glUniform3fv(owner.location, 1, glm::value_ptr(value)));
+UniformParamDelc(EUniformType::u_fvec4, glm::fvec4, glUniform4fv(owner.location, 1, glm::value_ptr(value)));
+UniformParamDelc(EUniformType::u_ivec2, glm::ivec2, glUniform2iv(owner.location, 1, glm::value_ptr(value)));
+UniformParamDelc(EUniformType::u_ivec3, glm::ivec3, glUniform3iv(owner.location, 1, glm::value_ptr(value)));
+UniformParamDelc(EUniformType::u_ivec4, glm::ivec4, glUniform4iv(owner.location, 1, glm::value_ptr(value)));
 
-	ShaderParameters(const Shader& owner) :
-		owner(owner) {}
-	~ShaderParameters() {
-		clearUniforms();
-	}
-	void clearUniforms();
-	void captureUniforms();
-	void uploadUniforms();
-
-	template<class T> 
-	T* getParamValue(string name) {
-		if (uniforms.contains(name)) {
-			return reinterpret_cast<T*>(uniforms[name]->paramIO->getData());
-		}
-		return nullptr;
-	}
-};
-class Shader : 
-	public Object {
-public:
-	enum class EShaderType {
-		Vertex = GL_VERTEX_SHADER,
-		Fragment = GL_FRAGMENT_SHADER
-	};
-
+template<> class TShaderUniform<EUniformType::u_stexture> : 
+	public ShaderUniform {
 protected:
-	bool compile(EShaderType eShaderType, const string& code, int& id);
-
-public:
-	unsigned shaderId = 0;
-	ShaderParameters parameters;
-	
-	Shader();
-	bool create(const string &vertex, const string &fragment);
-
-	Inline void bind();
-	Inline void unBind() const;
-	Inline void uploadUniforms();
-};
-
-
-class Material {
-public:
-	Var<Shader> shader;
-	void use();
-	
-	template<class T> 
-	void setParameter(string name, T value) {
-		if (shader) {
-			shader->parameters.getParamValue<T>(name);
-			if (T *param = shader->parameters.getParamValue<T>(name))
-				*param = value;
-		}
+	void upload() override {
+		if (!image)
+			return;
+		glActiveTexture(GL_TEXTURE0 + slot);
+		image->bind();
 	}
-	template<class T>
-	T* getParameter(string name) {
-		if (shader) {
-			return shader->parameters.getParamValue<T>(name);
-		}
-	}
+public:
+	using ShaderUniform::ShaderUniform;
+	unsigned slot = 0;
+	Var<Image> image;
 };
+#undef UniformParamDelc
 
 #endif // !_shaders
-
-
-//TODO: REMOVE
-//#shader vertex
-//#version 330 core
-//in vec4 pos;
-//in vec2 texCoord;
-//out vec2 vTexture;
-//
-////uniform mat4 uProj, uView, uModel;
-//uniform mat4 uProj;
-//uniform mat4 uView;
-//uniform mat4 uModel;
-//void main() {
-//	vTexture = texCoord;
-//	gl_Position = uProj * uView * uModel * pos;
-//};
-//
-//
-//#shader fragment
-//#version 330 core
-//
-//in vec2 vTexture;
-//out vec4 color;
-//
-//uniform vec4 uColor;
-//uniform sampler2D uTexture;
-//
-//void main() {
-//	vec4 texColor = texture(uTexture, vTexture);
-//	color = texColor * uColor;
-//};
