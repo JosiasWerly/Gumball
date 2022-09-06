@@ -3,132 +3,97 @@
 #define _var
 #include <iostream>
 
-
-class IVarData {
-public:
-	IVarData() = default;
-	virtual ~IVarData() = default;
-	virtual void *getPtrRef() = 0;
-};
-
 template<class T>
-class TVarData :
-	public IVarData {
+class VarContainer {
 public:
-	T *raw;
-	TVarData(T *init) {
-		raw = init;
-	}
-	~TVarData() {
-		delete raw;
-	}
-	void *getPtrRef() { return &raw; }
-};
-
-struct VarTarget {
-	IVarData *data = nullptr;
+	T *ptr = nullptr;
 	unsigned references = 1;
 
-	VarTarget(IVarData *init) :
-		data(init) {
+	VarContainer(T *ptr) :
+		ptr(ptr) {
 	}
-	~VarTarget() {
+	~VarContainer() {
+		delete ptr;
 	}
 };
 
 template<class T>
 class Var {
+	typedef VarContainer<T> Container;
 	template<class t> friend class Var;
 
 protected:
-	VarTarget *target = nullptr;
-	T **targetValue = nullptr;
+	Container *container = nullptr;
 
-	Inline void release() {
-		if (--target->references == 0) {
-			delete target->data;
-			delete target;
-			target = nullptr;
+	Inline void unRef() {
+		if (--container->references == 0) {
+			delete container;
+			container = nullptr;
 		}
 	}
-	Inline void changeRef(VarTarget *newTarget) {
-		release();
+	Inline void addRef(Container *newTarget) {
 		setRef(newTarget);
-		++target->references;
+		++container->references;
 	}
-	Inline void setRef(VarTarget *newTarget) {
-		target = newTarget;
-		if (auto castTarget = dynamic_cast<TVarData<T>*>(target->data))
-			targetValue = &castTarget->raw;
-		//else
-		//	throw; //impossible cast
+	Inline void setRef(Container *newTarget) {
+		container = newTarget;
 	}
 
 public:
 	virtual ~Var() {
-		release();
+		unRef();
 	}
 	Var(T *newValue = nullptr) {
-		setRef(new VarTarget(new TVarData<T>(newValue)));
+		setRef(new Container(newValue));
 	}
 	Var(const Var &other) {
-		setRef(other.target);
-		++target->references;
+		addRef(other.container);
 	}
-	Var(Var &&other) {
-		setRef(other.target);
-		++target->references;
+	Var(Var &&other) noexcept {
+		addRef(other.container);
 	}
 	Var &operator=(const Var &other) {
-		changeRef(other.target);
+		unRef();
+		addRef(other.container);
 		return *this;
 	}
 
-	T &operator*() { return **targetValue; }
-	T *operator->() { return *targetValue; }
-	operator bool() { return target && targetValue; }
-	bool operator==(const Var &other) const { return target == other.target; }
-	Inline unsigned references() { target->references; }
-	Inline T *pin() { return *targetValue; }
-	template<class t> t *pin() { return dynamic_cast<t *>(*targetValue); }
-	
+	T &operator*() { return *container->ptr; }
+	T *operator->() { return container->ptr; }
+	operator bool() { return container && container->ptr; }
+	bool operator==(const Var &other) const { return container == other.container; }
+	Inline unsigned references() { container->references; }
+	Inline T *pin() { return container->ptr; }
+	template<class t> t *pin() { return static_cast<t *>(container->ptr); }
+
 	void free() {
-		delete target->data;
-		target->data = nullptr;
+		delete container->ptr;		
+		container->ptr = nullptr;
 	}
-	void assign(T *init) {
+	void assign(T* init) {
 		free();
-		target->data = new TVarData<T>(init);
-		setRef(target);
+		container->ptr = init;
+	}
+};
+
+template<class T, class TStatic>
+class SVar {	
+	typedef Var<T> TVar;
+	TVar var;
+public:
+	SVar() = default;
+	SVar(const TVar &other) : var(other) {
+	}
+	SVar(TVar &&other) noexcept : var(other) {
+	}
+	TVar &operator=(const TVar &other) {
+		return var = other;
 	}
 
-	template<class t>
-	Var<t> as() {
-		Var<t> out;
-		out.release();
-		out.target = target;
-		++target->references;
-		targetValue = 
-		//if (auto castTarget = dynamic_cast<TVarData<T>*>(target->data)) {
-		//	t *test = static_cast<t *>(castTarget->raw);
-		//	int *&a = new int(2);
-		//}
-		return out;
-
-
-		/*Var<t> out;
-		out.release();
-		out.target = this->target;
-		++out.target->references;
-		if (auto castedTarget = dynamic_cast<TVarData<T>*>(target->data)) {
-			out.targetValue = reinterpret_cast<t **>(&castedTarget->raw);
-			if (!out.targetValue)
-				throw;
-		}
-		else
-			throw;
-		return out;*/
-	}
+	TStatic *pin() { return var.pin<TStatic>(); }
+	TStatic &operator*() { return *var.pin<TStatic>(); }
+	TStatic *operator->() { return var.pin<TStatic>(); }
+	operator bool() { return var; }
 };
 #endif
 

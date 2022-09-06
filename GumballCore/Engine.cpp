@@ -59,7 +59,7 @@ void Engine::tick() {
 	v.viewMode.setProjectionPerspective();
 	v.transform.position.z = -10;
 	renderSystem->pushView(0, &v);
-
+	
 	DrawInstance a;
 	a.setMesh("cube");
 	a.setTexture("logo");
@@ -104,6 +104,28 @@ void Engine::tick() {
 			debugTimeStats.capture();
 			editor->msStats[names[id++]] = debugTimeStats.getMS();
 		}
+
+
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::W))
+			a.transform.position += a.transform.rotator.forward() * .5;
+		else if (inputSystem->isKeyDown(Input::EKeyCode::S))
+			a.transform.position -= a.transform.rotator.forward() * .5;
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::D))
+			a.transform.position += a.transform.rotator.right() * .5;
+		else if (inputSystem->isKeyDown(Input::EKeyCode::A))
+			a.transform.position -= a.transform.rotator.right() * .5;
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::UP))
+			a.transform.rotator.rotate(1, 0, 0);
+		else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
+			a.transform.rotator.rotate(-1, 0, 0);
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
+			a.transform.rotator.rotate(0, 0, -1);
+		else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
+			a.transform.rotator.rotate(0, 0, 1);
 	}
 
 	for (auto &s : systems) 
@@ -112,6 +134,28 @@ void Engine::tick() {
 	for (auto &s : systems)
 		s->shutdown();
 }
+
+
+
+//if (inputSystem->isKeyDown(Input::EKeyCode::W))
+//a.transform.position += a.transform.rotator.forward() * 2.5;
+//else if (inputSystem->isKeyDown(Input::EKeyCode::S))
+//a.transform.position -= a.transform.rotator.forward() * 2.5;
+//
+//if (inputSystem->isKeyDown(Input::EKeyCode::D))
+//a.transform.position += a.transform.rotator.right() * 2.5;
+//else if (inputSystem->isKeyDown(Input::EKeyCode::A))
+//a.transform.position -= a.transform.rotator.right() * 2.5;
+//
+//if (inputSystem->isKeyDown(Input::EKeyCode::UP))
+//a.transform.rotator.rotate(1, 0, 0);
+//else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
+//a.transform.rotator.rotate(-1, 0, 0);
+//
+//if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
+//a.transform.rotator.rotate(0, 0, -1);
+//else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
+//a.transform.rotator.rotate(0, 0, 1);
 
 
 /*

@@ -186,7 +186,8 @@ public:
 		vbo->unbind();
 		ibo->unbind();
 
-		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent().as<Shader>();
+		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent();
+		material.shader->getUniform<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
 		//material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
 	}
 	bool setMesh(string name);
@@ -230,6 +231,10 @@ public:
 //glGenBuffers(1, &ibo);
 //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(id), id, GL_STATIC_DRAW);
+
+
+
+
 
 /*
 vao.bind();

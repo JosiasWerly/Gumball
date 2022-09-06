@@ -18,7 +18,7 @@ class AssetsSystem;
 
 /*
 * TODO: 
-* "minor" rework, today for talking an asset you need to:
+* "minor" rework, today for retrieve an asset you need to:
 * Engine::instance()->assetSystem->getAsset("logo")->getContent();
 * 
 * and should be
@@ -32,7 +32,6 @@ private:
 	string name = "";
 
 protected:
-	//TODO: perhaps this reference should be indirect and not a extention of Object.
 	Var<Object> content;
 public:
 	Inline Var<Object>& getContent(){

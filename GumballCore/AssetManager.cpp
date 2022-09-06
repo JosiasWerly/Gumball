@@ -74,7 +74,6 @@ void AssetsSystem::loadAssetsFromFolder(string root) {
 		if (!is_directory(i->path()))
 			loadAssetFromFile(i->path().string());
 	}
-	cout << "foo" << endl;
 }
 void AssetsSystem::reloadAsset(string name) {
 

@@ -23,7 +23,7 @@ void Tbo::loadTexture(string path) {
 
 bool DrawInstance::setMesh(string name) {
 	bind();
-	Var<MeshData> meshData = Engine::instance()->assetSystem->getAsset(name)->getContent().as<MeshData>();
+	MeshData* meshData = Engine::instance()->assetSystem->getAsset(name)->getContent().pin<MeshData>();
 	if (meshData) {
 		VboBuilder()
 			.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))
@@ -41,7 +41,7 @@ bool DrawInstance::setMesh(string name) {
 	return false;
 }
 bool DrawInstance::setTexture(string name) {
-	Var<Image> img = Engine::instance()->assetSystem->getAsset(name)->getContent().as<Image>();
+	SVar<Object, Image> img = Engine::instance()->assetSystem->getAsset(name)->getContent();
 	material.shader->getUniform<EUniformType::u_stexture>("uTexture")->image = img;
 	return true;
 }

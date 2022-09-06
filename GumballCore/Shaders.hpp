@@ -89,7 +89,7 @@ public:
 };
 class Material {
 public:
-	Var<Shader> shader;
+	SVar<Object, Shader> shader;
 	void use();
 };
 class ShaderFactory : 
@@ -157,7 +157,7 @@ protected:
 public:
 	using ShaderUniform::ShaderUniform;
 	unsigned slot = 0;
-	Var<Image> image;
+	SVar<Object, Image> image;
 };
 #undef UniformParamDelc
 

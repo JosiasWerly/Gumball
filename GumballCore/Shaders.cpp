@@ -114,11 +114,6 @@ void Material::use() {
 }
 
 
-static void test(int *&ptr) {
-	ptr = new int(123);
-}
-
-
 bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 	string vertex, fragment;
 	makeSourceFromArchive(ar, vertex, fragment);
@@ -128,21 +123,6 @@ bool ShaderFactory::assemble(Asset &asset, Archive &ar) {
 		return false;
 	}
 	
-	
-	{
-		int *p = nullptr;
-		test(p);
-
-		Object *ob = new Shader;
-		Shader *sh = static_cast<Shader*>(ob);
-
-		Var<Object> vo;
-		Var<Shader> vs;
-		vo.assign(shader);
-		vs = vo.as<Shader>();
-		cout << "foo" << endl;
-	}
-
 	asset.setContent(shader);
 	return true;
 }
