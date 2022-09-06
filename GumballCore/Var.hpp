@@ -58,13 +58,10 @@ protected:
 	}
 	Inline void setRef(VarTarget *newTarget) {
 		target = newTarget;
-
-		if (auto dCast = dynamic_cast<TVarData<T>*>(target->data))
-			targetValue = &dCast->raw;
-		else if (targetValue = reinterpret_cast<T **>(target->data->getPtrRef()))
-			;
-		else
-			throw;
+		if (auto castTarget = dynamic_cast<TVarData<T>*>(target->data))
+			targetValue = &castTarget->raw;
+		//else
+		//	throw; //impossible cast
 	}
 
 public:
@@ -87,23 +84,13 @@ public:
 		return *this;
 	}
 
-	T &operator*() {
-		return **targetValue;
-	}
-	T *operator->() {
-		return *targetValue;
-	}
-	operator bool() {
-		return target && targetValue;
-	}
-	bool operator==(const Var &other) const {
-		return target == other.target;
-	}
-
+	T &operator*() { return **targetValue; }
+	T *operator->() { return *targetValue; }
+	operator bool() { return target && targetValue; }
+	bool operator==(const Var &other) const { return target == other.target; }
 	Inline unsigned references() { target->references; }
 	Inline T *pin() { return *targetValue; }
-	template<class t> 
-	t *pin() { return dynamic_cast<t *>(*targetValue); }
+	template<class t> t *pin() { return dynamic_cast<t *>(*targetValue); }
 	
 	void free() {
 		delete target->data;
@@ -119,6 +106,18 @@ public:
 	Var<t> as() {
 		Var<t> out;
 		out.release();
+		out.target = target;
+		++target->references;
+		targetValue = 
+		//if (auto castTarget = dynamic_cast<TVarData<T>*>(target->data)) {
+		//	t *test = static_cast<t *>(castTarget->raw);
+		//	int *&a = new int(2);
+		//}
+		return out;
+
+
+		/*Var<t> out;
+		out.release();
 		out.target = this->target;
 		++out.target->references;
 		if (auto castedTarget = dynamic_cast<TVarData<T>*>(target->data)) {
@@ -128,7 +127,7 @@ public:
 		}
 		else
 			throw;
-		return out;
+		return out;*/
 	}
 };
 #endif

@@ -4,6 +4,7 @@
 #include "Var.hpp"
 using namespace std;
 
+
 int main(int argc, char *argv[]) {
 	Engine::setInstance(new Engine);
 	Engine::inst->args(argc, argv);

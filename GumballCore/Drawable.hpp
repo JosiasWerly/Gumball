@@ -184,7 +184,7 @@ public:
 
 		vao->unBind();
 		vbo->unbind();
-		ibo->unbind();		
+		ibo->unbind();
 
 		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent().as<Shader>();
 		//material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
