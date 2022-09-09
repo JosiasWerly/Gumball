@@ -5,25 +5,25 @@
 
 
 
-ShaderParam::ShaderParam(unsigned location, EUniformType type) :
+ShaderAttribute::ShaderAttribute(unsigned location, EUniformType type) :
 	location(location),
 	type(type) {
 
 	switch (type) {
-	case EUniformType::u_int:			param = new TShaderUniform<EUniformType::u_int>(*this);			break;
-	case EUniformType::u_float:			param = new TShaderUniform<EUniformType::u_float>(*this);		break;
-	case EUniformType::u_mat:			param = new TShaderUniform<EUniformType::u_mat>(*this);			break;
-	case EUniformType::u_stexture:		param = new TShaderUniform<EUniformType::u_stexture>(*this);	break;
-	case EUniformType::u_fvec2:			param = new TShaderUniform<EUniformType::u_fvec2>(*this);		break;
-	case EUniformType::u_fvec3:			param = new TShaderUniform<EUniformType::u_fvec3>(*this);		break;
-	case EUniformType::u_fvec4:			param = new TShaderUniform<EUniformType::u_fvec4>(*this);		break;
-	case EUniformType::u_ivec2:			param = new TShaderUniform<EUniformType::u_ivec2>(*this);		break;
-	case EUniformType::u_ivec3:			param = new TShaderUniform<EUniformType::u_ivec3>(*this);		break;
-	case EUniformType::u_ivec4:			param = new TShaderUniform<EUniformType::u_ivec4>(*this);		break;
+	case EUniformType::u_int:			param = new ShaderParameter<EUniformType::u_int>(*this);			break;
+	case EUniformType::u_float:			param = new ShaderParameter<EUniformType::u_float>(*this);		break;
+	case EUniformType::u_mat:			param = new ShaderParameter<EUniformType::u_mat>(*this);			break;
+	case EUniformType::u_stexture:		param = new ShaderParameter<EUniformType::u_stexture>(*this);	break;
+	case EUniformType::u_fvec2:			param = new ShaderParameter<EUniformType::u_fvec2>(*this);		break;
+	case EUniformType::u_fvec3:			param = new ShaderParameter<EUniformType::u_fvec3>(*this);		break;
+	case EUniformType::u_fvec4:			param = new ShaderParameter<EUniformType::u_fvec4>(*this);		break;
+	case EUniformType::u_ivec2:			param = new ShaderParameter<EUniformType::u_ivec2>(*this);		break;
+	case EUniformType::u_ivec3:			param = new ShaderParameter<EUniformType::u_ivec3>(*this);		break;
+	case EUniformType::u_ivec4:			param = new ShaderParameter<EUniformType::u_ivec4>(*this);		break;
 	default: throw;
 	}
 }
-ShaderParam::~ShaderParam() {
+ShaderAttribute::~ShaderAttribute() {
 }
 
 
@@ -76,7 +76,6 @@ bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {
 	}
 	return true;
 }
-
 void Shader::clearUniforms() {
 	for (auto &u : uniforms)
 		delete u.second;
@@ -91,7 +90,7 @@ void Shader::captureUniforms() {
 		int len, size;
 		char name[32] = "";
 		glGetActiveUniform(shaderId, i, 32, &len, &size, &type, name);
-		uniforms[name] = new ShaderParam(i, static_cast<EUniformType>(type));
+		uniforms[name] = new ShaderAttribute(i, static_cast<EUniformType>(type));
 	}
 }
 bool Shader::hasUniform(string name) {
@@ -125,4 +124,7 @@ bool ShaderFactory::assemble(Object *&content, Archive &ar) {
 	delete shader;
 	shader = nullptr;
 	return false;
+}
+bool ShaderFactory::disassemble(Object *&content, Archive &ar) {
+	return true;
 }
