@@ -14,7 +14,6 @@ using namespace std;
 class ShaderUniform;
 class ShaderParam;
 class Shader;
-class Material;
 class ShaderFactory;
 
 enum class EUniformType {
@@ -87,11 +86,13 @@ public:
 	Inline void bind();
 	Inline void unBind() const;
 };
+
 class Material {
 public:
-	SVar<Object, Shader> shader;
+	Var<Shader> shader;
 	void use();
 };
+
 class ShaderFactory : 
 	public IAssetFactory {
 public:
@@ -99,8 +100,8 @@ public:
 		IAssetFactory("ShaderFactory") {
 		this->extensions = { "shader", "glsl" };
 	}
-	virtual bool assemble(Asset &asset, Archive &ar);
-	virtual bool disassemble(Asset &asset, Archive &ar) {
+	virtual bool assemble(Object *&content, Archive &ar);
+	virtual bool disassemble(Object *&content, Archive &ar) {
 		return true;
 	}
 
@@ -157,7 +158,7 @@ protected:
 public:
 	using ShaderUniform::ShaderUniform;
 	unsigned slot = 0;
-	SVar<Object, Image> image;
+	Image *image;
 };
 #undef UniformParamDelc
 

@@ -2,11 +2,14 @@
 #ifndef _object
 #define _object
 #include "Definitions.hpp"
-
+#include "Var.hpp"
 
 class Object {
 public:
+	virtual ~Object() {}
 
+	virtual Var<Object> clone() { return Var<Object>(); }
+	virtual int *serialize(void *) { return nullptr; }
 };
 
 

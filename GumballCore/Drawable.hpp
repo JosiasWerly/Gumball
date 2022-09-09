@@ -164,52 +164,26 @@ public:
 
 #include "Engine.hpp"
 #include "AssetManager.hpp"
+
 class DrawInstance {
 	Vao *vao = nullptr;
 	Vbo *vbo = nullptr;
 	Ibo *ibo = nullptr;
 
 public:
-	MeshData* meshData;
+	MeshData *meshData = nullptr;
 	Material material;
 	Transform transform;
 
-	DrawInstance() {
-		vao = new Vao;
-		vao->bind();
-		vbo = new Vbo;
-		vbo->bind();
-		ibo = new Ibo;
-		ibo->bind();
-
-		vao->unBind();
-		vbo->unbind();
-		ibo->unbind();
-
-		material.shader = Engine::instance()->assetSystem->getAsset("default")->getContent();
-		material.shader->getUniform<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
-		//material.setParameter<glm::vec4>("uColor", glm::vec4(1, 1, 1, 0));
-	}
+	DrawInstance();
 	bool setMesh(string name);
 	bool setTexture(string name);
+	bool setMaterial(string name);
 
 
-	inline void bind() {
-		material.use();
-		vao->bind();
-		vbo->bind();
-		ibo->bind();
-	}
-	inline void unbind() {
-		vao->unBind();
-		vbo->unbind();
-		ibo->unbind();
-	}
-	inline void draw() {
-		material.use();
-		vao->bind();
-		glDrawElements(GL_TRIANGLES, ibo->size, GL_UNSIGNED_INT, nullptr);
-	}
+	void bind();
+	void unbind();
+	void draw();
 };
 
 

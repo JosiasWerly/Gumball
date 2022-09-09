@@ -84,8 +84,8 @@ public:
 		IAssetFactory("TextureFactory") {
 		this->extensions = { "png" };
 	}
-	virtual bool assemble(Asset &asset, Archive &ar);
-	virtual bool disassemble(Asset &asset, Archive &ar) {
+	virtual bool assemble(Object *&content, Archive &ar);
+	virtual bool disassemble(Object *&content, Archive &ar) {
 		return true;
 	}
 };

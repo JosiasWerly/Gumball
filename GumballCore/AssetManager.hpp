@@ -34,6 +34,7 @@ private:
 protected:
 	Var<Object> content;
 public:
+	Object *getContentCloned();
 	Inline Var<Object>& getContent(){
 		return content;
 	}
@@ -55,8 +56,8 @@ public:
 		name(name) {
 	}
 	bool hasExtension(const string &extention);
-	virtual bool assemble(Asset &asset, Archive &ar) = 0;
-	virtual bool disassemble(Asset &asset, Archive &ar) = 0;
+	virtual bool assemble(Object *&content, Archive &ar) = 0;
+	virtual bool disassemble(Object *&content, Archive &ar) = 0;
 };
 class AssetsSystem :
 	public IEngineSystem {
@@ -88,6 +89,8 @@ public:
 	
 	IAssetFactory *findFactory(const string &extension);
 	void createFactory(IAssetFactory *newFactory);
+	
+	bool assembleObject(Object *&content, const string &assetPath);
 };
 
 #endif // !_assetManager

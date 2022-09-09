@@ -4,7 +4,7 @@
 #include <iostream>
 #include <filesystem>
 
-
+#include "Engine.hpp"
 #include "Shaders.hpp"
 #include "Texture.hpp"
 #include "Mesh.hpp"
@@ -54,9 +54,10 @@ void AssetsSystem::loadAssetFromFile(const string &assetPath) {
 		if (auto factory = findFactory(assetExt)) {
 			Asset *asset = new Asset;
 			asset->name = assetName;
-			asset->filePath = assetPath;
-			Archive ar(assetPath);
-			if (factory->assemble(*asset, ar)) {
+			asset->filePath = assetPath;			
+			Object *content = nullptr;
+			if (assembleObject(content, assetPath)) {
+				asset->setContent(content);
 				assets.push_back(asset);
 				loaded = true;
 			}
@@ -87,4 +88,20 @@ IAssetFactory *AssetsSystem::findFactory(const string &extension) {
 }
 void AssetsSystem::createFactory(IAssetFactory *newFactory) {
 	factories.push_back(newFactory);
+}
+bool AssetsSystem::assembleObject(Object *&content, const string &assetPath) {
+	string assetName = Files::getNameOfFilePath(assetPath);
+	string assetExt = Files::getExtOfFilePath(assetPath);
+	if (auto factory = findFactory(assetExt)) {		
+		Archive ar(assetPath);		
+		return factory->assemble(content, ar);
+	}
+	return false;
+}
+
+
+Object* Asset::getContentCloned() {
+	Object *obj = nullptr;
+	Engine::instance()->assetSystem->assembleObject(obj, this->filePath);
+	return obj;
 }

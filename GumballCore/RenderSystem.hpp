@@ -1,5 +1,6 @@
 #pragma once
-#ifndef _viewport
+#ifndef _rendersystem
+#define _rendersystem
 
 #include <iostream>
 #include <list>

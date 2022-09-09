@@ -202,8 +202,8 @@ public:
 		this->extensions = { "obj" };
 	}
 	
-	bool assemble(Asset& asset, Archive& ar) override;
-	bool disassemble(Asset &asset, Archive &ar) override;
+	bool assemble(Object *&content, Archive& ar) override;
+	bool disassemble(Object *&content, Archive &ar) override;
 };
 
 

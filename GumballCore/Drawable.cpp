@@ -1,6 +1,7 @@
 
 #include "Drawable.hpp"
 #include "Engine.hpp"
+#include "Shaders.hpp"
 #include "stb_image/stb_image.h"
 
 #include <iostream>
@@ -21,8 +22,29 @@ void Tbo::loadTexture(string path) {
 	unbind();
 }
 
+
+DrawInstance::DrawInstance() {
+	vao = new Vao;
+	vao->bind();
+	vbo = new Vbo;
+	vbo->bind();
+	ibo = new Ibo;
+	ibo->bind();
+
+	vao->unBind();
+	vbo->unbind();
+	ibo->unbind();
+
+
+	;
+	material.shader.assign(static_cast<Shader *>(Engine::instance()->assetSystem->getAsset("default")->getContentCloned()));
+	material.shader->getUniform<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
+	material.shader->getUniform<EUniformType::u_stexture>("uTexture")->image = Engine::instance()->assetSystem->getAsset("logo")->getContent().pin<Image>();
+}
 bool DrawInstance::setMesh(string name) {
-	bind();
+	vao->bind();
+	vbo->bind();
+	ibo->bind();
 	MeshData* meshData = Engine::instance()->assetSystem->getAsset(name)->getContent().pin<MeshData>();
 	if (meshData) {
 		VboBuilder()
@@ -41,7 +63,24 @@ bool DrawInstance::setMesh(string name) {
 	return false;
 }
 bool DrawInstance::setTexture(string name) {
-	SVar<Object, Image> img = Engine::instance()->assetSystem->getAsset(name)->getContent();
+	Image *img = Engine::instance()->assetSystem->getAsset(name)->getContent().pin<Image>();
 	material.shader->getUniform<EUniformType::u_stexture>("uTexture")->image = img;
 	return true;
+}
+
+void DrawInstance::bind() {
+	material.use();
+	vao->bind();
+	vbo->bind();
+	ibo->bind();
+}
+void DrawInstance::unbind() {
+	vao->unBind();
+	vbo->unbind();
+	ibo->unbind();
+}
+void DrawInstance::draw() {
+	material.use();
+	vao->bind();
+	glDrawElements(GL_TRIANGLES, ibo->size, GL_UNSIGNED_INT, nullptr);
 }
