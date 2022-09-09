@@ -36,10 +36,10 @@ GLFWwindow* Window::GetGLWindow() {
 void IRenderOverlay::onRender(float deltaTime) {
 	for (auto& view : views) {
 		auto viewMat = view->transform.getMat();
-		for (auto& draw : drawInstances) {			
-			draw->material.shader->getUniform<EUniformType::u_mat>("uView")->value = viewMat;
-			draw->material.shader->getUniform<EUniformType::u_mat>("uProj")->value = view->viewMode.mProjection;
-			draw->material.shader->getUniform<EUniformType::u_mat>("uModel")->value = draw->transform.getMat();			
+		for (auto& draw : drawInstances) {
+			draw->material.param<EUniformType::u_mat>("uView")->value = viewMat;
+			draw->material.param<EUniformType::u_mat>("uProj")->value = view->viewMode.mProjection;
+			draw->material.param<EUniformType::u_mat>("uModel")->value = draw->transform.getMat();
 			draw->draw();
 		}
 	}

@@ -35,11 +35,10 @@ DrawInstance::DrawInstance() {
 	vbo->unbind();
 	ibo->unbind();
 
-
-	;
-	material.shader.assign(static_cast<Shader *>(Engine::instance()->assetSystem->getAsset("default")->getContentCloned()));
-	material.shader->getUniform<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
-	material.shader->getUniform<EUniformType::u_stexture>("uTexture")->image = Engine::instance()->assetSystem->getAsset("logo")->getContent().pin<Image>();
+	Shader *sh = Engine::instance()->assetSystem->getAsset("default")->getContent().pin<Shader>();
+	material.setShader(sh);
+	material.param<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
+	material.param<EUniformType::u_stexture>("uTexture")->image = Engine::instance()->assetSystem->getAsset("logo")->getContent().pin<Image>();
 }
 bool DrawInstance::setMesh(string name) {
 	vao->bind();
@@ -64,7 +63,7 @@ bool DrawInstance::setMesh(string name) {
 }
 bool DrawInstance::setTexture(string name) {
 	Image *img = Engine::instance()->assetSystem->getAsset(name)->getContent().pin<Image>();
-	material.shader->getUniform<EUniformType::u_stexture>("uTexture")->image = img;
+	material.param<EUniformType::u_stexture>("uTexture")->image = img;
 	return true;
 }
 

@@ -30,7 +30,6 @@ ShaderAttribute::~ShaderAttribute() {
 Shader::Shader() {
 }
 Shader::~Shader() {
-	clearUniforms();
 }
 bool Shader::create(const string &vertex, const string &fragment) {
 	shaderId = glCreateProgram();
@@ -54,7 +53,7 @@ bool Shader::create(const string &vertex, const string &fragment) {
 	}
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-	captureUniforms();
+	captureAttributeSchema();
 	return true;
 }
 bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {
@@ -76,13 +75,8 @@ bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {
 	}
 	return true;
 }
-void Shader::clearUniforms() {
-	for (auto &u : uniforms)
-		delete u.second;
-	uniforms.clear();
-}
-void Shader::captureUniforms() {
-	clearUniforms();
+void Shader::captureAttributeSchema() {
+	attributeScheme.clear();
 	int uniformsSize = 0;
 	glGetProgramiv(shaderId, GL_ACTIVE_UNIFORMS, &uniformsSize);
 	for (int i = 0; i < uniformsSize; i++) {
@@ -90,11 +84,13 @@ void Shader::captureUniforms() {
 		int len, size;
 		char name[32] = "";
 		glGetActiveUniform(shaderId, i, 32, &len, &size, &type, name);
-		uniforms[name] = new ShaderAttribute(i, static_cast<EUniformType>(type));
+		attributeScheme.push_back({
+				name,
+				static_cast<unsigned>(i),
+				static_cast<EUniformType>(type)
+			}
+		);
 	}
-}
-bool Shader::hasUniform(string name) {
-	return uniforms.contains(name);
 }
 Inline void Shader::bind() {
 	glUseProgram(shaderId);
@@ -102,14 +98,26 @@ Inline void Shader::bind() {
 Inline void Shader::unBind() const {
 	glUseProgram(0);
 }
-Inline void Shader::uploadUniforms() {
-	for (auto &u : uniforms)
-		u.second->param->upload();
-}
 
+
+
+
+Material::Material() {
+}
+Material::~Material() {
+	for (auto &u : parameters)
+		delete u.second;
+}
 void Material::use() {
-	shader->uploadUniforms();
+	for (auto &u : parameters)
+		u.second->param->upload();
 	shader->bind();
+}
+void Material::setShader(Shader *shader) {  //TODO: param should be const
+	this->shader = shader;
+	auto &attributes = shader->getAttributes();
+	for (auto &a : attributes)
+		parameters[a.name] = new ShaderAttribute(a.location, a.type);
 }
 
 

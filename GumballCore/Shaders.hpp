@@ -40,6 +40,7 @@ public:
 };
 class IShaderParameter {
 	friend class Shader;
+	friend class Material;
 protected:
 	const ShaderAttribute &owner;
 	virtual void upload() = 0;
@@ -56,11 +57,15 @@ public:
 	using IShaderParameter::IShaderParameter;
 };
 
-
-
-class ShaderParamSchema {
-public:
-
+struct ShaderAttributeDescriptor {
+	string name;
+	unsigned location;
+	EUniformType type;
+	ShaderAttributeDescriptor(string name, unsigned location, EUniformType type) :
+		name(name),
+		location(location),
+		type(type) {
+	}
 };
 class Shader : 
 	public Object {
@@ -69,32 +74,50 @@ public:
 		Vertex = GL_VERTEX_SHADER,
 		Fragment = GL_FRAGMENT_SHADER
 	};
+	
 protected:
+	list<ShaderAttributeDescriptor> attributeScheme;
+
 	bool compile(EShaderType eShaderType, const string& code, int& id);
-	map<string, ShaderAttribute*> uniforms;
+	void captureAttributeSchema();
 public:
 	unsigned shaderId = 0;
 
 	Shader();
 	virtual ~Shader();
-
 	bool create(const string &vertex, const string &fragment);
-	void clearUniforms();
-	void captureUniforms();
-	bool hasUniform(string name);
-	template<EUniformType etype> ShaderParameter<etype> *getUniform(string name) {
-		return dynamic_cast<ShaderParameter<etype>*>(uniforms[name]->param);
-	}
-
-
 	Inline void bind();
 	Inline void unBind() const;
-	Inline void uploadUniforms();
+	
+	Inline const list<ShaderAttributeDescriptor> &getAttributes() const { return attributeScheme; }
+	bool hasAttribute(string name) { 
+		for (auto &a : attributeScheme) {
+			if (a.name == name)
+				return true;
+		}
+		return false;
+	}
+	const ShaderAttributeDescriptor* getAttribute(string name) {
+		for (auto &a : attributeScheme) {
+			if (a.name == name)
+				return &a;
+		}
+		return nullptr;
+	}
 };
 class Material {
+	Shader *shader;
+	map<string, ShaderAttribute *> parameters;	
 public:
-	Var<Shader> shader;
+	Material();
+	virtual ~Material();
 	void use();
+	void setShader(Shader *shader);
+	const Shader *getShader() { return shader; }
+	bool hasParameter(string name) const { return parameters.contains(name); }
+	template<EUniformType etype> ShaderParameter<etype> *param(string name) {
+		return dynamic_cast<ShaderParameter<etype>*>(parameters[name]->param);
+	}
 };
 class ShaderFactory : 
 	public IAssetFactory {

@@ -100,6 +100,7 @@ bool AssetsSystem::assembleObject(Object *&content, const string &assetPath) {
 }
 
 
+
 Object* Asset::getContentCloned() {
 	Object *obj = nullptr;
 	Engine::instance()->assetSystem->assembleObject(obj, this->filePath);
