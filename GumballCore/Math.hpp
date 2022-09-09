@@ -28,7 +28,8 @@ public:
 
 	TVec rawVector;
 
-	TVector(){}
+	TVector() {
+	}
 	TVector(TVec &&rawVector) :
 		rawVector(rawVector){
 	}

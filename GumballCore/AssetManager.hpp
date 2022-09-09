@@ -35,8 +35,6 @@ protected:
 	Var<Object> content;
 public:
 
-	//TODO: REMOVE
-	Object *getContentCloned();
 	Inline Var<Object>& getContent(){
 		return content;
 	}

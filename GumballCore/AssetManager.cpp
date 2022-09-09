@@ -98,11 +98,3 @@ bool AssetsSystem::assembleObject(Object *&content, const string &assetPath) {
 	}
 	return false;
 }
-
-
-
-Object* Asset::getContentCloned() {
-	Object *obj = nullptr;
-	Engine::instance()->assetSystem->assembleObject(obj, this->filePath);
-	return obj;
-}

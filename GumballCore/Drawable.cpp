@@ -55,7 +55,7 @@ bool DrawInstance::setMesh(string name) {
 
 		ibo->setBuffer(
 			meshData->index.data(),
-			meshData->index.size() * sizeof(unsigned));
+			static_cast<unsigned int> (meshData->index.size() * sizeof(unsigned)));
 		unbind();
 		return true;
 	}
