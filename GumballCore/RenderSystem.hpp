@@ -14,6 +14,13 @@ using namespace std;
 #include "InputSystem.hpp"
 #include "Math.hpp"
 
+/*
+* IRenderOverlay is not ready to handle multiple types of layers
+* it's currently hard typed to support the default render procedure of a scene
+* the methods contained proven to be weak when handling UI procedures...
+* this part needs refactor
+*/
+
 class Window {
     GLFWwindow* window = nullptr;
     Vector2i winSize;

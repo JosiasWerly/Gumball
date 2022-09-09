@@ -95,7 +95,7 @@ public:
 Extern void OnProjectAttached(Engine &engineRef) {
 	Engine::setInstance(&engineRef);
 	cout << "<< loaded >> " << endl;
-	cout << "&" << (long) &*Engine::instance() << endl;
+	//cout << "&" << (long) &*Engine::instance() << endl;
 	//Calculator c;
 	//c.proc();
 }
