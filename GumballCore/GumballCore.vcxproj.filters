@@ -56,6 +56,9 @@
     <ClCompile Include="Archive.cpp">
       <Filter>scr</Filter>
     </ClCompile>
+    <ClCompile Include="SceneOverlay.cpp">
+      <Filter>scr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="scr">
@@ -124,6 +127,9 @@
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="Archive.hpp">
+      <Filter>scr</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneOverlay.hpp">
       <Filter>scr</Filter>
     </ClInclude>
   </ItemGroup>

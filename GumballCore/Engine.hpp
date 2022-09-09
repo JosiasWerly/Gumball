@@ -21,7 +21,6 @@ class Engine :
 	friend int main(int, char *[]);
 
 	TimeStat timeStats;
-	EditorOverlay *editor;
 	std::list<IEngineSystem*> systems, tickingSystems;
 	ProjectLinker* project;
 	

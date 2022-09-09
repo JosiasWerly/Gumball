@@ -1,4 +1,5 @@
 #include "RenderSystem.hpp"
+#include "SceneOverlay.hpp"
 #include "EditorOverlay.hpp"
 #include "Engine.hpp"
 
@@ -33,17 +34,9 @@ GLFWwindow* Window::GetGLWindow() {
 }
 
 
-void IRenderOverlay::onRender(float deltaTime) {
-	for (auto& view : views) {
-		auto viewMat = view->transform.getMat();
-		for (auto& draw : drawInstances) {
-			draw->material.param<EUniformType::u_mat>("uView")->value = viewMat;
-			draw->material.param<EUniformType::u_mat>("uProj")->value = view->viewMode.mProjection;
-			draw->material.param<EUniformType::u_mat>("uModel")->value = draw->transform.getMat();
-			draw->draw();
-		}
-	}
-}
+void IRenderOverlay::onAttach() {}
+void IRenderOverlay::onDetach() {}
+void IRenderOverlay::onRender(float deltaTime) {}
 
 void RenderSystem::initialize() {
 	glfwInit();
@@ -75,12 +68,23 @@ void RenderSystem::initialize() {
 	glEnable(GL_CULL_FACE);
 
 	//pushLayer(new IRenderOverlay("debug"));
-	pushLayer(new IRenderOverlay("game"));
+	pushLayer(new SceneOverlay);
 	pushLayer(new EditorOverlay);
 }
 void RenderSystem::shutdown() {
 	
 	glfwTerminate();
+}
+void RenderSystem::pushLayer(IRenderOverlay *layer, bool pushBack) {
+	if (pushBack)
+		layers.emplace_back(layer);
+	else
+		layers.emplace_front(layer);
+	layer->onAttach();
+}
+void RenderSystem::popLayer(IRenderOverlay *layer) {
+	layer->onDetach();
+	layers.remove(layer);
 }
 void RenderSystem::tick(float deltaTime) {
 	mainWindow.clearRender();

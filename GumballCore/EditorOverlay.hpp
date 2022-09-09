@@ -10,12 +10,11 @@ class UIElement;
 
 class EditorOverlay : 
     public IRenderOverlay {
+    friend class UIElement;
+
     ImGuiIO *guiIO = nullptr;
     std::list<UIElement *> elements;
 public:
-    //crap but it'll help me debug stuff
-    std::unordered_map<string, double> msStats;
-    
 
     EditorOverlay();    
     void onAttach() override;

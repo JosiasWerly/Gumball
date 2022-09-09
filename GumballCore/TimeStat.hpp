@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _timestat
 #include "GLUtils.hpp"
+#include "Definitions.hpp"
 class TimeStat {
 	double lastRegister = 0;
 	

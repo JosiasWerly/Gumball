@@ -12,6 +12,9 @@ using namespace std;
 
 #pragma warning( disable : 4312 4267 4838)
 
+
+//TODO: CHANGE NAME TO BUFFER
+
 struct Ibo {
 	unsigned id = 0, size = 0;
 
@@ -162,29 +165,7 @@ public:
 };
 
 
-#include "Engine.hpp"
-#include "AssetManager.hpp"
 
-class DrawInstance {
-	Vao *vao = nullptr;
-	Vbo *vbo = nullptr;
-	Ibo *ibo = nullptr;
-
-public:
-	MeshData *meshData = nullptr;
-	Material material;
-	Transform transform;
-
-	DrawInstance();
-	bool setMesh(string name);
-	bool setTexture(string name);
-	bool setMaterial(string name);
-
-
-	void bind();
-	void unbind();
-	void draw();
-};
 
 
 

@@ -2,6 +2,7 @@
 #include "EngineSystem.hpp"
 #include "AssetManager.hpp"
 #include "RenderSystem.hpp"
+#include "SceneOverlay.hpp"
 #include "EditorOverlay.hpp"
 #include "ProjectLinker.hpp"
 
@@ -40,11 +41,12 @@ void Engine::args(int argc, char *argv[]) {
 	project->enginePath = project->enginePath.substr(0, project->enginePath.find_last_of("\\"));
 }
 void Engine::tick() {
-	//cout << "&" << (long)&*Engine::instance() << endl;
 	for (auto &s : systems)
 		s->initialize();	
-	editor = dynamic_cast<EditorOverlay *>(getSystem<RenderSystem>()->getLayer("editor"));
+	auto editor = dynamic_cast<EditorOverlay *>(getSystem<RenderSystem>()->getLayer("editor"));
+	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
 	assetSystem->loadAssetsFromFolder("res\\");
+
 	while (true) {
 		if (project->hasToLoad()) {
 			if (project->isLoaded()) {
@@ -60,7 +62,7 @@ void Engine::tick() {
 
 		static string names[] = { "render", "input", "object" };
 		timeStats.capture();
-		editor->msStats["fps"] = timeStats.getFPS();
+		//editor->msStats["fps"] = timeStats.getFPS();
 
 		int id = 0;
 		TimeStat debugTimeStats;
@@ -68,8 +70,13 @@ void Engine::tick() {
 			debugTimeStats.capture();
 			s->tick((float)timeStats.getDeltaTime());
 			debugTimeStats.capture();
-			editor->msStats[names[id++]] = debugTimeStats.getMS();
+			//editor->msStats[names[id++]] = debugTimeStats.getMS();
 		}
+
+		
+
+
+
 	}
 
 	for (auto &s : systems) 
@@ -79,95 +86,41 @@ void Engine::tick() {
 		s->shutdown();
 }
 
-
-
-
-//void Engine::tick() {
-//	for (auto &s : systems)
-//		s->initialize();
+//View v;
+//v.viewMode.setProjectionPerspective();
+//v.transform.position.z = -10;
+//scene->pushView(&v);
 //
-//	cout << "&" << (long)&*Engine::instance() << endl;
-//	editor = dynamic_cast<EditorOverlay *>(getSystem<RenderSystem>()->getLayer("editor"));
-//
-//
-//	assetSystem->loadAssetsFromFolder("res\\");
-//
-//	View v;
-//	v.viewMode.setProjectionPerspective();
-//	v.transform.position.z = -10;
-//	renderSystem->pushView(0, &v);
-//
-//	DrawInstance a;
-//	a.setMesh("cube");
-//	a.setTexture("logo");
-//	a.transform.position.x = -1;
-//	renderSystem->pushDrawInstance(0, &a);
+//DrawInstance a;
+//a.setMesh("cube");
+//a.setTexture("logo");
+//a.transform.position.x = -1;
+//scene->pushDrawInstance(&a);
 //
 //
-//	DrawInstance b;
-//	b.setMesh("cube");
-//	b.setTexture("scotty");
-//	b.transform.position.x = 1;
-//	renderSystem->pushDrawInstance(0, &b);
+//DrawInstance b;
+//b.setMesh("cube");
+//b.setTexture("scotty");
+//b.transform.position.x = 1;
+//scene->pushDrawInstance(&b);
 //
 //
+//if (inputSystem->isKeyDown(Input::EKeyCode::W))
+//a.transform.position += a.transform.rotator.forward() * .5;
+//else if (inputSystem->isKeyDown(Input::EKeyCode::S))
+//a.transform.position -= a.transform.rotator.forward() * .5;
 //
+//if (inputSystem->isKeyDown(Input::EKeyCode::D))
+//a.transform.position += a.transform.rotator.right() * .5;
+//else if (inputSystem->isKeyDown(Input::EKeyCode::A))
+//a.transform.position -= a.transform.rotator.right() * .5;
 //
-//	while (true) {
-//		if (project->hasToLoad()) {
-//			if (project->isLoaded()) {
-//				for (auto &s : systems)
-//					s->onEndplay();
-//			}
-//			project->load();
-//			if (project->isLoaded()) {
-//				for (auto &s : systems)
-//					s->onPlay();
-//			}
-//		}
+//if (inputSystem->isKeyDown(Input::EKeyCode::UP))
+//a.transform.rotator.rotate(1, 0, 0);
+//else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
+//a.transform.rotator.rotate(-1, 0, 0);
 //
-//
-//
-//
-//		static string names[] = { "render", "input", "object" };
-//		timeStats.capture();
-//		editor->msStats["fps"] = timeStats.getFPS();
-//
-//		int id = 0;
-//		TimeStat debugTimeStats;
-//		for (auto &s : tickingSystems) {
-//			debugTimeStats.capture();
-//			s->tick((float)timeStats.getDeltaTime());
-//			debugTimeStats.capture();
-//			editor->msStats[names[id++]] = debugTimeStats.getMS();
-//		}
-//
-//
-//
-//		if (inputSystem->isKeyDown(Input::EKeyCode::W))
-//			a.transform.position += a.transform.rotator.forward() * .5;
-//		else if (inputSystem->isKeyDown(Input::EKeyCode::S))
-//			a.transform.position -= a.transform.rotator.forward() * .5;
-//
-//		if (inputSystem->isKeyDown(Input::EKeyCode::D))
-//			a.transform.position += a.transform.rotator.right() * .5;
-//		else if (inputSystem->isKeyDown(Input::EKeyCode::A))
-//			a.transform.position -= a.transform.rotator.right() * .5;
-//
-//		if (inputSystem->isKeyDown(Input::EKeyCode::UP))
-//			a.transform.rotator.rotate(1, 0, 0);
-//		else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
-//			a.transform.rotator.rotate(-1, 0, 0);
-//
-//		if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
-//			a.transform.rotator.rotate(0, 0, -1);
-//		else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
-//			a.transform.rotator.rotate(0, 0, 1);
-//	}
-//
-//	for (auto &s : systems)
-//		s->onEndplay();
-//
-//	for (auto &s : systems)
-//		s->shutdown();
-//}
+//if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
+//a.transform.rotator.rotate(0, 0, -1);
+//else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
+//a.transform.rotator.rotate(0, 0, 1);

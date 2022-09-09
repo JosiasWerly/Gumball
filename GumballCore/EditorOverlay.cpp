@@ -48,7 +48,9 @@ void EditorOverlay::onRender(float deltaTime) {
 
 
 void UIElement::hide() {
-    Engine::instance()->renderSystem->getLayer("editor");
+    auto overlay =  Engine::instance()->renderSystem->getLayer("editor");
+    EditorOverlay* edOverlay = dynamic_cast<EditorOverlay *>(overlay);
+    //edOverlay.
 }
 void UIElement::show() {
 
