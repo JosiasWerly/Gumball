@@ -31,7 +31,9 @@ public:
     }
 };
 
-class UIElement {
+
+//TODO: change name to IWidget
+class UIElement { 
     friend class WidgetOverlay;
     bool isVisible = true;
     UIElement *parent = nullptr;
@@ -44,8 +46,10 @@ protected:
 public:
     void hide();
     void show();
-    void addChild(UIElement *child);
-    void delChild(UIElement *child);
+    UIElement &operator<<(UIElement *child);
+    UIElement &operator>>(UIElement *child);
+    void addChildren(list<UIElement *> children);
+    void delChildren(list<UIElement *> children);
     
     Inline bool hasChild(UIElement *child) const { return std::find(children.begin(), children.end(), child) != std::end(children); };
     Inline UIElement *getParent() const { return parent; }
@@ -54,14 +58,14 @@ public:
 
 namespace UI {
     
-    class Window : 
+    class Canvas : 
         public UIElement{
         void begin() override;
         void end() override;
 
     public:
         string windowName = "Window";
-        Window() = default;
+        Canvas() = default;
     };
 
     class Text :

@@ -48,12 +48,11 @@ void Engine::tick() {
 	assetSystem->loadAssetsFromFolder("res\\");
 
 
-	UI::Window win;
+	UI::Canvas win;
 	UI::Text txt;
 	UI::Button bt;
 	(*editor) << &win;
-	win.addChild(&txt);
-	win.addChild(&bt);	
+	win << &txt << &bt;
 	int i = 0;
 	while (true) {
 		//if (project->hasToLoad()) {
