@@ -6,7 +6,6 @@
 #include <list>
 
 #include "GLUtils.hpp"
-#include "Patterns.hpp"
 #include "EngineSystem.hpp"
 #include "Event.hpp"
 
@@ -76,4 +75,4 @@ public:
 };
 
 #undef keyWrapper
-#endif // !_transform
+#endif // !_inputsystem

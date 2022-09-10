@@ -3,9 +3,7 @@
 #define _drawable
 
 #include "GLUtils.hpp"
-#include "Shaders.hpp"
 #include "Texture.hpp"
-#include "Mesh.hpp"
 #include <list>
 using namespace std;
 

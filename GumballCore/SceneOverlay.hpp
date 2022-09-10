@@ -4,8 +4,10 @@
 #include "Engine.hpp"
 #include "RenderSystem.hpp"
 #include "AssetManager.hpp"
+#include "Mesh.hpp"
 #include "Shaders.hpp"
 #include "Drawable.hpp"
+
 #include <list>
 
 class View {

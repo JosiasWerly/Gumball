@@ -42,8 +42,8 @@ void Engine::args(int argc, char *argv[]) {
 }
 void Engine::tick() {
 	for (auto &s : systems)
-		s->initialize();	
-	auto editor = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
+		s->initialize();
+	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
 	assetSystem->loadAssetsFromFolder("res\\");
 
@@ -51,9 +51,28 @@ void Engine::tick() {
 	UI::Canvas win;
 	UI::Text txt;
 	UI::Button bt;
-	(*editor) << &win;
+	(*widget) << &win;
 	win << &txt << &bt;
 	int i = 0;
+
+	View v;
+	v.viewMode.setProjectionPerspective();
+	v.transform.position.z = -10;
+	scene->pushView(&v);
+
+	DrawInstance a;
+	a.setMesh("cube");
+	a.setTexture("logo");
+	a.transform.position.x = -1;
+	scene->pushDrawInstance(&a);
+
+
+	DrawInstance b;
+	b.setMesh("cube");
+	b.setTexture("scotty");
+	b.transform.position.x = 1;
+	scene->pushDrawInstance(&b);
+
 	while (true) {
 		//if (project->hasToLoad()) {
 		//	if (project->isLoaded()) {
@@ -66,6 +85,27 @@ void Engine::tick() {
 		//			s->onPlay();
 		//	}
 		//}
+
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::W))
+			a.transform.position += a.transform.rotator.forward() * .5;
+		else if (inputSystem->isKeyDown(Input::EKeyCode::S))
+			a.transform.position -= a.transform.rotator.forward() * .5;
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::D))
+			a.transform.position += a.transform.rotator.right() * .5;
+		else if (inputSystem->isKeyDown(Input::EKeyCode::A))
+			a.transform.position -= a.transform.rotator.right() * .5;
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::UP))
+			a.transform.rotator.rotate(1, 0, 0);
+		else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
+			a.transform.rotator.rotate(-1, 0, 0);
+
+		if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
+			a.transform.rotator.rotate(0, 0, -1);
+		else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
+			a.transform.rotator.rotate(0, 0, 1);
 
 		if (bt.isClicked()) {
 			txt.text = (string("count:") + to_string(++i));

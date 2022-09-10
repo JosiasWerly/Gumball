@@ -1,8 +1,7 @@
 #pragma once
-#ifndef _assetManager
-#define _assetManager
+#ifndef _assetmanager
+#define _assetmanager
 
-#include "Patterns.hpp"
 #include "Object.hpp"
 #include "Var.hpp"
 #include "EngineSystem.hpp"
@@ -93,4 +92,4 @@ public:
 	bool assembleObject(Object *&content, const string &assetPath);
 };
 
-#endif // !_assetManager
+#endif // !_assetmanager
