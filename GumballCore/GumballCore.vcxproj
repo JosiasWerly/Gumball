@@ -163,7 +163,7 @@
     <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Patterns.cpp" />
-    <ClCompile Include="EditorOverlay.cpp" />
+    <ClCompile Include="WidgetOverlay.cpp" />
     <ClCompile Include="ProjectLinker.cpp" />
     <ClCompile Include="SceneOverlay.cpp" />
     <ClCompile Include="Shaders.cpp" />
@@ -203,7 +203,7 @@
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="FunctionLibrary.hpp" />
     <ClInclude Include="GLUtils.hpp" />
-    <ClInclude Include="EditorOverlay.hpp" />
+    <ClInclude Include="WidgetOverlay.hpp" />
     <ClInclude Include="ProjectLinker.hpp" />
     <ClInclude Include="SceneOverlay.hpp" />
     <ClInclude Include="Shaders.hpp" />

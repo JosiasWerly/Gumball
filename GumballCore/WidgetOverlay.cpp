@@ -1,11 +1,11 @@
-#include "EditorOverlay.hpp"
+#include "WidgetOverlay.hpp"
 #include "Engine.hpp"
 
 
-EditorOverlay::EditorOverlay() :
+WidgetOverlay::WidgetOverlay() :
     IRenderOverlay("editor") {
 }
-void EditorOverlay::onAttach() {
+void WidgetOverlay::onAttach() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     guiIO = &ImGui::GetIO();
@@ -19,10 +19,10 @@ void EditorOverlay::onAttach() {
     ImGui::StyleColorsDark();
 
 }
-void EditorOverlay::onDetach() {
+void WidgetOverlay::onDetach() {
 
 }
-void EditorOverlay::onRender(float deltaTime) {
+void WidgetOverlay::onRender(float deltaTime) {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -45,27 +45,50 @@ void EditorOverlay::onRender(float deltaTime) {
     }
 }
 
-
-
+void UIElement::render() {
+    if (!isVisible)
+        return;
+    begin();
+    draw();
+    for (auto c : children)
+        c->render();
+    end();
+}
+void UIElement::begin() {}
+void UIElement::end() {}
+void UIElement::draw() {}
 void UIElement::hide() {
-    auto overlay =  Engine::instance()->renderSystem->getLayer("editor");
-    EditorOverlay* edOverlay = dynamic_cast<EditorOverlay *>(overlay);
-    //edOverlay.
+    isVisible = false;
 }
 void UIElement::show() {
-
+    isVisible = true;    
+}
+void UIElement::addChild(UIElement *child) {
+    if (child->parent)
+        child->parent->delChild(child);
+    children.push_back(child);
+    child->parent = this;
+}
+void UIElement::delChild(UIElement *child) {    
+    children.push_back(child);
+    child->parent = this;
 }
 
-void UI::Window::begin() {
-    ImGui::Begin("window");
-}
-void UI::Window::end() {
+
+
+
+namespace UI {
+    void Window::begin() {
+        ImGui::Begin(windowName.c_str());
+    }
+    void Window::end() {
     ImGui::End();
 }
-
-void UI::Text::draw() {
-    ImGui::Text(text.c_str());
-}
+    
+    void Text::draw() {
+        ImGui::Text(text.c_str());
+    }
+};
 
 
 

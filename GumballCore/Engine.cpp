@@ -3,7 +3,7 @@
 #include "AssetManager.hpp"
 #include "RenderSystem.hpp"
 #include "SceneOverlay.hpp"
-#include "EditorOverlay.hpp"
+#include "WidgetOverlay.hpp"
 #include "ProjectLinker.hpp"
 
 #include <iostream>
@@ -43,23 +43,35 @@ void Engine::args(int argc, char *argv[]) {
 void Engine::tick() {
 	for (auto &s : systems)
 		s->initialize();	
-	auto editor = dynamic_cast<EditorOverlay *>(getSystem<RenderSystem>()->getLayer("editor"));
+	auto editor = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
 	assetSystem->loadAssetsFromFolder("res\\");
 
-	while (true) {
-		if (project->hasToLoad()) {
-			if (project->isLoaded()) {
-				for (auto &s : systems)
-					s->onEndplay();
-			}
-			project->load();
-			if (project->isLoaded()) {
-				for (auto &s : systems)
-					s->onPlay();
-			}
-		}
 
+	UI::Window win;
+	UI::Text txt;
+	UI::Button bt;
+	(*editor) << &win;
+	win.addChild(&txt);
+	win.addChild(&bt);	
+	int i = 0;
+	while (true) {
+		//if (project->hasToLoad()) {
+		//	if (project->isLoaded()) {
+		//		for (auto &s : systems)
+		//			s->onEndplay();
+		//	}
+		//	project->load();
+		//	if (project->isLoaded()) {
+		//		for (auto &s : systems)
+		//			s->onPlay();
+		//	}
+		//}
+
+		if (bt.isClicked()) {
+			txt.text = (string("count:") + to_string(++i));
+		}
+		
 		static string names[] = { "render", "input", "object" };
 		timeStats.capture();
 		//editor->msStats["fps"] = timeStats.getFPS();

@@ -1,6 +1,6 @@
 #include "RenderSystem.hpp"
 #include "SceneOverlay.hpp"
-#include "EditorOverlay.hpp"
+#include "WidgetOverlay.hpp"
 #include "Engine.hpp"
 
 void Window::create(string Name, Vector2i size) {
@@ -67,9 +67,8 @@ void RenderSystem::initialize() {
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 
-	//pushLayer(new IRenderOverlay("debug"));
 	pushLayer(new SceneOverlay);
-	pushLayer(new EditorOverlay);
+	pushLayer(new WidgetOverlay);
 }
 void RenderSystem::shutdown() {
 	

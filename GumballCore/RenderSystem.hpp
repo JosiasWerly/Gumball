@@ -29,8 +29,6 @@ public:
     GLFWwindow* GetGLWindow();
 };
 
-
-
 class IRenderOverlay {
 protected:
     IRenderOverlay(string name) :
@@ -60,7 +58,6 @@ public:
     void tick(float deltaTime) override;   
     void pushLayer(IRenderOverlay *layer, bool pushBack = true);
     void popLayer(IRenderOverlay *layer);
-
 
     Inline IRenderOverlay *getLayer(string name) {
         for (auto &l : layers) {
