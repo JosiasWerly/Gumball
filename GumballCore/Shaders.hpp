@@ -15,6 +15,8 @@ class ShaderFactory;
 class Shader;
 class ShaderAttribute;
 class IShaderParameter;
+class Material;
+
 
 enum class EUniformType {
 	u_int = GL_INT,
@@ -110,7 +112,7 @@ class Material {
 	map<string, ShaderAttribute *> parameters;	
 public:
 	Material();
-	virtual ~Material();
+	~Material();
 	void use();
 	void setShader(Shader *shader);
 	const Shader *getShader() { return shader; }

@@ -1,5 +1,5 @@
 #include "SceneOverlay.hpp"
-#include "Drawable.hpp"
+#include "GLBuffer.hpp"
 
 SceneOverlay::SceneOverlay() : 
 	IRenderOverlay("scene") {
@@ -55,6 +55,8 @@ DrawInstance::DrawInstance() {
 	material.setShader(sh);
 	material.param<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
 	material.param<EUniformType::u_stexture>("uTexture")->image = Engine::instance()->assetSystem->getAsset("logo")->getContent().pin<Image>();
+}
+DrawInstance::~DrawInstance() {
 }
 bool DrawInstance::setMesh(string name) {
 	vao->bind();

@@ -10,7 +10,6 @@ using namespace std;
 #include "GLUtils.hpp"
 #include "EngineSystem.hpp"
 #include "Patterns.hpp"
-#include "Drawable.hpp"
 #include "InputSystem.hpp"
 #include "Math.hpp"
 

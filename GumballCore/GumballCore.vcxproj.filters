@@ -8,7 +8,7 @@
     <ClCompile Include="AssetManager.cpp">
       <Filter>scr</Filter>
     </ClCompile>
-    <ClCompile Include="Drawable.cpp">
+    <ClCompile Include="GLBuffer.cpp">
       <Filter>scr</Filter>
     </ClCompile>
     <ClCompile Include="Patterns.cpp">
@@ -78,7 +78,7 @@
     <ClInclude Include="EngineSystem.hpp">
       <Filter>scr</Filter>
     </ClInclude>
-    <ClInclude Include="Drawable.hpp">
+    <ClInclude Include="GLBuffer.hpp">
       <Filter>scr</Filter>
     </ClInclude>
     <ClInclude Include="FunctionLibrary.hpp">

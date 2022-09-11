@@ -109,9 +109,9 @@ Material::~Material() {
 		delete u.second;
 }
 void Material::use() {
+	shader->bind();
 	for (auto &u : parameters)
 		u.second->param->upload();
-	shader->bind();
 }
 void Material::setShader(Shader *shader) {  //TODO: param should be const
 	this->shader = shader;

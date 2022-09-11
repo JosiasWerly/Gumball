@@ -6,7 +6,7 @@
 #include "AssetManager.hpp"
 #include "Mesh.hpp"
 #include "Shaders.hpp"
-#include "Drawable.hpp"
+#include "GLBuffer.hpp"
 
 #include <list>
 
@@ -83,6 +83,7 @@ public:
     Transform transform;
 
     DrawInstance();
+    ~DrawInstance();
     bool setMesh(string name);
     bool setTexture(string name);
 

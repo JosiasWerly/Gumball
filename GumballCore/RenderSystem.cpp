@@ -89,7 +89,7 @@ void RenderSystem::tick(float deltaTime) {
 	mainWindow.clearRender();
 
 	for (auto &layer : layers)
-		layer->onRender(0);
+		layer->onRender(deltaTime);
 	
 	mainWindow.render();
 }

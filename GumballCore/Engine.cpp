@@ -74,18 +74,18 @@ void Engine::tick() {
 	scene->pushDrawInstance(&b);
 
 	while (true) {
-		//if (project->hasToLoad()) {
-		//	if (project->isLoaded()) {
-		//		for (auto &s : systems)
-		//			s->onEndplay();
-		//	}
-		//	project->load();
-		//	if (project->isLoaded()) {
-		//		for (auto &s : systems)
-		//			s->onPlay();
-		//	}
-		//}
-
+		/*if (project->hasToLoad()) {
+			if (project->isLoaded()) {
+				for (auto &s : systems)
+					s->onEndplay();
+			}
+			project->load();
+			if (project->isLoaded()) {
+				for (auto &s : systems)
+					s->onPlay();
+			}
+		}*/
+		
 
 		if (inputSystem->isKeyDown(Input::EKeyCode::W))
 			a.transform.position += a.transform.rotator.forward() * .5;
@@ -107,10 +107,6 @@ void Engine::tick() {
 		else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
 			a.transform.rotator.rotate(0, 0, 1);
 
-		if (bt.isClicked()) {
-			txt.text = (string("count:") + to_string(++i));
-		}
-		
 		static string names[] = { "render", "input", "object" };
 		timeStats.capture();
 		//editor->msStats["fps"] = timeStats.getFPS();
