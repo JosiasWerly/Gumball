@@ -25,7 +25,7 @@ public:
 
     void setSize(Vector2i size);
     const Vector2i& getSize();
-    GLFWwindow* GetGLWindow();
+    GLFWwindow* getGLWindow();
 };
 
 class IRenderOverlay {

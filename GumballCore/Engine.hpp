@@ -22,10 +22,16 @@ class Engine :
 
 	TimeStat timeStats;
 	std::list<IEngineSystem*> systems, tickingSystems;
-	ProjectLinker* project;
+	ProjectLinker *projectLinker;
 	
 	Engine();
 	~Engine();
+
+	Inline void endPlay() const;
+	Inline void beginPlay() const;
+	Inline void shutdown() const;
+	Inline void initialize() const;
+
 public:
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;

@@ -21,5 +21,9 @@
     <ClInclude Include="lua\lualib.h">
       <Filter>lua</Filter>
     </ClInclude>
+    <ClInclude Include="LuaLanguage.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LuaLanguage.cpp" />
   </ItemGroup>
 </Project>

@@ -6,30 +6,33 @@
 #include "Definitions.hpp"
 #include "Engine.hpp"
 
-
+class IProject;
 class ProjectLinker {
 	DynamicLibrary dll;
 	std::time_t fileModifiedTime;
 
-	typedef void(*FnxOnProjectAttached)(Engine &engineRef);
-	typedef void(*FnxOnProjectDettached)();
-
-	FnxOnProjectAttached onAttached;
-	FnxOnProjectDettached onDettached;
-
-public:
 	string dllPath;
 	string enginePath;
+public:
+	void setup(string dllPath, string enginePath);
+	
+	IProject* linkerTargetInstance();
+	bool isNewLinkerAvailable();
+	Inline bool hasLinker() { return dll.isLoaded(); }
+};
 
-	void load();
-	bool hasToLoad();
-	Inline bool isLoaded() {
-		return dll.isLoaded();
-	}
+
+class IProject {
+protected:
+	IProject() = default;
+public:
+	virtual ~IProject() {}
+	virtual void onAttach(Engine &engine) = 0;
+	virtual void onDettach() = 0;
 };
 
 //TODO: perhaps I should use inherance for extending this points
-Extern void OnProjectAttached(Engine &engineRef);
-Extern void OnProjectDettached();
+Extern IProject* OnProjectAttached();
+typedef IProject *(*FnxOnProjectAttached)();
 
 #endif // !_projectLinker

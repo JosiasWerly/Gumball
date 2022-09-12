@@ -189,6 +189,9 @@
     <ProjectReference Include="..\Dependencies\Imgui\Imgui.vcxproj">
       <Project>{701a2cfe-b159-48f9-bf51-004bfafabf17}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Dependencies\Lua\Lua.vcxproj">
+      <Project>{4fea52be-d025-4ae4-84fe-56575aae0a35}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Dependencies\Misc\Misc.vcxproj">
       <Project>{3df93520-1ad9-4c17-b093-aa09dca834af}</Project>
     </ProjectReference>

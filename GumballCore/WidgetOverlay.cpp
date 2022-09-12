@@ -14,7 +14,7 @@ void WidgetOverlay::onAttach() {
 	guiIO->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	auto &RenderSys = *Engine::instance()->getSystem<RenderSystem>();
-	ImGui_ImplGlfw_InitForOpenGL(RenderSys.mainWindow.GetGLWindow(), true);
+	ImGui_ImplGlfw_InitForOpenGL(RenderSys.mainWindow.getGLWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 440");
 	ImGui::StyleColorsDark();
 

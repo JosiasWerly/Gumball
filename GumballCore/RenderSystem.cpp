@@ -29,7 +29,7 @@ void Window::setSize(Vector2i newSize) {
 const Vector2i& Window::getSize() {
 	return winSize;
 }
-GLFWwindow* Window::GetGLWindow() {
+GLFWwindow* Window::getGLWindow() {
 	return window;
 }
 
@@ -50,7 +50,7 @@ void RenderSystem::initialize() {
 
 	mainWindow.create("Gumball", { 800, 600 });
 	
-	glfwSetKeyCallback(mainWindow.GetGLWindow(), &InputSystem::keyboardCallback);
+	glfwSetKeyCallback(mainWindow.getGLWindow(), &InputSystem::keyboardCallback);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		throw 1;

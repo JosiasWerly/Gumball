@@ -19,10 +19,7 @@ using namespace std;
 
 
 Engine::Engine() {
-	project = new ProjectLinker;
-	project->dllPath = "C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\GumballProject\\GumballProject.dll";
-
-
+	projectLinker = new ProjectLinker;
 	renderSystem = new RenderSystem;
 	assetSystem = new AssetsSystem;
 	inputSystem = new InputSystem;
@@ -36,13 +33,35 @@ Engine::Engine() {
 }
 Engine::~Engine(){
 }
-void Engine::args(int argc, char *argv[]) {
-	project->enginePath = argv[0];
-	project->enginePath = project->enginePath.substr(0, project->enginePath.find_last_of("\\"));
+Inline void Engine::endPlay() const {
+	for (auto &s : systems)
+		s->onEndplay();
 }
-void Engine::tick() {
+Inline void Engine::beginPlay() const {
+	for (auto &s : systems)
+		s->onEndplay();
+}
+Inline void Engine::shutdown() const {
+	for (auto &s : systems)
+		s->shutdown();
+}
+Inline void Engine::initialize() const {
 	for (auto &s : systems)
 		s->initialize();
+}
+
+
+void Engine::args(int argc, char *argv[]) {
+	projectLinker->setup(
+		"C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\GumballProject\\GumballProject.dll",
+		argv[0]
+	);
+	
+}
+void Engine::tick() {
+	initialize();
+	IProject *project = nullptr;
+
 	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
 	assetSystem->loadAssetsFromFolder("res\\");
@@ -55,57 +74,27 @@ void Engine::tick() {
 	win << &txt << &bt;
 	int i = 0;
 
-	View v;
-	v.viewMode.setProjectionPerspective();
-	v.transform.position.z = -10;
-	scene->pushView(&v);
-
-	DrawInstance a;
-	a.setMesh("cube");
-	a.setTexture("logo");
-	a.transform.position.x = -1;
-	scene->pushDrawInstance(&a);
-
-
-	DrawInstance b;
-	b.setMesh("cube");
-	b.setTexture("scotty");
-	b.transform.position.x = 1;
-	scene->pushDrawInstance(&b);
-
 	while (true) {
-		/*if (project->hasToLoad()) {
-			if (project->isLoaded()) {
-				for (auto &s : systems)
-					s->onEndplay();
+		if (projectLinker->isNewLinkerAvailable()) {
+			if (project) {
+				endPlay();
+				project->onDettach();
+				delete project;
+				project = nullptr;
 			}
-			project->load();
-			if (project->isLoaded()) {
-				for (auto &s : systems)
-					s->onPlay();
+			project = projectLinker->linkerTargetInstance();
+			if (project) {
+				project->onAttach(*this);
+				beginPlay();
 			}
-		}*/
+			else
+				cout << "err in project instantiation" << endl;
+		}
+
+
 		
 
-		if (inputSystem->isKeyDown(Input::EKeyCode::W))
-			a.transform.position += a.transform.rotator.forward() * .5;
-		else if (inputSystem->isKeyDown(Input::EKeyCode::S))
-			a.transform.position -= a.transform.rotator.forward() * .5;
 
-		if (inputSystem->isKeyDown(Input::EKeyCode::D))
-			a.transform.position += a.transform.rotator.right() * .5;
-		else if (inputSystem->isKeyDown(Input::EKeyCode::A))
-			a.transform.position -= a.transform.rotator.right() * .5;
-
-		if (inputSystem->isKeyDown(Input::EKeyCode::UP))
-			a.transform.rotator.rotate(1, 0, 0);
-		else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
-			a.transform.rotator.rotate(-1, 0, 0);
-
-		if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
-			a.transform.rotator.rotate(0, 0, -1);
-		else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
-			a.transform.rotator.rotate(0, 0, 1);
 
 		static string names[] = { "render", "input", "object" };
 		timeStats.capture();
@@ -119,18 +108,10 @@ void Engine::tick() {
 			debugTimeStats.capture();
 			//editor->msStats[names[id++]] = debugTimeStats.getMS();
 		}
-
-		
-
-
-
 	}
 
-	for (auto &s : systems) 
-		s->onEndplay();
-
-	for (auto &s : systems)
-		s->shutdown();
+	endPlay();
+	shutdown();
 }
 
 //View v;
