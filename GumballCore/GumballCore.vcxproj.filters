@@ -1,136 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Engine.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetManager.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="GLBuffer.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Patterns.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="GLUtils.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="FunctionLibrary.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Shaders.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderSystem.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="InputSystem.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="WidgetOverlay.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Var.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeStat.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectLinker.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="Archive.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneOverlay.cpp">
-      <Filter>scr</Filter>
-    </ClCompile>
+    <ClInclude Include="Archive.hpp" />
+    <ClInclude Include="AssetManager.hpp" />
+    <ClInclude Include="Definitions.hpp" />
+    <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="EngineSystem.hpp" />
+    <ClInclude Include="Event.hpp" />
+    <ClInclude Include="FunctionLibrary.hpp" />
+    <ClInclude Include="GLBuffer.hpp" />
+    <ClInclude Include="GLUtils.hpp" />
+    <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Patterns.hpp" />
+    <ClInclude Include="ProjectLinker.hpp" />
+    <ClInclude Include="RenderSystem.hpp" />
+    <ClInclude Include="SceneOverlay.hpp" />
+    <ClInclude Include="Shaders.hpp" />
+    <ClInclude Include="template.hpp" />
+    <ClInclude Include="Texture.hpp" />
+    <ClInclude Include="TimeStat.hpp" />
+    <ClInclude Include="Var.hpp" />
+    <ClInclude Include="WidgetOverlay.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="scr">
-      <UniqueIdentifier>{a376b295-a0d0-4afe-8dfe-d3bab72c0fff}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Shaders.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetManager.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineSystem.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="GLBuffer.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="FunctionLibrary.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="GLUtils.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Patterns.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Definitions.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSystem.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Event.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="InputSystem.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="WidgetOverlay.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Var.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeStat.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectLinker.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="Archive.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneOverlay.hpp">
-      <Filter>scr</Filter>
-    </ClInclude>
+    <ClCompile Include="Archive.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="FunctionLibrary.cpp" />
+    <ClCompile Include="GLBuffer.cpp" />
+    <ClCompile Include="GLUtils.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Patterns.cpp" />
+    <ClCompile Include="ProjectLinker.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="SceneOverlay.cpp" />
+    <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="template.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TimeStat.cpp" />
+    <ClCompile Include="Var.cpp" />
+    <ClCompile Include="WidgetOverlay.cpp" />
+    <ClCompile Include="EngineSystem.cpp" />
   </ItemGroup>
 </Project>

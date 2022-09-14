@@ -69,7 +69,7 @@ struct ShaderAttributeDescriptor {
 		type(type) {
 	}
 };
-class Shader : 
+class Shader :
 	public Object {
 public:
 	enum class EShaderType {

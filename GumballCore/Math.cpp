@@ -7,7 +7,7 @@ void fDegreeToRad(float &value) {
 	value *= PIRad;
 }
 
-#pragma warning( disable : 4101 4244)//loss of data warning...
+#pragma warning( disable : 4101 4244)
 
 
 Vector3::operator Vector3i()	{ return Vector3i(x, y, z); }

@@ -6,7 +6,15 @@
 #include "Definitions.hpp"
 #include "Engine.hpp"
 
-class IProject;
+class Project {
+public:
+	Project();
+	virtual ~Project();
+	virtual void onAttach(Engine &engine);
+	virtual void onDettach();
+	virtual void onTick();
+};
+
 class ProjectLinker {
 	DynamicLibrary dll;
 	std::time_t fileModifiedTime;
@@ -16,23 +24,12 @@ class ProjectLinker {
 public:
 	void setup(string dllPath, string enginePath);
 	
-	IProject* linkerTargetInstance();
+	Project *linkerTargetInstance();
 	bool isNewLinkerAvailable();
 	Inline bool hasLinker() { return dll.isLoaded(); }
 };
 
 
-class IProject {
-protected:
-	IProject() = default;
-public:
-	virtual ~IProject() {}
-	virtual void onAttach(Engine &engine) = 0;
-	virtual void onDettach() = 0;
-};
-
-//TODO: perhaps I should use inherance for extending this points
-Extern IProject* OnProjectAttached();
-typedef IProject *(*FnxOnProjectAttached)();
-
+Extern GBCORE void GumballCoreEntryPoint();
+typedef Project *(*FnxEntryPoint)();
 #endif // !_projectLinker

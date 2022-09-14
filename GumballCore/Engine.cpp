@@ -39,7 +39,7 @@ Inline void Engine::endPlay() const {
 }
 Inline void Engine::beginPlay() const {
 	for (auto &s : systems)
-		s->onEndplay();
+		s->onPlay();
 }
 Inline void Engine::shutdown() const {
 	for (auto &s : systems)
@@ -53,18 +53,30 @@ Inline void Engine::initialize() const {
 
 void Engine::args(int argc, char *argv[]) {
 	projectLinker->setup(
-		"C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\GumballProject\\GumballProject.dll",
+		"C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\GumballProject.dll",
 		argv[0]
 	);
 	
 }
 void Engine::tick() {
 	initialize();
-	IProject *project = nullptr;
+	Project *project = nullptr;
 
 	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
-	assetSystem->loadAssetsFromFolder("res\\");
+	//assetSystem->loadAssetsFromFolder("res\\");
+	assetSystem->loadAssetsFromFolder("C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\res\\");
+
+	auto v = new View;
+	v->viewMode.setProjectionPerspective();
+	v->transform.position.z = -10;
+	scene->pushView(v);
+	
+	/*auto a = new DrawInstance;
+	a->setMesh("cube");
+	a->setTexture("logo");
+	a->transform.position.x = -1;
+	scene->pushDrawInstance(a);*/
 
 
 	UI::Canvas win;
@@ -90,6 +102,9 @@ void Engine::tick() {
 			else
 				cout << "err in project instantiation" << endl;
 		}
+		else if (project)
+			project->onTick();
+
 
 
 		
@@ -113,6 +128,8 @@ void Engine::tick() {
 	endPlay();
 	shutdown();
 }
+
+
 
 //View v;
 //v.viewMode.setProjectionPerspective();

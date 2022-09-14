@@ -6,18 +6,18 @@
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
 
-class EditorOverlay;
 class IEngineSystem;
+class EditorOverlay;
 class ProjectLinker;
-
 class RenderSystem;
 class AssetsSystem;
 class InputSystem;
+class TimeStat;
 
 
-class Engine : 
+class GBCORE Engine : 
 	public Singleton<Engine>{
-
+private:
 	friend int main(int, char *[]);
 
 	TimeStat timeStats;
@@ -36,8 +36,6 @@ public:
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
 	InputSystem *inputSystem;
-
-
 
 	void args(int argc, char *argv[]);
 	void tick();

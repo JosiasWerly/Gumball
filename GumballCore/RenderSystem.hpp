@@ -28,7 +28,7 @@ public:
     GLFWwindow* getGLWindow();
 };
 
-class IRenderOverlay {
+class GBCORE IRenderOverlay {
 protected:
     IRenderOverlay(string name) :
         name(name) {
@@ -66,6 +66,7 @@ public:
         return nullptr;
     }
     Inline list<IRenderOverlay*>& getLayerList() { return layers; }
+    Inline GLADloadproc glProcAddres() { return (GLADloadproc)glfwGetProcAddress; }
 };
 
 #endif // !_viewport

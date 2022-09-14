@@ -5,13 +5,20 @@
 #define Stringfy(s)#s
 #define Inline __forceinline
 
-#ifdef DLLExport
-#define DLL __declspec(dllexport)
+
+#pragma warning( disable : 4005)
+#ifdef GBCORE
+#define GBCORE __declspec(dllexport)
 #else
-#define DLL __declspec(dllimport)
+#define GBCORE __declspec(dllimport)
 #endif
 
-#define Extern extern "C" DLL
+#ifdef GBPROJECT
+#define GBProject __declspec(dllexport)
+#else
+#define GBPROJECT __declspec(dllimport)
+#endif
 
-
+#define Extern extern "C"
+#pragma warning( default : 4005)
 #endif // !_definitions

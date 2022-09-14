@@ -15,7 +15,7 @@ void ProjectLinker::setup(string dllPath, string enginePath) {
 	this->dllPath = dllPath;	
 	this->enginePath = enginePath.substr(0, enginePath.find_last_of("\\"));
 }
-IProject* ProjectLinker::linkerTargetInstance() {
+Project* ProjectLinker::linkerTargetInstance() {
 	const string localPath = enginePath + "\\target.dll";
 	if (dll.isLoaded())
 		dll.unload();
@@ -23,14 +23,13 @@ IProject* ProjectLinker::linkerTargetInstance() {
 
 	std::filesystem::copy(dllPath, localPath, std::filesystem::copy_options::overwrite_existing);
 	if (dll.load(localPath)) {
-		auto fnxAttchment = dll.getFunc<FnxOnProjectAttached>("OnProjectAttached");
-		if (!fnxAttchment)
-			return nullptr;
-
-		IProject *outProject = fnxAttchment();
+		auto projectEntryPoint = dll.getFunc<FnxEntryPoint>("OnProjectAttached");
+		if (!projectEntryPoint)
+			return nullptr;		
+		
+		Project *outProject = projectEntryPoint();
 		if (!outProject)
 			return nullptr;
-
 		{
 			fs::path p = dllPath;
 			const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
@@ -62,29 +61,8 @@ bool ProjectLinker::isNewLinkerAvailable() {
 }
 
 
+#ifdef GBCORE
+Extern GBCORE void GumballCoreEntryPoint() {
 
-
-//void ProjectLinker::load() {
-//	const string localPath = enginePath + "\\target.dll";
-//	if (dll.isLoaded()) {
-//		onDettached();
-//		dll.unload();
-//	}
-//	std::filesystem::copy(dllPath, localPath, std::filesystem::copy_options::overwrite_existing);
-//	//	std::filesystem::copy(dllPath, localPath, std::filesystem::copy_options::recursive);
-//	if (dll.load(localPath)) {
-//		if (FnxOnProjectAttached projAttach = dll.getFunc<FnxOnProjectAttached>("OnProjectAttached")) {
-//			if (projectBind = projAttach());
-//
-//			{
-//				fs::path p = dllPath;
-//				const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
-//				const auto curModifiedTime = std::chrono::system_clock::to_time_t(systemTime);
-//				fileModifiedTime = curModifiedTime;
-//			}
-//		}
-//	}
-//	else {
-//		cout << "fail to load" << endl;
-//	}
-//}
+}
+#endif // GBCore

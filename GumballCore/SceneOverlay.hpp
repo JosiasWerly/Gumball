@@ -51,7 +51,7 @@ public:
     ~View() = default;
 };
 
-class SceneOverlay :
+class GBCORE SceneOverlay :
     public IRenderOverlay {
     friend class DrawInstance;
 
@@ -72,7 +72,7 @@ public:
     void popDrawInstance(DrawInstance *drawInstance);
 };
 
-class DrawInstance {
+class GBCORE DrawInstance {
     Vao *vao = nullptr;
     Vbo *vbo = nullptr;
     Ibo *ibo = nullptr;

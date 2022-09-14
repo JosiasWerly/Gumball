@@ -62,7 +62,7 @@ bool DrawInstance::setMesh(string name) {
 	vao->bind();
 	vbo->bind();
 	ibo->bind();
-	MeshData *meshData = Engine::instance()->assetSystem->getAsset(name)->getContent().pin<MeshData>();
+	meshData = Engine::instance()->assetSystem->getAsset(name)->getContent().pin<MeshData>();
 	if (meshData) {
 		VboBuilder()
 			.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))

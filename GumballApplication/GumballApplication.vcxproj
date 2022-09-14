@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9ade59f6-9f79-4542-915b-dd871bcb07b7}</ProjectGuid>
-    <RootNamespace>GumballCore</RootNamespace>
+    <ProjectGuid>{538583c7-65f5-4e1e-9980-1cd9a87b4d8c}</ProjectGuid>
+    <RootNamespace>GumballApplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -114,19 +114,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;GBCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\glm\;$(SolutionDir)Dependencies\Glad\include\;$(SolutionDir)Dependencies\Imgui\;$(SolutionDir)Dependencies\Misc\;$(SolutionDir)Dependencies\Lua\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(ProjectDir)Definitions.hpp</ForcedIncludeFiles>
-      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\glm\;$(SolutionDir)Dependencies\Glad\include\;$(SolutionDir)Dependencies\Imgui\;$(SolutionDir)Dependencies\Misc\;$(SolutionDir)Dependencies\Lua\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutputPath)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GumballCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,71 +145,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Archive.hpp" />
-    <ClInclude Include="AssetManager.hpp" />
-    <ClInclude Include="Definitions.hpp" />
-    <ClInclude Include="Engine.hpp" />
-    <ClInclude Include="EngineSystem.hpp" />
-    <ClInclude Include="Event.hpp" />
-    <ClInclude Include="FunctionLibrary.hpp" />
-    <ClInclude Include="GLBuffer.hpp" />
-    <ClInclude Include="GLUtils.hpp" />
-    <ClInclude Include="InputSystem.hpp" />
-    <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Mesh.hpp" />
-    <ClInclude Include="Object.hpp" />
-    <ClInclude Include="Patterns.hpp" />
-    <ClInclude Include="ProjectLinker.hpp" />
-    <ClInclude Include="RenderSystem.hpp" />
-    <ClInclude Include="SceneOverlay.hpp" />
-    <ClInclude Include="Shaders.hpp" />
-    <ClInclude Include="template.hpp" />
-    <ClInclude Include="Texture.hpp" />
-    <ClInclude Include="TimeStat.hpp" />
-    <ClInclude Include="Var.hpp" />
-    <ClInclude Include="WidgetOverlay.hpp" />
+    <ClCompile Include="Application.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Archive.cpp" />
-    <ClCompile Include="AssetManager.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="EngineSystem.cpp" />
-    <ClCompile Include="FunctionLibrary.cpp" />
-    <ClCompile Include="GLBuffer.cpp" />
-    <ClCompile Include="GLUtils.cpp" />
-    <ClCompile Include="InputSystem.cpp" />
-    <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Patterns.cpp" />
-    <ClCompile Include="ProjectLinker.cpp" />
-    <ClCompile Include="RenderSystem.cpp" />
-    <ClCompile Include="SceneOverlay.cpp" />
-    <ClCompile Include="Shaders.cpp" />
-    <ClCompile Include="template.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TimeStat.cpp" />
-    <ClCompile Include="Var.cpp" />
-    <ClCompile Include="WidgetOverlay.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
-      <Project>{c078db5c-59bf-41ad-8e97-b916639dc407}</Project>
+    <ProjectReference Include="..\GumballCore\GumballCore.vcxproj">
+      <Project>{9ade59f6-9f79-4542-915b-dd871bcb07b7}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Dependencies\GLFW\GLFW.vcxproj">
-      <Project>{c1212ac0-593b-4aeb-a010-27c4d3718de5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\Glm\Glm.vcxproj">
-      <Project>{dfa4a950-90b6-4427-b5f7-4652ffdde6f3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\Imgui\Imgui.vcxproj">
-      <Project>{701a2cfe-b159-48f9-bf51-004bfafabf17}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\Lua\Lua.vcxproj">
-      <Project>{4fea52be-d025-4ae4-84fe-56575aae0a35}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\Misc\Misc.vcxproj">
-      <Project>{3df93520-1ad9-4c17-b093-aa09dca834af}</Project>
+    <ProjectReference Include="..\GumballProject\GumballProject.vcxproj">
+      <Project>{0817c44a-7e55-4d55-8b7c-6e4cb3175b3d}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

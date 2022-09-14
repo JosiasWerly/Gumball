@@ -39,7 +39,6 @@ namespace Input {
 		released = GLFW_RELEASE,
 		repeat = GLFW_REPEAT,
 	};
-
 	enum class EventType {
 		keyboard, mouse
 	};
@@ -55,7 +54,7 @@ namespace Input {
 	};
 };
 
-class InputSystem : 
+class GBCORE InputSystem : 
 	public IEngineSystem {
 public:
 	struct KeyCodeStatus {
