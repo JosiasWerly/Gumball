@@ -193,6 +193,7 @@ public:
 		return false;
 	}
 };
+
 class MeshFactory :
 	public IAssetFactory {
 public:

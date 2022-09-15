@@ -3,27 +3,29 @@
 #define _projectLinker
 
 #include <dllLoader/DynamicLibrary.hpp>
-//#include "EngineSystem.hpp"
+#include "Definitions.hpp"
+#include "Engine.hpp"
 
-class Project /*: 
-	public IEngineSystem*/ {
+class Project {
 public:
-	Project() {}
-	virtual ~Project() {}
-	virtual void initialize() {}
-	virtual void shutdown() {}
-	virtual void tick(float deltaTime) {}
-	virtual void onPlay() {}
-	virtual void onEndplay() {}
+	Project() {};
+	virtual ~Project() {};
+	virtual void onAttach(Engine &engine) {};
+	virtual void onDettach() {};
+	virtual void onTick() {};
 };
 
 class ProjectLinker {
 	DynamicLibrary dll;
 	std::time_t fileModifiedTime;
+
+	Project *project = nullptr;	
 public:
-	bool hasNewVersion();
+	void hotReload();
 	void unload();
-	Project *load();
+	Project *getProject();
+	bool isProjectLoaded();
+	bool hasNewVersion();
 };
 
 

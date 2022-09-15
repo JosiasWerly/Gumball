@@ -41,7 +41,7 @@ public:
     virtual void onRender(float deltaTime);
 };
 
-class GBCORE RenderSystem :
+class RenderSystem :
     public IEngineSystem {
     
     list<IRenderOverlay*> layers;
@@ -57,8 +57,16 @@ public:
     void tick(float deltaTime) override;   
     void pushLayer(IRenderOverlay *layer, bool pushBack = true);
     void popLayer(IRenderOverlay *layer);
-    IRenderOverlay *getLayer(string name);
-    list<IRenderOverlay *> &getLayerList();
+
+    Inline IRenderOverlay *getLayer(string name) {
+        for (auto &l : layers) {
+            if (l->name == name)
+                return l;
+        }
+        return nullptr;
+    }
+    Inline list<IRenderOverlay*>& getLayerList() { return layers; }
+    Inline GLADloadproc glProcAddres() { return (GLADloadproc)glfwGetProcAddress; }
 };
 
 #endif // !_viewport

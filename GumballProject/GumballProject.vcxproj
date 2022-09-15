@@ -120,7 +120,6 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)Dependencies\GLFW\include\;$(SolutionDir)Dependencies\glm\;$(SolutionDir)Dependencies\Glad\include\;$(SolutionDir)Dependencies\Imgui\;$(SolutionDir)Dependencies\Misc\;$(SolutionDir)Dependencies\Lua\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(SolutionDir)GumballCore\Definitions.hpp</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

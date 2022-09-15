@@ -3,7 +3,7 @@
 
 
 WidgetOverlay::WidgetOverlay() :
-	IRenderOverlay("widget") {
+	IRenderOverlay("editor") {
 }
 void WidgetOverlay::onAttach() {
 	IMGUI_CHECKVERSION();

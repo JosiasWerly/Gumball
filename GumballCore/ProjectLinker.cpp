@@ -13,7 +13,10 @@ namespace fs = std::filesystem;
 using namespace std::chrono_literals;
 
 
-Project* ProjectLinker::load() {
+void ProjectLinker::hotReload() {
+	if (dll.isLoaded())
+		dll.unload();
+
 	auto e = Enviroment::instance();
 	const string dllPath = e->getApplicationDir() + "GumballProject.dll";
 	const string dllCopy = e->getApplicationDir() + "Target.dll";
@@ -22,26 +25,31 @@ Project* ProjectLinker::load() {
 	if (dll.load(dllCopy)) {
 		auto projectEntryPoint = dll.getFunc<FnxEntryPoint>("EntryPoint");
 		if (!projectEntryPoint)
-			return nullptr;
+			return;
 
 		Project *outProject = projectEntryPoint();
 		if (!outProject)
-			return nullptr;
-
+			return;
 		{
 			fs::path p = dllPath;
 			const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
 			const auto curModifiedTime = std::chrono::system_clock::to_time_t(systemTime);
 			fileModifiedTime = curModifiedTime;
 		}
-
-		return outProject;
+		project = outProject;
 	}
-	return nullptr;
 }
 void ProjectLinker::unload() {
+	delete project;
+	project = nullptr;
 	if (dll.isLoaded())
 		dll.unload();
+}
+Project *ProjectLinker::getProject() {
+	return project;
+}
+bool ProjectLinker::isProjectLoaded() {
+	return project;
 }
 bool ProjectLinker::hasNewVersion() {
 	if (!dll.isLoaded())

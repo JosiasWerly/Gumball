@@ -12,7 +12,6 @@ class ProjectLinker;
 class RenderSystem;
 class AssetsSystem;
 class InputSystem;
-class Project;
 class TimeStat;
 
 
@@ -23,22 +22,19 @@ private:
 
 	TimeStat timeStats;
 	std::list<IEngineSystem*> systems, tickingSystems;
-	ProjectLinker *projectLinker = nullptr;
+	ProjectLinker *projectLinker;
 	
 	Engine();
 	~Engine();
-
 
 	Inline void endPlay() const;
 	Inline void beginPlay() const;
 	Inline void shutdown() const;
 	Inline void initialize() const;
-	Inline void hotReload();
 public:
-	Project *project = nullptr;
-	RenderSystem *renderSystem = nullptr;
-	AssetsSystem *assetSystem = nullptr;
-	InputSystem *inputSystem = nullptr;
+	RenderSystem *renderSystem;
+	AssetsSystem *assetSystem;
+	InputSystem *inputSystem;
 
 	void args(int argc, char *argv[]);
 	void tick();

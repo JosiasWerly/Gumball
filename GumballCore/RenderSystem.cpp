@@ -93,11 +93,3 @@ void RenderSystem::tick(float deltaTime) {
 	
 	mainWindow.render();
 }
-IRenderOverlay *RenderSystem::getLayer(string name) {
-	for (auto &l : layers) {
-		if (l->name == name)
-			return l;
-	}
-	return nullptr;
-}
-list<IRenderOverlay *> &RenderSystem::getLayerList() { return layers; }

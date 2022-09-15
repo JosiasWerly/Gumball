@@ -12,10 +12,10 @@ class MyProject :
 	public Project {
 public:
 	DrawInstance *a;
-
-	void initialize() {
-		auto e = Engine::instance();
-		auto &scene = *dynamic_cast<SceneOverlay *>(e->renderSystem->getLayer("scene"));
+	void onAttach(Engine &engine){
+		Engine::setInstance(&engine);
+		auto en = Engine::instance();
+		auto &scene = *dynamic_cast<SceneOverlay *>(en->renderSystem->getLayer("scene"));
 
 		a = new DrawInstance;
 		a->setMesh("cube");
@@ -23,11 +23,11 @@ public:
 		a->transform.position.x = -1;
 		scene.pushDrawInstance(a);
 	}
-	void shutdown() {
+	void onDettach(){
 		auto &scene = *dynamic_cast<SceneOverlay *>(Engine::instance()->renderSystem->getLayer("scene"));
 		scene.popDrawInstance(a);
 	}
-	void tick(float deltaTime) {
+	void onTick() {
 		auto inputSystem = Engine::instance()->inputSystem;
 		if (inputSystem->isKeyDown(Input::EKeyCode::W))
 			a->transform.position += a->transform.rotator.forward() * .5;
@@ -51,7 +51,7 @@ public:
 	}
 };
 
-Extern GBProject void *EntryPoint(Engine &inst) {
+Extern GBProject void *EntryPoint() {
 	return new MyProject;
 }
 
