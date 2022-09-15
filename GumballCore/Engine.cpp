@@ -15,12 +15,12 @@ using namespace std;
 
 Engine::Engine() {	
 	projectLinker = new ProjectLinker;
-	renderSystem = new RenderSystem;
 	assetSystem = new AssetsSystem;
+	renderSystem = new RenderSystem;
 	inputSystem = new InputSystem;
 
-	systems.push_back(renderSystem);
 	systems.push_back(assetSystem);
+	systems.push_back(renderSystem);
 	systems.push_back(inputSystem);
 
 	tickingSystems.push_back(renderSystem);
@@ -28,6 +28,7 @@ Engine::Engine() {
 }
 Engine::~Engine(){
 }
+
 Inline void Engine::endPlay() const {
 	for (auto &s : systems)
 		s->onEndplay();
@@ -44,6 +45,24 @@ Inline void Engine::initialize() const {
 	for (auto &s : systems)
 		s->initialize();
 }
+Inline void Engine::hotReload() {
+	//if (!project) {
+	//	if (projectLinker->hasNewVersion()) {
+	//		endPlay();
+	//		project->shutdown();
+	//		systems.remove(project);
+	//		tickingSystems.remove(project);
+	//		delete project;
+	//		project = nullptr;
+	//	}
+	//	if (project = projectLinker->load()) {
+	//		systems.push_back(project);
+	//		tickingSystems.push_back(project);
+	//		project->initialize();
+	//		beginPlay();
+	//	}
+	//}
+}
 void Engine::args(int argc, char *argv[]) {
 	auto e = Enviroment::setInstance(new Enviroment);
 	e->applicationPath = argv[0];
@@ -53,9 +72,9 @@ void Engine::args(int argc, char *argv[]) {
 }
 void Engine::tick() {
 	initialize();
+	
 	assetSystem->loadAssetsFromFolder(Enviroment::instance()->getResourcePath());
-
-	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
+	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("widget"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
 
 	auto v = new View;
@@ -71,42 +90,93 @@ void Engine::tick() {
 	int i = 0;
 
 	while (true) {
-
-		{
-			if (projectLinker->hasNewVersion()) {
-				if (Project *proj = projectLinker->getProject()) {
-					endPlay();
-					proj->onDettach();
-					projectLinker->unload();
-				}
-				projectLinker->hotReload();
-				if (Project *proj = projectLinker->getProject()) {
-					proj->onAttach(*this);
-					beginPlay();
-				}
-			}
-			else if (Project *proj = projectLinker->getProject())
-				proj->onTick();
-		}
-
-
-		static string names[] = { "render", "input", "object" };
+		hotReload();
 		timeStats.capture();
-		//editor->msStats["fps"] = timeStats.getFPS();
-
-		int id = 0;
 		TimeStat debugTimeStats;
 		for (auto &s : tickingSystems) {
 			debugTimeStats.capture();
 			s->tick((float)timeStats.getDeltaTime());
 			debugTimeStats.capture();
-			//editor->msStats[names[id++]] = debugTimeStats.getMS();
 		}
 	}
 
 	endPlay();
 	shutdown();
 }
+
+
+
+
+
+
+//void Engine::tick() {
+//	initialize();
+//	assetSystem->loadAssetsFromFolder(Enviroment::instance()->getResourcePath());
+//
+//	auto widget = dynamic_cast<WidgetOverlay *>(getSystem<RenderSystem>()->getLayer("editor"));
+//	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
+//
+//	auto v = new View;
+//	v->viewMode.setProjectionPerspective();
+//	v->transform.position.z = -10;
+//	scene->pushView(v);
+//
+//	UI::Canvas win;
+//	UI::Text txt;
+//	UI::Button bt;
+//	(*widget) << &win;
+//	win << &txt << &bt;
+//	int i = 0;
+//
+//	while (true) {
+//
+//
+//
+//		//{
+//		//	if (projectLinker->hasNewVersion()) {
+//		//		if (Project *proj = projectLinker->getProject()) {
+//		//			endPlay();
+//		//			proj->onDettach();
+//		//			projectLinker->unload();
+//		//		}
+//		//		projectLinker->hotReload();
+//		//		if (Project *proj = projectLinker->getProject()) {
+//		//			proj->onAttach();
+//		//			beginPlay();
+//		//		}
+//		//	}
+//		//}
+//
+//
+//		static string names[] = { "render", "input", "object" };
+//		timeStats.capture();
+//		//editor->msStats["fps"] = timeStats.getFPS();
+//
+//		int id = 0;
+//		TimeStat debugTimeStats;
+//		for (auto &s : tickingSystems) {
+//			debugTimeStats.capture();
+//			s->tick((float)timeStats.getDeltaTime());
+//			debugTimeStats.capture();
+//			//editor->msStats[names[id++]] = debugTimeStats.getMS();
+//		}
+//	}
+//
+//	endPlay();
+//	shutdown();
+//}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

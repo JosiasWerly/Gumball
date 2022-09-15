@@ -1,6 +1,5 @@
 #include "EngineSystem.hpp"
 
-
 IEngineSystem::IEngineSystem() {}
 IEngineSystem::~IEngineSystem() {}
 void IEngineSystem::initialize() {}

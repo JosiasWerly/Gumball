@@ -3,7 +3,7 @@
 #define _enginesystem
 
 class Engine;
-class GBCORE IEngineSystem {
+class IEngineSystem {
 protected:
 	friend Engine;
 
