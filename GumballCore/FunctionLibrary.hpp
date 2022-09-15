@@ -1,11 +1,8 @@
-//@TODO: transform this file into GLBindinds include
-
 #pragma once
-#ifndef __functionLibrary
-#define __functionLibrary
+#ifndef _functionlibrary
+#define _functionlibrary
 
-#include <iostream>
-#include <filesystem>
+#include "Patterns.hpp"
 #include <string>
 using namespace std;
 
@@ -13,13 +10,4 @@ namespace Files {
 	string getExtOfFilePath(string path);
 	string getNameOfFilePath(string path);
 };
-
-
-
-
-
-
-#endif // !__functionLibrary
-
-
-
+#endif // !_functionlibrary

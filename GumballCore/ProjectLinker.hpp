@@ -8,25 +8,24 @@
 
 class Project {
 public:
-	Project();
-	virtual ~Project();
-	virtual void onAttach(Engine &engine);
-	virtual void onDettach();
-	virtual void onTick();
+	Project() {};
+	virtual ~Project() {};
+	virtual void onAttach(Engine &engine) {};
+	virtual void onDettach() {};
+	virtual void onTick() {};
 };
 
 class ProjectLinker {
 	DynamicLibrary dll;
 	std::time_t fileModifiedTime;
 
-	string dllPath;
-	string enginePath;
+	Project *project = nullptr;	
 public:
-	void setup(string dllPath, string enginePath);
-	
-	Project *linkerTargetInstance();
-	bool isNewLinkerAvailable();
-	Inline bool hasLinker() { return dll.isLoaded(); }
+	void hotReload();
+	void unload();
+	Project *getProject();
+	bool isProjectLoaded();
+	bool hasNewVersion();
 };
 
 

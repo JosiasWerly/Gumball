@@ -5,20 +5,15 @@
 #include "SceneOverlay.hpp"
 #include "WidgetOverlay.hpp"
 #include "ProjectLinker.hpp"
+#include "EnviromentVariables.hpp"
 
 #include <iostream>
 #include <string>
 
 
 using namespace std;
-//template<class T> string getClassName(){
-//	string out = typeid(T).name();
-//	return out.substr(6, out.size() - 6);
-//}
-//Systems.emplace(getClassName<AssetsSystem>(), &AssetsSystem::instance());
 
-
-Engine::Engine() {
+Engine::Engine() {	
 	projectLinker = new ProjectLinker;
 	renderSystem = new RenderSystem;
 	assetSystem = new AssetsSystem;
@@ -49,35 +44,24 @@ Inline void Engine::initialize() const {
 	for (auto &s : systems)
 		s->initialize();
 }
-
-
 void Engine::args(int argc, char *argv[]) {
-	projectLinker->setup(
-		"C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\GumballProject.dll",
-		argv[0]
-	);
-	
+	auto e = Enviroment::setInstance(new Enviroment);
+	e->applicationPath = argv[0];
+	e->applicationDir = e->applicationPath.substr(0, e->applicationPath.find_last_of("\\")) + "\\";
+	e->resourcePath = e->applicationDir + "\\res\\";
+	e->contentPath = e->applicationDir + "\\content\\";
 }
 void Engine::tick() {
 	initialize();
-	Project *project = nullptr;
+	assetSystem->loadAssetsFromFolder(Enviroment::instance()->getResourcePath());
 
 	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("editor"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
-	//assetSystem->loadAssetsFromFolder("res\\");
-	assetSystem->loadAssetsFromFolder("C:\\Users\\Josias\\source\\repos\\JosiasWerly\\Gumball\\Build\\Debug\\res\\");
 
 	auto v = new View;
 	v->viewMode.setProjectionPerspective();
 	v->transform.position.z = -10;
 	scene->pushView(v);
-	
-	/*auto a = new DrawInstance;
-	a->setMesh("cube");
-	a->setTexture("logo");
-	a->transform.position.x = -1;
-	scene->pushDrawInstance(a);*/
-
 
 	UI::Canvas win;
 	UI::Text txt;
@@ -87,28 +71,23 @@ void Engine::tick() {
 	int i = 0;
 
 	while (true) {
-		if (projectLinker->isNewLinkerAvailable()) {
-			if (project) {
-				endPlay();
-				project->onDettach();
-				delete project;
-				project = nullptr;
+
+		{
+			if (projectLinker->hasNewVersion()) {
+				if (Project *proj = projectLinker->getProject()) {
+					endPlay();
+					proj->onDettach();
+					projectLinker->unload();
+				}
+				projectLinker->hotReload();
+				if (Project *proj = projectLinker->getProject()) {
+					proj->onAttach(*this);
+					beginPlay();
+				}
 			}
-			project = projectLinker->linkerTargetInstance();
-			if (project) {
-				project->onAttach(*this);
-				beginPlay();
-			}
-			else
-				cout << "err in project instantiation" << endl;
+			else if (Project *proj = projectLinker->getProject())
+				proj->onTick();
 		}
-		else if (project)
-			project->onTick();
-
-
-
-		
-
 
 
 		static string names[] = { "render", "input", "object" };

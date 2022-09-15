@@ -31,7 +31,6 @@ private:
 	Inline void beginPlay() const;
 	Inline void shutdown() const;
 	Inline void initialize() const;
-
 public:
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
