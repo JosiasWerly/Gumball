@@ -13,6 +13,7 @@ class RenderSystem;
 class AssetsSystem;
 class InputSystem;
 class TimeStat;
+class Project;
 
 
 class GBCORE Engine : 
@@ -31,7 +32,9 @@ private:
 	Inline void beginPlay() const;
 	Inline void shutdown() const;
 	Inline void initialize() const;
+	Inline void hotReload();
 public:
+	Project *project;
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
 	InputSystem *inputSystem;

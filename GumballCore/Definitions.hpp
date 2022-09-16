@@ -14,7 +14,7 @@
 #endif
 
 #ifdef GBPROJECT
-#define GBProject __declspec(dllexport)
+#define GBPROJECT __declspec(dllexport)
 #else
 #define GBPROJECT __declspec(dllimport)
 #endif
