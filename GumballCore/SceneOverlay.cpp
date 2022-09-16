@@ -12,7 +12,7 @@ void SceneOverlay::onAttach() {
 void SceneOverlay::onDetach() {
 
 }
-void SceneOverlay::onRender(float deltaTime) {
+void SceneOverlay::onRender(const double &deltaTime) {
 	for (auto &view : views) {
 		auto viewMat = view->transform.getMat();
 		for (auto &draw : drawInstances) {

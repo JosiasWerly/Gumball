@@ -22,7 +22,7 @@ void WidgetOverlay::onAttach() {
 void WidgetOverlay::onDetach() {
 
 }
-void WidgetOverlay::onRender(float deltaTime) {
+void WidgetOverlay::onRender(const double &deltaTime) {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();

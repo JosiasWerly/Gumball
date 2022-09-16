@@ -14,7 +14,7 @@ void InputSystem::keyboardCallback(GLFWwindow* window, int key, int scancode, in
 	else
 		inputSys.keyPool[keyCode].released = true;
 }
-void InputSystem::tick(float deltaTime) {
+void InputSystem::tick(const double &deltaTime) {
 	eventPool.clearPool();
 	Input::Event e;
 	for (auto& kv : keyPool) {

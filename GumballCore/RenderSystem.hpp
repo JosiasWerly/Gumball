@@ -38,7 +38,7 @@ public:
     virtual ~IRenderOverlay() = default;
     virtual void onAttach();
     virtual void onDetach();
-    virtual void onRender(float deltaTime);
+    virtual void onRender(const double &deltaTime);
 };
 
 class RenderSystem :
@@ -54,7 +54,7 @@ public:
     }
     void initialize() override;
     void shutdown() override;
-    void tick(float deltaTime) override;   
+    void tick(const double &deltaTime) override;
     void pushLayer(IRenderOverlay *layer, bool pushBack = true);
     void popLayer(IRenderOverlay *layer);
 

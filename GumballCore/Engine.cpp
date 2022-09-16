@@ -92,9 +92,8 @@ void Engine::tick() {
 		hotReload();
 		
 		timeStats.capture();
-		TimeStat debugTimeStats;
 		for (auto &s : tickingSystems)
-			s->tick((float)timeStats.getDeltaTime());
+			s->tick(timeStats.getDeltaTime());
 	}
 
 	endPlay();

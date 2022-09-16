@@ -36,7 +36,7 @@ GLFWwindow* Window::getGLWindow() {
 
 void IRenderOverlay::onAttach() {}
 void IRenderOverlay::onDetach() {}
-void IRenderOverlay::onRender(float deltaTime) {}
+void IRenderOverlay::onRender(const double &deltaTime) {}
 
 void RenderSystem::initialize() {
 	glfwInit();
@@ -85,7 +85,7 @@ void RenderSystem::popLayer(IRenderOverlay *layer) {
 	layer->onDetach();
 	layers.remove(layer);
 }
-void RenderSystem::tick(float deltaTime) {
+void RenderSystem::tick(const double &deltaTime) {
 	mainWindow.clearRender();
 
 	for (auto &layer : layers)

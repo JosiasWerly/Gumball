@@ -63,7 +63,7 @@ public:
     ~SceneOverlay();
     void onAttach() override;
     void onDetach() override;
-    void onRender(float deltaTime) override;
+    void onRender(const double &deltaTime) override;
 
 
     void pushView(View *view);

@@ -69,8 +69,7 @@ public:
 	bool isKeyDown(Input::EKeyCode Key);
 	bool onKeyPressed(Input::EKeyCode Key);
 	bool onKeyReleased(Input::EKeyCode Key);
-
-	void tick(float deltaTime) override;
+	void tick(const double &deltaTime) override;
 };
 
 #undef keyWrapper

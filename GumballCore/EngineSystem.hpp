@@ -11,9 +11,9 @@ protected:
 	virtual ~IEngineSystem();
 	virtual void initialize();
 	virtual void shutdown();
-	virtual void tick(float deltaTime);
 	virtual void onPlay();
 	virtual void onEndplay();
+	virtual void tick(const double &deltaTime);
 };
 
 #endif // !_enginesystem

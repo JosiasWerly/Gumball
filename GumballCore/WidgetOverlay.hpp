@@ -19,7 +19,7 @@ public:
     WidgetOverlay();
     void onAttach() override;
     void onDetach() override;
-    void onRender(float deltaTime) override;
+    void onRender(const double &deltaTime) override;
 
     WidgetOverlay &operator<<(UIElement *element) {
         elements.push_back(element);

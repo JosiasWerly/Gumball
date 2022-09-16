@@ -13,9 +13,9 @@ public:
 	virtual ~Project() {}
 	virtual void initialize() {}
 	virtual void shutdown() {}
-	virtual void tick(float deltaTime) {}
 	virtual void onPlay() {}
 	virtual void onEndplay() {}
+	virtual void tick(const double &deltaTime) {}
 };
 
 class ProjectLinker {

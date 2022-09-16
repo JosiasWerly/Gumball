@@ -18,8 +18,8 @@ public:
 		auto &scene = *dynamic_cast<SceneOverlay *>(e->renderSystem->getLayer("scene"));
 
 		a = new DrawInstance;
-		a->setMesh("cube");
-		a->setTexture("scotty");
+		a->setMesh("torus");
+		a->setTexture("logo");
 		a->transform.position.x = -1;
 		scene.pushDrawInstance(a);
 	}
@@ -27,7 +27,7 @@ public:
 		auto &scene = *dynamic_cast<SceneOverlay *>(Engine::instance()->renderSystem->getLayer("scene"));
 		scene.popDrawInstance(a);
 	}
-	void tick(float deltaTime) {
+	void tick(const double &deltaTime) {
 		auto inputSystem = Engine::instance()->inputSystem;
 		if (inputSystem->isKeyDown(Input::EKeyCode::W))
 			a->transform.position += a->transform.rotator.forward() * .5;
