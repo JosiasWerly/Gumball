@@ -2,7 +2,6 @@
 #ifndef _archive
 #define _archive
 
-#include "Definitions.hpp"
 
 #include <string>
 #include <fstream>

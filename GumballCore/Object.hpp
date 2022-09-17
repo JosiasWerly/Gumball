@@ -1,7 +1,6 @@
 #pragma once
 #ifndef _object
 #define _object
-#include "Definitions.hpp"
 #include "Var.hpp"
 
 class Object {

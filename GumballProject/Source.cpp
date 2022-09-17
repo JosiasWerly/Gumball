@@ -3,7 +3,7 @@
 #include <string>
 using namespace std;
 
-
+#include <GumballCore/Definitions.hpp>
 #include <GumballCore/ProjectLinker.hpp>
 #include <GumballCore/SceneOverlay.hpp>
 #include <GumballCore/WidgetOverlay.hpp>

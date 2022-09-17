@@ -1,7 +1,6 @@
 #pragma once
 #ifndef _timestat
 #include "GLUtils.hpp"
-#include "Definitions.hpp"
 class GBCORE TimeStat {
 	double lastRegister = 0;
 	

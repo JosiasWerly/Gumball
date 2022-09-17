@@ -3,7 +3,6 @@
 #define _projectLinker
 
 #include <dllLoader/DynamicLibrary.hpp>
-#include "Definitions.hpp"
 
 class Project {
 public:
