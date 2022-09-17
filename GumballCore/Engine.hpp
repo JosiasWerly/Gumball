@@ -34,13 +34,9 @@ private:
 	Inline void shutdown() const;
 	Inline void initialize() const;
 	Inline void hotReload();
-public:
-	Project *project;
-	RenderSystem *renderSystem;
-	AssetsSystem *assetSystem;
-	InputSystem *inputSystem;
-	World *world;
 
+	Project *project;
+public:
 	void args(int argc, char *argv[]);
 	void tick();
 
@@ -52,7 +48,11 @@ public:
 		}
 		return nullptr;
 	}
+
+
+	RenderSystem *renderSystem;
+	AssetsSystem *assetSystem;
+	InputSystem *inputSystem;
+	World *world;
 };
-
-
 #endif // !_engine

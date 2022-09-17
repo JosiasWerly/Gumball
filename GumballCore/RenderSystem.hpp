@@ -14,6 +14,9 @@ using namespace std;
 #include "Math.hpp"
 
 
+class SceneOverlay;
+class WidgetOverlay;
+
 class Window {
     GLFWwindow* window = nullptr;
     Vector2i winSize;
@@ -45,11 +48,11 @@ class RenderSystem :
     list<IRenderOverlay*> layers;
 public:
     Window mainWindow;
-    
-    ~RenderSystem() {
-        for (auto &l : layers)
-            delete l;
-    }
+    SceneOverlay *const scene;
+    WidgetOverlay *const widget;
+
+    RenderSystem();
+    ~RenderSystem();
     void initialize() override;
     void shutdown() override;
     void tick(const double &deltaTime) override;
@@ -64,7 +67,7 @@ public:
         return nullptr;
     }
     Inline list<IRenderOverlay*>& getLayerList() { return layers; }
-    Inline GLADloadproc glProcAddres() { return (GLADloadproc)glfwGetProcAddress; }
+    template<class t> t *getLayerAs(string name) { return dynamic_cast<t *>(getLayer(name)); }
 };
 
 #endif // !_viewport

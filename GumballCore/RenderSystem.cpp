@@ -38,6 +38,14 @@ void IRenderOverlay::onAttach() {}
 void IRenderOverlay::onDetach() {}
 void IRenderOverlay::onRender(const double &deltaTime) {}
 
+RenderSystem::RenderSystem() :
+	scene(new SceneOverlay),
+	widget(new WidgetOverlay) {
+}
+RenderSystem::~RenderSystem() {
+	for (auto &l : layers)
+		delete l;
+}
 void RenderSystem::initialize() {
 	glfwInit();
 
@@ -66,12 +74,10 @@ void RenderSystem::initialize() {
 	// Cull triangles which normal is not towards the camera
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-
-	pushLayer(new SceneOverlay);
-	pushLayer(new WidgetOverlay);
+	pushLayer(scene);
+	pushLayer(widget);
 }
-void RenderSystem::shutdown() {
-	
+void RenderSystem::shutdown() {	
 	glfwTerminate();
 }
 void RenderSystem::pushLayer(IRenderOverlay *layer, bool pushBack) {

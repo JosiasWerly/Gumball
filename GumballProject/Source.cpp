@@ -19,15 +19,12 @@ public:
 	DrawInstance a;
 
 	MyActor() {
-		auto e = Engine::instance();
-		auto &scene = *dynamic_cast<SceneOverlay *>(e->renderSystem->getLayer("scene"));
 		a.setMesh("torus");
 		a.setTexture("logo");
-		scene.pushDrawInstance(&a);
+		Engine::instance()->renderSystem->scene->pushDrawInstance(&a);
 	}
 	~MyActor() {
-		auto &scene = *dynamic_cast<SceneOverlay *>(Engine::instance()->renderSystem->getLayer("scene"));
-		scene.popDrawInstance(&a);
+		Engine::instance()->renderSystem->scene->popDrawInstance(&a);
 	}
 	void beginPlay() {
 

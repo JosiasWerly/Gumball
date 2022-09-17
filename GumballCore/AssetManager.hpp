@@ -24,6 +24,13 @@ class AssetsSystem;
 * Engine::instance()->assetSystem.getAsset<T>(Name)->getContent();
 * in this manner we can avoid searching all the list of assets.
 */
+
+namespace Path {
+	static string extention(string path);
+	static string fileName(string path);
+};
+
+
 class Asset {
 	friend class AssetsSystem;
 private:

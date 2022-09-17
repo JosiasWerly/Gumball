@@ -9,6 +9,16 @@
 #include "Texture.hpp"
 #include "Mesh.hpp"
 
+namespace Path {
+	string extention(string path) {
+		return std::filesystem::path(path).extension().string().substr(1);
+	}
+	string fileName(string path) {
+		string fName = std::filesystem::path(path).filename().string();
+		return fName.substr(0, fName.find_last_of("."));
+	}
+};
+
 bool IAssetFactory::hasExtension(const string &extention) {
 	for (auto &ex : extensions) {
 		if (ex == extention)
@@ -48,8 +58,8 @@ void AssetsSystem::unloadAsset(string name) {
 }
 void AssetsSystem::loadAssetFromFile(const string &assetPath) {
 	bool loaded = false;
-	string assetName = Files::getNameOfFilePath(assetPath);
-	string assetExt = Files::getExtOfFilePath(assetPath);
+	string assetName = Path::fileName(assetPath);
+	string assetExt = Path::extention(assetPath);
 	if (!getAsset(assetName)) {
 		if (auto factory = findFactory(assetExt)) {
 			Asset *asset = new Asset;
@@ -66,7 +76,7 @@ void AssetsSystem::loadAssetFromFile(const string &assetPath) {
 				asset = nullptr;
 			}
 		}
-		cout << assetPath << " --- " << (loaded ? "ok" : "fail") << endl;
+		cout << assetName << "." << assetExt << " --- " << (loaded ? "ok" : "fail") << endl;
 	}
 }
 void AssetsSystem::loadAssetsFromFolder(string root) {
@@ -90,8 +100,8 @@ void AssetsSystem::createFactory(IAssetFactory *newFactory) {
 	factories.push_back(newFactory);
 }
 bool AssetsSystem::assembleObject(Object *&content, const string &assetPath) {
-	string assetName = Files::getNameOfFilePath(assetPath);
-	string assetExt = Files::getExtOfFilePath(assetPath);
+	string assetName = Path::fileName(assetPath);
+	string assetExt = Path::extention(assetPath);
 	if (auto factory = findFactory(assetExt)) {		
 		Archive ar(assetPath);		
 		return factory->assemble(content, ar);

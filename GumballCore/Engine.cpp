@@ -12,7 +12,7 @@
 #include <string>
 using namespace std;
 
-Engine::Engine() {	
+Engine::Engine() {
 	project = nullptr;
 	projectLinker = new ProjectLinker;
 	renderSystem = new RenderSystem;
