@@ -4,18 +4,13 @@
 
 #include <dllLoader/DynamicLibrary.hpp>
 #include "Definitions.hpp"
-#include "EngineSystem.hpp"
 
-class Project :
-	public IEngineSystem {
+class Project {
 public:
 	Project() {}
 	virtual ~Project() {}
-	virtual void initialize() {}
-	virtual void shutdown() {}
-	virtual void onPlay() {}
-	virtual void onEndplay() {}
-	virtual void tick(const double &deltaTime) {}
+	virtual void attached() {}
+	virtual void detached() {}
 };
 
 class ProjectLinker {

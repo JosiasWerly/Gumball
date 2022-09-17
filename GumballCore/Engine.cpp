@@ -31,13 +31,13 @@ Engine::Engine() {
 }
 Engine::~Engine(){
 }
-Inline void Engine::endPlay() const {
-	for (auto &s : systems)
-		s->onEndplay();
-}
 Inline void Engine::beginPlay() const {
 	for (auto &s : systems)
 		s->onPlay();
+}
+Inline void Engine::endPlay() const {
+	for (auto &s : systems)
+		s->onEndplay();
 }
 Inline void Engine::shutdown() const {
 	for (auto &s : systems)
@@ -51,16 +51,12 @@ Inline void Engine::hotReload() {
 	if (projectLinker->hasNewVersion()) {
 		endPlay();
 		if (project) {
-			project->shutdown();
-			systems.remove(project);
-			tickingSystems.remove(project);
+			project->detached();
 			delete project;
 			project = nullptr;
 		}
 		if (project = projectLinker->load()) {
-			systems.push_back(project);
-			tickingSystems.push_back(project);
-			project->initialize();
+			project->attached();
 			beginPlay();
 		}
 	}

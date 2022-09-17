@@ -29,8 +29,8 @@ private:
 	Engine();
 	~Engine();
 
-	Inline void endPlay() const;
 	Inline void beginPlay() const;
+	Inline void endPlay() const;
 	Inline void shutdown() const;
 	Inline void initialize() const;
 	Inline void hotReload();

@@ -43,6 +43,10 @@ class World :
 	void registerActor(Actor *actor);
 	void unregisterActor(Actor *actor);
 public:
+	virtual void initialize() override;
+	virtual void shutdown() override;
+	virtual void onPlay() override;
+	virtual void onEndplay() override;
 	virtual void tick(const double &deltaTime) override;
 };
 #endif // _world

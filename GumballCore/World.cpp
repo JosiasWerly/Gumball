@@ -13,6 +13,19 @@ void World::unregisterActor(Actor *actor) {
 		}
 	}
 }
+void World::initialize() {
+}
+void World::shutdown() {
+	toSpawn.clear();
+	toDelete.clear();
+	toTick.clear();
+	for (auto a : actors)
+		a.free();
+}
+void World::onPlay() {
+}
+void World::onEndplay() {
+}
 void World::tick(const double &deltaTime) {
 	if (toSpawn.size()) {
 		for (auto a : toSpawn) {
