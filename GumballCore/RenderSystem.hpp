@@ -18,11 +18,9 @@ class Window {
     GLFWwindow* window = nullptr;
     Vector2i winSize;
 public:
-	void create(string Name, Vector2i size);   
-
+	void create(string Name, Vector2i size);
     void clearRender();
     void render();
-
     void setSize(Vector2i size);
     const Vector2i& getSize();
     GLFWwindow* getGLWindow();

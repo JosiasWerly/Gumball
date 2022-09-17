@@ -39,6 +39,8 @@ namespace Input {
 		released = GLFW_RELEASE,
 		repeat = GLFW_REPEAT,
 	};
+
+	//TODO: change this enum name to EInputDevice
 	enum class EventType {
 		keyboard, mouse
 	};

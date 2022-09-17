@@ -67,7 +67,10 @@ public:
 class MyProject :
 	public Project {
 public:
+	//when this DLL is attached
 	virtual void attached() {}
+
+	//when this DLL is detached
 	virtual void detached() {}
 };
 

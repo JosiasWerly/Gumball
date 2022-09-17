@@ -11,9 +11,8 @@
 using namespace std;
 
 class World;
-class Level;
-class IComponent;
 class Actor;
+class Component;
 
 
 class GBCORE GameObject {
@@ -24,8 +23,26 @@ public:
 	virtual void tick(const double &deltaTime) {}
 };
 
+class GBCORE Component : 
+	public GameObject {
+private:
+	Actor *owner;
+public:
+	static void *operator new(unsigned long long sz);
+	static void operator delete(void *ptr);
+	Component();
+	~Component();
+};
+
 class GBCORE Actor :
 	public GameObject {
+	friend class World;
+private:
+	list<Component*> components;
+	Inline void componentTick(const double &deltaTime) {
+		for (auto c : components)
+			c->tick(deltaTime);
+	}
 public:
 	static void *operator new(unsigned long long sz);
 	static void operator delete(void *ptr);
@@ -33,10 +50,12 @@ public:
 	virtual ~Actor();
 };
 
+
 class World : 
 	public Subsystem {
 	friend class Actor;
 
+	
 	list<Var<Actor>> actors;
 	list<Var<Actor>*> toSpawn, toDelete, toTick;
 

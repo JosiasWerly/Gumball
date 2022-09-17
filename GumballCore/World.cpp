@@ -1,6 +1,34 @@
 #include "World.hpp"
 #include "Engine.hpp"
 
+void *Component::operator new(unsigned long long sz) {
+	return ::operator new(sz);
+}
+void Component::operator delete(void *ptr) {
+	::operator delete(ptr);
+}
+Component::Component() {
+
+}
+Component::~Component() {
+
+}
+
+void *Actor::operator new(unsigned long long sz){
+	static World &w = *Engine::instance()->world;
+	Actor *newActor = reinterpret_cast<Actor*>(::operator new(sz));
+	w.registerActor(newActor);	
+	return newActor;
+}
+void Actor::operator delete(void *ptr) {
+	static World &w = *Engine::instance()->world;
+	w.unregisterActor(reinterpret_cast<Actor *>(ptr));
+}
+Actor::Actor() {
+}
+Actor::~Actor() {
+}
+
 void World::registerActor(Actor *actor) {
 	actors.emplace_back(Var<Actor>(actor));
 	toSpawn.push_back(&actors.back());
@@ -42,22 +70,8 @@ void World::tick(const double &deltaTime) {
 		}
 		toDelete.clear();
 	}
-	for (auto &a : toTick)
+	for (auto &a : toTick) {
+		(*a)->componentTick(deltaTime);
 		(*a)->tick(deltaTime);
-}
-
-
-void *Actor::operator new(unsigned long long sz){
-	static World &w = *Engine::instance()->world;
-	Actor *newActor = reinterpret_cast<Actor*>(::operator new(sz));
-	w.registerActor(newActor);	
-	return newActor;
-}
-void Actor::operator delete(void *ptr) {
-	static World &w = *Engine::instance()->world;
-	w.unregisterActor(reinterpret_cast<Actor *>(ptr));
-}
-Actor::Actor() {
-}
-Actor::~Actor() {
+	}
 }
