@@ -25,6 +25,7 @@
     <ClInclude Include="Var.hpp" />
     <ClInclude Include="WidgetOverlay.hpp" />
     <ClInclude Include="EnviromentVariables.hpp" />
+    <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />
@@ -49,5 +50,6 @@
     <ClCompile Include="WidgetOverlay.cpp" />
     <ClCompile Include="EngineSystem.cpp" />
     <ClCompile Include="EnviromentVariables.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
 </Project>

@@ -14,6 +14,7 @@ class AssetsSystem;
 class InputSystem;
 class TimeStat;
 class Project;
+class World;
 
 
 class GBCORE Engine : 
@@ -38,6 +39,7 @@ public:
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
 	InputSystem *inputSystem;
+	World *world;
 
 	void args(int argc, char *argv[]);
 	void tick();

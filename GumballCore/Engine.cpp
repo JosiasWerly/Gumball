@@ -5,12 +5,11 @@
 #include "SceneOverlay.hpp"
 #include "WidgetOverlay.hpp"
 #include "ProjectLinker.hpp"
+#include "World.hpp"
 #include "EnviromentVariables.hpp"
 
 #include <iostream>
 #include <string>
-
-
 using namespace std;
 
 Engine::Engine() {	
@@ -19,13 +18,16 @@ Engine::Engine() {
 	renderSystem = new RenderSystem;
 	assetSystem = new AssetsSystem;
 	inputSystem = new InputSystem;
+	world = new World;
 
 	systems.push_back(renderSystem);
 	systems.push_back(assetSystem);
 	systems.push_back(inputSystem);
+	systems.push_back(world);
 
 	tickingSystems.push_back(renderSystem);
 	tickingSystems.push_back(inputSystem);
+	tickingSystems.push_back(world);
 }
 Engine::~Engine(){
 }

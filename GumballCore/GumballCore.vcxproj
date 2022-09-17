@@ -170,6 +170,7 @@
     <ClInclude Include="TimeStat.hpp" />
     <ClInclude Include="Var.hpp" />
     <ClInclude Include="WidgetOverlay.hpp" />
+    <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="TimeStat.cpp" />
     <ClCompile Include="Var.cpp" />
     <ClCompile Include="WidgetOverlay.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\Glad\Glad.vcxproj">
