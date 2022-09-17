@@ -5,7 +5,7 @@
     <ClInclude Include="AssetManager.hpp" />
     <ClInclude Include="Definitions.hpp" />
     <ClInclude Include="Engine.hpp" />
-    <ClInclude Include="EngineSystem.hpp" />
+    <ClInclude Include="Subsystem.hpp" />
     <ClInclude Include="Event.hpp" />
     <ClInclude Include="FunctionLibrary.hpp" />
     <ClInclude Include="GLBuffer.hpp" />
@@ -48,7 +48,7 @@
     <ClCompile Include="TimeStat.cpp" />
     <ClCompile Include="Var.cpp" />
     <ClCompile Include="WidgetOverlay.cpp" />
-    <ClCompile Include="EngineSystem.cpp" />
+    <ClCompile Include="Subsystem.cpp" />
     <ClCompile Include="EnviromentVariables.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>

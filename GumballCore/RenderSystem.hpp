@@ -8,7 +8,7 @@
 using namespace std;
 
 #include "GLUtils.hpp"
-#include "EngineSystem.hpp"
+#include "Subsystem.hpp"
 #include "Patterns.hpp"
 #include "InputSystem.hpp"
 #include "Math.hpp"
@@ -42,7 +42,7 @@ public:
 };
 
 class RenderSystem :
-    public IEngineSystem {
+    public Subsystem {
     
     list<IRenderOverlay*> layers;
 public:

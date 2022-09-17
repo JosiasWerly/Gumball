@@ -4,7 +4,7 @@
 
 #include "Object.hpp"
 #include "Var.hpp"
-#include "EngineSystem.hpp"
+#include "Subsystem.hpp"
 #include "Archive.hpp"
 
 #include <list>
@@ -59,7 +59,7 @@ public:
 	virtual bool disassemble(Object *&content, Archive &ar) = 0;
 };
 class AssetsSystem :
-	public IEngineSystem {
+	public Subsystem {
 
 	list<IAssetFactory *> factories;
 	list<Asset *> assets;

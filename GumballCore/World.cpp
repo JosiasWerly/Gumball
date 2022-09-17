@@ -22,9 +22,9 @@ void World::shutdown() {
 	for (auto a : actors)
 		a.free();
 }
-void World::onPlay() {
+void World::beginPlay() {
 }
-void World::onEndplay() {
+void World::endPlay() {
 }
 void World::tick(const double &deltaTime) {
 	if (toSpawn.size()) {

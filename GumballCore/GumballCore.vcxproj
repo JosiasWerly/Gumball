@@ -150,7 +150,7 @@
     <ClInclude Include="AssetManager.hpp" />
     <ClInclude Include="Definitions.hpp" />
     <ClInclude Include="Engine.hpp" />
-    <ClInclude Include="EngineSystem.hpp" />
+    <ClInclude Include="Subsystem.hpp" />
     <ClInclude Include="EnviromentVariables.hpp" />
     <ClInclude Include="Event.hpp" />
     <ClInclude Include="FunctionLibrary.hpp" />
@@ -176,7 +176,7 @@
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="EngineSystem.cpp" />
+    <ClCompile Include="Subsystem.cpp" />
     <ClCompile Include="EnviromentVariables.cpp" />
     <ClCompile Include="FunctionLibrary.cpp" />
     <ClCompile Include="GLBuffer.cpp" />

@@ -76,15 +76,3 @@ Extern GBPROJECT void *EntryPoint() {
 	new MyActor;
 	return new MyProject;
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,5 +1,5 @@
 #include "Engine.hpp"
-#include "EngineSystem.hpp"
+#include "Subsystem.hpp"
 #include "AssetManager.hpp"
 #include "RenderSystem.hpp"
 #include "SceneOverlay.hpp"
@@ -33,11 +33,11 @@ Engine::~Engine(){
 }
 Inline void Engine::beginPlay() const {
 	for (auto &s : systems)
-		s->onPlay();
+		s->beginPlay();
 }
 Inline void Engine::endPlay() const {
 	for (auto &s : systems)
-		s->onEndplay();
+		s->endPlay();
 }
 Inline void Engine::shutdown() const {
 	for (auto &s : systems)

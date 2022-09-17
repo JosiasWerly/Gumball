@@ -4,7 +4,7 @@
 
 //#include "Object.hpp"
 #include "Definitions.hpp"
-#include "EngineSystem.hpp"
+#include "Subsystem.hpp"
 #include "Var.hpp"
 
 #include <list>
@@ -34,7 +34,7 @@ public:
 };
 
 class World : 
-	public IEngineSystem {
+	public Subsystem {
 	friend class Actor;
 
 	list<Var<Actor>> actors;
@@ -45,8 +45,8 @@ class World :
 public:
 	virtual void initialize() override;
 	virtual void shutdown() override;
-	virtual void onPlay() override;
-	virtual void onEndplay() override;
+	virtual void beginPlay() override;
+	virtual void endPlay() override;
 	virtual void tick(const double &deltaTime) override;
 };
 #endif // _world

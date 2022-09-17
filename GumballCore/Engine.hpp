@@ -6,7 +6,7 @@
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
 
-class IEngineSystem;
+class Subsystem;
 class EditorOverlay;
 class ProjectLinker;
 class RenderSystem;
@@ -23,7 +23,7 @@ private:
 	friend int main(int, char *[]);
 
 	TimeStat timeStats;
-	std::list<IEngineSystem*> systems, tickingSystems;
+	std::list<Subsystem *> systems, tickingSystems;
 	ProjectLinker *projectLinker;
 	
 	Engine();
