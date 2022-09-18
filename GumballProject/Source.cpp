@@ -26,13 +26,16 @@ public:
 	~MyActor() {
 		Engine::instance()->renderSystem->scene->popDrawInstance(&a);
 	}
-	void beginPlay() {
-
+	void beginPlay() override {
+		Actor::beginPlay();
+		cout << getName() << " beg" << endl;
 	}
-	void endPlay() {
-	
+	void endPlay() override {
+		Actor::endPlay();
+		cout << getName() << " end" << endl;
 	}
 	void tick(const double &deltaTime) {
+		Actor::tick(deltaTime);
 		auto inputSystem = Engine::instance()->inputSystem;
 		if (inputSystem->isKeyDown(Input::EKeyCode::UP))
 			a.transform.rotator.rotate(1, 0, 0);
