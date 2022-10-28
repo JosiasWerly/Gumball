@@ -1,11 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="lua">
-      <UniqueIdentifier>{6827b330-f524-47d1-96fd-bfee3db7cb42}</UniqueIdentifier>
+      <UniqueIdentifier>{C78D880B-3397-887C-BC12-9F7C281B947C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LuaLanguage.hpp" />
     <ClInclude Include="lua\lauxlib.h">
       <Filter>lua</Filter>
     </ClInclude>
@@ -21,7 +22,6 @@
     <ClInclude Include="lua\lualib.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="LuaLanguage.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LuaLanguage.cpp" />

@@ -12,8 +12,8 @@ struct HINSTANCE__;
 typedef HINSTANCE__ *HINSTANCE;
 
 class DynamicLibrary {
-	HINSTANCE instance;
-	string dllPath;
+	HINSTANCE instance = nullptr;
+	string dllPath = "";
 
 	void forceClose();
 	long long getFnxAddress(string &fName);
