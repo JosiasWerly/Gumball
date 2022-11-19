@@ -22,6 +22,7 @@ typedef std::vector<glm::vec3> listVec3;
 typedef std::vector<glm::vec2> listVec2;
 typedef std::vector<unsigned int> listUInt;
 
+//TODO: perhaps I should integrate this with VboBuilder
 struct MeshVertexData {
 	glm::vec3 pos, normal;
 	glm::vec2 uv;

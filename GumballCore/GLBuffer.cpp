@@ -19,7 +19,7 @@ Ibo::~Ibo() {
 void Ibo::bind() {
 	glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 }
-void Ibo::unbind() {
+void Ibo::unBind() {
 	glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 void Ibo::setBuffer(void *data, unsigned dataSize) {
@@ -37,7 +37,7 @@ Vbo::~Vbo() {
 void Vbo::bind() {
 	glDCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 }
-void Vbo::unbind() {
+void Vbo::unBind() {
 	glDCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
@@ -87,7 +87,7 @@ void Tbo::bind() {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, id);
 }
-void Tbo::unbind() {
+void Tbo::unBind() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 void Tbo::loadTexture(string path) {
@@ -103,7 +103,7 @@ void Tbo::loadTexture(string path) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
-	unbind();
+	unBind();
 }
 
 
@@ -114,7 +114,7 @@ VboBuilder &VboBuilder::addAttrib(unsigned attribID, unsigned componentSize, uns
 }
 void VboBuilder::build() {
 	unsigned pointer = 0;
-	for (auto &e : Entities) {
+	for (auto &e : entities) {
 		glDCall(glVertexAttribPointer(e.attribID, e.componentSize, e.glType, e.glNormalized, stride, (void *)pointer));
 		glDCall(glEnableVertexAttribArray(e.attribID));
 		pointer += e.subBufferSize;

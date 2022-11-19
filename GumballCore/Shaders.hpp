@@ -107,19 +107,28 @@ public:
 		return nullptr;
 	}
 };
-class Material {
+
+//TODO: this class should be moved to SceneOverlay.hpp, because the clsoe relation that it has with it
+class GBCORE Material {
+private:
 	Shader *shader;
 	map<string, ShaderAttribute *> parameters;	
+
+	Inline void copyParameters();
+	Inline void clearParameters();
 public:
 	Material();
 	~Material();
-	void use();
 	void setShader(Shader *shader);
 	const Shader *getShader() { return shader; }
 	bool hasParameter(string name) const { return parameters.contains(name); }
 	template<EUniformType etype> ShaderParameter<etype> *param(string name) {
 		return dynamic_cast<ShaderParameter<etype>*>(parameters[name]->param);
 	}
+
+	Inline void bind();
+	Inline void unBind();
+	Inline void uploadParams();
 };
 class ShaderFactory : 
 	public IAssetFactory {

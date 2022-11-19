@@ -15,7 +15,7 @@ struct Ibo {
 	Ibo();
 	~Ibo();
 	void bind();
-	void unbind();
+	void unBind();
 	void setBuffer(void *data, unsigned dataSize);
 };
 struct Vbo {
@@ -23,7 +23,7 @@ struct Vbo {
 	Vbo();
 	~Vbo();
 	void bind();
-	void unbind();
+	void unBind();
 };
 struct Vao {
 private:
@@ -47,7 +47,7 @@ public:
 	void loadTexture(string path);
 	void loadToGPU();
 	void bind();
-	void unbind();
+	void unBind();
 	inline bool isValid() { return imageBuffer; }
 	inline void setSlot(int newSlot) { slot = newSlot; }	
 	inline int getSlot() { return slot; }
@@ -63,19 +63,19 @@ private:
 			glNormalized;
 	};
 
-	list<EntityData> Entities;
+	list<EntityData> entities;
 	unsigned stride = 0;
 public:
 	template<class T>VboBuilder &addAttrib(unsigned componentSize, bool glNormalized = false) {
 		EntityData newAttribute = {
-				Entities.size(),
+				entities.size(),
 				componentSize,
 				componentSize * sizeof(T),
 				Conversors::typeCToGL<T>(),
 				glNormalized
 		};
 
-		Entities.push_back(newAttribute);
+		entities.push_back(newAttribute);
 		stride += newAttribute.subBufferSize;
 		return *this;
 	}
@@ -89,6 +89,7 @@ public:
 	}
 	VboBuilder &addAttrib(unsigned attribID, unsigned componentSize, unsigned stride, unsigned int pointer = 0, unsigned type = GL_FLOAT, bool glNormalized = false);
 	void build();
+	Inline bool isValid() const { return stride != 0; }
 };
 //unsigned vao;
 //glGenVertexArrays(1, &vao);

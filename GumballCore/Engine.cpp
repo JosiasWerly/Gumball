@@ -78,7 +78,6 @@ void Engine::tick() {
 	auto v = new View;
 	v->viewMode.setProjectionPerspective();
 	v->transform.position.z = -10;
-	scene->pushView(v);
 
 	UI::Canvas win;
 	UI::Text txt;

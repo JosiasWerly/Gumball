@@ -47,48 +47,91 @@ public:
     ViewMode viewMode;
     Transform transform;
 
-    View() = default;
-    ~View() = default;
+    View();
+    ~View();
+};
+
+class GBCORE DrawCallData {
+    Vao *vao = nullptr;
+    Vbo *vbo = nullptr;
+    Ibo *ibo = nullptr;
+    MeshData *meshData = nullptr;
+public:
+    DrawCallData(MeshData *mesh);
+    ~DrawCallData();
+    Inline void bind();
+    Inline void unBind();
+    Inline void draw();
+
+    Inline MeshData *getMeshData() const { return meshData; }
+};
+
+class GBCORE DrawCallInstance {
+    DrawCallData *drawData = nullptr;
+public:
+    Material material;
+    Transform transform;
+
+    DrawCallInstance(string meshName);
+    ~DrawCallInstance();
 };
 
 class GBCORE SceneOverlay :
     public IRenderOverlay {
-    friend class DrawInstance;
+    friend class View;
+    friend class DrawCallData;
+    friend class DrawCallInstance;
 
+    struct MeshDrawCallLayer {
+        MeshDrawCallLayer(DrawCallData *data) :
+            data(data) {
+        }
+        DrawCallData *data = nullptr;
+        list<DrawCallInstance *> instances;
+    };
+    MeshDrawCallLayer *findDrawLayer(MeshData *meshData) {
+        for (auto &dc : drawCallLayers) {
+            if (dc.data->getMeshData() == meshData)
+                return &dc;
+        }
+        return nullptr;
+    }
+    
     list<View *> views;
-    list<DrawInstance *> drawInstances;
+    list<MeshDrawCallLayer> drawCallLayers;
 public:
-
     SceneOverlay();
     ~SceneOverlay();
     void onAttach() override;
     void onDetach() override;
     void onRender(const double &deltaTime) override;
 
+    template<class T> T *instantiate() = delete;
+    template<class T> T *instantiate(string) = delete;
+    template<class T> void destroy(T*&) = delete;
 
-    void pushView(View *view);
-    void popView(View *view);
-    void pushDrawInstance(DrawInstance *instance, bool front = true);
-    void popDrawInstance(DrawInstance *drawInstance);
 };
 
-class GBCORE DrawInstance {
-    Vao *vao = nullptr;
-    Vbo *vbo = nullptr;
-    Ibo *ibo = nullptr;
 
-public:
-    MeshData *meshData = nullptr;
-    Material material;
-    Transform transform;
-
-    DrawInstance();
-    ~DrawInstance();
-    bool setMesh(string name);
-    bool setTexture(string name);
-
-    void bind();
-    void unbind();
-    void draw();
-};
 #endif // !_sceneoverlay
+
+
+//class GBCORE DrawInstance {
+//    Vao *vao = nullptr;
+//    Vbo *vbo = nullptr;
+//    Ibo *ibo = nullptr;
+//
+//public:
+//    MeshData *meshData = nullptr;
+//    Material material;
+//    Transform transform;
+//
+//    DrawInstance();
+//    ~DrawInstance();
+//    bool setMesh(string name);
+//    bool setTexture(string name);
+//
+//    void bind();
+//    void unbind();
+//    void draw();
+//};

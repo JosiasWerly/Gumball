@@ -3,8 +3,6 @@
 #include "Math.hpp"
 #include "Texture.hpp"
 
-
-
 ShaderAttribute::ShaderAttribute(unsigned location, EUniformType type) :
 	location(location),
 	type(type) {
@@ -100,24 +98,38 @@ Inline void Shader::unBind() const {
 }
 
 
+Inline void Material::copyParameters() {
+	if (!shader)
+		return;
+	clearParameters();
 
-
-Material::Material() {
-}
-Material::~Material() {
-	for (auto &u : parameters)
-		delete u.second;
-}
-void Material::use() {
-	shader->bind();
-	for (auto &u : parameters)
-		u.second->param->upload();
-}
-void Material::setShader(Shader *shader) {  //TODO: param should be const
-	this->shader = shader;
 	auto &attributes = shader->getAttributes();
 	for (auto &a : attributes)
 		parameters[a.name] = new ShaderAttribute(a.location, a.type);
+}	
+Inline void Material::clearParameters() {
+	for (auto &u : parameters)
+		delete u.second;
+	parameters.clear();
+}
+Material::Material() {
+}
+Material::~Material() {
+	clearParameters();
+}
+void Material::setShader(Shader *shader) {
+	this->shader = shader;
+	copyParameters();
+}
+Inline void Material::bind() {	
+	shader->bind();
+}
+Inline void Material::unBind() {
+	shader->unBind();
+}
+Inline void Material::uploadParams() {
+	for (auto &u : parameters)
+		u.second->param->upload();
 }
 
 
