@@ -19,7 +19,12 @@ namespace Path {
 	}
 };
 
-bool IAssetFactory::hasExtension(const string &extention) {
+AssetFactory::AssetFactory(SubClass *subClass, list<string> extensions) :
+	subClass(subClass),
+	extensions(extensions) {
+	
+}
+bool AssetFactory::hasExtension(const string &extention) {
 	for (auto &ex : extensions) {
 		if (ex == extention)
 			return true;
@@ -27,14 +32,25 @@ bool IAssetFactory::hasExtension(const string &extention) {
 	return false;
 }
 
+
+AssetFactory *AssetsSystem::findFactory(const string &extension) {
+	for (auto &f : factories) {
+		if (f.hasExtension(extension))
+			return &f;
+	}
+	return nullptr;
+}
+
 void AssetsSystem::initialize() {
 	factories = {
-		new ShaderFactory,
-		new TextureFactory,
-		new MeshFactory,
+		{ new TSubClass<Image>, {"png"} },
+		{ new TSubClass<MeshData>, {"obj"} },
+		{ new TSubClass<Shader>, {"shader", "glsl"} }
 	};
 }
 void AssetsSystem::shutdown() {
+	for (auto a : assets)
+		delete a;
 }
 Asset *AssetsSystem::getAsset(string name) {
 	for (auto a : assets) {
@@ -43,68 +59,50 @@ Asset *AssetsSystem::getAsset(string name) {
 	}
 	return nullptr;
 }
-Asset *AssetsSystem::createAsset(string name) {
-	Asset *newAsset = getAsset(name);
-	if (!newAsset) {
-		newAsset = new Asset;
-		newAsset->name = name;
-		assets.push_back(newAsset);
-	}
-	return newAsset;
+void AssetsSystem::addAsset(Asset *asset) {
+	if (!getAsset(asset->name))
+		assets.push_back(asset);
 }
-void AssetsSystem::unloadAsset(string name) {
-	if (auto a = getAsset(name))
-		a->content.free();
+void AssetsSystem::delAsset(Asset *asset) {
+	assets.remove(asset);
+}
+bool AssetsSystem::save(Asset *asset) {
+	return false;
+}
+bool AssetsSystem::load(Asset *asset) {
+	Archive ar(asset->filePath);
+	if (ar.isOpen()) {
+		string assetExt = Path::extention(asset->filePath);
+		if (auto factory = findFactory(assetExt)) {
+			auto newObj = factory->construct();
+			if (newObj->archiveLoad(ar)) {
+				asset->setContent(newObj);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+void AssetsSystem::loadFromFolder(string root) {
+	namespace fs = std::filesystem;
+	for (fs::recursive_directory_iterator i(root), end; i != end; ++i) {
+		if (!is_directory(i->path())) {
+			loadAssetFromFile(i->path().string());
+		}
+	}
 }
 void AssetsSystem::loadAssetFromFile(const string &assetPath) {
 	bool loaded = false;
 	string assetName = Path::fileName(assetPath);
 	string assetExt = Path::extention(assetPath);
 	if (!getAsset(assetName)) {
-		if (auto factory = findFactory(assetExt)) {
-			Asset *asset = new Asset;
-			asset->name = assetName;
-			asset->filePath = assetPath;			
-			Object *content = nullptr;
-			if (assembleObject(content, assetPath)) {
-				asset->setContent(content);
-				assets.push_back(asset);
-				loaded = true;
-			}
-			else {
-				delete asset;
-				asset = nullptr;
-			}
-		}
+		Asset *newAsset = new Asset;
+		newAsset->name = assetName;
+		newAsset->filePath = assetPath;
+		if (loaded = load(newAsset))
+			addAsset(newAsset);
+		else
+			delete newAsset;
 		cout << assetName << "." << assetExt << " --- " << (loaded ? "ok" : "fail") << endl;
 	}
-}
-void AssetsSystem::loadAssetsFromFolder(string root) {
-	namespace fs = std::filesystem;
-	for (fs::recursive_directory_iterator i(root), end; i != end; ++i) {
-		if (!is_directory(i->path()))
-			loadAssetFromFile(i->path().string());
-	}
-}
-void AssetsSystem::reloadAsset(string name) {
-
-}
-IAssetFactory *AssetsSystem::findFactory(const string &extension) {
-	for (auto f : factories) {
-		if (f->hasExtension(extension))
-			return f;
-	}
-	return nullptr;
-}
-void AssetsSystem::createFactory(IAssetFactory *newFactory) {
-	factories.push_back(newFactory);
-}
-bool AssetsSystem::assembleObject(Object *&content, const string &assetPath) {
-	string assetName = Path::fileName(assetPath);
-	string assetExt = Path::extention(assetPath);
-	if (auto factory = findFactory(assetExt)) {		
-		Archive ar(assetPath);		
-		return factory->assemble(content, ar);
-	}
-	return false;
 }

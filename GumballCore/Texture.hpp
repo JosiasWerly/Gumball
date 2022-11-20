@@ -14,10 +14,13 @@ using namespace std;
 //TODO: methods are kinda of crappy, Image::create should instantiate the internal buffer.
 class Image :
 	public Object {
+
 	unsigned id = 0;
 	int width = 0, height = 0;
 	Color *imageBuffer = nullptr;
 public:
+
+
 	~Image() {
 		destroy();
 	}
@@ -75,23 +78,14 @@ public:
 		return imageBuffer[p];
 	}
 	Color *&getBuffer() { return imageBuffer; }
+
+
+	virtual Var<Object> clone() const override { return Var<Object>(new Image); }
+	virtual bool archiveLoad(Archive &ar) override;
+	virtual bool archiveSave(Archive &ar) override;
 };
-
-class TextureFactory :
-	public IAssetFactory {
-public:
-	TextureFactory() :
-		IAssetFactory("TextureFactory") {
-		this->extensions = { "png" };
-	}
-	virtual bool assemble(Object *&content, Archive &ar);
-	virtual bool disassemble(Object *&content, Archive &ar) {
-		return true;
-	}
-};
-
-
 #endif // !__texture
+
 
 
 //class Texture {
@@ -143,3 +137,12 @@ public:
 //	inline void setSlot(int newSlot) { slot = newSlot; }
 //	inline int getSlot() { return slot; }
 //};
+
+//Texture::Texture() {}
+//void Texture::bind() {
+//	glActiveTexture(GL_TEXTURE0 + slot);
+//	image->bind();
+//}
+//void Texture::unbind() {
+//	//glBindTexture(GL_TEXTURE_2D, 0);
+//}

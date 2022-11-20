@@ -70,7 +70,7 @@ void Engine::args(int argc, char *argv[]) {
 }
 void Engine::tick() {
 	initialize();
-	assetSystem->loadAssetsFromFolder(Enviroment::instance()->getResourcePath());
+	assetSystem->loadFromFolder(Enviroment::instance()->getResourcePath());
 
 	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("widget"));
 	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));

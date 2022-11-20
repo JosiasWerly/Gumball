@@ -78,22 +78,25 @@ public:
 
 class GBCORE SceneOverlay :
     public IRenderOverlay {
+
     friend class View;
     friend class DrawCallData;
     friend class DrawCallInstance;
 
     struct MeshDrawCallLayer {
+        DrawCallData *data = nullptr;
+        list<DrawCallInstance *> instances;
+
         MeshDrawCallLayer(DrawCallData *data) :
             data(data) {
         }
-        DrawCallData *data = nullptr;
-        list<DrawCallInstance *> instances;
     };
     MeshDrawCallLayer *findDrawLayer(MeshData *meshData) {
         for (auto &dc : drawCallLayers) {
             if (dc.data->getMeshData() == meshData)
                 return &dc;
         }
+        drawCallLayers.push_back(MeshDrawCallLayer::MeshDrawCallLayer(meshData));
         return nullptr;
     }
     

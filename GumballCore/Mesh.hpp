@@ -32,10 +32,16 @@ class MeshData :
 public:
 	vector<MeshVertexData> mesh;
 	vector<unsigned int> index;
+
+	MeshData() = default;
 	MeshData(const vector<MeshVertexData> &mesh, const vector<unsigned> &index) :
 		mesh(mesh),
 		index(index) {
 	}
+	
+	virtual Var<Object> clone() const override { return Var<Object>(new MeshData); }
+	virtual bool archiveLoad(Archive &ar) override;
+	virtual bool archiveSave(Archive &ar) override;
 };
 class MeshFunctionsLibrary {
 public:
@@ -194,18 +200,4 @@ public:
 		return false;
 	}
 };
-
-class MeshFactory :
-	public IAssetFactory {
-public:
-	MeshFactory() :
-		IAssetFactory("MeshFactory") {
-		this->extensions = { "obj" };
-	}
-	
-	bool assemble(Object *&content, Archive& ar) override;
-	bool disassemble(Object *&content, Archive &ar) override;
-};
-
-
 #endif // !_mesh

@@ -86,7 +86,7 @@ void Shader::captureAttributeSchema() {
 				name,
 				static_cast<unsigned>(i),
 				static_cast<EUniformType>(type)
-			}
+								  }
 		);
 	}
 }
@@ -96,6 +96,41 @@ Inline void Shader::bind() {
 Inline void Shader::unBind() const {
 	glUseProgram(0);
 }
+bool Shader::archiveLoad(Archive &ar) {
+	string vertex, fragment;
+	{
+		enum class ESType {
+			none = -1, vertex, fragment
+		} shType;
+		string line;
+		while (ar.getLine(line)) {
+			if (line.find("#vert") != string::npos) {
+				shType = ESType::vertex;
+			}
+			else if (line.find("#frag") != string::npos) {
+				shType = ESType::fragment;
+			}
+			else if (line.find("//") == string::npos) {
+				if (shType == ESType::vertex)
+					vertex += line + "\n";
+				else
+					fragment += line + "\n";
+			}
+		}
+	}
+	if (vertex.empty() || fragment.empty())
+		return false;
+
+	if (create(vertex, fragment))
+		return true;
+	return false;
+}
+bool Shader::archiveSave(Archive &ar) {
+	return false;
+}
+
+
+
 
 
 Inline void Material::copyParameters() {
@@ -106,7 +141,7 @@ Inline void Material::copyParameters() {
 	auto &attributes = shader->getAttributes();
 	for (auto &a : attributes)
 		parameters[a.name] = new ShaderAttribute(a.location, a.type);
-}	
+}
 Inline void Material::clearParameters() {
 	for (auto &u : parameters)
 		delete u.second;
@@ -121,7 +156,7 @@ void Material::setShader(Shader *shader) {
 	this->shader = shader;
 	copyParameters();
 }
-Inline void Material::bind() {	
+Inline void Material::bind() {
 	shader->bind();
 }
 Inline void Material::unBind() {
@@ -130,21 +165,4 @@ Inline void Material::unBind() {
 Inline void Material::uploadParams() {
 	for (auto &u : parameters)
 		u.second->param->upload();
-}
-
-
-bool ShaderFactory::assemble(Object *&content, Archive &ar) {
-	string vertex, fragment;
-	makeSourceFromArchive(ar, vertex, fragment);
-	Shader *shader = new Shader;
-	if (shader->create(vertex, fragment)) {
-		content = shader;
-		return true;
-	}
-	delete shader;
-	shader = nullptr;
-	return false;
-}
-bool ShaderFactory::disassemble(Object *&content, Archive &ar) {
-	return true;
 }

@@ -2,13 +2,14 @@
 #ifndef _object
 #define _object
 #include "Var.hpp"
-
+#include "Archive.hpp"
 class Object {
 public:
 	virtual ~Object() {}
 
-	virtual Var<Object> clone() { return Var<Object>(); }
-	virtual int *serialize(void *) { return nullptr; }
+	virtual Var<Object> clone() const { throw "NotImplemented"; return nullptr; }
+	virtual bool archiveLoad(Archive &ar) { throw "NotImplemented"; return false; }
+	virtual bool archiveSave(Archive &ar) { throw "NotImplemented"; return false; }
 };
 
 

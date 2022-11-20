@@ -88,6 +88,7 @@ public:
 	Shader();
 	virtual ~Shader();
 	bool create(const string &vertex, const string &fragment);
+
 	Inline void bind();
 	Inline void unBind() const;
 	
@@ -106,6 +107,11 @@ public:
 		}
 		return nullptr;
 	}
+
+
+	virtual Var<Object> clone() const override { return Var<Object>(new Shader); }
+	virtual bool archiveLoad(Archive &ar) override;
+	virtual bool archiveSave(Archive &ar) override;
 };
 
 //TODO: this class should be moved to SceneOverlay.hpp, because the clsoe relation that it has with it
@@ -130,33 +136,7 @@ public:
 	Inline void unBind();
 	Inline void uploadParams();
 };
-class ShaderFactory : 
-	public IAssetFactory {
-public:
-	ShaderFactory() : 
-		IAssetFactory("ShaderFactory") {
-		this->extensions = { "shader", "glsl" };
-	}
-	virtual bool assemble(Object *&content, Archive &ar);
-	virtual bool disassemble(Object *&content, Archive &ar);
-	Inline void makeSourceFromArchive(Archive& ar, string &vertexCode, string &fragmentCode) {
-		string outString[2];
-		enum ESType{
-			none = -1, vertex, fragment
-		} shType;
-		string line;
-		while (ar.getLine(line)) {
-			if (line.find("#vert") != string::npos)
-				shType = ESType::vertex;
-			else if (line.find("#frag") != string::npos)
-				shType = ESType::fragment;
-			else if (line.find("//") == string::npos)
-				outString[static_cast<int>(shType)] += line + "\n";
-		}
-		vertexCode = outString[ESType::vertex];
-		fragmentCode = outString[ESType::fragment];
-	}
-};
+
 
 
 

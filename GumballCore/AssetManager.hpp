@@ -7,23 +7,14 @@
 #include "Subsystem.hpp"
 #include "Archive.hpp"
 
+
 #include <list>
 #include <string>
 using namespace std;
 
 class Asset;
-class IAssetFactory;
+class AssetFactory;
 class AssetsSystem;
-
-/*
-* TODO: 
-* "minor" rework, today for retrieve an asset you need to:
-* Engine::instance()->assetSystem->getAsset("logo")->getContent();
-* 
-* and should be
-* Engine::instance()->assetSystem.getAsset<T>(Name)->getContent();
-* in this manner we can avoid searching all the list of assets.
-*/
 
 namespace Path {
 	static string extention(string path);
@@ -52,30 +43,43 @@ public:
 	Inline const string& getName() { return name; }
 	Inline const string& getPath() { return filePath; }
 };
-class IAssetFactory {
+
+struct SubClass {
+public:
+	virtual Object *instantiate() const = 0;
+};
+template<class T>
+struct TSubClass : 
+	public SubClass{
+public:
+	Object *instantiate() const override { return new T; }
+};
+
+//this can be a tuple inside of assetSystem... no need for this class
+class AssetFactory {
 protected:
+	SubClass *subClass = nullptr;
 	list<string> extensions;
 public:
-	const string name;
-
-	IAssetFactory(string name = "") : 
-		name(name) {
-	}
+	AssetFactory(SubClass *subClass, list<string> extensions);
 	bool hasExtension(const string &extention);
-	virtual bool assemble(Object *&content, Archive &ar) = 0;
-	virtual bool disassemble(Object *&content, Archive &ar) = 0;
-};
+	Object *construct() { return subClass->instantiate(); }
+};	
+
 class AssetsSystem :
 	public Subsystem {
-
-	list<IAssetFactory *> factories;
+private:
+	list<AssetFactory> factories;
 	list<Asset *> assets;
 
+	AssetFactory *findFactory(const string &extension);
 protected:
 	virtual void initialize() override;
 	virtual void shutdown() override;
 
 public:
+	void addAsset(Asset *asset);
+	void delAsset(Asset *asset);	
 	Asset *getAsset(string name);
 	template<class T> T *getAsset(string name) {
 		T *target;
@@ -86,17 +90,11 @@ public:
 		return nullptr;
 	}
 
+	bool save(Asset *asset);
+	bool load(Asset *asset);
 
-	Asset *createAsset(string name);
-	void unloadAsset(string name);
+	void loadFromFolder(string root);
 	void loadAssetFromFile(const string &assetPath);
-	void loadAssetsFromFolder(string root);
-	void reloadAsset(string name);
-	
-	IAssetFactory *findFactory(const string &extension);
-	void createFactory(IAssetFactory *newFactory);
-	
-	bool assembleObject(Object *&content, const string &assetPath);
 };
 
 #endif // !_assetmanager
