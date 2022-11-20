@@ -3,11 +3,11 @@
 
 
 View::View() {
-    static auto scene = Engine::instance()->renderSystem->scene;
+    auto scene = Engine::instance()->renderSystem->scene;
     scene->views.push_back(this);
 }
 View::~View() {
-    static auto scene = Engine::instance()->renderSystem->scene;
+    auto scene = Engine::instance()->renderSystem->scene;
     scene->views.remove(this);
 }
 
@@ -21,17 +21,16 @@ DrawCallData::DrawCallData(MeshData *mesh) {
     meshData = mesh;
 
     VboBuilder()
-        .setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))
-        .addAttrib<float>(3)//pos
-        .addAttrib<float>(3)//normal
-        .addAttrib<float>(2)//uv
-        .build();
+		.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))
+		.addAttrib<float>(3)//pos
+		.addAttrib<float>(3)//normal
+		.addAttrib<float>(2)//uv
+		.build();
 
-    ibo->setBuffer(
-        meshData->index.data(),
-        static_cast<unsigned int> (meshData->index.size() * sizeof(unsigned)));
+	ibo->setBuffer(
+		meshData->index.data(),
+		static_cast<unsigned int> (meshData->index.size() * sizeof(unsigned)));
     unBind();
-
 }
 DrawCallData::~DrawCallData() {
     vao->unBind();
@@ -52,20 +51,39 @@ Inline void DrawCallData::draw() {
 }
 
 DrawCallInstance::DrawCallInstance(string meshName){
-    static auto scene = Engine::instance()->renderSystem->scene;
+    auto scene = Engine::instance()->renderSystem->scene;
+
+    Shader *sh = Engine::instance()->assetSystem->getAsset("default")->getContent().pin<Shader>();
+    material.setShader(sh);
+    material.param<EUniformType::u_fvec4>("uColor")->value = glm::vec4(1, 1, 1, 0);
+    material.param<EUniformType::u_stexture>("uTexture")->image = Engine::instance()->assetSystem->getAsset("logo")->getContent().pin<Image>();
+
     MeshData *mData = Engine::instance()->assetSystem->getAsset(meshName)->getContent().pin<MeshData>();
     if (!mData)
         throw 1;
-    auto drawCallLayer = scene->findDrawLayer(mData);
-    drawData = drawCallLayer->data;
-    drawCallLayer->instances.push_back(this);
+    auto drawLayer = scene->findDrawcallLayer(mData);
+    meshData = drawLayer->drawcallData->getMeshData();
+    drawLayer->drawcallInstances.push_back(this);
 }
 DrawCallInstance::~DrawCallInstance() {
     static auto scene = Engine::instance()->renderSystem->scene;
-    auto drawCallLayer = scene->findDrawLayer(drawData->getMeshData());
-    drawCallLayer->instances.remove(this);
+    auto drawLayer = scene->findDrawcallLayer(meshData);
+    drawLayer->drawcallInstances.remove(this);
 }
 
+SceneOverlay::DrawcallLayer::~DrawcallLayer() {
+    delete drawcallData;
+    drawcallData = nullptr;
+}
+SceneOverlay::DrawcallLayer *SceneOverlay::findDrawcallLayer(MeshData * meshData) {
+    for (auto &dc : drawCallLayers) {
+        if (dc.drawcallData->getMeshData() == meshData)
+            return &dc;
+    }
+    auto &newLayer = drawCallLayers.emplace_back();
+    newLayer.drawcallData = new DrawCallData(meshData);
+    return &newLayer;
+}
 SceneOverlay::SceneOverlay() : 
 	IRenderOverlay("scene") {
 }
@@ -81,14 +99,14 @@ void SceneOverlay::onRender(const double &deltaTime) {
 	for (auto &view : views) {
 		auto viewMat = view->transform.getMat();
         for (auto &drawLayer : drawCallLayers) {
-            drawLayer.data->bind();
-            for (auto &drawCall : drawLayer.instances) {
+            drawLayer.drawcallData->bind();
+            for (auto &drawCall : drawLayer.drawcallInstances) {
                 drawCall->material.bind();
                 drawCall->material.param<EUniformType::u_mat>("uView")->value = viewMat;
                 drawCall->material.param<EUniformType::u_mat>("uProj")->value = view->viewMode.mProjection;
                 drawCall->material.param<EUniformType::u_mat>("uModel")->value = drawCall->transform.getMat();
                 drawCall->material.uploadParams();
-                drawLayer.data->draw();
+                drawLayer.drawcallData->draw();
             }
         }
 	}

@@ -114,11 +114,11 @@ public:
 	virtual bool archiveSave(Archive &ar) override;
 };
 
-//TODO: this class should be moved to SceneOverlay.hpp, because the clsoe relation that it has with it
+//TODO: this class should be moved to SceneOverlay.hpp, because the close relation between both
 class GBCORE Material {
 private:
 	Shader *shader;
-	map<string, ShaderAttribute *> parameters;	
+	map<string, ShaderAttribute *> parameters;
 
 	Inline void copyParameters();
 	Inline void clearParameters();

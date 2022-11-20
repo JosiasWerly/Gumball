@@ -67,7 +67,7 @@ public:
 };
 
 class GBCORE DrawCallInstance {
-    DrawCallData *drawData = nullptr;
+    MeshData *meshData = nullptr;
 public:
     Material material;
     Transform transform;
@@ -82,26 +82,19 @@ class GBCORE SceneOverlay :
     friend class View;
     friend class DrawCallData;
     friend class DrawCallInstance;
-
-    struct MeshDrawCallLayer {
-        DrawCallData *data = nullptr;
-        list<DrawCallInstance *> instances;
-
-        MeshDrawCallLayer(DrawCallData *data) :
-            data(data) {
-        }
+    
+    struct DrawcallLayer {
+        DrawCallData *drawcallData = nullptr;
+        list<DrawCallInstance *> drawcallInstances;
+        ~DrawcallLayer();
     };
-    MeshDrawCallLayer *findDrawLayer(MeshData *meshData) {
-        for (auto &dc : drawCallLayers) {
-            if (dc.data->getMeshData() == meshData)
-                return &dc;
-        }
-        drawCallLayers.push_back(MeshDrawCallLayer::MeshDrawCallLayer(meshData));
-        return nullptr;
-    }
+
     
     list<View *> views;
-    list<MeshDrawCallLayer> drawCallLayers;
+    list<DrawcallLayer> drawCallLayers;
+    
+    
+    DrawcallLayer *findDrawcallLayer(MeshData *meshData);
 public:
     SceneOverlay();
     ~SceneOverlay();
@@ -117,24 +110,3 @@ public:
 
 
 #endif // !_sceneoverlay
-
-
-//class GBCORE DrawInstance {
-//    Vao *vao = nullptr;
-//    Vbo *vbo = nullptr;
-//    Ibo *ibo = nullptr;
-//
-//public:
-//    MeshData *meshData = nullptr;
-//    Material material;
-//    Transform transform;
-//
-//    DrawInstance();
-//    ~DrawInstance();
-//    bool setMesh(string name);
-//    bool setTexture(string name);
-//
-//    void bind();
-//    void unbind();
-//    void draw();
-//};
