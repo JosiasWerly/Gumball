@@ -70,7 +70,7 @@ class GBCORE DrawCallInstance {
     MeshData *meshData = nullptr;
 public:
     Material material;
-    Transform transform;
+    Transform *transform = nullptr;
 
     DrawCallInstance(string meshName);
     ~DrawCallInstance();
@@ -88,12 +88,10 @@ class GBCORE SceneOverlay :
         list<DrawCallInstance *> drawcallInstances;
         ~DrawcallLayer();
     };
-
     
     list<View *> views;
     list<DrawcallLayer> drawCallLayers;
-    
-    
+
     DrawcallLayer *findDrawcallLayer(MeshData *meshData);
 public:
     SceneOverlay();

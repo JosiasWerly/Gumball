@@ -10,36 +10,39 @@
 #include <list>
 using namespace std;
 
+class GameObject;
+class EntitySubsystem;
 class World;
-class Actor;
-class Component;
-
 
 enum class EGameObjectState {
-	nominal, begining, ending
+	spawn, nominal, destroy
 };
 class GBCORE GameObject {
+	friend class EntitySubsystem;
 	EGameObjectState state;
 	string name;
+
 public:
 	GameObject();
-	GameObject(string name);
-
 	virtual ~GameObject();
 	virtual void beginPlay();
 	virtual void endPlay();
 	virtual void tick(const double &deltaTime);	
 
-
 	string getName();
 	void setName(string name);
 	const bool isValid() const { return state == EGameObjectState::nominal; }
+
+	static void *operator new(unsigned long long sz);
 };
+Extern GBCORE void destroy(GameObject *go); //I would like to use the keyword delete, however my brain is moody today.
 
 class GBCORE EntitySubsystem {
 	friend class GameObject;
 	list<Var<GameObject>> entities;
 	list<Var<GameObject> *> toBegin, toEnd, toTick;
+
+	string requestName(const string &suggestedName);
 public:
 	void unload();
 	void add(GameObject *go);
@@ -47,11 +50,22 @@ public:
 	Inline void tick(const double &deltaTime);
 };
 
+
+class GBCORE Level {
+public:
+	Level() = default;
+	virtual ~Level() = default;
+
+	virtual void loadLevel() = 0;
+};
+
 class World : 
 	public Subsystem {
-
 public:
-	EntitySubsystem *entitySystem;
+
+	EntitySubsystem *entitySystem = nullptr;
+	Level *currentLevel = nullptr;
+
 
 	World();
 	virtual void initialize() override;
@@ -60,38 +74,5 @@ public:
 	virtual void endPlay() override;
 	virtual void tick(const double &deltaTime) override;
 };
-
-class GBCORE Component : 
-	public GameObject {
-	friend class Actor;
-private:
-	Actor *owner;
-public:
-	Component();
-	~Component();
-};
-
-class GBCORE Actor :
-	public GameObject {
-	friend class World;
-private:
-	list<Component*> components;
-public:
-	static void *operator new(unsigned long long sz);
-	static void operator delete(void *ptr);
-	
-	Actor();
-	virtual ~Actor();
-	virtual void beginPlay();
-	virtual void endPlay();
-	virtual void tick(const double &deltaTime);
-
-	void addComponent(Component *comp);
-	void delComponent(Component *comp);
-	Component *findComponent(string name);
-	template<class t> t *findComponent();
-	const list<Component *> &getComponents() { return components; }
-};
-
 
 #endif // _world

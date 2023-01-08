@@ -104,7 +104,7 @@ void SceneOverlay::onRender(const double &deltaTime) {
                 drawCall->material.bind();
                 drawCall->material.param<EUniformType::u_mat>("uView")->value = viewMat;
                 drawCall->material.param<EUniformType::u_mat>("uProj")->value = view->viewMode.mProjection;
-                drawCall->material.param<EUniformType::u_mat>("uModel")->value = drawCall->transform.getMat();
+                drawCall->material.param<EUniformType::u_mat>("uModel")->value = drawCall->transform->getMat();
                 drawCall->material.uploadParams();
                 drawLayer.drawcallData->draw();
             }

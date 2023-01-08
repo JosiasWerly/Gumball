@@ -7,6 +7,10 @@
 
 
 #pragma warning( disable : 4005)
+#define Export __declspec(dllexport)
+#define Import __declspec(dllimport)
+
+
 #ifdef GBCORE
 #define GBCORE __declspec(dllexport)
 #else

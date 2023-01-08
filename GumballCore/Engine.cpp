@@ -79,11 +79,14 @@ void Engine::tick() {
 	v->viewMode.setProjectionPerspective();
 	v->transform.position.z = -10;
 
+	/// crappy way of controlling the play and stop button
 	UI::Canvas win;
 	UI::Text txt;
 	UI::Button bt;
+	bt.text = ">";
 	(*widget) << &win;
-	win << &txt << &bt;
+	win << &txt << &bt;	
+	//////////////////////////////////////////////////////////////////
 
 	while (true) {
 		hotReload();
@@ -91,8 +94,18 @@ void Engine::tick() {
 		timeStats.capture();
 		for (auto &s : tickingSystems)
 			s->tick(timeStats.getDeltaTime());
-	}
 
+		if (bt.isClicked()) {
+			if (bt.text == ">") {
+				endPlay();
+				bt.text = "||";
+			}
+			else {
+				beginPlay();
+				bt.text = ">";
+			}
+		}
+	}
 	endPlay();
 	shutdown();
 }

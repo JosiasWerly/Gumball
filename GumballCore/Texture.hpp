@@ -11,7 +11,6 @@ using namespace std;
 
 
 //TODO: change name to Texture
-//TODO: methods are kinda of crappy, Image::create should instantiate the internal buffer.
 class Image :
 	public Object {
 

@@ -32,8 +32,6 @@ public:
 	}
 };
 
-
-
 template<class T> class Var {
 	typedef VarContainer Container;
 	template<class t> friend class Var;
@@ -110,9 +108,6 @@ public:
 	}
 
 };
-
-
-
 
 //class IVarContainer {
 //protected:

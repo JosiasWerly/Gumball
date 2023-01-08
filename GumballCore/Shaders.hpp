@@ -58,7 +58,7 @@ protected:
 public:
 	using IShaderParameter::IShaderParameter;
 };
-
+  
 struct ShaderAttributeDescriptor {
 	string name;
 	unsigned location;
