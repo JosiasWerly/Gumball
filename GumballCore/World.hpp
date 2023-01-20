@@ -73,6 +73,7 @@ public:
 	virtual void beginPlay() override;
 	virtual void endPlay() override;
 	virtual void tick(const double &deltaTime) override;
+	ESystemTickType tickMode() override { return ESystemTickType::gameplay; }
 };
 
 #endif // _world

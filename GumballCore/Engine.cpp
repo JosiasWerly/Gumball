@@ -8,48 +8,27 @@
 #include "World.hpp"
 #include "EnviromentVariables.hpp"
 
+#include "Subsystem.hpp"
 #include <iostream>
 #include <string>
 using namespace std;
 
 Engine::Engine() {
+	systemSeer = new SystemOverseer;
+
 	project = nullptr;
 	projectLinker = new ProjectLinker;
-	renderSystem = new RenderSystem;
-	assetSystem = new AssetsSystem;
-	inputSystem = new InputSystem;
-	world = new World;
-
-	systems.push_back(renderSystem);
-	systems.push_back(assetSystem);
-	systems.push_back(inputSystem);
-	systems.push_back(world);
-
-	tickingSystems.push_back(renderSystem);
-	tickingSystems.push_back(inputSystem);
-	tickingSystems.push_back(world);
+	renderSystem = systemSeer->addSystem<RenderSystem>();
+	assetSystem = systemSeer->addSystem<AssetsSystem>();
+	inputSystem = systemSeer->addSystem<InputSystem>();
+	world = systemSeer->addSystem<World>();
 }
 Engine::~Engine(){
 }
-Inline void Engine::beginPlay() const {
-	for (auto &s : systems)
-		s->beginPlay();
-}
-Inline void Engine::endPlay() const {
-	for (auto &s : systems)
-		s->endPlay();
-}
-Inline void Engine::shutdown() const {
-	for (auto &s : systems)
-		s->shutdown();
-}
-Inline void Engine::initialize() const {
-	for (auto &s : systems)
-		s->initialize();
-}
+
 Inline void Engine::hotReload() {
 	if (projectLinker->hasNewVersion()) {
-		endPlay();
+		systemSeer->endPlay();
 		if (project) {
 			project->detached();
 			delete project;
@@ -57,7 +36,7 @@ Inline void Engine::hotReload() {
 		}
 		if (project = projectLinker->load()) {
 			project->attached();
-			beginPlay();
+			systemSeer->beginPlay();
 		}
 	}
 }
@@ -69,17 +48,18 @@ void Engine::args(int argc, char *argv[]) {
 	e->contentPath = e->applicationDir + "\\content\\";
 }
 void Engine::tick() {
-	initialize();
+	systemSeer->initialize();
 	assetSystem->loadFromFolder(Enviroment::instance()->getResourcePath());
 
-	auto widget = dynamic_cast<WidgetOverlay*>(getSystem<RenderSystem>()->getLayer("widget"));
-	auto scene = dynamic_cast<SceneOverlay *>(getSystem<RenderSystem>()->getLayer("scene"));
+	auto widget = dynamic_cast<WidgetOverlay*>(renderSystem->getLayer("widget"));
+	auto scene = dynamic_cast<SceneOverlay *>(renderSystem->getLayer("scene"));
 
 	auto v = new View;
 	v->viewMode.setProjectionPerspective();
 	v->transform.position.z = -10;
 
 	/// crappy way of controlling the play and stop button
+	bool isPlaying = false;
 	UI::Canvas win;
 	UI::Text txt;
 	UI::Button bt;
@@ -92,20 +72,27 @@ void Engine::tick() {
 		hotReload();
 		
 		timeStats.capture();
-		for (auto &s : tickingSystems)
-			s->tick(timeStats.getDeltaTime());
+		const double& deltaTime = timeStats.getDeltaTime();
+		
+		//if (isPlaying)
+			systemSeer->tick<ESystemTickType::gameplay>(deltaTime);
+		//else 
+			systemSeer->tick<ESystemTickType::editor>(deltaTime);
+
 
 		if (bt.isClicked()) {
-			if (bt.text == ">") {
-				endPlay();
+			if (isPlaying) {
+				isPlaying = false;
+				systemSeer->endPlay();
 				bt.text = "||";
 			}
 			else {
-				beginPlay();
+				isPlaying = true;
+				systemSeer->beginPlay();
 				bt.text = ">";
 			}
 		}
 	}
-	endPlay();
-	shutdown();
+	systemSeer->endPlay();
+	systemSeer->shutdown();
 }

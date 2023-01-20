@@ -60,7 +60,7 @@ public:
     void tick(const double &deltaTime) override;
     void pushLayer(IRenderOverlay *layer, bool pushBack = true);
     void popLayer(IRenderOverlay *layer);
-
+    //TODO:transform this into a tempalte method
     Inline IRenderOverlay *getLayer(string name) {
         for (auto &l : layers) {
             if (l->name == name)
@@ -70,6 +70,8 @@ public:
     }
     Inline list<IRenderOverlay*>& getLayerList() { return layers; }
     template<class t> t *getLayerAs(string name) { return dynamic_cast<t *>(getLayer(name)); }
+
+    ESystemTickType tickMode() override { return ESystemTickType::all; }
 };
 
 #endif // !_viewport

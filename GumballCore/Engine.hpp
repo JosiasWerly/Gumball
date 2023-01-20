@@ -6,6 +6,7 @@
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
 
+class SystemOverseer;
 class Subsystem;
 class EditorOverlay;
 class ProjectLinker;
@@ -23,32 +24,17 @@ private:
 	friend int main(int, char *[]);
 
 	TimeStat timeStats;
-	std::list<Subsystem *> systems, tickingSystems;
-	ProjectLinker *projectLinker;
+	Project *project;
+	ProjectLinker *projectLinker;	
+	SystemOverseer *systemSeer;
 	
 	Engine();
 	~Engine();
-
-	Inline void beginPlay() const;
-	Inline void endPlay() const;
-	Inline void shutdown() const;
-	Inline void initialize() const;
+	
 	Inline void hotReload();
-
-	Project *project;
 public:
 	void args(int argc, char *argv[]);
 	void tick();
-
-	template<class T>
-	T *getSystem() {
-		for (auto s : systems) {
-			if (T *sys = reinterpret_cast<T *>(s))
-				return sys;
-		}
-		return nullptr;
-	}
-
 
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;

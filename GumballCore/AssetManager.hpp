@@ -95,6 +95,8 @@ public:
 
 	void loadFromFolder(string root);
 	void loadAssetFromFile(const string &assetPath);
+
+	ESystemTickType tickMode() override { return ESystemTickType::disable; }
 };
 
 #endif // !_assetmanager
