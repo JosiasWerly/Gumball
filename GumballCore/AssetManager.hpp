@@ -67,7 +67,7 @@ public:
 };	
 
 class AssetsSystem :
-	public Subsystem {
+	public EngineSystem {
 private:
 	list<AssetFactory> factories;
 	list<Asset *> assets;
@@ -96,7 +96,7 @@ public:
 	void loadFromFolder(string root);
 	void loadAssetFromFile(const string &assetPath);
 
-	ESystemTickType tickMode() override { return ESystemTickType::disable; }
+	ESystemTickType tickType() override { return ESystemTickType::disable; }
 };
 
 #endif // !_assetmanager

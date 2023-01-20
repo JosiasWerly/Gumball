@@ -51,21 +51,11 @@ public:
 };
 
 
-class GBCORE Level {
-public:
-	Level() = default;
-	virtual ~Level() = default;
-
-	virtual void loadLevel() = 0;
-};
-
 class World : 
-	public Subsystem {
+	public EngineSystem {
 public:
 
 	EntitySubsystem *entitySystem = nullptr;
-	Level *currentLevel = nullptr;
-
 
 	World();
 	virtual void initialize() override;
@@ -73,7 +63,7 @@ public:
 	virtual void beginPlay() override;
 	virtual void endPlay() override;
 	virtual void tick(const double &deltaTime) override;
-	ESystemTickType tickMode() override { return ESystemTickType::gameplay; }
+	ESystemTickType tickType() override { return ESystemTickType::gameplay; }
 };
 
 #endif // _world

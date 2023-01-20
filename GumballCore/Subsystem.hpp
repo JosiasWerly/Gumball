@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _subsystem
-#define _subsystem
+#ifndef _enginesystem
+#define _enginesystem
 
 #include <list>
 
@@ -13,26 +13,26 @@ enum class ESystemTickType {
 	gameplay,
 	all
 };
-class GBCORE Subsystem {
+class GBCORE EngineSystem {
 protected:
 	friend SystemOverseer;
 	friend Engine;
 
-	Subsystem();
-	virtual ~Subsystem();
+	EngineSystem();
+	virtual ~EngineSystem();
 	virtual void initialize();
 	virtual void shutdown();
 	virtual void beginPlay();
 	virtual void endPlay();
 	virtual void tick(const double &deltaTime);
-	virtual ESystemTickType tickMode();
+	virtual ESystemTickType tickType();
 };
 
 class GBCORE SystemOverseer {
 	friend Engine;
 private:
-	std::list<Subsystem *> systems;
-	std::list<Subsystem *> editorTick, gameplayTick;
+	std::list<EngineSystem *> systems;
+	std::list<EngineSystem *> editorTick, gameplayTick;
 	
 	SystemOverseer();
 protected:
@@ -59,7 +59,7 @@ public:
 		if (!sys) {
 			sys = new T;
 			systems.push_back(sys);
-			ESystemTickType tick = sys->tickMode();
+			ESystemTickType tick = sys->tickType();
 			switch (tick) {
 			case ESystemTickType::editor:
 				editorTick.push_back(sys);
@@ -85,4 +85,4 @@ public:
 		return nullptr;
 	}
 };
-#endif // !_subsystem
+#endif // !_enginesystem

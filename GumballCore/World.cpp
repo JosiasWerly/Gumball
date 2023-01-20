@@ -99,23 +99,15 @@ Inline void EntitySubsystem::tick(const double &deltaTime) {
 	}
 }
 
-
-void Level::loadLevel() {
-
-}
-
 World::World() {
 	entitySystem = new EntitySubsystem;
 }
 void World::initialize() {
 }
 void World::shutdown() {
-	if (currentLevel)
-		delete currentLevel;
 	entitySystem->unload();
 }
 void World::beginPlay() {
-	currentLevel->loadLevel();
 }
 void World::endPlay() {
 	entitySystem->unload();

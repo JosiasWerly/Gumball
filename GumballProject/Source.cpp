@@ -63,14 +63,6 @@ public:
 	}
 };
 
-class Sandbox : 
-	public Level {
-public:
-	void loadLevel() override {
-		new MyActor();
-	}
-};
-
 
 class MyProject :
 	public Project {
@@ -78,7 +70,7 @@ public:
 	//when this DLL is attached
 	virtual void attached() {
 		auto w = Engine::instance()->world;
-		w->currentLevel = new Sandbox;
+		new MyActor();
 	}
 
 	//when this DLL is detached

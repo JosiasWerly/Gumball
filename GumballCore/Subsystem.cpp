@@ -1,14 +1,14 @@
 #include "Subsystem.hpp"
 
 
-Subsystem::Subsystem() {}
-Subsystem::~Subsystem() {}
-void Subsystem::initialize() {}
-void Subsystem::shutdown() {}
-void Subsystem::beginPlay() {}
-void Subsystem::endPlay() {}
-void Subsystem::tick(const double &deltaTime) {}
-ESystemTickType Subsystem::tickMode() { return ESystemTickType::disable; }
+EngineSystem::EngineSystem() {}
+EngineSystem::~EngineSystem() {}
+void EngineSystem::initialize() {}
+void EngineSystem::shutdown() {}
+void EngineSystem::beginPlay() {}
+void EngineSystem::endPlay() {}
+void EngineSystem::tick(const double &deltaTime) {}
+ESystemTickType EngineSystem::tickType() { return ESystemTickType::disable; }
 
 SystemOverseer::SystemOverseer() {
 }

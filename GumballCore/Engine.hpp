@@ -7,7 +7,7 @@
 #include "TimeStat.hpp"
 
 class SystemOverseer;
-class Subsystem;
+class EngineSystem;
 class EditorOverlay;
 class ProjectLinker;
 class RenderSystem;

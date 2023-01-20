@@ -45,7 +45,7 @@ public:
 };
 
 class RenderSystem :
-    public Subsystem {
+    public EngineSystem {
     
     list<IRenderOverlay*> layers;
 public:
@@ -71,7 +71,7 @@ public:
     Inline list<IRenderOverlay*>& getLayerList() { return layers; }
     template<class t> t *getLayerAs(string name) { return dynamic_cast<t *>(getLayer(name)); }
 
-    ESystemTickType tickMode() override { return ESystemTickType::all; }
+    ESystemTickType tickType() override { return ESystemTickType::all; }
 };
 
 #endif // !_viewport

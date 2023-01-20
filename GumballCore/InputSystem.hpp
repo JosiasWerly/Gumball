@@ -57,7 +57,7 @@ namespace Input {
 };
 
 class GBCORE InputSystem : 
-	public Subsystem {
+	public EngineSystem {
 public:
 	struct KeyCodeStatus {
 		bool pressed, released, repeat; 
@@ -73,7 +73,7 @@ public:
 	bool onKeyReleased(Input::EKeyCode Key);
 	void tick(const double &deltaTime) override;
 
-	ESystemTickType tickMode() override { return ESystemTickType::all; }
+	ESystemTickType tickType() override { return ESystemTickType::all; }
 };
 
 #undef keyWrapper
