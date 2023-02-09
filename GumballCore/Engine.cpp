@@ -23,9 +23,8 @@ Engine::Engine() {
 	inputSystem = systemSeer->addSystem<InputSystem>();
 	world = systemSeer->addSystem<World>();
 }
-Engine::~Engine(){
+Engine::~Engine() {
 }
-
 Inline void Engine::hotReload() {
 	if (projectLinker->hasNewVersion()) {
 		systemSeer->endPlay();
@@ -74,9 +73,9 @@ void Engine::tick() {
 		timeStats.capture();
 		const double& deltaTime = timeStats.getDeltaTime();
 		
-		//if (isPlaying)
+		if (isPlaying)
 			systemSeer->tick<ESystemTickType::gameplay>(deltaTime);
-		//else 
+		else 
 			systemSeer->tick<ESystemTickType::editor>(deltaTime);
 
 

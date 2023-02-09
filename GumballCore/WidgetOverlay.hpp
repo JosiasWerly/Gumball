@@ -92,7 +92,6 @@ namespace UI {
         Button() = default;
         Inline bool isClicked() { return clicked; }
     };
-
 };
 
 #endif // !_widgetoverlay

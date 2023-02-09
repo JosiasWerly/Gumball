@@ -61,16 +61,16 @@ public:
 			systems.push_back(sys);
 			ESystemTickType tick = sys->tickType();
 			switch (tick) {
-			case ESystemTickType::editor:
-				editorTick.push_back(sys);
-				break;
-			case ESystemTickType::gameplay:
-				gameplayTick.push_back(sys);
-				break;
-			case ESystemTickType::all:
-				editorTick.push_back(sys);
-				gameplayTick.push_back(sys);
-				break;
+				case ESystemTickType::editor:
+					editorTick.push_back(sys);
+					break;
+				case ESystemTickType::gameplay:
+					gameplayTick.push_back(sys);
+					break;
+				case ESystemTickType::all:
+					editorTick.push_back(sys);
+					gameplayTick.push_back(sys);
+					break;
 			}
 		}
 		return sys;

@@ -50,11 +50,9 @@ public:
 	Inline void tick(const double &deltaTime);
 };
 
-
 class World : 
 	public EngineSystem {
 public:
-
 	EntitySubsystem *entitySystem = nullptr;
 
 	World();
