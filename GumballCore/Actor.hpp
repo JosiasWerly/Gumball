@@ -5,21 +5,21 @@
 #include "World.hpp"
 #include "Math.hpp"
 
-class GBCORE Component :
+class GBCORE ActorComponent :
 	public GameObject {
 	friend class Actor;
 private:
 	Actor *owner;
 public:
-	Component();
-	virtual ~Component();
+	ActorComponent();
+	virtual ~ActorComponent();
 };
 
 class GBCORE Actor :
 	public GameObject {
 	friend class World;
 private:
-	list<Component *> components;
+	list<ActorComponent *> components;
 public:
 	Transform transform;
 
@@ -29,11 +29,11 @@ public:
 	virtual void endPlay();
 	virtual void tick(const double &deltaTime);
 
-	void addComponent(Component *comp);
-	void delComponent(Component *comp);
-	Component *findComponent(string name);
+	void addComponent(ActorComponent *comp);
+	void delComponent(ActorComponent *comp);
+	ActorComponent *findComponent(string name);
 	template<class t> t *findComponent();
-	const list<Component *> &getComponents() { return components; }
+	const list<ActorComponent *> &getComponents() { return components; }
 };
 
 #endif // _actor

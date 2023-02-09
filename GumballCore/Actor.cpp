@@ -1,10 +1,10 @@
 #include "Actor.hpp"
 #include "Engine.hpp"
 
-Component::Component() :
+ActorComponent::ActorComponent() :
 	owner(nullptr) {
 }
-Component::~Component() {
+ActorComponent::~ActorComponent() {
 
 }
 
@@ -25,7 +25,7 @@ void Actor::tick(const double &deltaTime) {
 	for (auto &c : components)
 		c->tick(deltaTime);
 }
-void Actor::addComponent(Component *comp) {
+void Actor::addComponent(ActorComponent *comp) {
 	static World &w = *Engine::instance()->world;
 	if (comp->owner)
 		comp->owner->delComponent(comp);
@@ -33,13 +33,13 @@ void Actor::addComponent(Component *comp) {
 	if (isValid())
 		comp->beginPlay();
 }
-void Actor::delComponent(Component *comp) {
+void Actor::delComponent(ActorComponent *comp) {
 	if (comp->owner == this)
 		components.remove(comp);
 	if (isValid())
 		comp->endPlay();
 }
-Component *Actor::findComponent(string name) {
+ActorComponent *Actor::findComponent(string name) {
 	for (auto &c : components) {
 		if (c->getName() == name)
 			return c;

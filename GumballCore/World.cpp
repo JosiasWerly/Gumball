@@ -28,7 +28,7 @@ void *GameObject::operator new(unsigned long long sz) {
 	w.entitySystem->add(newGo);
 	return newGo;
 }
-void destroy(GameObject *go) {
+void GameObject::destroy(GameObject *go) {
 	static World &w = *Engine::instance()->world;
 	w.entitySystem->del(go);
 }

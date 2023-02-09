@@ -7,6 +7,7 @@
 #include "Subsystem.hpp"
 #include "Var.hpp"
 
+#include <deque>
 #include <list>
 using namespace std;
 
@@ -27,15 +28,15 @@ public:
 	virtual ~GameObject();
 	virtual void beginPlay();
 	virtual void endPlay();
-	virtual void tick(const double &deltaTime);	
+	virtual void tick(const double &deltaTime);
 
 	string getName();
 	void setName(string name);
 	const bool isValid() const { return state == EGameObjectState::nominal; }
 
 	static void *operator new(unsigned long long sz);
+	static void destroy(GameObject *go);
 };
-Extern GBCORE void destroy(GameObject *go); //I would like to use the keyword delete, however my brain is moody today.
 
 class GBCORE EntitySubsystem {
 	friend class GameObject;
@@ -63,5 +64,4 @@ public:
 	virtual void tick(const double &deltaTime) override;
 	ESystemTickType tickType() override { return ESystemTickType::gameplay; }
 };
-
 #endif // _world

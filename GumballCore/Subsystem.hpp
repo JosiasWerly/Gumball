@@ -52,7 +52,7 @@ protected:
 			s->tick(deltaTime);
 	}
 public:
-	
+
 	template<class T>
 	T *addSystem() {
 		T *sys = getSystem<T>();

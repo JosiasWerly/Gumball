@@ -173,27 +173,32 @@ public:
             availableIds.push_back(id);
         }
     }
-
-    T* allocT() {
+    T& allocT() {
         alloc();
-        return &(instances.end())->second;
+        return (instances.end())->second;
     }
-    void deallocT(T *trg) {
+    void deallocT(T &trg) {
         int id = findId(trg);
         if (id != -1) {
-            deallocT(id);
+            dealloc(id);
+        }
+    }
+    void reg(T &&trg) {
+        if (!availableIds.empty()) {
+            instances.insert({ availableIds.back(), trg });
+            availableIds.pop_back();
+        }
+        else {
+            instances.insert({ instances.size(), trg });
         }
     }
 
-    T *find(int id) {
-        if (instances.contains(id)) {
-            return &instances[id];
-        }
-        return nullptr;
+    T &find(int id) {
+        return instances[id];
     }
-    int findId(T *trg) {
+    int findId(T &trg) {
         for (auto i : instances) {
-            if (i.second == *trg) {
+            if (i.second == trg) {
                 return i.first;
             }
         }
@@ -202,36 +207,34 @@ public:
     unordered_map<int, T> &getInstances() { return instances; }
 };
 
-
-class AntitySystem {
+class EntitySystem {
     typedef const char *Name;
     unordered_map<Name, IComponentPool *> pools;
 public:
-    template<class t> 
-    TComponentPool<t> *getPool() {
-        Name name = typeid(t).raw_name();
+    EntitySystem() = default;
+    virtual ~EntitySystem() = default;
 
+    template<class t> 
+    TComponentPool<t> *getPool(Name name = "") {
         TComponentPool<t> *out = nullptr;
+        if (!name) {
+            name = typeid(t).raw_name();
+        }
         auto it = pools.find(name);
         if (it != pools.end()) {
             out = static_cast<TComponentPool<t>*>(it->second);
-        }
-        else {
-            out = new TComponentPool<t>();
-            pools.insert({ name, out });
         }
         return out;
     }
 
     template<class t>
-    t *alloc() {
-        auto p = getPool<t>();
-        return p->allocT();
-    }
-    template<class t>
-    void dealloc(t *trg) {
-        auto p = getPool<t>();
-        return p->deallocT(trg);
+    TComponentPool<t> *addPool(Name name = "") {
+        TComponentPool<t> *out = new TComponentPool<t>();
+        if (!name) {
+            name = typeid(t).raw_name();
+        }
+        pools.insert({ name, out });
+        return out;
     }
 };
 
