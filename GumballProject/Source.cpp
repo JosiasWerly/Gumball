@@ -12,16 +12,21 @@ using namespace std;
 
 
 
-static int id = 0;
 class MyActor :
 	public Actor {
 public:
-	int myId = 0;
+	Vector3 vel;
 	DrawCallInstance *di;
-
 	MyActor() {
 		di = new DrawCallInstance("torus");
 		di->transform = &transform;
+		transform.position = Vector3(rand() % 10, rand() % 10, rand() % 10);
+		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
+		vel = vel.normalize() * 0.2;
+		if (rand() % 2) {
+			vel *= -1;
+		}
+		transform.scale = Vector3(0.001, 0.001, 0.001);
 	}
 	virtual ~MyActor() {
 		delete di;
@@ -29,36 +34,22 @@ public:
 	}
 	void beginPlay() override {
 		Actor::beginPlay();
-		cout << getName() << " beg" << endl;
 	}
 	void endPlay() override {
 		Actor::endPlay();
-		cout << getName() << " end" << endl;
 	}
 	void tick(const double &deltaTime) {
 		Actor::tick(deltaTime);
-		auto inputSystem = Engine::instance()->inputSystem;
-		if (inputSystem->isKeyDown(Input::EKeyCode::UP))
-			transform.rotator.rotate(1, 0, 0);
-		else if (inputSystem->isKeyDown(Input::EKeyCode::DOWN))
-			transform.rotator.rotate(-1, 0, 0);
-		
-		if (inputSystem->isKeyDown(Input::EKeyCode::LEFT))
-			transform.rotator.rotate(0, 0, -1);
-		else if (inputSystem->isKeyDown(Input::EKeyCode::RIGHT))
-			transform.rotator.rotate(0, 0, 1);
-		
-		
-		if (inputSystem->onKeyReleased(Input::EKeyCode::Q)) {
-			auto newActor = new MyActor();
-			newActor->transform.position = transform.position + Vector3(0.4, 0, 0);
-			newActor->myId = ++id;
+		transform.rotator.rotate(1, 0, 0);
+		transform.position += vel;
+		if (abs(transform.position.x) > 5) {
+			transform.position.x *= -1;
 		}
-		else if (inputSystem->onKeyReleased(Input::EKeyCode::W)) {
-			if (myId == id) {				
-				destroy(this);
-				--id;
-			}
+		if (abs(transform.position.y) > 5) {
+			transform.position.y *= -1;
+		}
+		if (abs(transform.position.z) > 5) {
+			transform.position.z *= -1;
 		}
 	}
 };
@@ -69,8 +60,11 @@ class MyProject :
 public:
 	//when this DLL is attached
 	virtual void attached() {
+		srand(0);
 		auto w = Engine::instance()->world;
-		new MyActor();
+		for (size_t i = 0; i < 1000; i++) {
+			new MyActor();
+		}
 	}
 
 	//when this DLL is detached

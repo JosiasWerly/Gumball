@@ -99,6 +99,9 @@ public:
 	Inline TVector normalize() const {
 		return glm::normalize(rawVector);
 	}
+	Inline float length() const {
+		return glm::length(rawVector);
+	}
 
 	static TVector direction(TVector a, TVector b) {
 		return (b - a).normalize();

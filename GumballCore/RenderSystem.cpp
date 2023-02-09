@@ -32,7 +32,9 @@ const Vector2i& Window::getSize() {
 GLFWwindow* Window::getGLWindow() {
 	return window;
 }
-
+void Window::setTitle(string newTitle) {
+	glfwSetWindowTitle(window, newTitle.c_str());
+}
 
 void IRenderOverlay::onAttach() {}
 void IRenderOverlay::onDetach() {}

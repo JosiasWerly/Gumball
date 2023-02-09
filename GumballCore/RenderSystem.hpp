@@ -29,6 +29,8 @@ public:
     void setSize(Vector2i size);
     const Vector2i& getSize();
     GLFWwindow* getGLWindow();
+    void setTitle(string newTitle);
+    
 };
 
 class GBCORE IRenderOverlay {

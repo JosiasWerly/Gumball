@@ -73,8 +73,10 @@ void Engine::tick() {
 		timeStats.capture();
 		const double& deltaTime = timeStats.getDeltaTime();
 		
-		if (isPlaying)
+		if (isPlaying) {
 			systemSeer->tick<ESystemTickType::gameplay>(deltaTime);
+			renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
+		}
 		else 
 			systemSeer->tick<ESystemTickType::editor>(deltaTime);
 
