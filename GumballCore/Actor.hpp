@@ -8,11 +8,12 @@
 class GBCORE ActorComponent :
 	public GameObject {
 	friend class Actor;
-private:
+protected:
 	Actor *owner;
 public:
 	ActorComponent();
 	virtual ~ActorComponent();
+
 };
 
 class GBCORE Actor :

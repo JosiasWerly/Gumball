@@ -12,17 +12,18 @@
 using namespace std;
 
 class GameObject;
-class EntitySubsystem;
+class GameScene;
 class World;
 
 enum class EGameObjectState {
 	spawn, nominal, destroy
 };
 class GBCORE GameObject {
-	friend class EntitySubsystem;
+	friend class GameScene;
+private:
 	EGameObjectState state;
-	string name;
-
+	bool hasTick;
+protected:
 public:
 	GameObject();
 	virtual ~GameObject();
@@ -30,31 +31,41 @@ public:
 	virtual void endPlay();
 	virtual void tick(const double &deltaTime);
 
-	string getName();
-	void setName(string name);
-	const bool isValid() const { return state == EGameObjectState::nominal; }
+	void setTick(bool newTick);
+	bool getTick() const { return hasTick; }
+	const bool isValid() const { return this && state == EGameObjectState::nominal; }
 
-	static void *operator new(unsigned long long sz);
-	static void destroy(GameObject *go);
+	void *operator new(unsigned long long sz);
 };
 
-class GBCORE EntitySubsystem {
+class GBCORE GameScene {
 	friend class GameObject;
-	list<Var<GameObject>> entities;
-	list<Var<GameObject> *> toBegin, toEnd, toTick;
+private:
+	deque<GameObject*> entities;
+	deque<GameObject*> toBegin, toEnd, toTick;
+	list<GameObject*> toChangeTick;
 
-	string requestName(const string &suggestedName);
+	Inline void __erase(deque<GameObject *> &dq, GameObject *trg) {
+		auto found = std::find(dq.begin(), dq.end(), trg);
+		if (found != dq.end()) {
+			dq.erase(found);
+		}
+	}
 public:
 	void unload();
-	void add(GameObject *go);
-	void del(GameObject *go);
+	void root(GameObject *go);
+	void unRoot(GameObject *go);
+	void changeTick(GameObject *go);
 	Inline void tick(const double &deltaTime);
 };
+
+
+Extern GBCORE void destroy(GameObject *trg);
 
 class World : 
 	public EngineSystem {
 public:
-	EntitySubsystem *entitySystem = nullptr;
+	GameScene scene;
 
 	World();
 	virtual void initialize() override;
@@ -64,4 +75,12 @@ public:
 	virtual void tick(const double &deltaTime) override;
 	ESystemTickType tickType() override { return ESystemTickType::gameplay; }
 };
+
+
+
+
+
+
+
+
 #endif // _world

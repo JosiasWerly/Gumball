@@ -40,10 +40,10 @@ void Actor::delComponent(ActorComponent *comp) {
 		comp->endPlay();
 }
 ActorComponent *Actor::findComponent(string name) {
-	for (auto &c : components) {
-		if (c->getName() == name)
-			return c;
-	}
+	//for (auto &c : components) {
+	//	if (c->getName() == name)
+	//		return c;
+	//}
 	return nullptr;
 }
 template<class t> t *Actor::findComponent() {
