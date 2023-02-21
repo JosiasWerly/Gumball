@@ -53,10 +53,6 @@ void Engine::tick() {
 	auto widget = dynamic_cast<WidgetOverlay*>(renderSystem->getLayer("widget"));
 	auto scene = dynamic_cast<SceneOverlay *>(renderSystem->getLayer("scene"));
 
-	auto v = new View;
-	v->viewMode.setProjectionPerspective();
-	v->transform.position.z = -10;
-
 	/// crappy way of controlling the play and stop button
 	bool isPlaying = false;
 	UI::Canvas win;
@@ -85,12 +81,12 @@ void Engine::tick() {
 			if (isPlaying) {
 				isPlaying = false;
 				systemSeer->endPlay();
-				bt.text = "||";
+				bt.text = ">";
 			}
 			else {
 				isPlaying = true;
 				systemSeer->beginPlay();
-				bt.text = ">";
+				bt.text = "||";
 			}
 		}
 	}

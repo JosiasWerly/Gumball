@@ -143,99 +143,120 @@ using namespace std;
 
 
 
-class IComponentPool {
-public:
-    IComponentPool() = default;
-    virtual ~IComponentPool() = default;
-};
-template<class T>
-class TComponentPool : 
-    public IComponentPool{
-    deque<int> availableIds;
-    unordered_map<int, T> instances;
-public:    
-    TComponentPool() = default;
-    ~TComponentPool() = default;
-
-    int alloc() {
-        if (!availableIds.empty()) {
-            instances.insert({ availableIds.back(), T() });
-            availableIds.pop_back();
-        }
-        else {
-            instances.insert({ instances.size(), T() });
-        }
-        return instances.end()->first;
-    }
-    void dealloc(int id) {
-        if (instances.contains(id)) {
-            instances.erase(id);
-            availableIds.push_back(id);
-        }
-    }
-    T& allocT() {
-        alloc();
-        return (instances.end())->second;
-    }
-    void deallocT(T &trg) {
-        int id = findId(trg);
-        if (id != -1) {
-            dealloc(id);
-        }
-    }
-    void reg(T &&trg) {
-        if (!availableIds.empty()) {
-            instances.insert({ availableIds.back(), trg });
-            availableIds.pop_back();
-        }
-        else {
-            instances.insert({ instances.size(), trg });
-        }
-    }
-
-    T &find(int id) {
-        return instances[id];
-    }
-    int findId(T &trg) {
-        for (auto i : instances) {
-            if (i.second == trg) {
-                return i.first;
-            }
-        }
-        return -1;
-    }
-    unordered_map<int, T> &getInstances() { return instances; }
-};
-
-class EntitySystem {
-    typedef const char *Name;
-    unordered_map<Name, IComponentPool *> pools;
-public:
-    EntitySystem() = default;
-    virtual ~EntitySystem() = default;
-
-    template<class t> 
-    TComponentPool<t> *getPool(Name name = "") {
-        TComponentPool<t> *out = nullptr;
-        if (!name) {
-            name = typeid(t).raw_name();
-        }
-        auto it = pools.find(name);
-        if (it != pools.end()) {
-            out = static_cast<TComponentPool<t>*>(it->second);
-        }
-        return out;
-    }
-
-    template<class t>
-    TComponentPool<t> *addPool(Name name = "") {
-        TComponentPool<t> *out = new TComponentPool<t>();
-        if (!name) {
-            name = typeid(t).raw_name();
-        }
-        pools.insert({ name, out });
-        return out;
-    }
-};
+//typedef const char *ComponentName;
+//struct Entity {
+//    int id;
+//    unordered_map<ComponentName, int> components;
+//};
+//
+//class IComponentPool {
+//public:
+//    IComponentPool() = default;
+//    virtual ~IComponentPool() = default;
+//};
+//
+//template<class T>
+//class TComponentPool : 
+//    public IComponentPool{
+//    friend class EntitySystem;
+//    string name;
+//    deque<int> availableIds;
+//    unordered_map<int, T> instances;
+//public:    
+//    TComponentPool() = default;
+//    ~TComponentPool() = default;
+//
+//    int alloc(T &&init = T()) {
+//        if (!availableIds.empty()) {
+//            instances.insert({ availableIds.back(), init });
+//            availableIds.pop_back();
+//        }
+//        else {
+//            instances.insert({ instances.size(), init });
+//        }
+//        return instances.end()->first;
+//    }
+//    void dealloc(int id) {
+//        if (instances.contains(id)) {
+//            instances.erase(id);
+//            availableIds.push_back(id);
+//        }
+//    }
+//    T& allocT(T &&init = T()) {
+//        alloc(init);
+//        return (instances.end())->second;
+//    }
+//    void deallocT(T &trg) {
+//        int id = findId(trg);
+//        if (id != -1) {
+//            dealloc(id);
+//        }
+//    }
+//
+//    T &find(int id) {
+//        return instances[id];
+//    }
+//    int findId(T &trg) {
+//        for (auto i : instances) {
+//            if (i.second == trg) {
+//                return i.first;
+//            }
+//        }
+//        return -1;
+//    }
+//    unordered_map<int, T> &getInstances() { return instances; }
+//    ComponentName getName() const { return name.c_str(); }
+//};
+//
+//class EntitySystem {
+//    unordered_map<ComponentName, IComponentPool *> pools;
+//    TComponentPool<Entity> entities;
+//public:
+//    EntitySystem() = default;
+//    virtual ~EntitySystem() = default;
+//
+//    template<class t> 
+//    TComponentPool<t> *getPool() {
+//        ComponentName name = typeid(t).raw_name();
+//        TComponentPool<t> *out = nullptr;
+//
+//        auto it = pools.find(name);
+//        if (it != pools.end()) {
+//            out = static_cast<TComponentPool<t>*>(it->second);
+//        }
+//        return out;
+//    }
+//    template<class t>
+//    TComponentPool<t> *addPool() {
+//        ComponentName name = typeid(t).raw_name();
+//        TComponentPool<t> *out = new TComponentPool<t>();
+//
+//        pools.insert({ name, out });
+//        out->name = name;
+//        return out;
+//    }
+//
+//    void newEntity(Entity &e) {
+//        e.id = entities.alloc();
+//    }
+//    void delEntity(Entity &e) {
+//        entities.dealloc(e.id);
+//    }
+//
+//    template<class t>
+//    void addComp(Entity &e, t *trg = nullptr) {
+//        auto p = getPool<t>();
+//        if (trg) {
+//            p->findId(*trg);
+//        }
+//        e.components.insert({ p->getName(), p->alloc()});
+//    }
+//    template<class t>
+//    void delComp(Entity &e, t *trg = nullptr) {
+//        auto p = getPool<t>();
+//        p->dealloc(e.components[p->getName()]);
+//        e.components.erase(p->getName());
+//    }
+//};
 
 #endif // !_entitysystem5

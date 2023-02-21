@@ -19,7 +19,7 @@ Ibo::~Ibo() {
 void Ibo::bind() {
 	glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 }
-void Ibo::unBind() {
+void Ibo::unbind() {
 	glDCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 void Ibo::setBuffer(void *data, unsigned dataSize) {
@@ -37,7 +37,7 @@ Vbo::~Vbo() {
 void Vbo::bind() {
 	glDCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 }
-void Vbo::unBind() {
+void Vbo::unbind() {
 	glDCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
@@ -51,7 +51,7 @@ Vao::~Vao() {
 void Vao::bind() {
 	glDCall(glBindVertexArray(vao));
 }
-void Vao::unBind() {
+void Vao::unbind() {
 	glDCall(glBindVertexArray(0));
 }
 
@@ -87,7 +87,7 @@ void Tbo::bind() {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, id);
 }
-void Tbo::unBind() {
+void Tbo::unbind() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 void Tbo::loadTexture(string path) {
@@ -103,7 +103,7 @@ void Tbo::loadTexture(string path) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
-	unBind();
+	unbind();
 }
 
 
@@ -120,5 +120,6 @@ void VboBuilder::build() {
 		pointer += e.subBufferSize;
 	}
 }
+
 
 #pragma warning( default : 4312 4267 4838)

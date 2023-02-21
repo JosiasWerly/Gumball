@@ -7,18 +7,21 @@
 #include "Mesh.hpp"
 #include "Shaders.hpp"
 #include "GLBuffer.hpp"
+#include "EntitySystem.hpp"
 
 #include <list>
 
-class View {
+class ViewHandle {
+    friend class SceneOverlay;
+    SceneOverlay *scene = nullptr;
 public:
     class ViewMode {
     public:
-        //projection = false ?//just for testing
-        //glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
-        //glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
-
         enum class eProjectionMode {
+            //projection = false ?//just for testing
+            //glm::ortho(0.f, (float)x, 0.f, (float)y, -.1f, 100.f) :
+            //glm::perspective(glm::radians(45.0f), (float)x/(float)y, .1f, 200.0f);
+
             Ortho, Perspective, Custom
         };
         eProjectionMode eProjection;
@@ -43,68 +46,82 @@ public:
             return mProjection;
         }
     };
-
+    
     ViewMode viewMode;
-    Transform transform;
-
-    View();
-    ~View();
-};
-
-class GBCORE DrawCallData {
-    Vao *vao = nullptr;
-    Vbo *vbo = nullptr;
-    Ibo *ibo = nullptr;
-    MeshData *meshData = nullptr;
-public:
-    DrawCallData(MeshData *mesh);
-    ~DrawCallData();
-    Inline void bind();
-    Inline void unBind();
-    Inline void draw();
-
-    Inline MeshData *getMeshData() const { return meshData; }
-};
-
-class GBCORE DrawCallInstance {
-    MeshData *meshData = nullptr;
-public:
-    Material material;
     Transform *transform = nullptr;
 
-    DrawCallInstance(string meshName);
-    ~DrawCallInstance();
+    ViewHandle();
+    virtual ~ViewHandle();
+
+    void enable();
+    void disable();
+    void setLayer(int newLayer);
 };
+
+
+class GBCORE DrawHandle {
+    friend class SceneOverlay;
+    SceneOverlay *scene = nullptr;
+    
+    ShaderInstance *shader = nullptr;
+    MeshBuffer *mesh = nullptr;
+public:
+    Transform *transform = nullptr;
+    DrawHandle();
+    ~DrawHandle();
+
+    void enable();
+    void disable();
+    void setMesh(MeshData *newMesh);
+    void setShader(Shader *newShader);
+
+    Inline MeshData *getMesh() const;
+    Inline ShaderInstance *getShader() const;
+};
+
+
 
 class GBCORE SceneOverlay :
     public IRenderOverlay {
+private:
+    friend class ViewHandle;
+    friend class DrawHandle;
 
-    friend class View;
-    friend class DrawCallData;
-    friend class DrawCallInstance;
-    
-    struct DrawcallLayer {
-        DrawCallData *drawcallData = nullptr;
-        list<DrawCallInstance *> drawcallInstances;
-        ~DrawcallLayer();
-    };
-    
-    list<View *> views;
-    list<DrawcallLayer> drawCallLayers;
-
-    DrawcallLayer *findDrawcallLayer(MeshData *meshData);
+    list<ViewHandle *> views;
+    list<DrawHandle *> draws;
 public:
     SceneOverlay();
     ~SceneOverlay();
     void onAttach() override;
     void onDetach() override;
     void onRender(const double &deltaTime) override;
-
-    template<class T> T *instantiate() = delete;
-    template<class T> T *instantiate(string) = delete;
-    template<class T> void destroy(T*&) = delete;
-
 };
 
+
+//template<class TKey, class TInner>
+//struct Layer {
+//    typedef typename TKey tkey;
+//    typedef typename TInner tinner;
+//
+//    TKey *key;
+//    list<TInner *> values;
+//
+//    template<class tComparator, class tInstantiator>
+//    TInner *find(tComparator fnxComp, tInstantiator fnxAdd) {
+//        for (auto &i : values) {
+//            if (fnxComp(i->key)) {
+//                return i;
+//            }
+//        }
+//        if (fnxAdd) {
+//            TInner *out = fnxAdd();
+//            values.push_back(out);
+//            return out;
+//        }
+//        return nullptr;
+//    }
+//};
+//
+//Layer<int, Layer<ViewHandle, Layer<ShaderInstance, Layer<DrawCallBuffer, DrawHandle>>>> renderCache;
 
 #endif // !_sceneoverlay

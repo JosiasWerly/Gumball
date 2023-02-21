@@ -14,10 +14,13 @@ class MyComp :
 	public ActorComponent {
 public:
 	Vector3 vel;
+	MyComp() {
+		setTick(true);
+	}
 	void beginPlay() {
-		owner->transform.position = Vector3(rand() % 10, rand() % 10, rand() % 10);
+		owner->transform.position = Vector3(rand() % 9 - 5, rand() % 9 - 5, rand() % 9 - 5);
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
-		vel = vel.normalize() * 0.2;
+		vel = vel.normalize() * 0.01;
 		if (rand() % 2) {
 			vel *= -1;
 		}
@@ -25,13 +28,13 @@ public:
 	void tick(const double &deltaTime) {
 		owner->transform.rotator.rotate(1, 0, 0);
 		owner->transform.position += vel;
-		if (abs(owner->transform.position.x) > 5) {
+		if (abs(owner->transform.position.x) > 10) {
 			owner->transform.position.x *= -1;
 		}
-		if (abs(owner->transform.position.y) > 5) {
+		if (abs(owner->transform.position.y) > 10) {
 			owner->transform.position.y *= -1;
 		}
-		if (abs(owner->transform.position.z) > 5) {
+		if (abs(owner->transform.position.z) > 10) {
 			owner->transform.position.z *= -1;
 		}
 	}
@@ -41,16 +44,16 @@ public:
 class MyActor :
 	public Actor {
 public:
-	DrawCallInstance *di;
+	//DrawCallInstance *di;
 	MyActor() {
-		di = new DrawCallInstance("torus");
-		di->transform = &transform;
+		//di = new DrawCallInstance("torus");
+		//di->transform = &transform;
 		transform.scale = Vector3(0.001, 0.001, 0.001);
 		addComponent(new MyComp);
 	}
 	virtual ~MyActor() {
-		delete di;
-		di = nullptr;
+		//delete di;
+		//di = nullptr;
 	}
 	void beginPlay() override {
 		Actor::beginPlay();
@@ -69,13 +72,22 @@ class MyProject :
 public:
 	//when this DLL is attached
 	virtual void attached() {
-
-
 		srand(0);
-		auto w = Engine::instance()->world;
-		for (size_t i = 0; i < 1000; i++) {
-			new MyActor;
+		auto cameraActor = new Actor;
+		{
+			auto cameraComp = new CameraComponent;
+			cameraActor->addComponent(cameraComp);
+			cameraActor->transform.position.z = -30;
 		}
+		auto trashActor = new Actor;
+		{
+			auto meshComp = new MeshComponent();
+			trashActor->addComponent(meshComp);
+		}
+
+		//for (size_t i = 0; i < 1; i++) {
+		//	new MyActor;
+		//}
 	}
 
 	//when this DLL is detached

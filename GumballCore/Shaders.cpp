@@ -90,10 +90,10 @@ void Shader::captureAttributeSchema() {
 		);
 	}
 }
-Inline void Shader::bind() {
+void Shader::bind() const {
 	glUseProgram(shaderId);
 }
-Inline void Shader::unBind() const {
+void Shader::unbind() const {
 	glUseProgram(0);
 }
 bool Shader::archiveLoad(Archive &ar) {
@@ -131,38 +131,62 @@ bool Shader::archiveSave(Archive &ar) {
 
 
 
-
-
-Inline void Material::copyParameters() {
-	if (!shader)
-		return;
+ShaderInstance::ShaderInstance(Shader *sh) {
+	if (!sh) {
+		throw;
+	}
+	shader = sh;
+	copyParameters();
+}
+ShaderInstance::~ShaderInstance() {
 	clearParameters();
-
+}
+void ShaderInstance::copyParameters() {
+	clearParameters();
 	auto &attributes = shader->getAttributes();
 	for (auto &a : attributes)
 		parameters[a.name] = new ShaderAttribute(a.location, a.type);
 }
-Inline void Material::clearParameters() {
+void ShaderInstance::clearParameters() {
 	for (auto &u : parameters)
 		delete u.second;
 	parameters.clear();
 }
-Material::Material() {
-}
-Material::~Material() {
-	clearParameters();
-}
-void Material::setShader(Shader *shader) {
-	this->shader = shader;
-	copyParameters();
-}
-Inline void Material::bind() {
-	shader->bind();
-}
-Inline void Material::unBind() {
-	shader->unBind();
-}
-Inline void Material::uploadParams() {
+void ShaderInstance::upload() {
 	for (auto &u : parameters)
 		u.second->param->upload();
 }
+
+//Inline void Material::copyParameters() {
+//	if (!shader)
+//		return;
+//	clearParameters();
+//
+//	auto &attributes = shader->getAttributes();
+//	for (auto &a : attributes)
+//		parameters[a.name] = new ShaderAttribute(a.location, a.type);
+//}
+//Inline void Material::clearParameters() {
+//	for (auto &u : parameters)
+//		delete u.second;
+//	parameters.clear();
+//}
+//Material::Material() {
+//}
+//Material::~Material() {
+//	clearParameters();
+//}
+//void Material::setShader(Shader *shader) {
+//	this->shader = shader;
+//	copyParameters();
+//}
+//void Material::bind() {
+//	shader->bind();
+//}
+//void Material::unBind() {
+//	shader->unBind();
+//}
+//void Material::uploadParams() {
+//	for (auto &u : parameters)
+//		u.second->param->upload();
+//}

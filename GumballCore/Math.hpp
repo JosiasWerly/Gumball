@@ -265,7 +265,7 @@ public:
 		glm::mat4 out(1);
 		out = glm::translate(out, position.rawVector);
 		out = out * rotator.getMat();
-		//out = glm::scale(out, scale.rawVec()); //TODO:whthell with the scale
+		//out = glm::scale(out, scale.rawVec()); //TODO: whthell with the scale
 		return out;
 	}
 	glm::mat4 getRelativeMat(glm::mat4 mat) {

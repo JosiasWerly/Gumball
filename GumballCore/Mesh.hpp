@@ -10,8 +10,8 @@
 #include <cstring>
 #include <fstream>
 
+#include "GLBuffer.hpp"
 #include "Math.hpp"
-#include "Shaders.hpp"
 #include "FunctionLibrary.hpp"
 #include "Patterns.hpp"
 
@@ -199,5 +199,20 @@ public:
 		}
 		return false;
 	}
+};
+
+class GBCORE MeshBuffer {
+	struct Vao *vao = nullptr;
+	struct Vbo *vbo = nullptr;
+	struct Ibo *ibo = nullptr;
+	class MeshData *meshData = nullptr;
+public:
+	MeshBuffer(MeshData *mesh);
+	~MeshBuffer();
+	Inline void bind() const;
+	Inline void unbind() const;
+	Inline void draw() const;
+
+	Inline MeshData *getMeshData() const { return meshData; }
 };
 #endif // !_mesh

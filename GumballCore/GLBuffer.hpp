@@ -4,6 +4,7 @@
 
 #include "GLUtils.hpp"
 #include "Texture.hpp"
+#include "Mesh.hpp"
 #include <list>
 using namespace std;
 
@@ -15,7 +16,7 @@ struct Ibo {
 	Ibo();
 	~Ibo();
 	void bind();
-	void unBind();
+	void unbind();
 	void setBuffer(void *data, unsigned dataSize);
 };
 struct Vbo {
@@ -23,7 +24,7 @@ struct Vbo {
 	Vbo();
 	~Vbo();
 	void bind();
-	void unBind();
+	void unbind();
 };
 struct Vao {
 private:
@@ -32,7 +33,7 @@ public:
 	Vao();
 	~Vao();
 	void bind();
-	void unBind();
+	void unbind();
 };
 struct Tbo { //https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml	
 protected:
@@ -47,7 +48,7 @@ public:
 	void loadTexture(string path);
 	void loadToGPU();
 	void bind();
-	void unBind();
+	void unbind();
 	inline bool isValid() { return imageBuffer; }
 	inline void setSlot(int newSlot) { slot = newSlot; }	
 	inline int getSlot() { return slot; }
@@ -91,6 +92,7 @@ public:
 	void build();
 	Inline bool isValid() const { return stride != 0; }
 };
+
 //unsigned vao;
 //glGenVertexArrays(1, &vao);
 //glBindVertexArray(vao);

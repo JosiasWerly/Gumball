@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <unordered_map>
 using namespace std;
 
 class ShaderFactory;
@@ -42,14 +43,14 @@ public:
 };
 class IShaderParameter {
 	friend class Shader;
-	friend class Material;
+	friend class ShaderInstance;
 protected:
 	const ShaderAttribute &owner;
-	virtual void upload() = 0;
 public:
 	IShaderParameter(const ShaderAttribute &owner) : 
 		owner(owner) {
 	}
+	virtual void upload() = 0;
 };
 template<EUniformType Type> class ShaderParameter :
 	public IShaderParameter {
@@ -69,7 +70,7 @@ struct ShaderAttributeDescriptor {
 		type(type) {
 	}
 };
-class Shader :
+class GBCORE Shader :
 	public Object {
 public:
 	enum class EShaderType {
@@ -89,8 +90,8 @@ public:
 	virtual ~Shader();
 	bool create(const string &vertex, const string &fragment);
 
-	Inline void bind();
-	Inline void unBind() const;
+	Inline void bind() const;
+	Inline void unbind() const;
 	
 	Inline const list<ShaderAttributeDescriptor> &getAttributes() const { return attributeScheme; }
 	bool hasAttribute(string name) { 
@@ -114,40 +115,15 @@ public:
 	virtual bool archiveSave(Archive &ar) override;
 };
 
-//TODO: this class should be moved to SceneOverlay.hpp, because the close relation between both
-class GBCORE Material {
-private:
-	Shader *shader;
-	map<string, ShaderAttribute *> parameters;
-
-	Inline void copyParameters();
-	Inline void clearParameters();
-public:
-	Material();
-	~Material();
-	void setShader(Shader *shader);
-	const Shader *getShader() { return shader; }
-	bool hasParameter(string name) const { return parameters.contains(name); }
-	template<EUniformType etype> ShaderParameter<etype> *param(string name) {
-		return dynamic_cast<ShaderParameter<etype>*>(parameters[name]->param);
-	}
-
-	Inline void bind();
-	Inline void unBind();
-	Inline void uploadParams();
-};
-
-
-
-
 #define ShaderParamDelc(Type, ValueType, Expression) \
 template<> class ShaderParameter<Type> : \
 	public IShaderParameter {\
-protected:\
-	void upload() override { Expression; }\
 public:\
+	typename typedef ValueType TType;\
 	ValueType value = ValueType();\
 	using IShaderParameter::IShaderParameter;\
+	ValueType& operator=(ValueType &other){ value = other; return value;}\
+	void upload() override { Expression; }\
 };
 
 ShaderParamDelc(EUniformType::u_int, int, glUniform1iv(owner.location, 1, &value))
@@ -175,5 +151,55 @@ public:
 	Image *image;
 };
 #undef ShaderParamDelc
+
+
+
+class GBCORE ShaderInstance {
+private:
+	Shader *shader;
+	unordered_map<string, ShaderAttribute *> parameters;
+
+	void copyParameters();
+	void clearParameters();
+public:
+	ShaderInstance(Shader *sh);
+	~ShaderInstance();
+
+	Inline Shader *getShader() const { return shader; }
+	Inline void bind() const { shader->bind(); }
+	Inline void unbind() const { shader->unbind(); }
+	Inline bool operator==(Shader *s) const { return shader == s; }
+	Inline bool operator==(ShaderInstance *si) const { return shader == si->shader; }
+	void upload();
+
+	template<EUniformType eType>
+	ShaderParameter<eType> *param(const string &name) {
+		return dynamic_cast<ShaderParameter<eType>*>(parameters[name]->param);
+	}
+
+	template<EUniformType eType, class T>
+	typename void param(const string &name, const T &param) {
+
+	}
+
+	#define ShaderParamDelc(Type)\
+	template<>\
+	void param<Type>(const string &name, const ShaderParameter<Type>::TType &value) {\
+		ShaderParameter<Type> *p = param<Type>(name);\
+		p->value = value;\
+		p->upload();\
+	}
+	ShaderParamDelc(EUniformType::u_int)
+	ShaderParamDelc(EUniformType::u_float);
+	ShaderParamDelc(EUniformType::u_mat);
+	ShaderParamDelc(EUniformType::u_fvec2);
+	ShaderParamDelc(EUniformType::u_fvec3);
+	ShaderParamDelc(EUniformType::u_fvec4);
+	ShaderParamDelc(EUniformType::u_ivec2);
+	ShaderParamDelc(EUniformType::u_ivec3);
+	ShaderParamDelc(EUniformType::u_ivec4);
+	#undef ShaderParamDelc
+};
+
 
 #endif // !_shaders
