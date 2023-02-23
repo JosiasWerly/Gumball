@@ -63,10 +63,10 @@ void SceneOverlay::onRender(const double &deltaTime) {
 			auto sh = d->shader;
             d->mesh->bind();
 			sh->bind();
-			sh->param<EUniformType::u_mat>("uView")->value = mView;
-			sh->param<EUniformType::u_mat>("uProj")->value = v->viewMode.mProjection;
-			sh->param<EUniformType::u_mat>("uModel")->value = d->transform->getMat();
-			sh->upload();
+			//sh->param<EUniformType::u_mat>("uView")->value = mView;
+			//sh->param<EUniformType::u_mat>("uProj")->value = v->viewMode.mProjection;
+			//sh->param<EUniformType::u_mat>("uModel")->value = d->transform->getMat();
+			//sh->upload();
             d->mesh->draw();
 		}
 	}

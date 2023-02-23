@@ -11,13 +11,14 @@ using namespace std;
 #include <GumballCore/Actor.hpp>
 
 class MyComp : 
-	public ActorComponent {
+	public MeshComponent {
 public:
 	Vector3 vel;
 	MyComp() {
 		setTick(true);
 	}
 	void beginPlay() {
+		MeshComponent::beginPlay();
 		owner->transform.position = Vector3(rand() % 9 - 5, rand() % 9 - 5, rand() % 9 - 5);
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
 		vel = vel.normalize() * 0.01;
@@ -79,15 +80,10 @@ public:
 			cameraActor->addComponent(cameraComp);
 			cameraActor->transform.position.z = -30;
 		}
-		auto trashActor = new Actor;
-		{
-			auto meshComp = new MeshComponent();
-			trashActor->addComponent(meshComp);
-		}
 
-		//for (size_t i = 0; i < 1; i++) {
-		//	new MyActor;
-		//}
+		for (size_t i = 0; i < 2000; i++) {
+			new MyActor;
+		}
 	}
 
 	//when this DLL is detached
