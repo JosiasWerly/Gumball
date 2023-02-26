@@ -13,47 +13,40 @@ const float RadPI = 180.f / PI;
 void fRadToDegree(float &value);
 void fDegreeToRad(float &value);
 
-struct Color {
-	unsigned char R, G, B, A;	
+struct GBCORE Color {
+	unsigned char R, G, B, A;
 
 	Color() {
 		R = G = B = 255;
 		A = 0;
 	}
-	constexpr Color(unsigned int hex)
-	{
-		R = hex & 0xff000000;
-		G = hex & 0x00ff0000;
-		B = hex & 0x0000ff00;
+	Color(unsigned int hex) {
+		R = (hex & 0xff000000) >> 24;
+		G = (hex & 0x00ff0000) >> 16;
+		B = (hex & 0x0000ff00) >> 8;
 		A = hex & 0x000000ff;
 	}
-	constexpr Color(unsigned char R, unsigned char G, unsigned char B, unsigned char A = 0) :
-		R(R), G(G), B(B), A(A) {
-	}
-	Color(glm::vec4 vec) {
-		vec *= 255.f;
-		R = static_cast<char>(vec.r);
-		G = static_cast<char>(vec.b);
-		B = static_cast<char>(vec.b);
-		A = static_cast<char>(vec.a);
+	Color(unsigned char R, unsigned char G, unsigned char B, unsigned char A) {
+		this->R = R;
+		this->G = G;
+		this->B = B;
+		this->A = A;
 	}
 
-	operator glm::vec4();
-
-
-	static const Color Black;
-	static const Color White;
-	static const Color Red;
-	static const Color Green;
-	static const Color Blue;
-	static const Color Yellow;
-	static const Color Cyan;
-	static const Color Magenta;
-	static const Color Gray;
-	static const Color Brown;
-	static const Color Orange;
-	static const Color Pink;
-	static const Color Purple;
+	static glm::vec4 toVec4(Color c) {
+		auto out = glm::vec4(c.R, c.G, c.B, c.A);
+		out /= 255.f;
+		return out;
+	}
+	static Color toColor(glm::vec4 v) {
+		v *= 255.f;
+		Color out;
+		out.R = static_cast<char>(v.r);
+		out.G = static_cast<char>(v.b);
+		out.B = static_cast<char>(v.b);
+		out.A = static_cast<char>(v.a);
+		return out;
+	}
 };
 
 //TODO: implement vec4

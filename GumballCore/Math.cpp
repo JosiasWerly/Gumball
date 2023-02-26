@@ -9,25 +9,22 @@ void fDegreeToRad(float &value) {
 
 #pragma warning( disable : 4101 4244)
 
-const Color Color::Black(0x000000ff);
-const Color Color::White(0xffffffff);
-const Color Color::Red(0xff0000ff);
-const Color Color::Green(0x00ff00ff);
-const Color Color::Blue(0x0000ffff);
-const Color Color::Yellow(0xffff00ff);
-const Color Color::Cyan(0x00ffffff);
-const Color Color::Magenta(0xff00ffff);
-const Color Color::Gray(0x808080ff);
-const Color Color::Brown(0xa52a2aff);
-const Color Color::Orange(0xffa500ff);
-const Color Color::Pink(0xffc0cbff);
-const Color Color::Purple(0x800080ff);
 
-Color::operator glm::vec4() {
-	auto out = glm::vec4(R, G, B, A);
-	out /= 255.f;
-	return out;
-}
+
+
+//	constexpr const Color Black(0x000000ff);
+//	constexpr const Color White(0xffffffff);
+//	constexpr Color Red = Color::Color(0xff0000ff);
+//	constexpr const Color Green(0x00ff00ff);
+//	constexpr const Color Blue(0x0000ffff);
+//	constexpr const Color Yellow(0xffff00ff);
+//	constexpr const Color Cyan(0x00ffffff);
+//	constexpr const Color Magenta(0xff00ffff);
+//	constexpr const Color Gray(0x808080ff);
+//	constexpr const Color Brown(0xa52a2aff);
+//	constexpr const Color Orange(0xffa500ff);
+//	constexpr const Color Pink(0xffc0cbff);
+//	constexpr const Color Purple(0x800080ff);
 
 
 Vector3::operator Vector3i()	{ return Vector3i(x, y, z); }

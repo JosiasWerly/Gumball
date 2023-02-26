@@ -45,7 +45,7 @@ void DrawHandle::setShader(Shader *newShader) {
         material->setParam<Image*>("uTexture", as->getAsset("logo")->getContent().pin<Image>());
 
 
-        material->setParam<Color>("uColor", Color::Red);
+        material->setParam<Color>("uColor", Color(0xabcde0ff));
         newShader->unbind();
     }
 }

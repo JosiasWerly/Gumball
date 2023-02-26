@@ -169,12 +169,12 @@ public:
 
 	template<> void setParam<Color>(const string &name, Color value) {
 		auto &p = *paramAs<glm::fvec4>(name);
-		p.val = value;
+		p.val = Color::toVec4(value);
 		p.upload();
 	}
 	template<> Color getParam <Color>(const string &name) {
 		const auto &v = paramAs<glm::fvec4>(name)->val;
-		return Color(v);
+		return Color::toColor(v);
 	}
 
 	#define TParamDelc(CType)\
