@@ -20,7 +20,14 @@ struct Color {
 		R = G = B = 255;
 		A = 0;
 	}
-	Color(unsigned char R, unsigned char G, unsigned char B, unsigned char A = 0) :
+	constexpr Color(unsigned int hex)
+	{
+		R = hex & 0xff000000;
+		G = hex & 0x00ff0000;
+		B = hex & 0x0000ff00;
+		A = hex & 0x000000ff;
+	}
+	constexpr Color(unsigned char R, unsigned char G, unsigned char B, unsigned char A = 0) :
 		R(R), G(G), B(B), A(A) {
 	}
 	Color(glm::vec4 vec) {
@@ -32,6 +39,21 @@ struct Color {
 	}
 
 	operator glm::vec4();
+
+
+	static const Color Black;
+	static const Color White;
+	static const Color Red;
+	static const Color Green;
+	static const Color Blue;
+	static const Color Yellow;
+	static const Color Cyan;
+	static const Color Magenta;
+	static const Color Gray;
+	static const Color Brown;
+	static const Color Orange;
+	static const Color Pink;
+	static const Color Purple;
 };
 
 //TODO: implement vec4
