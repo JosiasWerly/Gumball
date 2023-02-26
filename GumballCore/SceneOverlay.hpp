@@ -63,7 +63,7 @@ class GBCORE DrawHandle {
     friend class SceneOverlay;
     SceneOverlay *scene = nullptr;
     
-    ShaderInstance *shader = nullptr;
+    Material *material = nullptr;
     MeshBuffer *mesh = nullptr;
 public:
     Transform *transform = nullptr;
@@ -75,8 +75,8 @@ public:
     void setMesh(MeshData *newMesh);
     void setShader(Shader *newShader);
 
-    Inline MeshData *getMesh() const;
-    Inline ShaderInstance *getShader() const;
+    Inline MeshData *getMesh() const { return mesh->getMeshData(); }
+    Inline Material *getMaterial() const { return material; }
 };
 
 

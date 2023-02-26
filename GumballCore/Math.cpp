@@ -9,6 +9,11 @@ void fDegreeToRad(float &value) {
 
 #pragma warning( disable : 4101 4244)
 
+Color::operator glm::vec4() {
+	auto out = glm::vec4(R, G, B, A);
+	out /= 255.f;
+	return out;
+}
 
 Vector3::operator Vector3i()	{ return Vector3i(x, y, z); }
 Vector3::operator Vector2()		{ return Vector2(x, y); }

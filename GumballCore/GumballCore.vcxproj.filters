@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Archive.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="EntitySystem.cpp" />
+    <ClCompile Include="EnviromentVariables.cpp" />
+    <ClCompile Include="FunctionLibrary.cpp" />
+    <ClCompile Include="GLBuffer.cpp" />
+    <ClCompile Include="GLUtils.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Patterns.cpp" />
+    <ClCompile Include="ProjectLinker.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="SceneOverlay.cpp" />
+    <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Subsystem.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TimeStat.cpp" />
+    <ClCompile Include="Var.cpp" />
+    <ClCompile Include="WidgetOverlay.cpp" />
+    <ClCompile Include="World.cpp" />
+    <ClCompile Include="template.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Actor.hpp" />
+    <ClInclude Include="Archive.hpp" />
+    <ClInclude Include="AssetManager.hpp" />
+    <ClInclude Include="Definitions.hpp" />
+    <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="EntitySystem.hpp" />
+    <ClInclude Include="EnviromentVariables.hpp" />
+    <ClInclude Include="Event.hpp" />
+    <ClInclude Include="FunctionLibrary.hpp" />
+    <ClInclude Include="GLBuffer.hpp" />
+    <ClInclude Include="GLUtils.hpp" />
+    <ClInclude Include="InputSystem.hpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Patterns.hpp" />
+    <ClInclude Include="ProjectLinker.hpp" />
+    <ClInclude Include="RenderSystem.hpp" />
+    <ClInclude Include="SceneOverlay.hpp" />
+    <ClInclude Include="Shaders.hpp" />
+    <ClInclude Include="Subsystem.hpp" />
+    <ClInclude Include="Texture.hpp" />
+    <ClInclude Include="TimeStat.hpp" />
+    <ClInclude Include="Var.hpp" />
+    <ClInclude Include="WidgetOverlay.hpp" />
+    <ClInclude Include="World.hpp" />
+    <ClInclude Include="template.hpp" />
+  </ItemGroup>
+</Project>

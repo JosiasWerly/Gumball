@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 const float PI = glm::pi<float>();
 const float PIRad = PI / 180.f;
@@ -12,13 +13,28 @@ const float RadPI = 180.f / PI;
 void fRadToDegree(float &value);
 void fDegreeToRad(float &value);
 
-
 struct Color {
-	union {
-		unsigned char R, G, B, A;
-		int hexColor;
-	};
+	unsigned char R, G, B, A;	
+
+	Color() {
+		R = G = B = 255;
+		A = 0;
+	}
+	Color(unsigned char R, unsigned char G, unsigned char B, unsigned char A = 0) :
+		R(R), G(G), B(B), A(A) {
+	}
+	Color(glm::vec4 vec) {
+		vec *= 255.f;
+		R = static_cast<char>(vec.r);
+		G = static_cast<char>(vec.b);
+		B = static_cast<char>(vec.b);
+		A = static_cast<char>(vec.a);
+	}
+
+	operator glm::vec4();
 };
+
+//TODO: implement vec4
 
 template<class T> 
 class TVector {
@@ -221,7 +237,7 @@ public:
 
 class Rotator {
 protected:
-	glm::mat4 rot = glm::mat4(1);
+	glm::mat4 rot = glm::mat4(1); //EVALUATE perhaps I should transform this into a quat..
 public:
 	Rotator() {
 	}
@@ -260,6 +276,15 @@ public:
 	Vector3 position;
 	Vector3 scale;
 	Rotator rotator;
+
+	Transform() {
+	}
+	Transform(glm::mat4 m) {
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::quat rotation;//THIS IS INCOMPLETE		
+		glm::decompose(m, scale.rawVector, rotation, position.rawVector, skew, perspective);
+	}
 
 	glm::mat4 getMat() {
 		glm::mat4 out(1);

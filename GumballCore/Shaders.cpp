@@ -3,26 +3,6 @@
 #include "Math.hpp"
 #include "Texture.hpp"
 
-ShaderAttribute::ShaderAttribute(unsigned location, EUniformType type) :
-	location(location),
-	type(type) {
-
-	switch (type) {
-	case EUniformType::u_int:			param = new ShaderParameter<EUniformType::u_int>(*this);			break;
-	case EUniformType::u_float:			param = new ShaderParameter<EUniformType::u_float>(*this);		break;
-	case EUniformType::u_mat:			param = new ShaderParameter<EUniformType::u_mat>(*this);			break;
-	case EUniformType::u_stexture:		param = new ShaderParameter<EUniformType::u_stexture>(*this);	break;
-	case EUniformType::u_fvec2:			param = new ShaderParameter<EUniformType::u_fvec2>(*this);		break;
-	case EUniformType::u_fvec3:			param = new ShaderParameter<EUniformType::u_fvec3>(*this);		break;
-	case EUniformType::u_fvec4:			param = new ShaderParameter<EUniformType::u_fvec4>(*this);		break;
-	case EUniformType::u_ivec2:			param = new ShaderParameter<EUniformType::u_ivec2>(*this);		break;
-	case EUniformType::u_ivec3:			param = new ShaderParameter<EUniformType::u_ivec3>(*this);		break;
-	case EUniformType::u_ivec4:			param = new ShaderParameter<EUniformType::u_ivec4>(*this);		break;
-	default: throw;
-	}
-}
-ShaderAttribute::~ShaderAttribute() {
-}
 
 
 Shader::Shader() {
@@ -86,7 +66,7 @@ void Shader::captureAttributeSchema() {
 				name,
 				static_cast<unsigned>(i),
 				static_cast<EUniformType>(type)
-								  }
+			}
 		);
 	}
 }
@@ -130,32 +110,62 @@ bool Shader::archiveSave(Archive &ar) {
 }
 
 
+ShaderAttribute::ShaderAttribute(unsigned location, EUniformType type) :
+	location(location),
+	type(type) {
+	switch (type) {
+		case EUniformType::u_int:			param = new TShaderParameter<int>(*this);		break;
+		case EUniformType::u_float:			param = new TShaderParameter<float>(*this);		break;
+		case EUniformType::u_fvec2:			param = new TShaderParameter<glm::fvec2>(*this);		break;
+		case EUniformType::u_fvec3:			param = new TShaderParameter<glm::fvec3>(*this);		break;
+		case EUniformType::u_fvec4:			param = new TShaderParameter<glm::fvec4>(*this);		break;
+		case EUniformType::u_ivec2:			param = new TShaderParameter<glm::ivec2>(*this);		break;
+		case EUniformType::u_ivec3:			param = new TShaderParameter<glm::ivec3>(*this);		break;
+		case EUniformType::u_ivec4:			param = new TShaderParameter<glm::ivec4>(*this);		break;
+		case EUniformType::u_mat:			param = new TShaderParameter<glm::mat4>(*this);		break;
+		case EUniformType::u_stexture:		param = new TShaderParameter<Image*>(*this);	break;
+		default: throw;
+	}
+}
+ShaderAttribute::~ShaderAttribute() {
+}
 
-ShaderInstance::ShaderInstance(Shader *sh) {
+
+Material::Material(Shader *sh) {
 	if (!sh) {
 		throw;
 	}
 	shader = sh;
 	copyParameters();
 }
-ShaderInstance::~ShaderInstance() {
+Material::~Material() {
 	clearParameters();
 }
-void ShaderInstance::copyParameters() {
+void Material::copyParameters() {
 	clearParameters();
 	auto &attributes = shader->getAttributes();
 	for (auto &a : attributes)
 		parameters[a.name] = new ShaderAttribute(a.location, a.type);
 }
-void ShaderInstance::clearParameters() {
+void Material::clearParameters() {
 	for (auto &u : parameters)
 		delete u.second;
 	parameters.clear();
 }
-void ShaderInstance::upload() {
-	for (auto &u : parameters)
-		u.second->param->upload();
-}
+
+
+
+
+
+
+
+
+
+
+//void ShaderInstance::upload() {
+//	for (auto &u : parameters)
+//		u.second->param->upload();
+//}
 
 //Inline void Material::copyParameters() {
 //	if (!shader)

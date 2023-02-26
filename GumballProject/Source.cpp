@@ -93,6 +93,6 @@ public:
 };
 
 
-Extern GBPROJECT void *EntryPoint() {	
+Extern GBPROJECT void *EntryPoint() {
 	return new MyProject;
 }
