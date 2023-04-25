@@ -7,7 +7,6 @@ ViewHandle::ViewHandle() {
 ViewHandle::~ViewHandle() {
     disable();
 }
-
 void ViewHandle::enable() {
     scene->views.push_back(this);
 }
@@ -50,12 +49,12 @@ void DrawHandle::setShader(Shader *newShader) {
     }
 }
 
+
 SceneOverlay::SceneOverlay() : 
 	IRenderOverlay("scene") {
 }
 SceneOverlay::~SceneOverlay() {
 }
-
 void SceneOverlay::onAttach() {
 
 }

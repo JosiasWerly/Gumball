@@ -32,7 +32,6 @@ bool AssetFactory::hasExtension(const string &extention) {
 	return false;
 }
 
-
 AssetFactory *AssetsSystem::findFactory(const string &extension) {
 	for (auto &f : factories) {
 		if (f.hasExtension(extension))
@@ -40,7 +39,6 @@ AssetFactory *AssetsSystem::findFactory(const string &extension) {
 	}
 	return nullptr;
 }
-
 void AssetsSystem::initialize() {
 	factories = {
 		{ new TSubClass<Image>, {"png"} },

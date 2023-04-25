@@ -58,6 +58,14 @@ void Vao::unbind() {
 
 //https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
 Tbo::Tbo() {
+
+	//glGenTextures(1, &gPosition);
+	//glBindTexture(GL_TEXTURE_2D, gPosition);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+
 	glDCall(glGenTextures(1, &id));
 	glDCall(glBindTexture(GL_TEXTURE_2D, id));
 	glDCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
@@ -69,41 +77,51 @@ Tbo::Tbo() {
 Tbo::~Tbo() {
 	glDeleteTextures(1, &id);
 }
-void Tbo::setPixel(int x, int y, int color) {
-	int p = ((y * height) + x) * 4;
-	if (!imageBuffer || p > width * height)
-		return;
-	imageBuffer[p] = (color >> 24);
-	imageBuffer[p + 1] = (color >> 16);
-	imageBuffer[p + 2] = (color >> 8);
-	imageBuffer[p + 3] = color;
-}
 void Tbo::loadToGPU() {
-	this->bind();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
-	glBindTexture(GL_TEXTURE_2D, id);
+	bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	unbind();
 }
 void Tbo::bind() {
-	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 void Tbo::unbind() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-void Tbo::loadTexture(string path) {
-	bind();
-	if (imageBuffer) {
-		stbi_image_free(imageBuffer);
-		imageBuffer = nullptr;
-	}
+void Tbo::create(int width, int height, Color *newBuffer) {
+	this->width = width;
+	this->height = height;
+	this->buffer = newBuffer;
 
-	int ch = 0;
-	stbi_set_flip_vertically_on_load(true);
-	if (imageBuffer = stbi_load(path.c_str(), &width, &height, &ch, 4)) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
-		glGenerateMipmap(GL_TEXTURE_2D);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+void Tbo::destroy() {
+	if (width > 0 || height > 0) {
+		glDeleteTextures(1, &id);
+		id = 0;
+		width = 0;
+		height = 0;
+		delete[] buffer;
+		buffer = nullptr;
 	}
-	unbind();
+}
+void Tbo::setPixel(unsigned x, unsigned y, Color color) {
+	const int p = ((y * height) + x) * 4;
+	if (p > width * height)
+		return;
+	buffer[p] = color;
+}
+Color Tbo::getPixel(unsigned x, unsigned y) {
+	const int p = ((y * height) + x) * 4;
+	return buffer[p];
 }
 
 

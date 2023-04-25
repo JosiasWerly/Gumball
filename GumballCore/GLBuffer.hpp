@@ -3,7 +3,7 @@
 #define _glbuffer
 
 #include "GLUtils.hpp"
-#include "Texture.hpp"
+#include "Math.hpp"
 #include "Mesh.hpp"
 #include <list>
 using namespace std;
@@ -35,23 +35,28 @@ public:
 	void bind();
 	void unbind();
 };
-struct Tbo { //https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml	
+struct Tbo {
+	//https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
 protected:
-	char slot = 0;
 	int width = 0, height = 0;
-	unsigned char *imageBuffer = nullptr;
+	Color *buffer = nullptr;
 public:
 	unsigned id = 0;
 	Tbo();
 	virtual ~Tbo();
-	void setPixel(int x, int y, int color);
-	void loadTexture(string path);
+	
 	void loadToGPU();
+
 	void bind();
 	void unbind();
-	inline bool isValid() { return imageBuffer; }
-	inline void setSlot(int newSlot) { slot = newSlot; }	
-	inline int getSlot() { return slot; }
+
+	void create(int width, int height, Color *imageBuffer);
+	void destroy();
+
+	void setPixel(unsigned x, unsigned y, Color color);
+	Color getPixel(unsigned x, unsigned y);
+	Color *&getBuffer() { return buffer; }
+	bool isValid() const { return buffer; }
 };
 struct VboBuilder {
 private:

@@ -10,6 +10,7 @@
 #include <cstring>
 #include <fstream>
 
+#include "Object.hpp"
 #include "GLBuffer.hpp"
 #include "Math.hpp"
 #include "FunctionLibrary.hpp"

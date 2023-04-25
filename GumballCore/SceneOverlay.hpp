@@ -11,7 +11,7 @@
 
 #include <list>
 
-class ViewHandle {
+class GBCORE ViewHandle {
     friend class SceneOverlay;
     SceneOverlay *scene = nullptr;
 public:
@@ -57,8 +57,6 @@ public:
     void disable();
     void setLayer(int newLayer);
 };
-
-
 class GBCORE DrawHandle {
     friend class SceneOverlay;
     SceneOverlay *scene = nullptr;
@@ -78,8 +76,6 @@ public:
     Inline MeshData *getMesh() const { return mesh->getMeshData(); }
     Inline Material *getMaterial() const { return material; }
 };
-
-
 
 class GBCORE SceneOverlay :
     public IRenderOverlay {
