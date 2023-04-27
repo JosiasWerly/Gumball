@@ -4,10 +4,85 @@
 #include "Texture.hpp"
 
 
+IShaderUniformBus *IShaderUniformBus::TCreateBus(ShaderUniform &Uniform) {
+	switch (Uniform.type) {
+		case EUniformType::u_int:			return new TShaderUniformBus<int>(Uniform);				break;
+		case EUniformType::u_float:			return new TShaderUniformBus<float>(Uniform);			break;
+		case EUniformType::u_fvec2:			return new TShaderUniformBus<glm::fvec2>(Uniform);		break;
+		case EUniformType::u_fvec3:			return new TShaderUniformBus<glm::fvec3>(Uniform);		break;
+		case EUniformType::u_fvec4:			return new TShaderUniformBus<glm::fvec4>(Uniform);		break;
+		case EUniformType::u_ivec2:			return new TShaderUniformBus<glm::ivec2>(Uniform);		break;
+		case EUniformType::u_ivec3:			return new TShaderUniformBus<glm::ivec3>(Uniform);		break;
+		case EUniformType::u_ivec4:			return new TShaderUniformBus<glm::ivec4>(Uniform);		break;
+		case EUniformType::u_mat:			return new TShaderUniformBus<glm::mat4>(Uniform);		break;
+		case EUniformType::u_stexture:		return new TShaderUniformBus<Image *>(Uniform);			break;
+		default: throw;
+	}
+}
+
+ShaderUniformIOBus::ShaderUniformIOBus() {
+}
+ShaderUniformIOBus::~ShaderUniformIOBus() {
+	detach();
+}
+void ShaderUniformIOBus::attach(const list<ShaderUniform> &uniforms) {
+	parameters.clear();
+	for (const auto &u : uniforms)
+		parameters[u.name] = &u;
+}
+void ShaderUniformIOBus::detach() {
+	parameters.clear();
+}
+void ShaderUniformIOBus::upload() const {
+	for (auto &kv : parameters)
+		kv.second->bus->upload();
+}
 
 Shader::Shader() {
 }
 Shader::~Shader() {
+	uniformIOBus.detach();
+	for (auto &u : uniforms)
+		delete u.bus;
+}
+void Shader::updateUniforms() {
+	uniforms.clear();
+	int uniformsSize = 0;
+	glGetProgramiv(shaderId, GL_ACTIVE_UNIFORMS, &uniformsSize);
+	for (int i = 0; i < uniformsSize; i++) {
+		unsigned type;
+		int len, size;
+		char name[32] = "";
+		glGetActiveUniform(shaderId, i, 32, &len, &size, &type, name);
+		uniforms.push_back(
+			{
+				static_cast<unsigned>(i),
+				static_cast<EUniformType>(type),
+				name
+			}
+		);
+		auto &newUniform = uniforms.back();
+		newUniform.bus = IShaderUniformBus::TCreateBus(newUniform);
+	}
+}
+bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {
+	id = glCreateShader(static_cast<unsigned>(eShaderType));
+	const char *src = code.c_str();
+	glDCall(glShaderSource(id, 1, &src, 0));
+	glDCall(glCompileShader(id));
+
+	int result;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	if (result == GL_FALSE) {
+		int length;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char *msg = (char *)alloca(length * sizeof(char));
+		glGetShaderInfoLog(id, length, &length, msg);
+
+		cout << (eShaderType == EShaderType::Vertex ? "vert" : "frag") << msg << endl;
+		return false;
+	}
+	return true;
 }
 bool Shader::create(const string &vertex, const string &fragment) {
 	shaderId = glCreateProgram();
@@ -31,44 +106,8 @@ bool Shader::create(const string &vertex, const string &fragment) {
 	}
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-	captureAttributeSchema();
+	updateUniforms();
 	return true;
-}
-bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {
-	id = glCreateShader(static_cast<unsigned>(eShaderType));
-	const char *src = code.c_str();
-	glDCall(glShaderSource(id, 1, &src, 0));
-	glDCall(glCompileShader(id));
-
-	int result;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-	if (result == GL_FALSE) {
-		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char *msg = (char *)alloca(length * sizeof(char));
-		glGetShaderInfoLog(id, length, &length, msg);
-
-		cout << (eShaderType == EShaderType::Vertex ? "vert" : "frag") << msg << endl;
-		return false;
-	}
-	return true;
-}
-void Shader::captureAttributeSchema() {
-	attributeScheme.clear();
-	int uniformsSize = 0;
-	glGetProgramiv(shaderId, GL_ACTIVE_UNIFORMS, &uniformsSize);
-	for (int i = 0; i < uniformsSize; i++) {
-		unsigned type;
-		int len, size;
-		char name[32] = "";
-		glGetActiveUniform(shaderId, i, 32, &len, &size, &type, name);
-		attributeScheme.push_back({
-				name,
-				static_cast<unsigned>(i),
-				static_cast<EUniformType>(type)
-			}
-		);
-	}
 }
 void Shader::bind() const {
 	glUseProgram(shaderId);
@@ -76,6 +115,10 @@ void Shader::bind() const {
 void Shader::unbind() const {
 	glUseProgram(0);
 }
+void Shader::upload() const {
+	uniformIOBus.upload();
+}
+
 bool Shader::archiveLoad(Archive &ar) {
 	string vertex, fragment;
 	{
@@ -109,94 +152,9 @@ bool Shader::archiveSave(Archive &ar) {
 	return false;
 }
 
-
-ShaderAttribute::ShaderAttribute(unsigned location, EUniformType type) :
-	location(location),
-	type(type) {
-	switch (type) {
-		case EUniformType::u_int:			param = new TShaderParameter<int>(*this);		break;
-		case EUniformType::u_float:			param = new TShaderParameter<float>(*this);		break;
-		case EUniformType::u_fvec2:			param = new TShaderParameter<glm::fvec2>(*this);		break;
-		case EUniformType::u_fvec3:			param = new TShaderParameter<glm::fvec3>(*this);		break;
-		case EUniformType::u_fvec4:			param = new TShaderParameter<glm::fvec4>(*this);		break;
-		case EUniformType::u_ivec2:			param = new TShaderParameter<glm::ivec2>(*this);		break;
-		case EUniformType::u_ivec3:			param = new TShaderParameter<glm::ivec3>(*this);		break;
-		case EUniformType::u_ivec4:			param = new TShaderParameter<glm::ivec4>(*this);		break;
-		case EUniformType::u_mat:			param = new TShaderParameter<glm::mat4>(*this);		break;
-		case EUniformType::u_stexture:		param = new TShaderParameter<Image*>(*this);	break;
-		default: throw;
+void ShaderInstance::setShader(Shader *newShader) {
+	shader = newShader;
+	if (shader) {
+		uniformIOBus.attach(shader->getUniforms());
 	}
 }
-ShaderAttribute::~ShaderAttribute() {
-}
-
-
-Material::Material(Shader *sh) {
-	if (!sh) {
-		throw;
-	}
-	shader = sh;
-	copyParameters();
-}
-Material::~Material() {
-	clearParameters();
-}
-void Material::copyParameters() {
-	clearParameters();
-	auto &attributes = shader->getAttributes();
-	for (auto &a : attributes)
-		parameters[a.name] = new ShaderAttribute(a.location, a.type);
-}
-void Material::clearParameters() {
-	for (auto &u : parameters)
-		delete u.second;
-	parameters.clear();
-}
-
-
-
-
-
-
-
-
-
-
-//void ShaderInstance::upload() {
-//	for (auto &u : parameters)
-//		u.second->param->upload();
-//}
-
-//Inline void Material::copyParameters() {
-//	if (!shader)
-//		return;
-//	clearParameters();
-//
-//	auto &attributes = shader->getAttributes();
-//	for (auto &a : attributes)
-//		parameters[a.name] = new ShaderAttribute(a.location, a.type);
-//}
-//Inline void Material::clearParameters() {
-//	for (auto &u : parameters)
-//		delete u.second;
-//	parameters.clear();
-//}
-//Material::Material() {
-//}
-//Material::~Material() {
-//	clearParameters();
-//}
-//void Material::setShader(Shader *shader) {
-//	this->shader = shader;
-//	copyParameters();
-//}
-//void Material::bind() {
-//	shader->bind();
-//}
-//void Material::unBind() {
-//	shader->unBind();
-//}
-//void Material::uploadParams() {
-//	for (auto &u : parameters)
-//		u.second->param->upload();
-//}

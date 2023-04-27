@@ -7,6 +7,7 @@
 #include "SceneOverlay.hpp"
 
 class Actor;
+
 class GBCORE ActorComponent :
 	public GameObject {
 	friend class Actor;
@@ -43,14 +44,7 @@ public:
 	MeshComponent();
 	virtual ~MeshComponent();
 };
-class GBCORE SpriteComponent :
-	public ActorComponent {
-public:
-	SpriteComponent() {
-	}
-	virtual ~SpriteComponent() {
-	}
-};
+
 class GBCORE CameraComponent :
 	public ActorComponent {
 	ViewHandle view;
@@ -63,7 +57,6 @@ public:
 	virtual ~CameraComponent();
 
 };
-
 
 class GBCORE Actor :
 	public GameObject {

@@ -21,7 +21,6 @@ DrawHandle::DrawHandle() {
 DrawHandle::~DrawHandle() {
     disable();
     delete mesh;
-    delete material;
 }
 void DrawHandle::enable() {
     scene->draws.push_back(this);
@@ -36,16 +35,14 @@ void DrawHandle::setMesh(MeshData *newMesh) {
 }
 void DrawHandle::setShader(Shader *newShader) {
     auto as = Engine::instance()->assetSystem;
-    if (material)
-        delete material;
+    shaderInstance.setShader(newShader);
     if (newShader) {
-        material = new Material(newShader);
-        newShader->bind();
-        material->setParam<Image*>("uTexture", as->getAsset("logo")->getContent().pin<Image>());
-
-
-        material->setParam<Color>("uColor", Color(0xabcde0ff));
-        newShader->unbind();
+        shaderInstance.bind();
+        auto &IO = shaderInstance.uniformIO();
+        IO.setParam<Image *>("uTexture", as->getAsset("logo")->getContent().pin<Image>());
+        IO.setParam<Color>("uColor", Color(0xabcde0ff));
+        IO.upload();
+        shaderInstance.unbind();
     }
 }
 
@@ -66,14 +63,17 @@ void SceneOverlay::onRender(const double &deltaTime) {
 		const auto mView = v->transform->getMat();
 		for (auto &d : draws) {
             auto &mesh = d->mesh;
-			auto &mat = d->material;
-
+			auto &shader = d->shaderInstance;
+            auto &shaderIO = shader.uniformIO();
+            
             mesh->bind();
-            mat->bind();
-            mat->setParam<glm::mat4>("uView", mView);
-            mat->setParam<glm::mat4>("uProj", v->viewMode.mProjection);
-            mat->setParam<glm::mat4>("uModel", d->transform->getMat());
+            shader.bind();
+            shaderIO.setParam<glm::mat4>("uView", mView);
+            shaderIO.setParam<glm::mat4>("uProj", v->viewMode.mProjection);
+            shaderIO.setParam<glm::mat4>("uModel", d->transform->getMat());
+            shaderIO.upload();
             mesh->draw();
+            shader.unbind();
 		}
 	}
 }
