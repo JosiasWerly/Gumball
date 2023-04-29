@@ -42,28 +42,10 @@ void DrawHandle::setShader(Shader *newShader) {
         auto &io = shaderInstance.uniformIO();
         Tbo &tex = as->getAsset("logo")->getContent().pin<Image>()->getTexture();
         Tbo &tex2 = as->getAsset("scotty")->getContent().pin<Image>()->getTexture();
-        int txtUniId = 0;
-
         io.setParam<Tbo *>("uTexture", &tex);
-        io.setParam<Tbo *>("uTexture2", &tex2);
-        io.setParam<int>("foo", 0);
+        io.setParam<Color>("uColor", 0xffffffff);
         io.upload();
         shaderInstance.unbind();
-
-        //glActiveTexture(GL_TEXTURE0);
-        //tex.bind();
-        //glUniform1i(io.getUniform("uTexture")->location, 0);
-        //tex.unbind();
-
-        //glActiveTexture(GL_TEXTURE1);
-        //tex2.bind();
-        //glUniform1i(io.getUniform("uTexture2")->location, 1);
-        //tex2.unbind();
-
-        
-        //io.getUniform("uTexture")->location
-        //io.setParam<Image *>("uTexture", as->getAsset("logo")->getContent().pin<Image>());
-        //io.setParam<Color>("uColor", Color(0xffffffff));
     }
 }
 
