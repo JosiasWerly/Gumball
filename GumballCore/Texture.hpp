@@ -23,10 +23,13 @@ public:
 		destroy();
 	}
 	void create(int width, int height, Color *imageBuffer) {
-		textureBuffer.create(width, height, imageBuffer);
+		textureBuffer.bind();
+		textureBuffer.create(width, height);
+		textureBuffer.setBuffer(imageBuffer);
+		textureBuffer.unbind();
 	}
 	void destroy() {
-		textureBuffer.destroy();
+		//textureBuffer.destroy();
 	}
 	Inline void bind() {
 		textureBuffer.bind();

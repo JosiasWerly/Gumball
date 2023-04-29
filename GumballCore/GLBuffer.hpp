@@ -35,26 +35,24 @@ public:
 	void bind();
 	void unbind();
 };
+//https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
 struct Tbo {
-	//https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
 protected:
 	int width = 0, height = 0;
+	unsigned internalFormat, type, format;		
 	Color *buffer = nullptr;
 public:
 	unsigned id = 0;
 	Tbo();
-	virtual ~Tbo();
-	
+	virtual ~Tbo();	
 	void loadToGPU();
-
 	void bind();
 	void unbind();
-
-	void create(int width, int height, Color *imageBuffer);
-	void destroy();
-
+	void create(int width, int height, unsigned internalFormat = GL_RGBA8, unsigned  format = GL_RGBA, unsigned type = GL_UNSIGNED_BYTE);
 	void setPixel(unsigned x, unsigned y, Color color);
 	Color getPixel(unsigned x, unsigned y);
+
+	void setBuffer(Color *newBuffer);
 	Color *&getBuffer() { return buffer; }
 	bool isValid() const { return buffer; }
 };
