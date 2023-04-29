@@ -44,6 +44,8 @@ public:
 		return textureBuffer.isValid();
 	}
 
+	Tbo &getTexture() { return textureBuffer; }
+
 	virtual Var<Object> clone() const override { return Var<Object>(new Image); }
 	virtual bool archiveLoad(Archive &ar) override;
 	virtual bool archiveSave(Archive &ar) override;

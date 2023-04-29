@@ -15,7 +15,7 @@ IShaderUniformBus *IShaderUniformBus::TCreateBus(ShaderUniform &Uniform) {
 		case EUniformType::u_ivec3:			return new TShaderUniformBus<glm::ivec3>(Uniform);		break;
 		case EUniformType::u_ivec4:			return new TShaderUniformBus<glm::ivec4>(Uniform);		break;
 		case EUniformType::u_mat:			return new TShaderUniformBus<glm::mat4>(Uniform);		break;
-		case EUniformType::u_stexture:		return new TShaderUniformBus<Image *>(Uniform);			break;
+		case EUniformType::u_stexture:		return new TShaderUniformBus<Tbo *>(Uniform);			break;
 		default: throw;
 	}
 }
@@ -46,6 +46,7 @@ Shader::~Shader() {
 		delete u.bus;
 }
 void Shader::updateUniforms() {
+	unsigned texturesNum = 0;
 	uniforms.clear();
 	int uniformsSize = 0;
 	glGetProgramiv(shaderId, GL_ACTIVE_UNIFORMS, &uniformsSize);
@@ -63,6 +64,11 @@ void Shader::updateUniforms() {
 		);
 		auto &newUniform = uniforms.back();
 		newUniform.bus = IShaderUniformBus::TCreateBus(newUniform);
+
+		if (newUniform.type == EUniformType::u_stexture) {
+			auto textUni = dynamic_cast<TShaderUniformBus<Tbo*>*>(newUniform.bus);
+			textUni->activeId = texturesNum++;			
+		}
 	}
 }
 bool Shader::compile(EShaderType eShaderType, const string &code, int &id) {

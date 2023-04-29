@@ -20,6 +20,7 @@ public:
 	void beginPlay() {
 		MeshComponent::beginPlay();
 		owner->transform.position = Vector3(rand() % 9 - 5, rand() % 9 - 5, rand() % 9 - 5);
+		owner->transform.rotator.rotate(90, 0, 0);
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
 		vel = vel.normalize() * 0.01;
 		if (rand() % 2) {
@@ -27,7 +28,7 @@ public:
 		}
 	}
 	void tick(const double &deltaTime) {
-		owner->transform.rotator.rotate(1, 0, 0);
+		//owner->transform.rotator.rotate(1, 0, 1);
 		owner->transform.position += vel;
 		if (abs(owner->transform.position.x) > 10) {
 			owner->transform.position.x *= -1;

@@ -54,7 +54,7 @@ template<> class TShaderUniformBus<CType> : public IShaderUniformBus {\
 public:\
 	using IShaderUniformBus::IShaderUniformBus;\
 	typedef CType Type;\
-	CType val;\
+	Type val;\
 	void upload() override final { Exp; } \
 }
 ShaderUniformDelc(int,			glUniform1iv(owner.location, 1, &val));
@@ -66,12 +66,27 @@ ShaderUniformDelc(glm::ivec2,	glUniform2iv(owner.location, 1, glm::value_ptr(val
 ShaderUniformDelc(glm::ivec3,	glUniform3iv(owner.location, 1, glm::value_ptr(val)));
 ShaderUniformDelc(glm::ivec4,	glUniform4iv(owner.location, 1, glm::value_ptr(val)));
 ShaderUniformDelc(glm::mat4,	glUniformMatrix4fv(owner.location, 1, GL_FALSE, &val[0][0]));
-ShaderUniformDelc(Image *,		glActiveTexture(GL_TEXTURE0); val->bind(););
+//ShaderUniformDelc(Image *,		/*glActiveTexture(GL_TEXTURE0); val->bind();*/);
+
+template<> class TShaderUniformBus<Tbo*> : public IShaderUniformBus {
+public:
+	using IShaderUniformBus::IShaderUniformBus;
+	typedef Tbo* Type;
+	Type val;
+	unsigned activeId = 0;
+	void upload() override final { 
+		glActiveTexture(GL_TEXTURE0 + activeId);
+		val->bind();
+		glUniform1i(owner.location, activeId);
+	}
+};
 #undef ShaderUniformDelc
 
 class ShaderUniformIOBus {
 private:
+
 	unordered_map<string, const ShaderUniform*> parameters;
+	//list<unordered_map<string, const ShaderUniform *>::iterator *> toUpload;
 	
 	template<class T> TShaderUniformBus<T> *param(const string &name) { return dynamic_cast<TShaderUniformBus<T>*>(parameters[name]->bus); }
 public:
@@ -81,10 +96,10 @@ public:
 	void attach(const list<ShaderUniform> &uniforms);
 	void detach();
 	void upload() const;
-
+	const ShaderUniform *getUniform(string name) { return parameters[name]; }
 
 	template<class T> void setParam(const string &name, T) = delete;
-	template<class T> T getParam(const string &name) = delete;	
+	template<class T> T getParam(const string &name) = delete;
 	#define ParamDelc(CType)\
 	template<> void setParam<CType>(const string &name, CType value) { \
 		param<CType>(name)->val = value;\
@@ -101,7 +116,7 @@ public:
 	ParamDelc(glm::ivec2);
 	ParamDelc(glm::ivec3);
 	ParamDelc(glm::ivec4);
-	ParamDelc(Image *);
+	ParamDelc(Tbo *);
 	#undef ParamDelc
 
 	template<> void setParam<Color>(const string &name, Color value) {
