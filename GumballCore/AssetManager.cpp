@@ -19,31 +19,24 @@ namespace Path {
 	}
 };
 
-AssetFactory::AssetFactory(SubClass *subClass, list<string> extensions) :
-	subClass(subClass),
-	extensions(extensions) {
-	
-}
-bool AssetFactory::hasExtension(const string &extention) {
-	for (auto &ex : extensions) {
-		if (ex == extention)
-			return true;
-	}
-	return false;
-}
 
-AssetFactory *AssetsSystem::findFactory(const string &extension) {
+//{ new TSubClass<Image>, { "png" } },
+//{ new TSubClass<MeshData>, {"obj"} },
+//{ new TSubClass<Shader>, {"shader", "glsl"} }
+
+
+IAssetFactory *AssetsSystem::findFactory(const string &extension) {
 	for (auto &f : factories) {
-		if (f.hasExtension(extension))
-			return &f;
+		if (f->hasExtension(extension))
+			return f;
 	}
 	return nullptr;
 }
 void AssetsSystem::initialize() {
 	factories = {
-		{ new TSubClass<Image>, {"png"} },
-		{ new TSubClass<MeshData>, {"obj"} },
-		{ new TSubClass<Shader>, {"shader", "glsl"} }
+		new AssetFactory<Image>,
+		new AssetFactory<MeshData>,
+		new AssetFactory<Shader>
 	};
 }
 void AssetsSystem::shutdown() {
@@ -72,9 +65,7 @@ bool AssetsSystem::load(Asset *asset) {
 	if (ar.isOpen()) {
 		string assetExt = Path::extention(asset->filePath);
 		if (auto factory = findFactory(assetExt)) {
-			auto newObj = factory->construct();
-			if (newObj->archiveLoad(ar)) {
-				asset->setContent(newObj);
+			if (factory->archiveLoad(ar, asset->content)) {
 				return true;
 			}
 		}

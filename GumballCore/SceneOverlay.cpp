@@ -40,8 +40,9 @@ void DrawHandle::setShader(Shader *newShader) {
         shaderInstance.bind();
 
         auto &io = shaderInstance.uniformIO();
-        Tbo &tex = as->getAsset("logo")->getContent().pin<Image>()->getTexture();
-        Tbo &tex2 = as->getAsset("scotty")->getContent().pin<Image>()->getTexture();
+        
+        Tbo &tex = as->getContent<Image>("logo")->getTexture();
+        Tbo &tex2 = as->getContent<Image>("scotty")->getTexture();
         io.setParam<Tbo *>("uTexture", &tex);
         io.setParam<Color>("uColor", 0xffffffff);
         io.upload();

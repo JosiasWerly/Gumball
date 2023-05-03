@@ -1,10 +1,5 @@
 #include "Mesh.hpp"
-bool MeshData::archiveLoad(Archive &ar) {
-	return MeshFunctionsLibrary::LoadMeshVertexData(ar.filePath().c_str(), mesh, index);
-}
-bool MeshData::archiveSave(Archive &ar) {
-	return false;
-}
+
 
 MeshBuffer::MeshBuffer(MeshData *mesh) {
 	vao = new Vao();
@@ -43,4 +38,15 @@ void MeshBuffer::unbind() const {
 }
 void MeshBuffer::draw() const {
 	glDrawElements(GL_TRIANGLES, ibo->size, GL_UNSIGNED_INT, nullptr);
+}
+
+AssetFactory<MeshData>::AssetFactory() {
+	extensions = { "obj" };
+}
+bool AssetFactory<MeshData>::load(Archive &ar, MeshData &val) {
+	return MeshFunctionsLibrary::LoadMeshVertexData(ar.filePath().c_str(), val.mesh, val.index);
+}
+bool AssetFactory<MeshData>::save(Archive &ar, const MeshData &val) {
+	throw;
+	return false;
 }

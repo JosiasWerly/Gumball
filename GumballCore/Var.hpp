@@ -32,7 +32,16 @@ public:
 	}
 };
 
-template<class T> class Var {
+
+class IVar {
+protected:
+	IVar() {}
+public:
+	virtual ~IVar() {}
+	virtual bool isValid() { return false; }
+};
+
+template<class T> class Var : public IVar{
 	typedef VarContainer Container;
 	template<class t> friend class Var;
 
@@ -90,7 +99,7 @@ public:
 
 	T &operator*() { return *ptr; }
 	T *&operator->() { return ptr; }
-	const bool isValid() { return *this; }
+	bool isValid() override { return *this; }
 	operator bool() { return container && container->var && ptr; }
 	bool operator==(const Var &other) const { return container == other.container; }
 	Inline unsigned references() { container->references; }

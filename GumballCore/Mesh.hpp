@@ -10,7 +10,7 @@
 #include <cstring>
 #include <fstream>
 
-#include "Object.hpp"
+#include "AssetManager.hpp"
 #include "GLBuffer.hpp"
 #include "Math.hpp"
 #include "FunctionLibrary.hpp"
@@ -24,26 +24,11 @@ typedef std::vector<glm::vec2> listVec2;
 typedef std::vector<unsigned int> listUInt;
 
 //TODO: perhaps I should integrate this with VboBuilder
-struct MeshVertexData {
+struct GBCORE MeshVertexData {
 	glm::vec3 pos, normal;
 	glm::vec2 uv;
 };
-class MeshData :
-	public Object {
-public:
-	vector<MeshVertexData> mesh;
-	vector<unsigned int> index;
 
-	MeshData() = default;
-	MeshData(const vector<MeshVertexData> &mesh, const vector<unsigned> &index) :
-		mesh(mesh),
-		index(index) {
-	}
-	
-	virtual Var<Object> clone() const override { return Var<Object>(new MeshData); }
-	virtual bool archiveLoad(Archive &ar) override;
-	virtual bool archiveSave(Archive &ar) override;
-};
 class MeshFunctionsLibrary {
 public:
 	struct gPackedVertex {
@@ -215,5 +200,25 @@ public:
 	Inline void draw() const;
 
 	Inline MeshData *getMeshData() const { return meshData; }
+};
+
+class MeshData {
+public:
+	vector<MeshVertexData> mesh;
+	vector<unsigned int> index;
+
+	MeshData() = default;
+	MeshData(const vector<MeshVertexData> &mesh, const vector<unsigned> &index) :
+		mesh(mesh),
+		index(index) {
+	}
+};
+
+
+template<> class AssetFactory<MeshData> : public TAssetFactory<MeshData> {
+public:
+	AssetFactory();
+	bool load(Archive &ar, MeshData &val);
+	bool save(Archive &ar, const MeshData &val);
 };
 #endif // !_mesh

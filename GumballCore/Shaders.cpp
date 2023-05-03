@@ -3,7 +3,6 @@
 #include "Math.hpp"
 #include "Texture.hpp"
 
-
 IShaderUniformBus *IShaderUniformBus::TCreateBus(ShaderUniform &Uniform) {
 	switch (Uniform.type) {
 		case EUniformType::u_int:			return new TShaderUniformBus<int>(Uniform);				break;
@@ -125,7 +124,17 @@ void Shader::upload() const {
 	uniformIOBus.upload();
 }
 
-bool Shader::archiveLoad(Archive &ar) {
+void ShaderInstance::setShader(Shader *newShader) {
+	shader = newShader;
+	if (shader) {
+		uniformIOBus.attach(shader->getUniforms());
+	}
+}
+
+AssetFactory<Shader>::AssetFactory() {
+	extensions = { "shader", "glsl" };
+}
+bool AssetFactory<Shader>::load(Archive &ar, Shader &val) {
 	string vertex, fragment;
 	{
 		enum class ESType {
@@ -150,17 +159,11 @@ bool Shader::archiveLoad(Archive &ar) {
 	if (vertex.empty() || fragment.empty())
 		return false;
 
-	if (create(vertex, fragment))
+	if (val.create(vertex, fragment))
 		return true;
 	return false;
 }
-bool Shader::archiveSave(Archive &ar) {
+bool AssetFactory<Shader>::save(Archive &ar, const Shader &val) {
+	throw;
 	return false;
-}
-
-void ShaderInstance::setShader(Shader *newShader) {
-	shader = newShader;
-	if (shader) {
-		uniformIOBus.attach(shader->getUniforms());
-	}
 }

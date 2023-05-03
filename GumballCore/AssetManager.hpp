@@ -9,11 +9,11 @@
 
 
 #include <list>
+#include <set>
 #include <string>
 using namespace std;
 
 class Asset;
-class AssetFactory;
 class AssetsSystem;
 
 namespace Path {
@@ -24,55 +24,59 @@ namespace Path {
 
 class Asset {
 	friend class AssetsSystem;
+
 private:
 	string filePath = "";
 	string name = "";
 
 protected:
-	Var<Object> content;
+	IVar *content = nullptr;
+
 public:
-
-	Inline Var<Object>& getContent(){
-		return content;
-	}
-	Inline void setContent(Object *newContent) {
-		content.assign(newContent);
-	}
-
-	Inline bool isValid() { return content; }
+	Inline IVar *getContent() { return content; }
+	Inline bool isValid() { return content != nullptr; }
 	Inline const string& getName() { return name; }
 	Inline const string& getPath() { return filePath; }
 };
 
-struct SubClass {
-public:
-	virtual Object *instantiate() const = 0;
-};
-template<class T>
-struct TSubClass : 
-	public SubClass{
-public:
-	Object *instantiate() const override { return new T; }
-};
-
-//this can be a tuple inside of assetSystem... no need for this class
-class AssetFactory {
+class IAssetFactory {
 protected:
-	SubClass *subClass = nullptr;
-	list<string> extensions;
+	set<string> extensions;
 public:
-	AssetFactory(SubClass *subClass, list<string> extensions);
-	bool hasExtension(const string &extention);
-	Object *construct() { return subClass->instantiate(); }
-};	
+	IAssetFactory() {}
+	bool hasExtension(const string &extention) const { return extensions.contains(extention); }
+	virtual bool archiveLoad(Archive &ar, IVar *&var) = 0;
+	virtual bool archiveSave(Archive &ar, const IVar *var) = 0;
+};
+template<class T> class TAssetFactory : public IAssetFactory {
+public:
+	bool archiveLoad(Archive &ar, IVar *&var) override final {
+		delete var;
+		T *trg = new T;
+		if (load(ar, *trg)) {
+			var = new Var<T>(trg);
+			return true;
+		}
+		delete trg;
+		return false;
+	}
+	bool archiveSave(Archive &ar, const IVar *var) override final {
+		throw;
+		return false;
+	}
+
+	virtual bool load(Archive &ar, T &val) = 0;
+	virtual bool save(Archive &ar, const T &val) = 0;
+};
+template<class T> class AssetFactory : public TAssetFactory<T> {};
 
 class AssetsSystem :
 	public EngineSystem {
 private:
-	list<AssetFactory> factories;
+	list<IAssetFactory*> factories;
 	list<Asset *> assets;
 
-	AssetFactory *findFactory(const string &extension);
+	IAssetFactory *findFactory(const string &extension);
 protected:
 	virtual void initialize() override;
 	virtual void shutdown() override;
@@ -81,11 +85,11 @@ public:
 	void addAsset(Asset *asset);
 	void delAsset(Asset *asset);	
 	Asset *getAsset(string name);
-	template<class T> T *getAsset(string name) {
-		T *target;
+	template<class t> t *getContent(string name) {
 		if (auto asset = getAsset(name)) {
-			*asset >> target;
-			return target;
+			if (auto var = dynamic_cast<Var<t>*>(asset->getContent())) {
+				return var->pin();
+			}
 		}
 		return nullptr;
 	}

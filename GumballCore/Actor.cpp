@@ -36,8 +36,8 @@ void ActorComponent::setActive(bool newActive) {
 
 MeshComponent::MeshComponent() {
 	auto as = Engine::instance()->assetSystem;
-	draw.setShader(as->getAsset("default")->getContent().pin<Shader>());
-	draw.setMesh(as->getAsset("cube")->getContent().pin<MeshData>());
+	draw.setShader(as->getContent<Shader>("default"));
+	draw.setMesh(as->getContent<MeshData>("cube"));
 	
 }
 MeshComponent::~MeshComponent() {

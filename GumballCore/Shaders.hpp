@@ -135,8 +135,7 @@ public:
 	}
 };
 
-class GBCORE Shader :
-	public Object {
+class GBCORE Shader {
 public:
 	enum class EShaderType {
 		Vertex = GL_VERTEX_SHADER,
@@ -159,10 +158,6 @@ public:
 	Inline void upload() const;
 	list<ShaderUniform> &getUniforms() { return uniforms; }
 	ShaderUniformIOBus &uniformIO() { return uniformIOBus; }
-
-	virtual Var<Object> clone() const override { return Var<Object>(new Shader); }
-	virtual bool archiveLoad(Archive &ar) override;
-	virtual bool archiveSave(Archive &ar) override;
 };
 
 class GBCORE ShaderInstance {
@@ -179,5 +174,11 @@ public:
 	Inline void upload() const { uniformIOBus.upload(); }
 };
 
+template<> class AssetFactory<Shader> : public TAssetFactory<Shader> {
+public:
+	AssetFactory();
+	bool load(Archive &ar, Shader &val);
+	bool save(Archive &ar, const Shader &val);
+};
 
 #endif // !_shader
