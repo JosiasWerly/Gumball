@@ -214,7 +214,6 @@ public:
 	}
 };
 
-
 template<> class AssetFactory<MeshData> : public TAssetFactory<MeshData> {
 public:
 	AssetFactory();

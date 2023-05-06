@@ -95,6 +95,54 @@ public:
 	void build();
 	Inline bool isValid() const { return stride != 0; }
 };
+struct Fbo {
+private:
+	unsigned id;
+
+public:
+	vector<Tbo *> textures;
+	Fbo() {
+		glGenFramebuffers(1, &id);
+		for (auto t : textures) {
+			delete t;
+		}
+	}
+	~Fbo() {
+		glDeleteFramebuffers(1, &id);
+	}
+	void bind() {
+		glBindFramebuffer(GL_FRAMEBUFFER, id);
+	}
+	void unbind() {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void addTexture() {
+		Tbo *newTexture = new Tbo;
+		newTexture->bind();
+		newTexture->create(2000, 2000);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textures.size(), GL_TEXTURE_2D, newTexture->id, 0);
+		textures.push_back(newTexture);
+		newTexture->unbind();
+	}
+	void updateBuffers() {
+		const int tNum = textures.size();
+		unsigned *textureRelay = new unsigned[tNum];
+		for (int i = 0; i < tNum; ++i) {
+			textureRelay[i] = GL_COLOR_ATTACHMENT0 + i;
+		}
+		glDrawBuffers(tNum, textureRelay);
+		delete[] textureRelay;
+	}
+
+
+	void beginDraw() {
+		for (int i = 0; i < textures.size(); ++i) {
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, textures[i]->id);
+		}
+	}
+};
 
 //unsigned vao;
 //glGenVertexArrays(1, &vao);

@@ -5,6 +5,8 @@
 #include <filesystem>
 
 #include "Engine.hpp"
+#include "EnviromentVariables.hpp"
+
 #include "Shaders.hpp"
 #include "Texture.hpp"
 #include "Mesh.hpp"
@@ -20,11 +22,6 @@ namespace Path {
 };
 
 
-//{ new TSubClass<Image>, { "png" } },
-//{ new TSubClass<MeshData>, {"obj"} },
-//{ new TSubClass<Shader>, {"shader", "glsl"} }
-
-
 IAssetFactory *AssetsSystem::findFactory(const string &extension) {
 	for (auto &f : factories) {
 		if (f->hasExtension(extension))
@@ -38,6 +35,7 @@ void AssetsSystem::initialize() {
 		new AssetFactory<MeshData>,
 		new AssetFactory<Shader>
 	};
+	loadFromFolder(Enviroment::instance()->getResourcePath());
 }
 void AssetsSystem::shutdown() {
 	for (auto a : assets)

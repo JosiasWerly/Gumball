@@ -21,6 +21,7 @@ protected:
 	EngineSystem();
 	virtual ~EngineSystem();
 	virtual void initialize();
+	virtual void lateInitialize();
 	virtual void shutdown();
 	virtual void beginPlay();
 	virtual void endPlay();
@@ -36,10 +37,11 @@ private:
 	
 	SystemOverseer();
 protected:
+	Inline void initialize() const;
+	Inline void lateInitialize() const;
+	Inline void shutdown() const;
 	Inline void beginPlay() const;
 	Inline void endPlay() const;
-	Inline void shutdown() const;
-	Inline void initialize() const;
 
 	template<ESystemTickType> void tick(const double &deltaTime) {
 	}

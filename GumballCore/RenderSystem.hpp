@@ -58,6 +58,7 @@ public:
     RenderSystem();
     ~RenderSystem();
     void initialize() override;
+    void lateInitialize() override;
     void shutdown() override;
     void tick(const double &deltaTime) override;
     void pushLayer(IRenderOverlay *layer, bool pushBack = true);

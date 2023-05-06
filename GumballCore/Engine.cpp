@@ -48,7 +48,7 @@ void Engine::args(int argc, char *argv[]) {
 }
 void Engine::tick() {
 	systemSeer->initialize();
-	assetSystem->loadFromFolder(Enviroment::instance()->getResourcePath());
+	systemSeer->lateInitialize();
 
 	auto widget = dynamic_cast<WidgetOverlay*>(renderSystem->getLayer("widget"));
 	auto scene = dynamic_cast<SceneOverlay *>(renderSystem->getLayer("scene"));

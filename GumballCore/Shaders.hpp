@@ -72,9 +72,11 @@ template<> class TShaderUniformBus<Tbo*> : public IShaderUniformBus {
 public:
 	using IShaderUniformBus::IShaderUniformBus;
 	typedef Tbo* Type;
-	Type val;
+	Type val = nullptr;
 	unsigned activeId = 0;
 	void upload() override final { 
+		if (!val)
+			return;
 		glActiveTexture(GL_TEXTURE0 + activeId);
 		val->bind();
 		glUniform1i(owner.location, activeId);

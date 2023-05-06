@@ -85,6 +85,10 @@ private:
 
     list<ViewHandle *> views;
     list<DrawHandle *> draws;
+
+    Fbo *fbo;
+    MeshBuffer *fboMesh;
+    ShaderInstance fboShader;
 public:
     SceneOverlay();
     ~SceneOverlay();

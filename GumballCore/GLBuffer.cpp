@@ -106,7 +106,7 @@ Color Tbo::getPixel(unsigned x, unsigned y) {
 }
 void Tbo::setBuffer(Color *newBuffer) {
 	buffer = newBuffer;
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, buffer);
 }
 
 VboBuilder &VboBuilder::addAttrib(unsigned attribID, unsigned componentSize, unsigned stride, unsigned int pointer, unsigned type, bool glNormalized) {

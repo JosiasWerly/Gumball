@@ -76,6 +76,8 @@ void RenderSystem::initialize() {
 	// Cull triangles which normal is not towards the camera
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
+}
+void RenderSystem::lateInitialize() {
 	pushLayer(scene);
 	pushLayer(widget);
 }
