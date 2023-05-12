@@ -95,9 +95,16 @@ public:
 	void build();
 	Inline bool isValid() const { return stride != 0; }
 };
+
+enum class EFboTarget {
+	Read = GL_READ_FRAMEBUFFER,
+	Write = GL_DRAW_FRAMEBUFFER, 
+	ReadWrite = GL_FRAMEBUFFER
+};
 struct Fbo {
 private:
-	unsigned id;
+	EFboTarget trg = EFboTarget::ReadWrite;
+	unsigned id = 0;
 
 public:
 	vector<Tbo *> textures;
@@ -110,17 +117,18 @@ public:
 	~Fbo() {
 		glDeleteFramebuffers(1, &id);
 	}
-	void bind() {
-		glBindFramebuffer(GL_FRAMEBUFFER, id);
+	void bind(EFboTarget target = EFboTarget::ReadWrite) {
+		trg = target;
+		glBindFramebuffer(static_cast<unsigned>(trg), id);
 	}
 	void unbind() {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(static_cast<unsigned>(trg), 0);
 	}
 
-	void addTexture() {
+	void addTexture(int sizeX = 2000, int sizeY = 2000) {
 		Tbo *newTexture = new Tbo;
 		newTexture->bind();
-		newTexture->create(2000, 2000);
+		newTexture->create(sizeX, sizeY);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textures.size(), GL_TEXTURE_2D, newTexture->id, 0);
 		textures.push_back(newTexture);
 		newTexture->unbind();
@@ -134,8 +142,10 @@ public:
 		glDrawBuffers(tNum, textureRelay);
 		delete[] textureRelay;
 	}
-
-
+	void cleaBuffer() {
+		glClearColor(0, 0, 0, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 	void beginDraw() {
 		for (int i = 0; i < textures.size(); ++i) {
 			glActiveTexture(GL_TEXTURE0 + i);

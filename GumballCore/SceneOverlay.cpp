@@ -60,22 +60,28 @@ void SceneOverlay::onAttach() {
     fbo->addTexture();
     fbo->updateBuffers();
     fbo->unbind();
-
-
-    auto shader = Engine::instance()->assetSystem->getContent<Shader>("deferred");
-    fboShader.setShader(shader);
-    auto io = fboShader.uniformIO();
-    io.setParam<Tbo *>("uTexture", fbo->textures[0]);
-    //io.setParam<Tbo *>("uTexture", &Engine::instance()->assetSystem->getContent<Image>("logo")->getTexture());
-    fboMesh = new MeshBuffer(Engine::instance()->assetSystem->getContent<MeshData>("plane"));
+    //MeshData *ms = new MeshData();
+    //{
+    //    ms->mesh = {
+    //        {
+    //            {}, {}, {}
+    //        }
+    //    };
+    //}
+    //fboMesh = new MeshBuffer(Engine::instance()->assetSystem->getContent<MeshData>("plane"));
+    //auto shader = Engine::instance()->assetSystem->getContent<Shader>("deferred");
+    //fboShader.setShader(shader);
+    //auto io = fboShader.uniformIO();
+    //io.setParam<Tbo *>("uTexture", fbo->textures[0]);
+    ////io.setParam<Tbo *>("uTexture", &Engine::instance()->assetSystem->getContent<Image>("logo")->getTexture());
+    //fboMesh = new MeshBuffer(Engine::instance()->assetSystem->getContent<MeshData>("plane"));
 }
 void SceneOverlay::onDetach() {
 
 }
 void SceneOverlay::onRender(const double &deltaTime) {
-	fbo->bind();
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	fbo->bind(EFboTarget::Write);
+    fbo->cleaBuffer();
 	for (auto &v : views) {
 		const auto mView = v->transform->getMat();
 		for (auto &d : draws) {
@@ -93,24 +99,29 @@ void SceneOverlay::onRender(const double &deltaTime) {
 			shader.unbind();
 		}
 	}
-	fbo->unbind();
+	//fbo->unbind();
+
+    fbo->bind(EFboTarget::Read);
+    glBindFramebuffer(static_cast<unsigned>(EFboTarget::Write), 0);
+    glBlitFramebuffer(0, 0, 1200, 800, 0, 0, 1200, 800, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
    
-   
-    if (views.size() == 0)
-        return;
-   fboMesh->bind();
-   fboShader.bind();
-   
-   auto io = fboShader.uniformIO();   
-   Transform pos;
-   pos.position = Vector3(0, 0, 25);
-   pos.rotator.rotate(90, 0, 0);
-   io.setParam<glm::mat4>("uView", views.front()->transform->getMat());
-   io.setParam<glm::mat4>("uProj", views.front()->viewMode.mProjection);
-   io.setParam<glm::mat4>("uModel", pos.getMat());   
-   fboShader.upload();
-   
-   fboMesh->draw();
-   fboShader.unbind();
-   fboMesh->unbind();
+   // if (views.size() == 0)
+   //     return;
+   //fboMesh->bind();
+   //fboShader.bind();
+   //
+   //auto io = fboShader.uniformIO();
+   //Transform pos;
+   //pos.position = Vector3(0, 0, 25);
+   //pos.rotator.rotate(90, 0, 0);
+   //io.setParam<glm::mat4>("uView", views.front()->transform->getMat());
+   //io.setParam<glm::mat4>("uProj", views.front()->viewMode.mProjection);
+   //io.setParam<glm::mat4>("uModel", pos.getMat());   
+   //fboShader.upload();
+   //
+   //fboMesh->draw();
+   //fboShader.unbind();
+   //fboMesh->unbind();
 }
