@@ -25,14 +25,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GumballCore", "GumballCore\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GumballProject", "GumballProject\GumballProject.vcxproj", "{607A3B1F-4C48-2F25-35DC-9F4B21490B8A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{E169437C-546A-4F05-9509-9B84AFB897AC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shaders", "shaders", "{C7CA69F8-C38B-4B8F-941C-B96799EA3C47}"
-	ProjectSection(SolutionItems) = preProject
-		Resources\shaders\default.shader = Resources\shaders\default.shader
-		Resources\shaders\test.shader = Resources\shaders\test.shader
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -70,7 +62,6 @@ Global
 		{7F9B877C-6BD2-880D-14BF-6E1000D5040F} = {C5F8F5E2-310F-F478-7A86-7F9AE6DBC400}
 		{A705880B-130F-887C-9C8A-9E7C0893937C} = {C5F8F5E2-310F-F478-7A86-7F9AE6DBC400}
 		{9116897C-7D4D-8A0D-263A-70101250060F} = {C5F8F5E2-310F-F478-7A86-7F9AE6DBC400}
-		{C7CA69F8-C38B-4B8F-941C-B96799EA3C47} = {E169437C-546A-4F05-9509-9B84AFB897AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6CFDEC66-6B5F-43EF-887D-7F1735DBB77A}

@@ -11,8 +11,8 @@ out vec3 f_normal;
 uniform mat4 uProj, uView, uModel;
 
 
-void main() {
-    f_normal = normal;
+void main(){
+	f_normal = normal;
     f_uv = uv;
     gl_Position = uProj * uView * uModel * vec4(pos, 1);
 };
@@ -28,6 +28,6 @@ out vec4 fColor;
 
 uniform vec4 uColor;
 uniform sampler2D uTexture;
-void main() {
-    fColor = texture(uTexture, f_uv) * uColor;
+void main(){
+    fColor = texture(uTexture, f_uv) * uColor;    
 };
