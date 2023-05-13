@@ -123,5 +123,40 @@ void VboBuilder::build() {
 	}
 }
 
+DrawableBuffer::DrawableBuffer() {
+	vao = new Vao();
+	vao->bind();
+	vbo = new Vbo();
+	vbo->bind();
+	ibo = new Ibo();
+	ibo->bind();
+
+	unbindAll();
+}
+DrawableBuffer::~DrawableBuffer() {
+	unbindAll();
+	delete vao;
+	delete vbo;
+	delete ibo;
+}
+void DrawableBuffer::bind() const {
+	vao->bind();
+}
+void DrawableBuffer::unbind() const {
+	vao->unbind();
+}
+void DrawableBuffer::bindAll() const{
+	vao->bind();
+	vbo->bind();
+	ibo->bind();
+}
+void DrawableBuffer::unbindAll() const {
+	vao->unbind();
+	vbo->unbind();
+	ibo->unbind();
+}
+void DrawableBuffer::draw() const {
+	glDrawElements(GL_TRIANGLES, ibo->size, GL_UNSIGNED_INT, nullptr);
+}
 
 #pragma warning( default : 4312 4267 4838)

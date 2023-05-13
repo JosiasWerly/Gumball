@@ -4,8 +4,8 @@
 
 #include "GLUtils.hpp"
 #include "Math.hpp"
-#include "Mesh.hpp"
 #include <list>
+#include <vector>
 using namespace std;
 
 #pragma warning( disable : 4312 4267 4838)
@@ -56,6 +56,8 @@ public:
 	Color *&getBuffer() { return buffer; }
 	bool isValid() const { return buffer; }
 };
+
+//I should make the class VBO contains a method that returns this struct, drawable properly the builder pattern.
 struct VboBuilder {
 private:
 	struct EntityData {
@@ -96,6 +98,26 @@ public:
 	Inline bool isValid() const { return stride != 0; }
 };
 
+class DrawableBuffer {
+	Vao *vao = nullptr;
+	Vbo *vbo = nullptr;
+	Ibo *ibo = nullptr;
+public:
+	DrawableBuffer();
+	~DrawableBuffer();
+	void bind() const;
+	void unbind() const;
+	void bindAll() const;
+	void unbindAll() const;
+	void draw() const;
+
+	Inline Vao &getVao() const { return *vao; }
+	Inline Vbo &getVbo() const { return *vbo; }
+	Inline Ibo &getIbo() const { return *ibo; }
+};
+
+
+
 enum class EFboTarget {
 	Read = GL_READ_FRAMEBUFFER,
 	Write = GL_DRAW_FRAMEBUFFER, 
@@ -122,10 +144,10 @@ public:
 		glBindFramebuffer(static_cast<unsigned>(trg), id);
 	}
 	void unbind() {
-		glBindFramebuffer(static_cast<unsigned>(trg), 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void addTexture(int sizeX = 2000, int sizeY = 2000) {
+	void addTexture(int sizeX = 800, int sizeY = 600) {
 		Tbo *newTexture = new Tbo;
 		newTexture->bind();
 		newTexture->create(sizeX, sizeY);

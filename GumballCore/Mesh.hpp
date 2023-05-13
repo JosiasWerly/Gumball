@@ -23,7 +23,10 @@ typedef std::vector<glm::vec3> listVec3;
 typedef std::vector<glm::vec2> listVec2;
 typedef std::vector<unsigned int> listUInt;
 
-//TODO: perhaps I should integrate this with VboBuilder
+
+
+
+
 struct GBCORE MeshVertexData {
 	glm::vec3 pos, normal;
 	glm::vec2 uv;
@@ -187,21 +190,6 @@ public:
 	}
 };
 
-class GBCORE MeshBuffer {
-	struct Vao *vao = nullptr;
-	struct Vbo *vbo = nullptr;
-	struct Ibo *ibo = nullptr;
-	class MeshData *meshData = nullptr;
-public:
-	MeshBuffer(MeshData *mesh);
-	~MeshBuffer();
-	Inline void bind() const;
-	Inline void unbind() const;
-	Inline void draw() const;
-
-	Inline MeshData *getMeshData() const { return meshData; }
-};
-
 class MeshData {
 public:
 	vector<MeshVertexData> mesh;
@@ -220,4 +208,19 @@ public:
 	bool load(Archive &ar, MeshData &val);
 	bool save(Archive &ar, const MeshData &val);
 };
+
+class GBCORE MeshInstance {
+	class DrawableBuffer *drawable = nullptr;
+	class MeshData *meshData = nullptr;
+public:
+	MeshInstance();
+	~MeshInstance();
+	void setMeshData(MeshData *NewMeshData);
+
+	Inline void bind() const { drawable->bind(); }
+	Inline void unbind() const { drawable->unbind(); }
+	Inline void draw() const { drawable->draw(); }
+	Inline MeshData *getMeshData() const { return meshData; }
+};
+
 #endif // !_mesh
