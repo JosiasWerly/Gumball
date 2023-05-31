@@ -76,6 +76,20 @@ public:
     Inline MeshInstance &getMeshInstance() { return staticMesh; }
     Inline ShaderInstance &getShaderInstance() { return shaderInstance; }
 };
+class GBCORE FboHandle {
+    Fbo fbo;
+    MeshInstance screenMesh;
+    ShaderInstance shaderInstance;
+public:
+    FboHandle();
+    ~FboHandle();
+    
+    void setShader(Shader *newShader);
+    Inline ShaderInstance &getShader() { return shaderInstance; }
+    Inline MeshInstance &getMesh() { return screenMesh; }
+    Inline Fbo &getFbo() { return fbo; }
+
+};
 
 class GBCORE SceneOverlay :
     public IRenderOverlay {
@@ -86,9 +100,7 @@ private:
     list<ViewHandle *> views;
     list<DrawHandle *> draws;
 
-    Fbo *fbo;
-    DrawableBuffer *plane;
-    ShaderInstance fboShader;
+    FboHandle *Gbuffer;
 public:
     SceneOverlay();
     ~SceneOverlay();

@@ -86,18 +86,21 @@ public:
 
 class ShaderUniformIOBus {
 private:
-
+	friend class Shader;
+	friend class ShaderInstance;
 	unordered_map<string, const ShaderUniform*> parameters;
-	//list<unordered_map<string, const ShaderUniform *>::iterator *> toUpload;
 	
 	template<class T> TShaderUniformBus<T> *param(const string &name) { return dynamic_cast<TShaderUniformBus<T>*>(parameters[name]->bus); }
+
+protected:
+
+	void attach(const list<ShaderUniform> &uniforms);
+	void detach();
+
 public:
 	ShaderUniformIOBus();
 	~ShaderUniformIOBus();
 
-	void attach(const list<ShaderUniform> &uniforms);
-	void detach();
-	void upload() const;
 	const ShaderUniform *getUniform(string name) { return parameters[name]; }
 
 	template<class T> void setParam(const string &name, T) = delete;
@@ -135,6 +138,7 @@ public:
 		const auto &v = param<glm::fvec3>(name)->val;
 		return Vector3::Vector3(v.x, v.y, v.z);
 	}
+	void upload() const;
 };
 
 class GBCORE Shader {
@@ -164,6 +168,7 @@ public:
 
 class GBCORE ShaderInstance {
 protected:
+	friend class Shader;
 	Shader *shader;
 	ShaderUniformIOBus uniformIOBus;
 public:

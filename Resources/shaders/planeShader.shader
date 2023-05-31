@@ -26,7 +26,7 @@ out vec4 fColor;
 uniform sampler2D uTexture;
 
 void main() {
-    //fColor  =  texture(uTexture, f_uv) * vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);
-    //fColor = vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);
-    fColor  =  texture(uTexture, f_uv) + vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);
+    fColor  =  texture(uTexture, f_uv);
+    //fColor = vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);    
+    //fColor  =  texture(uTexture, f_uv) + vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);
 }

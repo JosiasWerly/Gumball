@@ -37,7 +37,9 @@ void ActorComponent::setActive(bool newActive) {
 MeshComponent::MeshComponent() {
 	auto as = Engine::instance()->assetSystem;
 	draw.setShader(as->getContent<Shader>("default"));
-	draw.setMesh(as->getContent<MeshData>("cube"));
+	auto &io = draw.getShaderInstance().uniformIO();
+	io.setParam<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
+	draw.setMesh(as->getContent<MeshData>("screenPlane"));
 	
 }
 MeshComponent::~MeshComponent() {

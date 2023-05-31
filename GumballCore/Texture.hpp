@@ -19,8 +19,8 @@ public:
 		destroy();
 	}
 	void create(int width, int height, Color *imageBuffer) {
-		textureBuffer.bind();
 		textureBuffer.create(width, height);
+		textureBuffer.bind();
 		textureBuffer.setBuffer(imageBuffer);
 		textureBuffer.unbind();
 	}
@@ -34,7 +34,7 @@ public:
 		textureBuffer.unbind();
 	}
 	Inline void uploadBuffer() {
-		textureBuffer.loadToGPU();
+		textureBuffer.upload();
 	}
 	Inline bool isValid() {
 		return textureBuffer.isValid();

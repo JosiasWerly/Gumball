@@ -60,6 +60,7 @@ void RenderSystem::initialize() {
 
 	mainWindow.create("Gumball", { 800, 600 });
 	
+	glfwSetFramebufferSizeCallback(mainWindow.getGLWindow(), &RenderSystem::onWindowResize);
 	glfwSetKeyCallback(mainWindow.getGLWindow(), &InputSystem::keyboardCallback);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -102,4 +103,8 @@ void RenderSystem::tick(const double &deltaTime) {
 		layer->onRender(deltaTime);
 	
 	mainWindow.render();
+}
+void RenderSystem::onWindowResize(GLFWwindow *window, int width, int height) {
+	auto RSys = Engine::instance()->renderSystem;
+	RSys->mainWindow.setSize(Vector2i(width, height));
 }

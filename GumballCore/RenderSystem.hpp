@@ -11,6 +11,7 @@ using namespace std;
 #include "Subsystem.hpp"
 #include "Patterns.hpp"
 #include "InputSystem.hpp"
+#include "Event.hpp"
 #include "Math.hpp"
 
 
@@ -30,7 +31,6 @@ public:
     const Vector2i& getSize();
     GLFWwindow* getGLWindow();
     void setTitle(string newTitle);
-    
 };
 
 class GBCORE IRenderOverlay {
@@ -75,6 +75,9 @@ public:
     template<class t> t *getLayerAs(string name) { return dynamic_cast<t *>(getLayer(name)); }
 
     ESystemTickType tickType() override { return ESystemTickType::all; }
+
+    static void onWindowResize(GLFWwindow *window, int width, int height);
 };
+
 
 #endif // !_viewport

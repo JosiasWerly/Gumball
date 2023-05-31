@@ -45,16 +45,18 @@ public:
 	unsigned id = 0;
 	Tbo();
 	virtual ~Tbo();	
-	void loadToGPU();
-	void bind();
-	void unbind();
+	void upload();
 	void create(int width, int height, unsigned internalFormat = GL_RGBA8, unsigned  format = GL_RGBA, unsigned type = GL_UNSIGNED_BYTE);
+	void destroy();
 	void setPixel(unsigned x, unsigned y, Color color);
 	Color getPixel(unsigned x, unsigned y);
 
 	void setBuffer(Color *newBuffer);
 	Color *&getBuffer() { return buffer; }
 	bool isValid() const { return buffer; }
+	
+	void bind();
+	void unbind();
 };
 
 //I should make the class VBO contains a method that returns this struct, drawable properly the builder pattern.
@@ -116,8 +118,6 @@ public:
 	Inline Ibo &getIbo() const { return *ibo; }
 };
 
-
-
 enum class EFboTarget {
 	Read = GL_READ_FRAMEBUFFER,
 	Write = GL_DRAW_FRAMEBUFFER, 
@@ -130,51 +130,17 @@ private:
 
 public:
 	vector<Tbo *> textures;
-	Fbo() {
-		glGenFramebuffers(1, &id);
-		for (auto t : textures) {
-			delete t;
-		}
-	}
-	~Fbo() {
-		glDeleteFramebuffers(1, &id);
-	}
-	void bind(EFboTarget target = EFboTarget::ReadWrite) {
-		trg = target;
-		glBindFramebuffer(static_cast<unsigned>(trg), id);
-	}
-	void unbind() {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
-	void addTexture(int sizeX = 800, int sizeY = 600) {
-		Tbo *newTexture = new Tbo;
-		newTexture->bind();
-		newTexture->create(sizeX, sizeY);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textures.size(), GL_TEXTURE_2D, newTexture->id, 0);
-		textures.push_back(newTexture);
-		newTexture->unbind();
-	}
-	void updateBuffers() {
-		const int tNum = textures.size();
-		unsigned *textureRelay = new unsigned[tNum];
-		for (int i = 0; i < tNum; ++i) {
-			textureRelay[i] = GL_COLOR_ATTACHMENT0 + i;
-		}
-		glDrawBuffers(tNum, textureRelay);
-		delete[] textureRelay;
-	}
-	void cleaBuffer() {
-		glClearColor(0, 0, 0, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	void beginDraw() {
-		for (int i = 0; i < textures.size(); ++i) {
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, textures[i]->id);
-		}
-	}
+	Fbo();
+	~Fbo();
+	void bind(EFboTarget target = EFboTarget::ReadWrite);
+	void unbind();
+	void clearTextures();
+	void addTexture(Vector2i size);
+	void updateDrawBuffers();
+	void clearBuffer();
+	void beginDraw();
 };
+
 
 //unsigned vao;
 //glGenVertexArrays(1, &vao);
