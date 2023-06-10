@@ -19,7 +19,7 @@ public:
 	}
 	void beginPlay() {
 		MeshComponent::beginPlay();
-		owner->transform.position = Vector3(rand() % 100 * .1, rand() % 100 * .1, rand() % 100 * .1);
+		owner->transform.position = Vector3(rand() % 100 * .1f, rand() % 100 * .1f, rand() % 100 * .1f);
 
 
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);

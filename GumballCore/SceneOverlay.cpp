@@ -63,6 +63,15 @@ void FboHandle::setShader(Shader *newShader) {
     fbo.updateDrawBuffers();
     fbo.unbind();
 }
+void FboHandle::render() {
+    fbo.unbind();
+    fbo.bind(EFboTarget::Read);
+    screenMesh.bind();
+    shaderInstance.bind();
+    shaderInstance.upload();
+    screenMesh.draw();
+    fbo.unbind();
+}
 
 
 
@@ -74,13 +83,13 @@ SceneOverlay::~SceneOverlay() {
 void SceneOverlay::onAttach() {
     auto &as = Engine::instance()->assetSystem;
     Gbuffer = new FboHandle;
-    Gbuffer->setShader(as->getContent<Shader>("planeShader"));
+    Gbuffer->setShader(as->getContent<Shader>("gbuffer"));
 }
 void SceneOverlay::onDetach() {
 
 }
 void SceneOverlay::onRender(const double &deltaTime) {
-    auto &fbo = Gbuffer->getFbo();
+    auto &fbo = Gbuffer->getFbo();    
     fbo.bind(EFboTarget::Write);
     fbo.clearBuffer();
     for (auto &v : views) {
@@ -99,13 +108,5 @@ void SceneOverlay::onRender(const double &deltaTime) {
     		shader.unbind();
     	}
     }
-    fbo.unbind();
-
-    auto &mesh = Gbuffer->getMesh();
-    auto &shader = Gbuffer->getShader();
-    fbo.bind(EFboTarget::Read);
-    mesh.bind();
-    shader.bind();
-    shader.upload();
-    mesh.draw();
+    Gbuffer->render();    
 }

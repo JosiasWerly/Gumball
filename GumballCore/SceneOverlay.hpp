@@ -88,7 +88,9 @@ public:
     Inline ShaderInstance &getShader() { return shaderInstance; }
     Inline MeshInstance &getMesh() { return screenMesh; }
     Inline Fbo &getFbo() { return fbo; }
-
+    
+    void write();
+    void render();
 };
 
 class GBCORE SceneOverlay :

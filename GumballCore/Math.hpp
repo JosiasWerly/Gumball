@@ -49,7 +49,12 @@ struct GBCORE Color {
 	}
 };
 
-//TODO: implement vec4
+class Vector2i;
+class Vector3i;
+class Vector4i;
+class Vector2;
+class Vector3;
+class Vector4;
 
 template<class T> 
 class TVector {
@@ -145,59 +150,31 @@ public:
 	}
 };
 
-class Vector3;
-class Vector2;
-class Vector3i;
-class Vector2i;
-
-class Vector3 : 
-	public TVector<glm::vec3> {
-public:
-	float	&x = rawVector.x,
-			&y = rawVector.y,
-			&z = rawVector.z;
-
-	Vector3() = default;
-	Vector3(float x, float y, float z) :
-		TParent(TVec(x, y, z)) {
-	}
-	Vector3(TParent &&init) :
-		TParent(init) {
-	}
-	Vector3 &operator=(const Vector3 &other) {
-		x = other.x;
-		y = other.y;
-		z = other.z;
-		return *this;
-	};
-
-	operator Vector3i();
-	operator Vector2();
-	operator Vector2i();
-};
-class Vector2 : 
-	public TVector<glm::vec2> {
+class Vector2i :
+	public TVector<glm::ivec2> {
 public:
 	using TParent::TParent;
-	float	&x = rawVector.x,
-			&y = rawVector.y;
-
-	Vector2() = default;
-	Vector2(float x, float y) :
+	int	&x = rawVector.x,
+		&y = rawVector.y;
+	
+	Vector2i() = default;
+	Vector2i(int x, int y) :
 		TParent(TVec(x, y)) {
 	}
-	Vector2(TParent &&init) :
+	Vector2i(TParent && init) :
 		TParent(init) {
 	}
-	Vector2 &operator=(const Vector2 &other) {
+	Vector2i &operator=(const Vector2i & other) {
 		x = other.x;
 		y = other.y;
 		return *this;
 	};
 
-	operator Vector3();
 	operator Vector3i();
-	operator Vector2i();
+	operator Vector4i();
+	operator Vector2();
+	operator Vector3();
+	operator Vector4();
 };
 class Vector3i :
 	public TVector<glm::ivec3> {
@@ -221,34 +198,126 @@ public:
 		return *this;
 	};
 
-	operator Vector3();
-	operator Vector2();
 	operator Vector2i();
+	operator Vector4i();
+	operator Vector2();
+	operator Vector3();
+	operator Vector4();
 };
-class Vector2i :
-	public TVector<glm::ivec2> {
+class Vector4i :
+	public TVector<glm::ivec4> {
 public:
 	using TParent::TParent;
-	int	&x = rawVector.x,
-		&y = rawVector.y;
-	
-	Vector2i() = default;
-	Vector2i(int x, int y) :
-		TParent(TVec(x, y)) {
+	int &x = rawVector.x,
+		&y = rawVector.y,
+		&z = rawVector.z,
+		&w = rawVector.w;
+
+	Vector4i() = default;
+	Vector4i(int x, int y, int z, int w) :
+		TParent(TVec(x, y, z, w)) {
 	}
-	Vector2i(TParent && init) :
+	Vector4i(TParent &&init) :
 		TParent(init) {
 	}
-	Vector2i &operator=(const Vector2i & other) {
+	Vector4i &operator=(const Vector4i &other) {
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		w = other.w;
+		return *this;
+	};
+
+	operator Vector2i();
+	operator Vector3i();
+	operator Vector2();
+	operator Vector3();
+	operator Vector4();
+};
+class Vector2 : 
+	public TVector<glm::vec2> {
+public:
+	using TParent::TParent;
+	float &x = rawVector.x,
+		&y = rawVector.y;
+
+	Vector2() = default;
+	Vector2(float x, float y) :
+		TParent(TVec(x, y)) {
+	}
+	Vector2(TParent &&init) :
+		TParent(init) {
+	}
+	Vector2 &operator=(const Vector2 &other) {
 		x = other.x;
 		y = other.y;
 		return *this;
 	};
 
-	operator Vector3();
+	operator Vector2i();
 	operator Vector3i();
-	operator Vector2();
+	operator Vector4i();
+	operator Vector3();
+	operator Vector4();
 };
+class Vector3 : 
+	public TVector<glm::vec3> {
+public:
+	float &x = rawVector.x,
+		&y = rawVector.y,
+		&z = rawVector.z;
+
+	Vector3() = default;
+	Vector3(float x, float y, float z) :
+		TParent(TVec(x, y, z)) {
+	}
+	Vector3(TParent &&init) :
+		TParent(init) {
+	}
+	Vector3 &operator=(const Vector3 &other) {
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		return *this;
+	};
+
+	operator Vector2i();
+	operator Vector3i();
+	operator Vector4i();
+	operator Vector2();
+	operator Vector4();
+};
+class Vector4 :
+	public TVector<glm::vec4> {
+public:
+	using TParent::TParent;
+	float &x = rawVector.x,
+		&y = rawVector.y,
+		&z = rawVector.z,
+		&w = rawVector.w;
+
+	Vector4() = default;
+	Vector4(float x, float y, float z, float w) :
+		TParent(TVec(x, y, z, w)) {
+	}
+	Vector4(TParent &&init) :
+		TParent(init) {
+	}
+	Vector4 &operator=(const Vector4 &other) {
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		w = other.w;
+		return *this;
+	};
+
+	operator Vector2i();
+	operator Vector3i();
+	operator Vector4i();
+	operator Vector2();
+	operator Vector3();
+};
+
 
 class Rotator {
 protected:
