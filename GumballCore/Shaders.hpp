@@ -84,6 +84,39 @@ public:
 };
 #undef ShaderUniformDelc
 
+
+
+#define ParamDelc(CType)\
+template<> void setParam<CType>(const string &name, CType value) { \
+	param<CType>(name)->val = value;\
+}\
+template<> CType getParam<CType>(const string &name) { \
+	return param<CType>(name)->val;\
+}
+
+#define ParamDelc2(CType, GType)\
+template<> void setParam<CType>(const string &name, CType value) { \
+	param<GType>(name)->val = value;\
+}\
+template<> CType getParam<CType>(const string &name) { \
+	return param<GType>(name)->val;\
+}
+
+#define InlineParamDelc(CType)\
+template<> void setParamInline<CType>(const string &name, CType value) { \
+	auto *p = param<CType>(name);\
+	p->val = value;\
+	p->upload();\
+}
+
+#define InlineParamDelc2(CType, GType)\
+template<> void setParamInline<CType>(const string &name, CType value) { \
+	auto *p = param<GType>(name);\
+	p->val = value;\
+	p->upload();\
+}
+
+
 class ShaderUniformIOBus {
 private:
 	friend class Shader;
@@ -103,15 +136,9 @@ public:
 
 	const ShaderUniform *getUniform(string name) { return parameters[name]; }
 
+	template<class T> void setParamInline(const string &name, T) = delete;
 	template<class T> void setParam(const string &name, T) = delete;
 	template<class T> T getParam(const string &name) = delete;
-	#define ParamDelc(CType)\
-	template<> void setParam<CType>(const string &name, CType value) { \
-		param<CType>(name)->val = value;\
-	}\
-	template<> CType getParam<CType>(const string &name) { \
-		return param<CType>(name)->val;\
-	}
 	ParamDelc(int);
 	ParamDelc(float);
 	ParamDelc(glm::mat4);
@@ -122,24 +149,28 @@ public:
 	ParamDelc(glm::ivec3);
 	ParamDelc(glm::ivec4);
 	ParamDelc(Tbo *);
-	#undef ParamDelc
+	ParamDelc2(Color, glm::fvec4);
+	ParamDelc2(Vector3, glm::fvec3);
 
-	template<> void setParam<Color>(const string &name, Color value) {
-		param<glm::fvec4>(name)->val = Color::toVec4(value);
-	}
-	template<> Color getParam<Color>(const string &name) {
-		return Color::toColor(param<glm::fvec4>(name)->val);
-	}
-
-	template<> void setParam<Vector3>(const string &name, Vector3 value) {
-		param<glm::fvec3>(name)->val = value.rawVector;
-	}
-	template<> Vector3 getParam<Vector3>(const string &name) {		
-		const auto &v = param<glm::fvec3>(name)->val;
-		return Vector3::Vector3(v.x, v.y, v.z);
-	}
+	InlineParamDelc(int);
+	InlineParamDelc(float);
+	InlineParamDelc(glm::mat4);
+	InlineParamDelc(glm::fvec2);
+	InlineParamDelc(glm::fvec3);
+	InlineParamDelc(glm::fvec4);
+	InlineParamDelc(glm::ivec2);
+	InlineParamDelc(glm::ivec3);
+	InlineParamDelc(glm::ivec4);
+	InlineParamDelc(Tbo *);
+	InlineParamDelc2(Color, glm::fvec4);
+	InlineParamDelc2(Vector3, glm::fvec3);
+	
 	void upload() const;
 };
+#undef ParamDelc
+#undef ParamDelc2
+#undef InlineParamDelc
+#undef InlineParamDelc2
 
 class GBCORE Shader {
 public:

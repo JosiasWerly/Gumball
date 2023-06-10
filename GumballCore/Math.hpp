@@ -14,39 +14,14 @@ void fRadToDegree(float &value);
 void fDegreeToRad(float &value);
 
 struct GBCORE Color {
-	unsigned char R, G, B, A;
+	unsigned char r, g, b, a;
 
-	Color() {
-		R = G = B = 255;
-		A = 0;
-	}
-	Color(unsigned int hex) {
-		R = (hex & 0xff000000) >> 24;
-		G = (hex & 0x00ff0000) >> 16;
-		B = (hex & 0x0000ff00) >> 8;
-		A = hex & 0x000000ff;
-	}
-	Color(unsigned char R, unsigned char G, unsigned char B, unsigned char A) {
-		this->R = R;
-		this->G = G;
-		this->B = B;
-		this->A = A;
-	}
-
-	static glm::vec4 toVec4(Color c) {
-		auto out = glm::vec4(c.R, c.G, c.B, c.A);
-		out /= 255.f;
-		return out;
-	}
-	static Color toColor(glm::vec4 v) {
-		v *= 255.f;
-		Color out;
-		out.R = static_cast<char>(v.r);
-		out.G = static_cast<char>(v.b);
-		out.B = static_cast<char>(v.b);
-		out.A = static_cast<char>(v.a);
-		return out;
-	}
+	Color();
+	Color(unsigned int hex);
+	Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 0);
+	
+	Color(glm::vec4 glmVec4);
+	operator glm::vec4();
 };
 
 class Vector2i;
@@ -67,9 +42,10 @@ public:
 	TVector() : 
 		rawVector(TVec(0)) {
 	}
-	TVector(TVec &&rawVector) :
+	TVector(TVec rawVector) :
 		rawVector(rawVector){
 	}
+	operator TVec &() { return rawVector; }
 
 	TVector &operator+=(TVector v) {
 		rawVector += v.rawVector;
@@ -153,10 +129,10 @@ public:
 class Vector2i :
 	public TVector<glm::ivec2> {
 public:
-	using TParent::TParent;
 	int	&x = rawVector.x,
 		&y = rawVector.y;
 	
+	using TParent::TParent;
 	Vector2i() = default;
 	Vector2i(int x, int y) :
 		TParent(TVec(x, y)) {
@@ -179,11 +155,11 @@ public:
 class Vector3i :
 	public TVector<glm::ivec3> {
 public:
-	using TParent::TParent;
 	int	&x = rawVector.x,
 		&y = rawVector.y,
 		&z = rawVector.z;
 
+	using TParent::TParent;
 	Vector3i() = default;
 	Vector3i(int x, int y, int z) :
 		TParent(TVec(x, y, z)) {
@@ -207,12 +183,12 @@ public:
 class Vector4i :
 	public TVector<glm::ivec4> {
 public:
-	using TParent::TParent;
 	int &x = rawVector.x,
 		&y = rawVector.y,
 		&z = rawVector.z,
 		&w = rawVector.w;
 
+	using TParent::TParent;
 	Vector4i() = default;
 	Vector4i(int x, int y, int z, int w) :
 		TParent(TVec(x, y, z, w)) {
@@ -236,11 +212,11 @@ public:
 };
 class Vector2 : 
 	public TVector<glm::vec2> {
-public:
-	using TParent::TParent;
+public:	
 	float &x = rawVector.x,
 		&y = rawVector.y;
 
+	using TParent::TParent;
 	Vector2() = default;
 	Vector2(float x, float y) :
 		TParent(TVec(x, y)) {
@@ -267,6 +243,7 @@ public:
 		&y = rawVector.y,
 		&z = rawVector.z;
 
+	using TParent::TParent;
 	Vector3() = default;
 	Vector3(float x, float y, float z) :
 		TParent(TVec(x, y, z)) {
@@ -290,12 +267,12 @@ public:
 class Vector4 :
 	public TVector<glm::vec4> {
 public:
-	using TParent::TParent;
 	float &x = rawVector.x,
 		&y = rawVector.y,
 		&z = rawVector.z,
 		&w = rawVector.w;
 
+	using TParent::TParent;
 	Vector4() = default;
 	Vector4(float x, float y, float z, float w) :
 		TParent(TVec(x, y, z, w)) {
@@ -317,7 +294,6 @@ public:
 	operator Vector2();
 	operator Vector3();
 };
-
 
 class Rotator {
 protected:

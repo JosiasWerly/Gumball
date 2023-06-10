@@ -26,6 +26,32 @@ void fDegreeToRad(float &value) {
 //	constexpr const Color Pink(0xffc0cbff);
 //	constexpr const Color Purple(0x800080ff);
 
+Color::Color() {
+	r = g = b = 255;
+	a = 0;
+}
+Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+	this->r = r;
+	this->g = g;
+	this->b = b;
+	this->a = a;
+}
+Color::Color(unsigned int hex) {
+	r = (hex & 0xff000000) >> 24;
+	g = (hex & 0x00ff0000) >> 16;
+	b = (hex & 0x0000ff00) >> 8;
+	a = hex & 0x000000ff;
+}
+Color::Color(glm::vec4 glmVec4) {
+	glmVec4 *= 255.f;
+	r = static_cast<char>(glmVec4.r);
+	g = static_cast<char>(glmVec4.r);
+	b = static_cast<char>(glmVec4.r);
+	a = static_cast<char>(glmVec4.r);
+}
+Color::operator glm::vec4() { return glm::vec4(r/255.f, g/255.f, b/255.f, a/255.f); }
+
+
 Vector2i::operator Vector3i() { return Vector3i(x, y, 0); }
 Vector2i::operator Vector4i() { return Vector4i(x, y, 0, 0); }
 Vector2i::operator Vector2() { return Vector2(x, y); }
