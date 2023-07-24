@@ -26,14 +26,15 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-
+	
 	for (auto e : elements)
 		e->render();
 
+	//ImGui::ShowDemoWindow();
 
-	ImGui::Render();
+	ImGui::Render();	
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+	
 	// Update and Render additional Platform Windows
 	// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
 	//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
@@ -45,7 +46,7 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 	}
 }
 
-void UIElement::render() {
+void Widget::render() {
 	if (!isVisible)
 		return;
 	begin();
@@ -54,31 +55,31 @@ void UIElement::render() {
 		c->render();
 	end();
 }
-void UIElement::begin() {}
-void UIElement::end() {}
-void UIElement::draw() {}
-void UIElement::hide() {
+void Widget::begin() {}
+void Widget::end() {}
+void Widget::draw() {}
+void Widget::hide() {
 	isVisible = false;
 }
-void UIElement::show() {
+void Widget::show() {
 	isVisible = true;
 }
-UIElement &UIElement::operator<<(UIElement *child) {
+Widget &Widget::operator<<(Widget *child) {
 	if (child->parent)
 		(*child->parent) >> child;
 	children.push_back(child);
 	child->parent = this;
 	return *this;
 }
-UIElement &UIElement::operator>>(UIElement *child) {
+Widget &Widget::operator>>(Widget *child) {
 	children.push_back(child);
 	child->parent = this;
 	return *this;
 }
-void UIElement::addChildren(list<UIElement *> children) {
+void Widget::addChildren(list<Widget *> children) {
 	this->children.merge(children);
 }
-void UIElement::delChildren(list<UIElement *> children) {
+void Widget::delChildren(list<Widget *> children) {
 	throw; //TODO
 }
 
@@ -87,7 +88,7 @@ void UIElement::delChildren(list<UIElement *> children) {
 
 namespace UI {
 	void Canvas::begin() {
-		ImGui::Begin(windowName.c_str());
+		ImGui::Begin(reinterpret_cast<const char*>(this));
 	}
 	void Canvas::end() {
 		ImGui::End();
@@ -96,36 +97,34 @@ namespace UI {
 	void Text::draw() {
 		ImGui::Text(text.c_str());
 	}
+
+	void InputText::draw() {
+		const ImGuiInputTextFlags inFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
+		const auto InputCallback = [](ImGuiInputTextCallbackData *data)->int {
+			InputText *self = static_cast<InputText*>(data->UserData);
+			switch (data->EventFlag) {
+				case ImGuiInputTextFlags_CallbackCompletion: {
+					break;
+				}
+				case ImGuiInputTextFlags_CallbackHistory: {
+					break;
+				}
+			}
+			return 0;
+		};
+		if (ImGui::InputText("Input", inBuffer, IM_ARRAYSIZE(inBuffer), inFlags, InputCallback, this)) {
+			str = string(inBuffer);			
+			ImGui::SetKeyboardFocusHere(-1);
+			strcpy(inBuffer, "");
+		}
+	}
+	bool InputText::getInput(string &out) const {
+		out = str;
+		return str.size();
+	}
+
+	void Button::draw() {
+		ImGui::Button(text.c_str());
+		clicked = ImGui::IsItemClicked(0);
+	}
 };
-
-
-
-//ImGui::Begin("Debug");
-
-	/*static bool clicked;
-	static string text = "bt1";
-
-
-	ImGui::PushID(0xa);
-
-	if (clicked) {
-		text = "bt1";
-	}
-	else {
-		text = "clicked";
-	}
-	int i = clicked * 4;
-	ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.6f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(i / 7.0f, 0.8f, 0.8f));
-	ImGui::Button(text.c_str());
-	if (ImGui::IsItemClicked(0))
-		clicked = !clicked;
-	ImGui::PopStyleColor(3);
-	ImGui::PopID();*/
-
-
-	//for (auto &kv : msStats) {
-	//    ImGui::Text((kv.first + " : %.4f").c_str(), kv.second);
-	//}
-	//ImGui::End();

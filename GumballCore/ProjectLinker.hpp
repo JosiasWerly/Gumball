@@ -13,12 +13,14 @@ public:
 };
 
 class ProjectLinker {
+	Project *project = nullptr;
 	DynamicLibrary dll;
 	std::time_t fileModifiedTime;
 public:
 	bool hasNewVersion();
 	void unload();
 	Project *load();
+	Project *getProject() const { return project; }
 };
 
 

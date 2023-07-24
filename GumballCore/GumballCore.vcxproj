@@ -59,6 +59,7 @@
     <ClInclude Include="Archive.hpp" />
     <ClInclude Include="AssetManager.hpp" />
     <ClInclude Include="Definitions.hpp" />
+    <ClInclude Include="ConsoleSystem.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="EntitySystem.hpp" />
     <ClInclude Include="EnviromentVariables.hpp" />
@@ -87,6 +88,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="ConsoleSystem.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EntitySystem.cpp" />
     <ClCompile Include="EnviromentVariables.cpp" />

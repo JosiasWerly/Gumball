@@ -80,4 +80,4 @@ public:
 };
 
 
-#endif // !_viewport
+#endif // !_rendersystem

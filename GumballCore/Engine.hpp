@@ -13,8 +13,8 @@ class ProjectLinker;
 class RenderSystem;
 class AssetsSystem;
 class InputSystem;
+class ConsoleSystem;
 class TimeStat;
-class Project;
 class World;
 
 
@@ -24,14 +24,11 @@ private:
 	friend int main(int, char *[]);
 
 	TimeStat timeStats;
-	Project *project;
 	ProjectLinker *projectLinker;	
 	SystemOverseer *systemSeer;
 	
 	Engine();
-	~Engine();
-	
-	Inline void hotReload();
+	~Engine();	
 public:
 	void args(int argc, char *argv[]);
 	void tick();
@@ -39,6 +36,7 @@ public:
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
 	InputSystem *inputSystem;
+	ConsoleSystem *consoleSystem;
 	World *world;
 };
 

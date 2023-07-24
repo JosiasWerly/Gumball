@@ -43,8 +43,7 @@ protected:
 	Inline void beginPlay() const;
 	Inline void endPlay() const;
 
-	template<ESystemTickType> void tick(const double &deltaTime) {
-	}
+	template<ESystemTickType> void tick(const double &deltaTime) = delete;
 	template<> void tick<ESystemTickType::editor>(const double &deltaTime) {
 		for (auto &s : editorTick)
 			s->tick(deltaTime);

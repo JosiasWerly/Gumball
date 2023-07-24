@@ -24,22 +24,27 @@ Project *ProjectLinker::load() {
 		if (!projectEntryPoint)
 			return nullptr;
 
-		Project *outProject = projectEntryPoint();
-		if (!outProject)
+		project = projectEntryPoint();
+		if (!project)
 			return nullptr;
-
+		
 		{
 			fs::path p = dllPath;
 			const auto systemTime = std::chrono::clock_cast<std::chrono::system_clock>(fs::last_write_time(p));
 			const auto curModifiedTime = std::chrono::system_clock::to_time_t(systemTime);
 			fileModifiedTime = curModifiedTime;
 		}
-
-		return outProject;
+		project->attached();
+		return project;
 	}
 	return nullptr;
 }
 void ProjectLinker::unload() {
+	if (project) {
+		project->detached();
+		delete project;
+	}
+	project = nullptr;
 	if (dll.isLoaded())
 		dll.unload();
 }
@@ -59,7 +64,6 @@ bool ProjectLinker::hasNewVersion() {
 				return true;
 		}
 	}
-
 	return false;
 }
 
