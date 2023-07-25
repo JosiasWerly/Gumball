@@ -28,7 +28,7 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 	ImGui::NewFrame();
 	
 	for (auto e : elements)
-		e->render();
+		e->render(deltaTime);
 
 	//ImGui::ShowDemoWindow();
 
@@ -45,60 +45,67 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 		glfwMakeContextCurrent(backup_current_context);
 	}
 }
+WidgetOverlay &WidgetOverlay::operator<<(Widget *element) {
+	elements.push_back(element);
+	return *this;
+}
+WidgetOverlay &WidgetOverlay::operator>>(Widget *element) {
+	elements.remove(element);
+	return *this;
+}
 
-void Widget::render() {
-	if (!isVisible)
+void Widget::render(const double &deltaTime) {
+}
+void Widget::setVisibility(bool newVisible) {
+	isVisible = newVisible;
+}
+
+void WidgetContainer::render(const double &deltaTime) {
+	if (!getVisibility())
 		return;
-	begin();
-	draw();
+	beginDraw();
 	for (auto c : children)
-		c->render();
-	end();
+		c->render(deltaTime);
+	endDraw();
 }
-void Widget::begin() {}
-void Widget::end() {}
-void Widget::draw() {}
-void Widget::hide() {
-	isVisible = false;
+void WidgetContainer::beginDraw() {
+	ImGui::Begin(reinterpret_cast<const char *>(this));
 }
-void Widget::show() {
-	isVisible = true;
+void WidgetContainer::endDraw() {
+	ImGui::End();
 }
-Widget &Widget::operator<<(Widget *child) {
+WidgetContainer &WidgetContainer::operator<<(Widget *child) {
 	if (child->parent)
 		(*child->parent) >> child;
 	children.push_back(child);
 	child->parent = this;
 	return *this;
 }
-Widget &Widget::operator>>(Widget *child) {
-	children.push_back(child);
-	child->parent = this;
+WidgetContainer &WidgetContainer::operator>>(Widget *child) {
+	children.remove(child);
+	child->parent = nullptr;
 	return *this;
 }
-void Widget::addChildren(list<Widget *> children) {
-	this->children.merge(children);
+void WidgetContainer::addChildren(list<Widget *> children) {
+	for (auto it : children) {
+		(*this) << it;
+	}
 }
-void Widget::delChildren(list<Widget *> children) {
-	throw; //TODO
+void WidgetContainer::delChildren(list<Widget *> children) {
+	for (auto it : children) {
+		(*this) >> it;
+	}
 }
 
 
 
 
 namespace UI {
-	void Canvas::begin() {
-		ImGui::Begin(reinterpret_cast<const char*>(this));
-	}
-	void Canvas::end() {
-		ImGui::End();
-	}
-
-	void Text::draw() {
+	void Text::render(const double &deltaTime) {
 		ImGui::Text(text.c_str());
 	}
 
-	void InputText::draw() {
+	void InputText::render(const double &deltaTime) {
 		const ImGuiInputTextFlags inFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
 		const auto InputCallback = [](ImGuiInputTextCallbackData *data)->int {
 			InputText *self = static_cast<InputText*>(data->UserData);
@@ -123,7 +130,7 @@ namespace UI {
 		return str.size();
 	}
 
-	void Button::draw() {
+	void Button::render(const double &deltaTime) {
 		ImGui::Button(text.c_str());
 		clicked = ImGui::IsItemClicked(0);
 	}

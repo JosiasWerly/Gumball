@@ -4,20 +4,24 @@
 #include "InputSystem.hpp"
 #include "WidgetOverlay.hpp"
 
-class ConsoleWidget : public Widget {
+class ConsoleWidget : public UserWidget {
 public:
 	ConsoleSystem *owner;
-	UI::Canvas canva;
 	UI::InputText input;
 	UI::Button play;
 	UI::Button reload;
 	ConsoleWidget() {
-		(*this) << &canva;
-		canva << &input << &play << &reload;
+		(*this) << &reload << &play << &input;
 		play.text = "play";
 		reload.text = "rld";
 	}
-	void draw() override {
+	void render(const double &deltaTime) override {
+		reload.render(deltaTime);
+		ImGui::SameLine();
+		play.render(deltaTime);
+		input.render(deltaTime);
+
+
 		if (play.isClicked()) {
 			bool &isPlay = owner->isPlay;
 			isPlay = !isPlay;

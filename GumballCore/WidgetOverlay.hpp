@@ -21,88 +21,81 @@ public:
     void onDetach() override;
     void onRender(const double &deltaTime) override;
 
-    WidgetOverlay &operator<<(Widget *element) {
-        elements.push_back(element);
-        return *this;
-    }
-    WidgetOverlay &operator>>(Widget *element) {
-        elements.remove(element);
-        return *this;
-    }
+    WidgetOverlay &operator<<(Widget *element);
+    WidgetOverlay &operator>>(Widget *element);
 };
 
 
 //TODO: add a default name to IWidget::Name, since every entity needs a name
 //TODO: implement an event based, we're handling by pooling everything...
-class Widget { 
-    friend class WidgetOverlay;
-    bool isVisible = true;
-    Widget *parent = nullptr;
-    list<Widget *> children;
+class Widget {
+	friend class WidgetOverlay;
+	friend class WidgetContainer;
 
-protected:
-    void render();
-    virtual void begin();
-    virtual void end();
-    virtual void draw();
+	bool isVisible = true;
+	WidgetContainer *parent = nullptr;
 
 public:
-    void hide();
-    void show();
-    Widget &operator<<(Widget *child);
-    Widget &operator>>(Widget *child);
-    void addChildren(list<Widget *> children);
-    void delChildren(list<Widget *> children);
-    
-    Inline bool hasChild(Widget *child) const { return std::find(children.begin(), children.end(), child) != std::end(children); };
-    Inline Widget *getParent() const { return parent; }
-    Inline bool visible() const { return isVisible; }
+    virtual void render(const double &deltaTime);
+	void setVisibility(bool newVisible);
+	
+	Inline bool getVisibility() const { return isVisible; }
+    Inline WidgetContainer *getParent() const { return parent; }
+};
+
+class WidgetContainer : public Widget {
+	list<Widget *> children;
+public:
+	WidgetContainer() = default;
+	
+	virtual void render(const double &deltaTime) override;
+	virtual void beginDraw();
+	virtual void endDraw();
+
+	WidgetContainer &operator<<(Widget *child);
+	WidgetContainer &operator>>(Widget *child);
+	void addChildren(list<Widget *> children);
+	void delChildren(list<Widget *> children);
+	Inline bool hasChild(Widget *child) const { return std::find(children.begin(), children.end(), child) != std::end(children); };
+};
+
+class UserWidget : public WidgetContainer {
+public:
+	UserWidget() = default;
+	//possible methods to implement on child of this class
+	//virtual void render(const double &deltaTime) {}
+	//virtual void beginDraw() {}
+	//virtual void endDraw() {}
 };
 
 namespace UI {
-    class Canvas : public Widget {
-    public:
-        string windowName = "Window";
+	class Text : public Widget {
+	public:
+		string text = "Text";
 
-        Canvas() = default;
-    
-    protected:
-        void begin() override;
-        void end() override;
-    };
+		Text() = default;
+		void render(const double &deltaTime);
+	};
 
-    class Text : public Widget {
-    
-    public:
-        string text = "Text";        
-        Text() = default;
+	class InputText : public Widget {
+		char inBuffer[256] = {};
+		string str;
 
-    protected:
-        void draw() override;
-    };
+	public:
+		void render(const double &deltaTime);
+		bool getInput(string &out) const;
+	};
 
-    class InputText : public Widget {
-        char inBuffer[256] = {};
-        string str;
-    public:
-        bool getInput(string &out) const;
-    
-    protected:
-        void draw() override;
-    };
+	class Button : public Widget {
+		bool clicked = false;
 
-    class Button : public Widget {
-        bool clicked = false;
-    
-    public:
-        string text = "Button";
+	public:
+		string text = "Button";
 
-        Button() = default;
-        Inline bool isClicked() { return clicked; }
-    
-    protected:
-        void draw() override;
-    };
+		Button() = default;
+		void render(const double &deltaTime);
+		Inline bool isClicked() { return clicked; }
+	};
 };
 
 #endif // !_widgetoverlay
