@@ -15,7 +15,7 @@ class MyComp :
 public:
 	Vector3 vel;
 	MyComp() {
-		setTick(true);
+		setTickEnable(true);
 	}
 	void beginPlay() {
 		MeshComponent::beginPlay();
@@ -99,7 +99,7 @@ public:
 			cameraActor->transform.position.z = -30;
 		}
 
-		for (size_t i = 0; i < 200/*2000*/; i++) {
+		for (size_t i = 0; i < 1000; i++) {
 			new MyActor;
 		}
 	}

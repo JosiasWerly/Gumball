@@ -14,16 +14,21 @@ void GameObject::endPlay() {
 }
 void GameObject::tick(const double &deltaTime) {
 }
-void GameObject::setTick(bool newTick) {
+void GameObject::setTickEnable(bool newState) {
+	if (newState == tickEnable)
+		return;
+	tickEnable = newState;
 	static World &w = *Engine::instance()->world;
 	w.scene.changeTick(this);
-	hasTick = newTick;
+}
+void GameObject::setTickInterval(float newValue) {
+	tickInterval = newValue;
 }
 void *GameObject::operator new(unsigned long long sz) {
 	static World &w = *Engine::instance()->world;
-	GameObject *ob = reinterpret_cast<GameObject *>(::operator new(sz));
-	w.scene.root(ob);
-	return ob;
+	GameObject *go = reinterpret_cast<GameObject *>(::operator new(sz));
+	w.scene.root(go);
+	return go;
 }
 void destroy(GameObject *trg) {
 	static World &w = *Engine::instance()->world;
@@ -39,6 +44,7 @@ void GameScene::unload() {
 		delete e;
 		e = nullptr;
 	}
+	entities.clear();
 }
 void GameScene::root(GameObject *go) {
 	entities.emplace_back(go);
@@ -46,9 +52,14 @@ void GameScene::root(GameObject *go) {
 	toBegin.push_back(entities.back());
 }
 void GameScene::unRoot(GameObject *go) {
-	if (go->isValid()) {
-		toEnd.push_back(go);
-		go->state = EGameObjectState::destroy;
+	if (!go->isValid())
+		return;
+
+	toEnd.push_back(go);
+	go->state = EGameObjectState::destroy;
+	if (go->tickEnable) {
+		go->tickEnable = false;
+		changeTick(go);
 	}
 }
 void GameScene::changeTick(GameObject *go) {
@@ -59,11 +70,21 @@ Inline void GameScene::tick(const double &deltaTime) {
 		for (auto &e : toBegin) {
 			e->beginPlay();
 			e->state = EGameObjectState::nominal;
-			if (e->getTick()) {
-				toTick.push_back(e);
-			}
 		}
 		toBegin.clear();
+	}
+	if (toChangeTick.size()) {
+		for (auto &e : toChangeTick) {
+			if(e->isValid()) {
+				if (e->getTickEnable()) {
+					toTick.push_back(e);
+				}
+				else {
+					__erase(toTick, e);
+				}
+			}
+		}
+		toChangeTick.clear();
 	}
 	if (toEnd.size()) {
 		for (auto &e : toEnd) {
@@ -73,19 +94,6 @@ Inline void GameScene::tick(const double &deltaTime) {
 			e = nullptr;
 		}
 		toEnd.clear();
-	}
-	if (toChangeTick.size()) {
-		for (auto &e : toChangeTick) {
-			if(e->isValid()) {
-				if (e->getTick()) {
-					toTick.push_back(e);
-				}
-				else {
-					__erase(toTick, e);
-				}
-			}
-		}
-		toChangeTick.clear();
 	}
 	
 	for (auto &e : toTick) {

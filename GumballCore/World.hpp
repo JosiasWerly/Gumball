@@ -22,7 +22,8 @@ class GBCORE GameObject {
 	friend class GameScene;
 private:
 	EGameObjectState state;
-	bool hasTick;
+	bool tickEnable = false;
+	float tickInterval = 0;
 protected:
 public:
 	GameObject();
@@ -31,8 +32,11 @@ public:
 	virtual void endPlay();
 	virtual void tick(const double &deltaTime);
 
-	void setTick(bool newTick);
-	bool getTick() const { return hasTick; }
+	void setTickEnable(bool newState);
+	Inline bool getTickEnable() const { return tickEnable; }
+	void setTickInterval(float newValue);
+	Inline bool getTickInterval() const { return tickInterval; }
+
 	const bool isValid() const { return this && state == EGameObjectState::nominal; }
 
 	void *operator new(unsigned long long sz);
@@ -75,12 +79,5 @@ public:
 	virtual void tick(const double &deltaTime) override;
 	ESystemTickType tickType() override { return ESystemTickType::gameplay; }
 };
-
-
-
-
-
-
-
 
 #endif // _world

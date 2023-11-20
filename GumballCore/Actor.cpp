@@ -3,7 +3,6 @@
 
 ActorComponent::ActorComponent() :
 	owner(nullptr) {
-	setTick(false);
 }
 ActorComponent::~ActorComponent() {
 
