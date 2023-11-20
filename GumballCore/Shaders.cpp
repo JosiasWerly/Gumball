@@ -26,8 +26,9 @@ ShaderUniformIOBus::~ShaderUniformIOBus() {
 }
 void ShaderUniformIOBus::attach(const list<ShaderUniform> &uniforms) {
 	parameters.clear();
-	for (const auto &u : uniforms)
-		parameters[u.name] = &u;
+	for (const auto &u : uniforms) {
+		parameters[u.name] = &u;		
+	}
 }
 void ShaderUniformIOBus::detach() {
 	parameters.clear();

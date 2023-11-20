@@ -99,7 +99,7 @@ public:
 			cameraActor->transform.position.z = -30;
 		}
 
-		for (size_t i = 0; i < 1000; i++) {
+		for (size_t i = 0; i < 1; i++) {
 			new MyActor;
 		}
 	}

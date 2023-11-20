@@ -27,7 +27,7 @@ void DrawHandle::disable() {
     scene->draws.remove(this);
 }
 void DrawHandle::setMesh(MeshData *newMesh) {
-    staticMesh.setMeshData(newMesh);
+    meshInstance.setMeshData(newMesh);
 }
 void DrawHandle::setShader(Shader *newShader) {
     auto as = Engine::instance()->assetSystem;
@@ -96,7 +96,7 @@ void SceneOverlay::onRender(const double &deltaTime) {
     	const auto mView = v->transform->getMat();
         const auto mProjection = v->viewMode.mProjection;
     	for (auto &d : draws) {
-    		auto &mesh = d->staticMesh;
+    		auto &mesh = d->meshInstance;
     		auto &shader = d->shaderInstance;
     		auto &shaderIO = shader.uniformIO();
     		mesh.bind();

@@ -62,7 +62,7 @@ class GBCORE DrawHandle {
     SceneOverlay *scene = nullptr;
     
     ShaderInstance shaderInstance;
-    MeshInstance staticMesh;
+    MeshInstance meshInstance;
 public:
     Transform *transform = nullptr;
     DrawHandle();
@@ -73,7 +73,7 @@ public:
     void setMesh(MeshData *newMesh);
     void setShader(Shader *newShader);
 
-    Inline MeshInstance &getMeshInstance() { return staticMesh; }
+    Inline MeshInstance &getMeshInstance() { return meshInstance; }
     Inline ShaderInstance &getShaderInstance() { return shaderInstance; }
 };
 class GBCORE FboHandle {
