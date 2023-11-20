@@ -82,14 +82,14 @@ SceneOverlay::~SceneOverlay() {
 }
 void SceneOverlay::onAttach() {
     auto &as = Engine::instance()->assetSystem;
-    Gbuffer = new FboHandle;
-    Gbuffer->setShader(as->getContent<Shader>("gbuffer"));
+    gbuffer = new FboHandle;
+    gbuffer->setShader(as->getContent<Shader>("gbuffer"));
 }
 void SceneOverlay::onDetach() {
 
 }
 void SceneOverlay::onRender(const double &deltaTime) {
-    auto &fbo = Gbuffer->getFbo();    
+    auto &fbo = gbuffer->getFbo();
     fbo.bind(EFboTarget::Write);
     fbo.clearBuffer();
     for (auto &v : views) {
@@ -109,5 +109,5 @@ void SceneOverlay::onRender(const double &deltaTime) {
     		shader.unbind();
     	}
     }
-    Gbuffer->render();    
+    gbuffer->render();
 }

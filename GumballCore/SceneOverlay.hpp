@@ -101,7 +101,7 @@ private:
     list<ViewHandle *> views;
     list<DrawHandle *> draws;
 
-    FboHandle *Gbuffer;
+    FboHandle *gbuffer;
 public:
     SceneOverlay();
     ~SceneOverlay();
