@@ -94,6 +94,7 @@ void SceneOverlay::onRender(const double &deltaTime) {
     fbo.clearBuffer();
     for (auto &v : views) {
     	const auto mView = v->transform->getMat();
+        const auto mProjection = v->viewMode.mProjection;
     	for (auto &d : draws) {
     		auto &mesh = d->staticMesh;
     		auto &shader = d->shaderInstance;
@@ -101,7 +102,7 @@ void SceneOverlay::onRender(const double &deltaTime) {
     		mesh.bind();
     		shader.bind();
     		shaderIO.setParam<glm::mat4>("uView", mView);
-    		shaderIO.setParam<glm::mat4>("uProj", v->viewMode.mProjection);
+    		shaderIO.setParam<glm::mat4>("uProj", mProjection);
     		shaderIO.setParam<glm::mat4>("uModel", d->transform->getMat());
     		shaderIO.upload();
     		mesh.draw();
