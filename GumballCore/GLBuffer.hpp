@@ -46,17 +46,19 @@ public:
 	Tbo();
 	virtual ~Tbo();	
 	void upload();
-	void create(int width, int height, unsigned internalFormat = GL_RGBA8, unsigned  format = GL_RGBA, unsigned type = GL_UNSIGNED_BYTE);
+	void create(int width, int height, unsigned internalFormat = GL_RGBA8, unsigned format = GL_RGBA, unsigned type = GL_UNSIGNED_BYTE);
+	void create(int width, int height, Color *buffer, unsigned internalFormat = GL_RGBA8, unsigned format = GL_RGBA, unsigned type = GL_UNSIGNED_BYTE);
 	void destroy();
 	void setPixel(unsigned x, unsigned y, Color color);
 	Color getPixel(unsigned x, unsigned y);
 
 	void setBuffer(Color *newBuffer);
 	Color *&getBuffer() { return buffer; }
-	bool isValid() const { return buffer; }
 	
 	void bind();
 	void unbind();
+	
+	bool isValid() const { return buffer; }
 };
 
 //I should make the class VBO contains a method that returns this struct, drawable properly the builder pattern.
@@ -139,6 +141,7 @@ public:
 	void updateDrawBuffers();
 	void clearBuffer();
 	void beginDraw();
+	bool isCompleted();
 };
 
 

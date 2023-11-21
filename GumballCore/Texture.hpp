@@ -10,7 +10,7 @@
 #include "stb_image/stb_image.h"
 using namespace std;
 
-
+//TODO: fix this texture filename
 class GBCORE Image {
 	Tbo textureBuffer;
 public:
@@ -19,10 +19,7 @@ public:
 		destroy();
 	}
 	void create(int width, int height, Color *imageBuffer) {
-		textureBuffer.create(width, height);
-		textureBuffer.bind();
-		textureBuffer.setBuffer(imageBuffer);
-		textureBuffer.unbind();
+		textureBuffer.create(width, height, imageBuffer);
 	}
 	void destroy() {
 		//textureBuffer.destroy();
@@ -34,9 +31,11 @@ public:
 		textureBuffer.unbind();
 	}
 	Inline void uploadBuffer() {
+		textureBuffer.bind();
 		textureBuffer.upload();
+		textureBuffer.unbind();
 	}
-	Inline bool isValid() {
+	Inline bool isValid() const {
 		return textureBuffer.isValid();
 	}
 	Tbo &getTexture() { return textureBuffer; }

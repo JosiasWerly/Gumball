@@ -57,15 +57,14 @@ void Vao::unbind() {
 
 
 //https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
+//glTexSubImage2D and glTexImage2D
 Tbo::Tbo() {
 }
 Tbo::~Tbo() {
 	destroy();
 }
 void Tbo::upload() {
-	bind();
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	unbind();
 }
 void Tbo::bind() {
 	glBindTexture(GL_TEXTURE_2D, id);
@@ -73,24 +72,57 @@ void Tbo::bind() {
 void Tbo::unbind() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+//TODO: create internal method to not copy paste the same functionality among these 2 "create" methods
 void Tbo::create(int width, int height, unsigned internalFormat, unsigned format, unsigned type) {
-	destroy();
+	if (isValid()) {
+		destroy();
+	}
+
 	this->width = width;
 	this->height = height;
 	this->internalFormat = internalFormat;
 	this->type = type;
 	this->format = format;
+	this->buffer = new Color[width * height];
+
 	glDCall(glGenTextures(1, &id));
-	bind();
+	glBindTexture(GL_TEXTURE_2D, id);
 	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unbind();
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, buffer);
+	//glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, buffer);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+void Tbo::create(int width, int height, Color *buffer, unsigned internalFormat, unsigned format, unsigned type) {
+	if (isValid()) {
+		destroy();
+	}
+	
+	this->width = width;
+	this->height = height;
+	this->internalFormat = internalFormat;
+	this->type = type;
+	this->format = format;
+	this->buffer = buffer;
+
+	glDCall(glGenTextures(1, &id));
+	glBindTexture(GL_TEXTURE_2D, id);
+	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (buffer) {
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, buffer);
+		//glDCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, buffer));
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 void Tbo::destroy() {
-	if (id > 0 && width > 0 || height > 0) {
+	if (id > 0 && width > 0 || height > 0) { //TODO: change to isValid()?
 		glDeleteTextures(1, &id);
 		id = 0;
 		width = 0;
@@ -175,7 +207,7 @@ Fbo::~Fbo() {
 }
 void Fbo::bind(EFboTarget target) {
 	trg = target;
-	glBindFramebuffer(static_cast<unsigned>(trg), id);
+	glBindFramebuffer(static_cast<unsigned>(trg), id);	
 }
 void Fbo::unbind() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -190,7 +222,7 @@ void Fbo::clearTextures() {
 void Fbo::addTexture(Vector2i size) {
 	Tbo *newTexture = new Tbo;
 	newTexture->bind();
-	newTexture->create(size.x, size.y);
+	newTexture->create(size.x, size.y, nullptr);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textures.size(), GL_TEXTURE_2D, newTexture->id, 0);
 	textures.push_back(newTexture);
 	newTexture->unbind();
@@ -213,6 +245,11 @@ void Fbo::beginDraw() {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, textures[i]->id);
 	}
+}
+bool Fbo::isCompleted() {
+	bind();
+	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+	unbind();
 }
 
 #pragma warning( default : 4312 4267 4838)

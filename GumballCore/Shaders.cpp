@@ -27,13 +27,29 @@ ShaderUniformIOBus::~ShaderUniformIOBus() {
 void ShaderUniformIOBus::attach(const list<ShaderUniform> &uniforms) {
 	parameters.clear();
 	for (const auto &u : uniforms) {
-		parameters[u.name] = &u;		
+		if (u.type == EUniformType::u_stexture) {
+			textures[u.name] = &u;
+		}
+		else {
+			numbers[u.name] = &u;
+		}
+		parameters[u.name] = &u;
 	}
 }
 void ShaderUniformIOBus::detach() {
 	parameters.clear();
+	textures.clear();
+	parameters.clear();
 }
-void ShaderUniformIOBus::upload() const {
+void ShaderUniformIOBus::uploadNumbers() const {
+	for (auto &kv : numbers)
+		kv.second->bus->upload();
+}
+void ShaderUniformIOBus::uploadTextures() const {
+	for (auto &kv : textures)
+		kv.second->bus->upload();
+}
+void ShaderUniformIOBus::uploadParameters() const {
 	for (auto &kv : parameters)
 		kv.second->bus->upload();
 }
@@ -122,7 +138,7 @@ void Shader::unbind() const {
 	glUseProgram(0);
 }
 void Shader::upload() const {
-	uniformIOBus.upload();
+	uniformIOBus.uploadParameters();
 }
 
 void ShaderInstance::setShader(Shader *newShader) {

@@ -58,4 +58,7 @@
     <ClInclude Include="template.hpp" />
     <ClInclude Include="ConsoleSystem.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\readme.txt" />
+  </ItemGroup>
 </Project>

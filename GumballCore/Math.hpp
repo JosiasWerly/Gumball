@@ -342,7 +342,7 @@ public:
 	Transform(glm::mat4 m) {
 		glm::vec3 skew;
 		glm::vec4 perspective;
-		glm::quat rotation;//THIS IS INCOMPLETE		
+		glm::quat rotation;//THIS IS INCOMPLETE | why?
 		glm::decompose(m, scale.rawVector, rotation, position.rawVector, skew, perspective);
 	}
 

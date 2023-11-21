@@ -10,6 +10,7 @@
 #include <sstream>
 #include <map>
 #include <unordered_map>
+#include <deque>
 using namespace std;
 
 enum class EUniformType {
@@ -121,7 +122,10 @@ class ShaderUniformIOBus {
 private:
 	friend class Shader;
 	friend class ShaderInstance;
-	unordered_map<string, const ShaderUniform*> parameters;
+	unordered_map<string, const ShaderUniform *> parameters;
+	unordered_map<string, const ShaderUniform *> numbers;
+	unordered_map<string, const ShaderUniform *> textures;
+	
 	
 	template<class T> TShaderUniformBus<T> *param(const string &name) { return dynamic_cast<TShaderUniformBus<T>*>(parameters[name]->bus); }
 
@@ -165,7 +169,9 @@ public:
 	InlineParamDelc2(Color, glm::fvec4);
 	InlineParamDelc2(Vector3, glm::fvec3);
 	
-	void upload() const;
+	void uploadNumbers() const;
+	void uploadTextures() const;
+	void uploadParameters() const;
 };
 #undef ParamDelc
 #undef ParamDelc2
@@ -209,7 +215,7 @@ public:
 
 	Inline void bind() const { shader->bind(); }
 	Inline void unbind() const { shader->unbind(); }
-	Inline void upload() const { uniformIOBus.upload(); }
+	Inline void upload() const { uniformIOBus.uploadParameters(); }
 };
 
 template<> class AssetFactory<Shader> : public TAssetFactory<Shader> {

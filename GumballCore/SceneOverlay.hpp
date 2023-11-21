@@ -89,6 +89,7 @@ public:
     Inline MeshInstance &getMesh() { return screenMesh; }
     Inline Fbo &getFbo() { return fbo; }
     
+    void flush();
     void render();
 };
 
