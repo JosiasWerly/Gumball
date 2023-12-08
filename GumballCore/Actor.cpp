@@ -37,8 +37,14 @@ MeshComponent::MeshComponent() {
 	auto as = Engine::instance()->assetSystem;
 	draw.setShader(as->getContent<Shader>("default"));
 	auto &io = draw.getShaderInstance().uniformIO();
-	io.setParam<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
-	draw.setMesh(as->getContent<MeshData>("screenPlane"));
+
+	const char *rndTex[] = { "color_grid", "logo", "scotty" };
+	Tbo *t = &as->getContent<Image>(rndTex[rand() % 3])->getTexture();
+	io.setParam<Tbo *>("uTexture", t);
+
+	const char *rndMesh[] = { "cube", "icosphere", "screenPlane" };
+	draw.setMesh(as->getContent<MeshData>(rndMesh[rand()%3]));
+	//draw.setMesh(as->getContent<MeshData>("screenPlane"));
 	
 }
 MeshComponent::~MeshComponent() {

@@ -20,7 +20,7 @@ public:
 	void beginPlay() {
 		MeshComponent::beginPlay();
 		owner->transform.position = Vector3(rand() % 100 * .1f, rand() % 100 * .1f, rand() % 100 * .1f);
-
+		
 
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
 		vel = vel.normalize() * 0.01;
@@ -99,7 +99,7 @@ public:
 			cameraActor->transform.position.z = -30;
 		}
 
-		for (size_t i = 0; i < 1; i++) {
+		for (size_t i = 0; i < 10; i++) {
 			new MyActor;
 		}
 	}
@@ -109,7 +109,6 @@ public:
 
 	}
 };
-
 
 Extern GBPROJECT void *EntryPoint() {
 	return new MyProject;

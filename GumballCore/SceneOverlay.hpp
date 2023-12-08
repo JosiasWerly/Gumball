@@ -101,8 +101,10 @@ private:
 
     list<ViewHandle *> views;
     list<DrawHandle *> draws;
-
+    
     FboHandle *gbuffer;
+    ShaderInstance *geometryShader;
+
 public:
     SceneOverlay();
     ~SceneOverlay();

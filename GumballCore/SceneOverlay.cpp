@@ -32,6 +32,7 @@ void DrawHandle::setMesh(MeshData *newMesh) {
 void DrawHandle::setShader(Shader *newShader) {
     auto as = Engine::instance()->assetSystem;
     shaderInstance.setShader(newShader);
+    shaderInstance.getShader()->getUniforms().set<int>("", 0);
     if (newShader) {
 		shaderInstance.bind();
 		auto &io = shaderInstance.uniformIO();
@@ -77,11 +78,6 @@ void FboHandle::render() {
 }
 
 
-//REFACTOR of the render pipeline, testing out some stuff...
-ShaderInstance *shaderInstance;
-MeshInstance *meshInstance[2];
-Transform transforms[2];
-
 SceneOverlay::SceneOverlay() : 
 	IRenderOverlay("scene") {
 }
@@ -92,30 +88,42 @@ void SceneOverlay::onAttach() {
     gbuffer = new FboHandle;
     gbuffer->setShader(as->getContent<Shader>("gbuffer"));
 
-    shaderInstance = new ShaderInstance();
-    shaderInstance->setShader(as->getContent<Shader>("default"));
-    shaderInstance->bind();
-    shaderInstance->uniformIO().setParamInline<Color>("uColor", 0xffffffff);
-    shaderInstance->uniformIO().setParamInline<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
-    shaderInstance->unbind();
+    geometryShader = new ShaderInstance();
+    geometryShader->setShader(as->getContent<Shader>("geometry"));
+    geometryShader->bind();
+    geometryShader->uniformIO().setParamInline<Color>("uColor", 0xffffffff);
+    geometryShader->uniformIO().setParamInline<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
 
-    meshInstance[0] = new MeshInstance;
-    meshInstance[1] = new MeshInstance;
-    
-    transforms[0].position = Vector3(-5, 0, 10);
-    transforms[1].position = Vector3(5, 0, 10);
-
-    meshInstance[0]->setMeshData(as->getContent<MeshData>("cube"));
-    meshInstance[1]->setMeshData(as->getContent<MeshData>("icosphere"));
-    bool test = gbuffer->getFbo().isCompleted();
     gbuffer->getFbo().unbind();
 }
 void SceneOverlay::onDetach() {
 
 }
 void SceneOverlay::onRender(const double &deltaTime) {
-    gbuffer->flush();
+    ShaderUniformIOBus &geometryShaderIO = geometryShader->uniformIO();
+    geometryShader->bind();
+    //geometryShaderIO.uploadTextures();
 
+    gbuffer->flush();
+    for (auto &v : views) {
+        const auto mView = v->transform->getMat();
+        const auto mProjection = v->viewMode.mProjection;
+        geometryShaderIO.setParamInline<glm::mat4>("uView", mView);
+        geometryShaderIO.setParamInline<glm::mat4>("uProj", mProjection);        
+
+        for (auto &d : draws) {
+            auto &mesh = d->meshInstance;
+            geometryShaderIO.setParamInline<glm::mat4>("uModel", d->transform->getMat());
+            d->shaderInstance.uniformIO().uploadTextures();
+            mesh.bind();
+            mesh.draw();
+        }
+
+    }
+    geometryShader->unbind();
+    gbuffer->render();
+
+	/*gbuffer->flush();
 
 	shaderInstance->bind();
 	ShaderUniformIOBus &shaderIO = shaderInstance->uniformIO();
@@ -126,12 +134,12 @@ void SceneOverlay::onRender(const double &deltaTime) {
 
 		shaderIO.setParamInline<glm::mat4>("uView", mView);
 		shaderIO.setParamInline<glm::mat4>("uProj", mProjection);
-        shaderIO.uploadTextures();
+		shaderIO.uploadTextures();
 
 		shaderIO.setParamInline<glm::mat4>("uModel", transforms[0].getMat());
 		meshInstance[0]->bind();
 		meshInstance[0]->draw();
-        meshInstance[0]->unbind();
+		meshInstance[0]->unbind();
 
 		shaderIO.setParamInline<glm::mat4>("uModel", transforms[1].getMat());
 		meshInstance[1]->bind();
@@ -139,7 +147,7 @@ void SceneOverlay::onRender(const double &deltaTime) {
 		meshInstance[1]->unbind();
 	}
 	shaderInstance->unbind();
-	gbuffer->render();
+	gbuffer->render();*/
 
 
     //auto &fbo = gbuffer->getFbo();

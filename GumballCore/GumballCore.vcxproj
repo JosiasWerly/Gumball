@@ -76,6 +76,7 @@
     <ClInclude Include="RenderSystem.hpp" />
     <ClInclude Include="SceneOverlay.hpp" />
     <ClInclude Include="Shaders.hpp" />
+    <ClInclude Include="ShaderUniform.hpp" />
     <ClInclude Include="Subsystem.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="TimeStat.hpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="SceneOverlay.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="ShaderUniform.cpp" />
     <ClCompile Include="Subsystem.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TimeStat.cpp" />

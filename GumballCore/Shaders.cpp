@@ -3,67 +3,15 @@
 #include "Math.hpp"
 #include "Texture.hpp"
 
-IShaderUniformBus *IShaderUniformBus::TCreateBus(ShaderUniform &Uniform) {
-	switch (Uniform.type) {
-		case EUniformType::u_int:			return new TShaderUniformBus<int>(Uniform);				break;
-		case EUniformType::u_float:			return new TShaderUniformBus<float>(Uniform);			break;
-		case EUniformType::u_fvec2:			return new TShaderUniformBus<glm::fvec2>(Uniform);		break;
-		case EUniformType::u_fvec3:			return new TShaderUniformBus<glm::fvec3>(Uniform);		break;
-		case EUniformType::u_fvec4:			return new TShaderUniformBus<glm::fvec4>(Uniform);		break;
-		case EUniformType::u_ivec2:			return new TShaderUniformBus<glm::ivec2>(Uniform);		break;
-		case EUniformType::u_ivec3:			return new TShaderUniformBus<glm::ivec3>(Uniform);		break;
-		case EUniformType::u_ivec4:			return new TShaderUniformBus<glm::ivec4>(Uniform);		break;
-		case EUniformType::u_mat:			return new TShaderUniformBus<glm::mat4>(Uniform);		break;
-		case EUniformType::u_stexture:		return new TShaderUniformBus<Tbo *>(Uniform);			break;
-		default: throw;
-	}
-}
-
-ShaderUniformIOBus::ShaderUniformIOBus() {
-}
-ShaderUniformIOBus::~ShaderUniformIOBus() {
-	detach();
-}
-void ShaderUniformIOBus::attach(const list<ShaderUniform> &uniforms) {
-	parameters.clear();
-	for (const auto &u : uniforms) {
-		if (u.type == EUniformType::u_stexture) {
-			textures[u.name] = &u;
-		}
-		else {
-			numbers[u.name] = &u;
-		}
-		parameters[u.name] = &u;
-	}
-}
-void ShaderUniformIOBus::detach() {
-	parameters.clear();
-	textures.clear();
-	parameters.clear();
-}
-void ShaderUniformIOBus::uploadNumbers() const {
-	for (auto &kv : numbers)
-		kv.second->bus->upload();
-}
-void ShaderUniformIOBus::uploadTextures() const {
-	for (auto &kv : textures)
-		kv.second->bus->upload();
-}
-void ShaderUniformIOBus::uploadParameters() const {
-	for (auto &kv : parameters)
-		kv.second->bus->upload();
-}
 
 Shader::Shader() {
 }
 Shader::~Shader() {
-	uniformIOBus.detach();
-	for (auto &u : uniforms)
-		delete u.bus;
 }
 void Shader::updateUniforms() {
-	unsigned texturesNum = 0;
 	uniforms.clear();
+
+	unsigned texturesNum = 0;
 	int uniformsSize = 0;
 	glGetProgramiv(shaderId, GL_ACTIVE_UNIFORMS, &uniformsSize);
 	for (int i = 0; i < uniformsSize; i++) {
@@ -71,18 +19,15 @@ void Shader::updateUniforms() {
 		int len, size;
 		char name[32] = "";
 		glGetActiveUniform(shaderId, i, 32, &len, &size, &type, name);
-		uniforms.push_back(
-			{
-				static_cast<unsigned>(i),
-				static_cast<EUniformType>(type),
-				name
-			}
-		);
-		auto &newUniform = uniforms.back();
-		newUniform.bus = IShaderUniformBus::TCreateBus(newUniform);
 
-		if (newUniform.type == EUniformType::u_stexture) {
-			auto textUni = dynamic_cast<TShaderUniformBus<Tbo*>*>(newUniform.bus);
+		ShaderUniformInfo shaderInfo{
+			static_cast<unsigned>(i),
+			static_cast<EUniformType>(type),
+			name
+		};
+		ShaderUniformBus* bus =  uniforms.add(shaderInfo);
+		if (bus->owner.type == EUniformType::u_stexture) {
+			auto textUni = dynamic_cast<TShaderUniformBus<Tbo*>*>(bus);
 			textUni->activeId = texturesNum++;			
 		}
 	}
@@ -138,14 +83,12 @@ void Shader::unbind() const {
 	glUseProgram(0);
 }
 void Shader::upload() const {
-	uniformIOBus.uploadParameters();
+	uniforms.uploadAll();
 }
 
 void ShaderInstance::setShader(Shader *newShader) {
 	shader = newShader;
-	if (shader) {
-		uniformIOBus.attach(shader->getUniforms());
-	}
+	uniforms.clear();
 }
 
 AssetFactory<Shader>::AssetFactory() {

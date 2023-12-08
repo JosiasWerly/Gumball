@@ -27,6 +27,7 @@
     <ClCompile Include="World.cpp" />
     <ClCompile Include="template.cpp" />
     <ClCompile Include="ConsoleSystem.cpp" />
+    <ClCompile Include="ShaderUniform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.hpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="World.hpp" />
     <ClInclude Include="template.hpp" />
     <ClInclude Include="ConsoleSystem.hpp" />
+    <ClInclude Include="ShaderUniform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\readme.txt" />
