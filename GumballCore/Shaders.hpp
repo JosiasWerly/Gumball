@@ -48,11 +48,11 @@ template<> CType get<CType>(const string &name) { \
 class GBCORE ShaderInstance {
 protected:
 	Shader *shader;
-	ShaderParams shaderParams;
+	ShaderParams params;
 public:
 	void setShader(Shader *newShader);
 	Shader *getShader() { return shader; }
-	ShaderParams &getParameters() { return shaderParams; }
+	ShaderParams &getParameters() { return params; }
 };
 #undef ParamDelc
 

@@ -55,7 +55,7 @@ public:
 	void setBuffer(Color *newBuffer);
 	Color *&getBuffer() { return buffer; }
 	
-	void bind();
+	void bind() const;
 	void unbind();
 	
 	bool isValid() const { return buffer; }

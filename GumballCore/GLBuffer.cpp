@@ -66,7 +66,7 @@ Tbo::~Tbo() {
 void Tbo::upload() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 }
-void Tbo::bind() {
+void Tbo::bind() const {
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 void Tbo::unbind() {

@@ -10,10 +10,12 @@
 #include <map>
 #include <list>
 #include <deque>
+#include <set>
 #include <unordered_map>
 using namespace std;
 
 class ShaderUniformBus;
+template<class T> class TShaderUniformBus;
 
 enum class EUniformType {
 	u_int = GL_INT,
@@ -32,12 +34,16 @@ struct ShaderUniformInfo {
 	unsigned location;
 	EUniformType type;
 	string name;
+
+	bool operator==(const ShaderUniformInfo &other) const {
+		return location == other.location && name == other.name;
+	}
 };
 
 class ShaderUniformBus {
 public:
 	static ShaderUniformBus *createBus(const ShaderUniformInfo &UniformInfo);
-	template<class T> TShaderUniformBus<T> *as() { dynamic_cast<TShaderUniformBus<T> *>(this); }
+	template<class T> TShaderUniformBus<T> *as() { return dynamic_cast<TShaderUniformBus<T> *>(this); }
 
 	const ShaderUniformInfo &owner;
 	ShaderUniformBus(const ShaderUniformInfo &owner) : owner(owner) {}
@@ -84,7 +90,10 @@ public:
 };
 
 class ShaderUniforms {
-private:
+	friend class ShaderParams;
+
+protected:
+	list<ShaderUniformInfo> uniformsInfo;
 	list<ShaderUniformBus *> uniforms;
 	unordered_map<string, ShaderUniformBus *> accessor;
 	unordered_map<string, ShaderUniformBus *> active;
@@ -96,26 +105,47 @@ private:
 			active[uniformBus->owner.name] = uniformBus;
 		}
 	}
+	Inline void __genAccessor(list<ShaderUniformBus *> uniforms) {
+		accessor.clear();
+		for (auto &u : uniforms) {
+			accessor[u->owner.name] = u;
+		}
+	}
+	Inline ShaderUniformInfo &__getInfo(const string &name) {
+		for (auto &i : uniformsInfo) {
+			if (i.name == name) {
+				return i;
+			}
+		}
+		throw;
+	}
+
+	virtual void __activate(string name) {
+		active[name] = accessor[name];
+	}
+	virtual void __deactivate(string name) {
+		active.erase(name);
+	}
 
 public:
 	ShaderUniforms();
-	~ShaderUniforms();
+	~ShaderUniforms();	
 
-	ShaderUniformBus *clone(ShaderUniformBus *target, bool activate = false);
-	ShaderUniformBus *add(const ShaderUniformInfo &info, bool activate = false);
+	ShaderUniformBus *add(const ShaderUniformInfo &info, bool autoActivate = false);
 	void del(string name);
-	void setActive(string name, bool newActive);
 	void clear();
-
 	void uploadActive() const;
-	void uploadAll() const;
+	void uploadAll() const;	
 
+	virtual void setActive(string name, bool newActive);
+	virtual void activate(list<string> names);
+	virtual void deactivate(list<string> names);
 
 	template<class T> void sync(const string &name, T) = delete;
 	template<class T> void set(const string &name, T) = delete;
-	template<class T> T get(const string &name) = delete;	
-	
-	#define UniformDelc(CType, GType)\
+	template<class T> T get(const string &name) = delete;
+
+#define UniformDelc(CType, GType)\
 	template<> void sync<CType>(const string &name, CType value) { \
 		auto *p = accessor[name]->as<GType>();\
 		p->val = value;\
@@ -127,6 +157,7 @@ public:
 	template<> CType get<CType>(const string &name) { \
 		return accessor[name]->as<GType>()->val;\
 	}
+	
 	UniformDelc(int, int);
 	UniformDelc(float, float);
 	UniformDelc(glm::mat4, glm::mat4);
@@ -138,45 +169,31 @@ public:
 	UniformDelc(glm::ivec4, glm::ivec4);
 	UniformDelc(Tbo *, Tbo *);
 	UniformDelc(Color, glm::fvec4);
-	UniformDelc(Vector3, glm::fvec3);	
-	#undef UniformDelc;
+	UniformDelc(Vector3, glm::fvec3);
+
+#undef UniformDelc
+
+	list<ShaderUniformBus *> &getUniforms() { return uniforms; }
+	unordered_map<string, ShaderUniformBus *> &getActive() { return active; }
 };
 
-class ShaderParams {
+class ShaderParams : private ShaderUniforms {
 private:
-	ShaderUniforms *uniformsTarget;
-	unordered_map<string, ShaderUniformBus *> accessor;
+	ShaderUniforms *parent;
+	std::set<string> overwriten;
 
+	void __activate(string name) override;
+	void __deactivate(string name) override;
 public:
-	void attach(ShaderUniforms *target);
-	void detach();
+	using ShaderUniforms::set;
+	using ShaderUniforms::get;
+	using ShaderUniforms::uploadActive;
 
-	void setEnable(string name, bool newEnable);
+	using ShaderUniforms::setActive;
+	using ShaderUniforms::deactivate;
+	using ShaderUniforms::activate;
 
-
-	template<class T> void set(const string &name, T) = delete;
-	template<class T> T get(const string &name) = delete;
-	
-	#define ParamDelc(CType, GType)\
-	template<> void set<CType>(const string &name, CType value) { \
-		accessor[name]->as<GType>()->val = value;\
-	}\
-	template<> CType get<CType>(const string &name) { \
-		return accessor[name]->as<GType>()->val;\
-	}
-	ParamDelc(int, int);
-	ParamDelc(float, float);
-	ParamDelc(glm::mat4, glm::mat4);
-	ParamDelc(glm::fvec2, glm::fvec2);
-	ParamDelc(glm::fvec3, glm::fvec3);
-	ParamDelc(glm::fvec4, glm::fvec4);
-	ParamDelc(glm::ivec2, glm::ivec2);
-	ParamDelc(glm::ivec3, glm::ivec3);
-	ParamDelc(glm::ivec4, glm::ivec4);
-	ParamDelc(Tbo *, Tbo *);
-	ParamDelc(Color, glm::fvec4);
-	ParamDelc(Vector3, glm::fvec3);
-	#undef ParamDelc;
+	void setParent(ShaderUniforms *newParent);
 };
 
 #endif

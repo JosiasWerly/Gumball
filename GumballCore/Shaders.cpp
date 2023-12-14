@@ -20,7 +20,8 @@ void Shader::updateUniforms() {
 		char name[32] = "";
 		glGetActiveUniform(shaderId, i, 32, &len, &size, &type, name);
 
-		ShaderUniformInfo shaderInfo{
+		//TODO: check if ShaderUniform::Add is correcly storing shaderInfo, it shouldn't based on the lifetime of this variable
+		ShaderUniformInfo shaderInfo {
 			static_cast<unsigned>(i),
 			static_cast<EUniformType>(type),
 			name
@@ -88,7 +89,7 @@ void Shader::upload() const {
 
 void ShaderInstance::setShader(Shader *newShader) {
 	shader = newShader;
-	uniforms.clear();
+	params.setParent(&newShader->getUniforms());
 }
 
 AssetFactory<Shader>::AssetFactory() {

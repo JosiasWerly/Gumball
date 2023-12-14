@@ -34,13 +34,20 @@ void ActorComponent::setActive(bool newActive) {
 }
 
 MeshComponent::MeshComponent() {
+	static int i = 0;
+	const char *rndTex[] = { "color_grid", "logo", "scotty" };
+
+
 	auto as = Engine::instance()->assetSystem;
 	draw.setShader(as->getContent<Shader>("default"));
-	auto &io = draw.getShaderInstance().uniformIO();
+	
+	auto &params = draw.getShaderInstance().getParameters();
+	Tbo *t = &as->getContent<Image>(rndTex[i++ % 3])->getTexture();
+	params.setActive("uTexture", true);
+	params.setActive("uColor", true);
 
-	const char *rndTex[] = { "color_grid", "logo", "scotty" };
-	Tbo *t = &as->getContent<Image>(rndTex[rand() % 3])->getTexture();
-	io.setParam<Tbo *>("uTexture", t);
+	params.set<Tbo *>("uTexture", t);
+	params.set<Color>("uColor", 0xffffffff);
 
 	const char *rndMesh[] = { "cube", "icosphere", "screenPlane" };
 	draw.setMesh(as->getContent<MeshData>(rndMesh[rand()%3]));

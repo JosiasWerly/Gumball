@@ -20,16 +20,11 @@ ShaderUniforms::ShaderUniforms() {
 ShaderUniforms::~ShaderUniforms() {
 	clear();
 }
-ShaderUniformBus *ShaderUniforms::clone(ShaderUniformBus *target, bool activate) {
-	if (!target) {
-		return nullptr;
-	}
-	ShaderUniformBus *clonedBus = ShaderUniformBus::createBus(target->owner);
-	__add(clonedBus, activate);
-}
-ShaderUniformBus *ShaderUniforms::add(const ShaderUniformInfo &info, bool activate) {
-	ShaderUniformBus *newBus = ShaderUniformBus::createBus(info);
-	__add(newBus, activate);	
+ShaderUniformBus *ShaderUniforms::add(const ShaderUniformInfo &info, bool autoActivate) {
+	uniformsInfo.push_back(info);
+	ShaderUniformBus *newBus = ShaderUniformBus::createBus(uniformsInfo.back());
+	__add(newBus, autoActivate);
+	return newBus;
 }
 void ShaderUniforms::del(string name) {
 	if (accessor.contains(name)) {
@@ -37,17 +32,30 @@ void ShaderUniforms::del(string name) {
 		uniforms.remove(bus);
 		accessor.erase(name);
 		active.erase(name);
+		uniformsInfo.remove(bus->owner);
 		delete bus;
 	}
 }
 void ShaderUniforms::setActive(string name, bool newActive) {
 	if (accessor.contains(name)) {
 		if (newActive) {
-			active[name] = accessor[name];
+			__activate(name);
 		}
 		else {
-			active.erase(name);
+			__deactivate(name);
 		}
+	}
+}
+void ShaderUniforms::activate(list<string> names) {
+	for (auto &name : names) {
+		if (accessor.contains(name)) {
+			__activate(name);
+		}
+	}
+}
+void ShaderUniforms::deactivate(list<string> names) {
+	for (auto &name : names) {
+		__deactivate(name);
 	}
 }
 void ShaderUniforms::clear(){
@@ -66,5 +74,27 @@ void ShaderUniforms::uploadActive() const {
 void ShaderUniforms::uploadAll() const {
 	for (auto &i : uniforms) {
 		i->upload();
+	}
+}
+
+void ShaderParams::__activate(string name) {
+	overwriten.insert(name);
+	add(parent->__getInfo(name), true);
+}
+void ShaderParams::__deactivate(string name) {
+	if (overwriten.contains(name)) {
+		del(name);		
+	}
+	accessor[name] = parent->accessor[name];
+	active[name] = parent->active[name];
+}
+void ShaderParams::setParent(ShaderUniforms *newParent) {
+	clear();
+
+	overwriten.clear();
+	parent = newParent;
+	if (newParent) {
+		accessor = parent->accessor;
+		active = parent->active;
 	}
 }

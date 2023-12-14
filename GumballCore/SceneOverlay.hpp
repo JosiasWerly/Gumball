@@ -103,7 +103,7 @@ private:
     list<DrawHandle *> draws;
     
     FboHandle *gbuffer;
-    ShaderInstance *geometryShader;
+    Shader *geometryShader;
 
 public:
     SceneOverlay();
