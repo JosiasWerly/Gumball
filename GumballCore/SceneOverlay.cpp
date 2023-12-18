@@ -15,7 +15,9 @@ void ViewHandle::disable() {
 }
 
 DrawHandle::DrawHandle() {
+    static Shader *geometry = Engine::instance()->assetSystem->getContent<Shader>("geometry");
     scene = Engine::instance()->renderSystem->scene;
+    shaderInstance.setShader(geometry);
 }
 DrawHandle::~DrawHandle() {
     disable();
@@ -47,6 +49,7 @@ void FboHandle::setShader(Shader *newShader) {
     auto &uniforms = shaderInstance.getShader()->getUniforms();
 
 	for (auto it : uniforms.getUniforms()) {
+        uniforms.setActive(it->owner.name, true);
 		if (EUniformType::u_stexture == it->owner.type) {
 			fbo.addTexture({ 800, 600 });
             uniforms.set<Tbo *>(it->owner.name, fbo.textures.back());
@@ -62,13 +65,13 @@ void FboHandle::flush() {
 void FboHandle::render() {
     fbo.unbind();
     fbo.bind(EFboTarget::Read);
-    screenMesh.bind();
     Shader *shader = shaderInstance.getShader();
     shader->bind();
     shader->upload();
-    shader->unbind();
+    screenMesh.bind();
     screenMesh.draw();
     fbo.unbind();
+    shader->unbind();
 }
 
 
@@ -85,38 +88,69 @@ void SceneOverlay::onAttach() {
 
     geometryShader = as->getContent<Shader>("geometry");
     auto &params = geometryShader->getUniforms();
+    params.activate({ "uColor", "uTexture" });
     params.set<Color>("uColor", 0xffffffff);
     params.set<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
-    params.setActive("uColor", true);
-    params.setActive("uTexture", true);
 
 }
 void SceneOverlay::onDetach() {
 
 }
 void SceneOverlay::onRender(const double &deltaTime) {
-    ShaderUniforms &geometryUniforms = geometryShader->getUniforms();
-    geometryShader->bind();
-    
-    geometryUniforms.uploadActive();
-    //gbuffer->flush();
-    for (auto &v : views) {
-        const auto mView = v->transform->getMat();
-        const auto mProjection = v->viewMode.mProjection;
-        geometryUniforms.sync<glm::mat4>("uView", mView);
-        geometryUniforms.sync<glm::mat4>("uProj", mProjection);
+    /* render
+    * 1. geometry: normal geometry shader.(output goes to gbuffer)
+    * 2. custom geometry: custom shader.(output goes to gbuffer)
+    * 3. lighting(gbuffer). 
+    * 5. postprocess
+    */
+    //https://learnopengl.com/code_viewer_gh.php?code=src/5.advanced_lighting/8.2.deferred_shading_volumes/deferred_shading_volumes.cpp
+    gbuffer->flush();
 
-        for (auto &d : draws) {
-            auto &mesh = d->meshInstance;
-            geometryUniforms.sync<glm::mat4>("uModel", d->transform->getMat());
-            d->shaderInstance.getParameters().uploadActive();
-            mesh.bind();
-            mesh.draw();
-        }
+	ShaderUniforms &geometryUniforms = geometryShader->getUniforms();
+	geometryShader->bind();
+	geometryUniforms.uploadActive();
+	for (auto &v : views) {
+		const auto mView = v->transform->getMat();
+		const auto mProjection = v->viewMode.mProjection;
+		geometryUniforms.sync<glm::mat4>("uView", mView);
+		geometryUniforms.sync<glm::mat4>("uProj", mProjection);
 
-    }
-    geometryShader->unbind();
+		for (auto &d : draws) {
+			auto &mesh = d->meshInstance;
+			geometryUniforms.sync<glm::mat4>("uModel", d->transform->getMat());
+			d->shaderInstance.getParameters().uploadActive();
+			mesh.bind();
+			mesh.draw();
+		}
+	}
+	geometryShader->unbind();
+
+    gbuffer->render();
+
+    //ShaderUniforms &geometryUniforms = geometryShader->getUniforms();
+    //geometryShader->bind();
+    //
+    //geometryUniforms.uploadActive();
+    ////gbuffer->flush();
+    //for (auto &v : views) {
+    //    const auto mView = v->transform->getMat();
+    //    const auto mProjection = v->viewMode.mProjection;
+    //    geometryUniforms.sync<glm::mat4>("uView", mView);
+    //    geometryUniforms.sync<glm::mat4>("uProj", mProjection);
+    //
+    //    for (auto &d : draws) {
+    //        auto &mesh = d->meshInstance;
+    //        geometryUniforms.sync<glm::mat4>("uModel", d->transform->getMat());
+    //        d->shaderInstance.getParameters().uploadActive();
+    //        mesh.bind();
+    //        mesh.draw();
+    //    }
+    //
+    //}
+    //geometryShader->unbind();
     //gbuffer->render();
+
+
 
 	/*gbuffer->flush();
 
@@ -150,7 +184,7 @@ void SceneOverlay::onRender(const double &deltaTime) {
     //fbo.clearBuffer();
     //for (auto &v : views) {
     //	const auto mView = v->transform->getMat();
-    //    const auto mProjection = v->viewMode.mProjection;
+    //  const auto mProjection = v->viewMode.mProjection;
     //	for (auto &d : draws) {
     //		auto &mesh = d->meshInstance;
     //		auto &shader = d->shaderInstance;

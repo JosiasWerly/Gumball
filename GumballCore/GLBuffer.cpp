@@ -110,15 +110,15 @@ void Tbo::create(int width, int height, Color *buffer, unsigned internalFormat, 
 
 	glDCall(glGenTextures(1, &id));
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
+	//glDCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, buffer));
 	if (buffer) {
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, buffer);
-		//glDCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, buffer));
-	}
+		glDCall(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, buffer));
+	}	
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 void Tbo::destroy() {
@@ -198,12 +198,13 @@ void DrawableBuffer::draw() const {
 
 Fbo::Fbo() {
 	glGenFramebuffers(1, &id);
-	for (auto t : textures) {
-		delete t;
-	}
+	//glRenderbufferStorage
 }
 Fbo::~Fbo() {
 	glDeleteFramebuffers(1, &id);
+	for (auto t : textures) {
+		delete t;
+	}
 }
 void Fbo::bind(EFboTarget target) {
 	trg = target;
@@ -221,8 +222,8 @@ void Fbo::clearTextures() {
 }
 void Fbo::addTexture(Vector2i size) {
 	Tbo *newTexture = new Tbo;
-	newTexture->bind();
 	newTexture->create(size.x, size.y, nullptr);
+	newTexture->bind();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + textures.size(), GL_TEXTURE_2D, newTexture->id, 0);
 	textures.push_back(newTexture);
 	newTexture->unbind();
@@ -246,10 +247,6 @@ void Fbo::beginDraw() {
 		glBindTexture(GL_TEXTURE_2D, textures[i]->id);
 	}
 }
-bool Fbo::isCompleted() {
-	bind();
-	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
-	unbind();
-}
+
 
 #pragma warning( default : 4312 4267 4838)

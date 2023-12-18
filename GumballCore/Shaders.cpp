@@ -120,8 +120,9 @@ bool AssetFactory<Shader>::load(Archive &ar, Shader &val) {
 	if (vertex.empty() || fragment.empty())
 		return false;
 
-	if (val.create(vertex, fragment))
+	if (val.create(vertex, fragment)) {
 		return true;
+	}
 	return false;
 }
 bool AssetFactory<Shader>::save(Archive &ar, const Shader &val) {

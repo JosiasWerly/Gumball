@@ -141,7 +141,8 @@ public:
 	void updateDrawBuffers();
 	void clearBuffer();
 	void beginDraw();
-	bool isCompleted();
+	
+	//glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 };
 
 
