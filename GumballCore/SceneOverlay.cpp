@@ -88,9 +88,8 @@ void SceneOverlay::onAttach() {
 
     geometryShader = as->getContent<Shader>("geometry");
     auto &params = geometryShader->getUniforms();
-    params.activate({ "uColor", "uTexture" });
-    params.set<Color>("uColor", 0xffffffff);
-    params.set<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
+    params.activate({ "gAlbedo" });
+    //params.set<Tbo *>("uTexture", &as->getContent<Image>("color_grid")->getTexture());
 
 }
 void SceneOverlay::onDetach() {

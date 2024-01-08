@@ -19,7 +19,9 @@ public:
 	}
 	void beginPlay() {
 		MeshComponent::beginPlay();
-		owner->transform.position = Vector3(rand() % 100 * .1f, rand() % 100 * .1f, rand() % 100 * .1f);
+
+
+		owner->transform.position = Vector3(0, 5, 0);
 		
 
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
@@ -29,6 +31,8 @@ public:
 		}
 	}
 	void tick(const double &deltaTime) {
+		owner->transform.rotator.rotate(0, .5, 0);
+		return;
 		owner->transform.position += vel;
 		auto &pos = owner->transform.position;
 		if (pos.x < -10) {
@@ -96,10 +100,10 @@ public:
 		{
 			auto cameraComp = new CameraComponent;
 			cameraActor->addComponent(cameraComp);
-			cameraActor->transform.position.z = -30;
+			cameraActor->transform.position.z = -20;
 		}
 
-		for (size_t i = 0; i < 10; i++) {
+		for (size_t i = 0; i < 1; i++) {
 			new MyActor;
 		}
 	}

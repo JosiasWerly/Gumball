@@ -38,7 +38,8 @@ GumballProject -> the project where the programmer can edit while GumballApplica
 -render culling.
 -simple collisions procedures.
 
-
+############## Notes ##############
+- Zforward, XRight, YUp
 
 "dont let good ideias spoil good work" - Bjarne Stroustrup.
 "[...] value is not equal to work hour [...]" - StarShip troopers.
