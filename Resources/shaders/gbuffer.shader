@@ -5,12 +5,12 @@ in vec3 pos;
 in vec3 normal;
 in vec2 uv;
 
-out vec2 f_uv;
-out vec3 f_normal;
+out vec2 fUV;
+out vec3 fNormal;
 
-void main() {
-    f_normal = normal;
-    f_uv = uv;
+void main() {    
+    fUV = uv;
+    fNormal = normal;
     gl_Position = vec4(pos, 1);
 }
 
@@ -18,15 +18,15 @@ void main() {
 #frag
 #version 440 core
 
-in vec2 f_uv;
-in vec3 f_normal;
+in vec2 fUV;
+in vec3 fNormal;
 
 out vec4 fColor;
 
-uniform sampler2D uTexture;
+uniform sampler2D gAlbedo;
+uniform sampler2D gPosition;
+uniform sampler2D gNormal;
 
 void main() {
-    fColor  =  texture(uTexture, f_uv);
-    //fColor = vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);    
-    //fColor  =  texture(uTexture, f_uv) + vec4(f_uv.x, f_uv.y, f_uv.x + f_uv.y, 1);
+    fColor  =  texture(gAlbedo, fUV);
 }
