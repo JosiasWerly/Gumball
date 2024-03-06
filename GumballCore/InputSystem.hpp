@@ -6,7 +6,7 @@
 #include <list>
 
 #include "GLUtils.hpp"
-#include "Subsystem.hpp"
+#include "SystemController.hpp"
 #include "Event.hpp"
 
 
@@ -57,7 +57,7 @@ namespace Input {
 };
 
 class GBCORE InputSystem : 
-	public EngineSystem {
+	public System {
 public:
 	struct KeyCodeStatus {
 		bool pressed, released, repeat; 

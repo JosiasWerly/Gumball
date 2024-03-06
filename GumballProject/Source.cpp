@@ -7,7 +7,7 @@ using namespace std;
 #include <GumballCore/ProjectLinker.hpp>
 #include <GumballCore/SceneOverlay.hpp>
 #include <GumballCore/WidgetOverlay.hpp>
-#include <GumballCore/World.hpp>
+#include <GumballCore/WorldSystem.hpp>
 #include <GumballCore/Actor.hpp>
 
 class MyComp : 

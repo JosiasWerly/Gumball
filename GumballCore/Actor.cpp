@@ -41,6 +41,7 @@ MeshComponent::MeshComponent() {
 	params.set<Color>("uColor", 0xffffffff);
 	draw.setMesh(as->getContent<MeshData>("cube"));
 
+	activate();
 	//static int i = 0;
 	//const char *rndTex[] = { "color_grid", "logo", "scotty" };
 	//auto as = Engine::instance()->assetSystem;	
@@ -79,6 +80,7 @@ void MeshComponent::newOwner(Actor *newOwner, Actor *oldOwner) {
 
 CameraComponent::CameraComponent() {
 	view.viewMode.setProjectionPerspective();
+	activate();
 }
 CameraComponent::~CameraComponent() {
 
@@ -111,7 +113,6 @@ void Actor::endPlay() {
 void Actor::tick(const double &deltaTime) {
 }
 void Actor::addComponent(ActorComponent *comp) {
-	static World &w = *Engine::instance()->world;
 	Actor *oldOwner = comp->owner;
 	if (oldOwner) {
 		oldOwner->components.remove(comp);

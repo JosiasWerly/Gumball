@@ -6,14 +6,15 @@
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
 
-class SystemOverseer;
+class SystemController;
 class ProjectLinker;
+class TimeStat;
+
 class EditorSystem;
 class RenderSystem;
 class AssetsSystem;
 class InputSystem;
-class TimeStat;
-class World;
+class WorldSystem;
 
 
 class GBCORE Engine : 
@@ -23,7 +24,7 @@ private:
 
 	TimeStat timeStats;
 	ProjectLinker *projectLinker;	
-	SystemOverseer *systemSeer;
+	SystemController *systemController;
 	
 	Engine();
 	~Engine();	
@@ -31,11 +32,12 @@ public:
 	void args(int argc, char *argv[]);
 	void tick();
 
+	//self explanatory names
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
 	InputSystem *inputSystem;
+	WorldSystem *worldSystem;
 	EditorSystem *editorSystem;
-	World *world;
 };
 
 

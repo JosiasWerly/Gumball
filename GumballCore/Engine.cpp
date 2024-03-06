@@ -1,17 +1,17 @@
 #include "Engine.hpp"
-#include "Subsystem.hpp"
-#include "AssetManager.hpp"
-#include "RenderSystem.hpp"
+#include "SystemController.hpp"
 #include "SceneOverlay.hpp"
 #include "WidgetOverlay.hpp"
 #include "ProjectLinker.hpp"
-#include "EditorSystem.hpp"
 #include "CommandPalette.hpp"
-#include "World.hpp"
+
+#include "AssetSystem.hpp"
+#include "RenderSystem.hpp"
+#include "EditorSystem.hpp"
+#include "WorldSystem.hpp"
 
 #include "EnviromentVariables.hpp"
 
-#include "Subsystem.hpp"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -19,12 +19,12 @@ using namespace std;
 Engine::Engine() {
 	projectLinker = new ProjectLinker;
 	
-	systemSeer = new SystemOverseer;
-	renderSystem = systemSeer->addSystem<RenderSystem>();
-	assetSystem = systemSeer->addSystem<AssetsSystem>();
-	inputSystem = systemSeer->addSystem<InputSystem>();
-	editorSystem = systemSeer->addSystem<EditorSystem>();
-	world = systemSeer->addSystem<World>();
+	systemController = new SystemController;
+	renderSystem = systemController->addSystem<RenderSystem>();
+	assetSystem = systemController->addSystem<AssetsSystem>();
+	inputSystem = systemController->addSystem<InputSystem>();
+	editorSystem = systemController->addSystem<EditorSystem>();
+	worldSystem = systemController->addSystem<WorldSystem>();
 }
 Engine::~Engine() {
 }
@@ -36,15 +36,15 @@ void Engine::args(int argc, char *argv[]) {
 	e->contentPath = e->applicationDir + "\\content\\";
 }
 void Engine::tick() {
-	systemSeer->initialize();
-	systemSeer->lateInitialize();
+	systemController->initialize();
+	systemController->lateInitialize();
 
 	while (true) {
 		if (projectLinker->hasNewVersion() || editorSystem->command->isReload) {
-			systemSeer->endPlay();
+			systemController->endPlay();
 			projectLinker->unload();
 			if (projectLinker->load()) {
-				systemSeer->beginPlay();
+				systemController->beginPlay();
 			}
 			
 			editorSystem->command->isReload = false;
@@ -53,15 +53,15 @@ void Engine::tick() {
 		timeStats.capture();
 		const double &deltaTime = timeStats.getDeltaTime();
 		if (editorSystem->command->isPlay) {
-			systemSeer->tick<ESystemTickType::gameplay>(deltaTime);
+			systemController->tick<ESystemTickType::gameplay>(deltaTime);
 			renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
 		}
 		else {
-			systemSeer->tick<ESystemTickType::editor>(deltaTime);
+			systemController->tick<ESystemTickType::editor>(deltaTime);
 		}
 	}
-	systemSeer->endPlay();
-	systemSeer->shutdown();
+	systemController->endPlay();
+	systemController->shutdown();
 }
 
 //systemSeer->initialize();

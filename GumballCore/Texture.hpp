@@ -1,7 +1,7 @@
 #pragma once
 #ifndef __texture
 #define __texture
-#include "AssetManager.hpp"
+#include "AssetSystem.hpp"
 #include "GLUtils.hpp"
 #include "GLBuffer.hpp"
 #include "Math.hpp"

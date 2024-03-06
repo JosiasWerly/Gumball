@@ -2,7 +2,7 @@
 #ifndef _actor
 #define _actor
 
-#include "World.hpp"
+#include "WorldSystem.hpp"
 #include "Math.hpp"
 #include "SceneOverlay.hpp"
 

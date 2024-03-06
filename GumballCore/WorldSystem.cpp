@@ -1,4 +1,4 @@
-#include "World.hpp"
+#include "WorldSystem.hpp"
 #include "Engine.hpp"
 
 #include <string>
@@ -18,20 +18,20 @@ void GameObject::setTickEnable(bool newState) {
 	if (newState == tickEnable)
 		return;
 	tickEnable = newState;
-	static World &w = *Engine::instance()->world;
+	static WorldSystem &w = *Engine::instance()->worldSystem;
 	w.scene.changeTick(this);
 }
 void GameObject::setTickInterval(float newValue) {
 	tickInterval = newValue;
 }
 void *GameObject::operator new(unsigned long long sz) {
-	static World &w = *Engine::instance()->world;
+	static WorldSystem &w = *Engine::instance()->worldSystem;
 	GameObject *go = reinterpret_cast<GameObject *>(::operator new(sz));
 	w.scene.root(go);
 	return go;
 }
 void destroy(GameObject *trg) {
-	static World &w = *Engine::instance()->world;
+	static WorldSystem &w = *Engine::instance()->worldSystem;
 	w.scene.unRoot(trg);
 }
 
@@ -102,18 +102,18 @@ Inline void GameScene::tick(const double &deltaTime) {
 }
 
 
-World::World() {
+WorldSystem::WorldSystem() {
 }
-void World::initialize() {
+void WorldSystem::initialize() {
 }
-void World::shutdown() {
+void WorldSystem::shutdown() {
 	scene.unload();
 }
-void World::beginPlay() {
+void WorldSystem::beginPlay() {
 }
-void World::endPlay() {
+void WorldSystem::endPlay() {
 	scene.unload();
 }
-void World::tick(const double &deltaTime) {
+void WorldSystem::tick(const double &deltaTime) {
 	scene.tick(deltaTime);
 }

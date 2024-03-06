@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _shader
 #define _shader
-#include "AssetManager.hpp"
+#include "AssetSystem.hpp"
 #include "GLUtils.hpp"
 #include "ShaderUniform.hpp"
 

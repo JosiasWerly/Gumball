@@ -1,10 +1,10 @@
 #pragma once
-#ifndef _assetmanager
-#define _assetmanager
+#ifndef _assetsystem
+#define _assetsystem
 
 #include "Object.hpp"
 #include "Var.hpp"
-#include "Subsystem.hpp"
+#include "SystemController.hpp"
 #include "Archive.hpp"
 
 
@@ -71,7 +71,7 @@ public:
 template<class T> class AssetFactory : public TAssetFactory<T> {};
 
 class AssetsSystem :
-	public EngineSystem {
+	public System {
 private:
 	list<IAssetFactory*> factories;
 	list<Asset *> assets;
@@ -100,7 +100,7 @@ public:
 	void loadFromFolder(string root);
 	void loadAssetFromFile(const string &assetPath);
 
-	ESystemTickType tickType() override { return ESystemTickType::disable; }
+	ESystemTickType tickType() override { return ESystemTickType::none; }
 };
 
-#endif // !_assetmanager
+#endif // !_assetsystem

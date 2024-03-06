@@ -10,7 +10,7 @@
 #include <cstring>
 #include <fstream>
 
-#include "AssetManager.hpp"
+#include "AssetSystem.hpp"
 #include "GLBuffer.hpp"
 #include "Math.hpp"
 #include "FunctionLibrary.hpp"
@@ -22,10 +22,6 @@ using namespace std;
 typedef std::vector<glm::vec3> listVec3;
 typedef std::vector<glm::vec2> listVec2;
 typedef std::vector<unsigned int> listUInt;
-
-
-
-
 
 struct GBCORE MeshVertexData {
 	glm::vec3 pos, normal;

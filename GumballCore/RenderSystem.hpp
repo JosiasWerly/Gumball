@@ -8,7 +8,7 @@
 using namespace std;
 
 #include "GLUtils.hpp"
-#include "Subsystem.hpp"
+#include "SystemController.hpp"
 #include "Patterns.hpp"
 #include "InputSystem.hpp"
 #include "Event.hpp"
@@ -45,7 +45,7 @@ public:
 };
 
 class RenderSystem :
-    public EngineSystem {
+    public System {
     
     list<RenderOverlay*> overlays;
     SceneOverlay *const scene;

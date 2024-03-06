@@ -2,13 +2,13 @@
 #ifndef _editorsystem
 #define _editorsystem
 
-#include "ProjectLinker.hpp"
-#include "Subsystem.hpp"
+#include "SystemController.hpp"
 
-class EditorSystem : public EngineSystem {
+class EditorSystem : 
+	public System {
 public:
 	class CommandPalette *command;
 	void lateInitialize() override;
-	ESystemTickType tickType() override { return ESystemTickType::disable; }
+	ESystemTickType tickType() override { return ESystemTickType::none; }
 };
 #endif // !_editorsystem

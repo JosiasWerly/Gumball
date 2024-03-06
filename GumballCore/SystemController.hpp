@@ -1,25 +1,23 @@
 #pragma once
-#ifndef _enginesystem
-#define _enginesystem
+#ifndef _systemcontroller
+#define _systemcontroller
 
 #include <list>
 
-class Engine;
-class SystemOverseer;
-
 enum class ESystemTickType {
-	disable,
+	none,
 	editor,
 	gameplay,
 	all
 };
-class GBCORE EngineSystem {
-protected:
-	friend SystemOverseer;
-	friend Engine;
 
-	EngineSystem();
-	virtual ~EngineSystem();
+class GBCORE System {
+protected:
+	friend class SystemController;
+	friend class Engine;
+
+	System() = default;
+	virtual ~System() = default;
 	virtual void initialize();
 	virtual void lateInitialize();
 	virtual void shutdown();
@@ -29,19 +27,19 @@ protected:
 	virtual ESystemTickType tickType();
 };
 
-class GBCORE SystemOverseer {
-	friend Engine;
+class GBCORE SystemController {
+	friend class Engine;
 private:
-	std::list<EngineSystem *> systems;
-	std::list<EngineSystem *> editorTick, gameplayTick;
+	std::list<System *> systems;
+	std::list<System *> editorTick, gameplayTick;
 	
-	SystemOverseer();
+	SystemController();
 protected:
-	Inline void initialize() const;
-	Inline void lateInitialize() const;
-	Inline void shutdown() const;
-	Inline void beginPlay() const;
-	Inline void endPlay() const;
+	void initialize() const;
+	void lateInitialize() const;
+	void shutdown() const;
+	void beginPlay() const;
+	void endPlay() const;
 
 	template<ESystemTickType> void tick(const double &deltaTime) = delete;
 	template<> void tick<ESystemTickType::editor>(const double &deltaTime) {
@@ -86,4 +84,4 @@ public:
 		return nullptr;
 	}
 };
-#endif // !_enginesystem
+#endif // !_systemcontroller

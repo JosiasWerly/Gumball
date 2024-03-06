@@ -57,7 +57,7 @@
   <ItemGroup>
     <ClInclude Include="Actor.hpp" />
     <ClInclude Include="Archive.hpp" />
-    <ClInclude Include="AssetManager.hpp" />
+    <ClInclude Include="AssetSystem.hpp" />
     <ClInclude Include="Definitions.hpp" />
     <ClInclude Include="CommandPalette.hpp" />
     <ClInclude Include="EditorSystem.hpp" />
@@ -78,18 +78,18 @@
     <ClInclude Include="SceneOverlay.hpp" />
     <ClInclude Include="Shaders.hpp" />
     <ClInclude Include="ShaderUniform.hpp" />
-    <ClInclude Include="Subsystem.hpp" />
+    <ClInclude Include="SystemController.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="TimeStat.hpp" />
     <ClInclude Include="Var.hpp" />
     <ClInclude Include="WidgetOverlay.hpp" />
-    <ClInclude Include="World.hpp" />
+    <ClInclude Include="WorldSystem.hpp" />
     <ClInclude Include="template.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Archive.cpp" />
-    <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="AssetSystem.cpp" />
     <ClCompile Include="CommandPalette.cpp" />
     <ClCompile Include="EditorSystem.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -108,12 +108,12 @@
     <ClCompile Include="SceneOverlay.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="ShaderUniform.cpp" />
-    <ClCompile Include="Subsystem.cpp" />
+    <ClCompile Include="SystemController.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TimeStat.cpp" />
     <ClCompile Include="Var.cpp" />
     <ClCompile Include="WidgetOverlay.cpp" />
-    <ClCompile Include="World.cpp" />
+    <ClCompile Include="WorldSystem.cpp" />
     <ClCompile Include="template.cpp" />
   </ItemGroup>
   <ItemGroup>

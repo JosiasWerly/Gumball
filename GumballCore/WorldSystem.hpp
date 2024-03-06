@@ -1,10 +1,8 @@
 #pragma once
-#ifndef _world
-#define _world
+#ifndef _worldsystem
+#define _worldsystem
 
-//#include "Object.hpp"
-//#include "Definitions.hpp"
-#include "Subsystem.hpp"
+#include "SystemController.hpp"
 #include "Var.hpp"
 
 #include <deque>
@@ -13,7 +11,7 @@ using namespace std;
 
 class GameObject;
 class GameScene;
-class World;
+class WorldSystem;
 
 enum class EGameObjectState {
 	spawn, nominal, destroy
@@ -66,12 +64,12 @@ public:
 
 Extern GBCORE void destroy(GameObject *trg);
 
-class World : 
-	public EngineSystem {
+class WorldSystem : 
+	public System {
 public:
 	GameScene scene;
 
-	World();
+	WorldSystem();
 	virtual void initialize() override;
 	virtual void shutdown() override;
 	virtual void beginPlay() override;
@@ -80,4 +78,4 @@ public:
 	ESystemTickType tickType() override { return ESystemTickType::gameplay; }
 };
 
-#endif // _world
+#endif // _worldsystem

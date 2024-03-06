@@ -2,7 +2,7 @@
 #ifndef __shaderuniform
 #define __shaderuniform
 
-#include "AssetManager.hpp"
+#include "AssetSystem.hpp" //TODO: remove?
 #include "GLUtils.hpp"
 #include "Math.hpp"
 #include "Texture.hpp"
