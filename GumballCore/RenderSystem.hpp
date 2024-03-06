@@ -18,13 +18,11 @@ using namespace std;
 class SceneOverlay;
 class WidgetOverlay;
 
-
-
 class Window {
     GLFWwindow* window = nullptr;
     Vector2i winSize;
 public:
-	void create(string Name, Vector2i size);
+	void create(string name, Vector2i size);
     void clearRender();
     void render();
     void setSize(Vector2i size);
@@ -33,14 +31,14 @@ public:
     void setTitle(string newTitle);
 };
 
-class GBCORE IRenderOverlay {
+class GBCORE RenderOverlay {
 protected:
-    IRenderOverlay(string name) :
+    RenderOverlay(string name) :
         name(name) {
     }
 public:
     const string name;
-    virtual ~IRenderOverlay() = default;
+    virtual ~RenderOverlay() = default;
     virtual void onAttach();
     virtual void onDetach();
     virtual void onRender(const double &deltaTime);
@@ -49,11 +47,11 @@ public:
 class RenderSystem :
     public EngineSystem {
     
-    list<IRenderOverlay*> layers;
-public:
-    Window mainWindow;
+    list<RenderOverlay*> overlays;
     SceneOverlay *const scene;
     WidgetOverlay *const widget;
+public:
+    Window mainWindow;
 
     RenderSystem();
     ~RenderSystem();
@@ -61,19 +59,23 @@ public:
     void lateInitialize() override;
     void shutdown() override;
     void tick(const double &deltaTime) override;
-    void pushLayer(IRenderOverlay *layer, bool pushBack = true);
-    void popLayer(IRenderOverlay *layer);
-    //TODO:transform this into a tempalte method
-    Inline IRenderOverlay *getLayer(string name) {
-        for (auto &l : layers) {
-            if (l->name == name)
-                return l;
-        }
+    
+    void pushOverlay(RenderOverlay *overlay, bool front = false);
+    void popOverlay(RenderOverlay *overlay);
+    RenderOverlay *getOverlay(string name);
+    template<class t> t *getOverlay() { 
+        for (auto i : overlays) {
+            if (t *ti = dynamic_cast<t *>(i)) {
+                return ti;
+            }
+        };
         return nullptr;
     }
-    Inline list<IRenderOverlay*>& getLayerList() { return layers; }
-    template<class t> t *getLayerAs(string name) { return dynamic_cast<t *>(getLayer(name)); }
+    template<class t> t *getOverlay(string name) { return dynamic_cast<t *>(getOverlay(name)); }
 
+    Inline SceneOverlay *getScene() const { return scene; }
+    Inline WidgetOverlay *getWidget() const { return widget; }
+    Inline list<RenderOverlay *> getLayerList() const { return overlays; }
     ESystemTickType tickType() override { return ESystemTickType::all; }
 
     static void onWindowResize(GLFWwindow *window, int width, int height);

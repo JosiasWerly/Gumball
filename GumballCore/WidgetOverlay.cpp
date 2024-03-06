@@ -3,7 +3,7 @@
 
 
 WidgetOverlay::WidgetOverlay() :
-	IRenderOverlay("widget") {
+	RenderOverlay("widget") {
 }
 void WidgetOverlay::onAttach() {
 	IMGUI_CHECKVERSION();
@@ -97,6 +97,25 @@ void WidgetContainer::delChildren(list<Widget *> children) {
 	}
 }
 
+UserWidget::UserWidget() {
+	setVisibility(false);
+}
+void UserWidget::show() {
+	if (getVisibility())
+		return;
+
+	WidgetOverlay &wOverlay = *Engine::instance()->renderSystem->getWidget();
+	wOverlay << this;
+	setVisibility(true);
+}
+void UserWidget::hide() {
+	if (!getVisibility())
+		return;
+
+	WidgetOverlay &wOverlay = *Engine::instance()->renderSystem->getWidget();
+	wOverlay >> this;
+	setVisibility(false);
+}
 
 
 

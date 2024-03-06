@@ -9,7 +9,7 @@ class WidgetOverlay;
 class Widget;
 
 class WidgetOverlay :
-    public IRenderOverlay {
+    public RenderOverlay {
     friend class Widget;
 
     ImGuiIO *guiIO = nullptr;
@@ -37,7 +37,7 @@ class Widget {
 
 public:
     virtual void render(const double &deltaTime);
-	void setVisibility(bool newVisible);
+	virtual void setVisibility(bool newVisible);
 	
 	Inline bool getVisibility() const { return isVisible; }
     Inline WidgetContainer *getParent() const { return parent; }
@@ -60,9 +60,12 @@ public:
 };
 
 class UserWidget : public WidgetContainer {
+
 public:
-	UserWidget() = default;
-	//possible methods to implement on child of this class
+	UserWidget();
+	void show();
+	void hide();
+	
 	//virtual void render(const double &deltaTime) {}
 	//virtual void beginDraw() {}
 	//virtual void endDraw() {}

@@ -2,7 +2,7 @@
 #include "GLBuffer.hpp"
 
 ViewHandle::ViewHandle() {
-    scene = Engine::instance()->renderSystem->scene;
+    scene = Engine::instance()->renderSystem->getScene();
 }
 ViewHandle::~ViewHandle() {
     disable();
@@ -16,7 +16,7 @@ void ViewHandle::disable() {
 
 DrawHandle::DrawHandle() {
     static Shader *geometry = Engine::instance()->assetSystem->getContent<Shader>("geometry");
-    scene = Engine::instance()->renderSystem->scene;
+    scene = Engine::instance()->renderSystem->getScene();
     shaderInstance.setShader(geometry);
 }
 DrawHandle::~DrawHandle() {
@@ -76,7 +76,7 @@ void FboHandle::render() {
 
 
 SceneOverlay::SceneOverlay() : 
-	IRenderOverlay("scene") {
+    RenderOverlay("scene") {
 }
 SceneOverlay::~SceneOverlay() {
 }

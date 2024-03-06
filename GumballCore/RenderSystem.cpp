@@ -3,9 +3,9 @@
 #include "WidgetOverlay.hpp"
 #include "Engine.hpp"
 
-void Window::create(string Name, Vector2i size) {
+void Window::create(string name, Vector2i size) {
 	winSize = size;
-	window = glfwCreateWindow(size.x, size.y, Name.c_str(), NULL, NULL);
+	window = glfwCreateWindow(size.x, size.y, name.c_str(), NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -36,16 +36,16 @@ void Window::setTitle(string newTitle) {
 	glfwSetWindowTitle(window, newTitle.c_str());
 }
 
-void IRenderOverlay::onAttach() {}
-void IRenderOverlay::onDetach() {}
-void IRenderOverlay::onRender(const double &deltaTime) {}
+void RenderOverlay::onAttach() {}
+void RenderOverlay::onDetach() {}
+void RenderOverlay::onRender(const double &deltaTime) {}
 
 RenderSystem::RenderSystem() :
 	scene(new SceneOverlay),
 	widget(new WidgetOverlay) {
 }
 RenderSystem::~RenderSystem() {
-	for (auto &l : layers)
+	for (auto &l : overlays)
 		delete l;
 }
 void RenderSystem::initialize() {
@@ -79,30 +79,37 @@ void RenderSystem::initialize() {
 	glEnable(GL_CULL_FACE);
 }
 void RenderSystem::lateInitialize() {
-	pushLayer(scene);
-	pushLayer(widget);
+	pushOverlay(scene);
+	pushOverlay(widget);
 }
 void RenderSystem::shutdown() {	
 	glfwTerminate();
 }
-void RenderSystem::pushLayer(IRenderOverlay *layer, bool pushBack) {
-	if (pushBack)
-		layers.emplace_back(layer);
-	else
-		layers.emplace_front(layer);
-	layer->onAttach();
-}
-void RenderSystem::popLayer(IRenderOverlay *layer) {
-	layer->onDetach();
-	layers.remove(layer);
-}
 void RenderSystem::tick(const double &deltaTime) {
 	mainWindow.clearRender();
 
-	for (auto &layer : layers)
+	for (auto &layer : overlays)
 		layer->onRender(deltaTime);
 	
 	mainWindow.render();
+}
+void RenderSystem::pushOverlay(RenderOverlay *overlay, bool front){
+	if (front)
+		overlays.emplace_front(overlay);
+	else
+		overlays.emplace_back(overlay);
+	overlay->onAttach();
+}
+void RenderSystem::popOverlay(RenderOverlay *overlay) {
+	overlay->onDetach();
+	overlays.remove(overlay);
+}
+RenderOverlay *RenderSystem::getOverlay(string name) {
+	for (auto &l : overlays) {
+		if (l->name == name)
+			return l;
+	}
+	return nullptr;
 }
 void RenderSystem::onWindowResize(GLFWwindow *window, int width, int height) {
 	auto RSys = Engine::instance()->renderSystem;

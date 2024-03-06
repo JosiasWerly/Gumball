@@ -8,10 +8,10 @@
 
 class SystemOverseer;
 class ProjectLinker;
+class ConsoleSystem;
 class RenderSystem;
 class AssetsSystem;
 class InputSystem;
-class ConsoleSystem;
 class TimeStat;
 class World;
 

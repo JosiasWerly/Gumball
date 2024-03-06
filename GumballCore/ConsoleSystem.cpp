@@ -42,8 +42,7 @@ public:
 void ConsoleSystem::lateInitialize() {
 	ConsoleWidget *widget = new ConsoleWidget;
 	widget->owner = this;
-	auto widgetOverlay = Engine::instance()->renderSystem->getLayerAs<WidgetOverlay>("widget");
-	*widgetOverlay << widget;
+	widget->show();
 }
 void ConsoleSystem::tick(const double &deltaTime) {
 	

@@ -94,7 +94,7 @@ public:
 };
 
 class GBCORE SceneOverlay :
-    public IRenderOverlay {
+    public RenderOverlay {
 private:
     friend class ViewHandle;
     friend class DrawHandle;
