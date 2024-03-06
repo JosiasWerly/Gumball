@@ -23,21 +23,6 @@ GumballProject -> the project where the programmer can edit while GumballApplica
 - clear patterns && architecture (i'm creating this for me so there is almost none comments, however I try my best to create a clear code and pattern).
 
 
-############## ToDo ##############
--texture and image class have a bad interaction between both.
--render piperline need improvement, SceneOverlay.cpp  SceneOverlay::OnRender.
--texture atlas reducing the ammount of calls.
--figure out a way to enable drawables to have shader.
--render target.
--gbuffer properly implemented, lighting pass, pos-process pass.
--find a managable way of interop between c++/lua/rust.
--sprite sheets, sprites animation.
--investigate how to do 3d animation.
--octa, quad, kd trees.
--improve interop between math classes.
--render culling.
--simple collisions procedures.
-
 ############## Notes ##############
 - Zforward, XRight, YUp
 
@@ -50,3 +35,11 @@ KUDOS to:
 Mr. Cherno: from whom I've learned the opengl from youtube.
 Lucas Pazze: great friend and programmer.
 Leonardo Murillo: great friend and colleague.
+
+
+
+############## TODO ##############
+-improve console widget
+-asset system.
+-create content widget.
+-create scene/level object.

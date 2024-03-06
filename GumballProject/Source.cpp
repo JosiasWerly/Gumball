@@ -21,7 +21,7 @@ public:
 		MeshComponent::beginPlay();
 
 
-		owner->transform.position = Vector3(0, 5, 0);
+		
 		
 
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
@@ -63,7 +63,7 @@ public:
 	}
 };
 
-
+static int i = 0;
 class MyActor :
 	public Actor {
 public:
@@ -72,6 +72,8 @@ public:
 		//di = new DrawCallInstance("torus");
 		//di->transform = &transform;
 		transform.scale = Vector3(0.001, 0.001, 0.001);
+		transform.position = Vector3(-5 + i, 0, 0);
+		i += 3;
 		addComponent(new MyComp);
 	}
 	virtual ~MyActor() {
@@ -103,7 +105,7 @@ public:
 			cameraActor->transform.position.z = -20;
 		}
 
-		for (size_t i = 0; i < 1; i++) {
+		for (size_t i = 0; i < 5; i++) {
 			new MyActor;
 		}
 	}

@@ -149,8 +149,6 @@ void SceneOverlay::onRender(const double &deltaTime) {
     //geometryShader->unbind();
     //gbuffer->render();
 
-
-
 	/*gbuffer->flush();
 
 	shaderInstance->bind();
