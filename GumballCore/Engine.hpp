@@ -8,7 +8,7 @@
 
 class SystemOverseer;
 class ProjectLinker;
-class ConsoleSystem;
+class EditorSystem;
 class RenderSystem;
 class AssetsSystem;
 class InputSystem;
@@ -34,7 +34,7 @@ public:
 	RenderSystem *renderSystem;
 	AssetsSystem *assetSystem;
 	InputSystem *inputSystem;
-	ConsoleSystem *consoleSystem;
+	EditorSystem *editorSystem;
 	World *world;
 };
 

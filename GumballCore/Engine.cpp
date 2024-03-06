@@ -5,7 +5,8 @@
 #include "SceneOverlay.hpp"
 #include "WidgetOverlay.hpp"
 #include "ProjectLinker.hpp"
-#include "ConsoleSystem.hpp"
+#include "EditorSystem.hpp"
+#include "CommandPalette.hpp"
 #include "World.hpp"
 
 #include "EnviromentVariables.hpp"
@@ -22,7 +23,7 @@ Engine::Engine() {
 	renderSystem = systemSeer->addSystem<RenderSystem>();
 	assetSystem = systemSeer->addSystem<AssetsSystem>();
 	inputSystem = systemSeer->addSystem<InputSystem>();
-	consoleSystem = systemSeer->addSystem<ConsoleSystem>();
+	editorSystem = systemSeer->addSystem<EditorSystem>();
 	world = systemSeer->addSystem<World>();
 }
 Engine::~Engine() {
@@ -39,19 +40,19 @@ void Engine::tick() {
 	systemSeer->lateInitialize();
 
 	while (true) {
-		if (projectLinker->hasNewVersion() || consoleSystem->isReload) {
+		if (projectLinker->hasNewVersion() || editorSystem->command->isReload) {
 			systemSeer->endPlay();
 			projectLinker->unload();
 			if (projectLinker->load()) {
 				systemSeer->beginPlay();
 			}
-			consoleSystem->isReload = false;
+			
+			editorSystem->command->isReload = false;
 		}
 
 		timeStats.capture();
 		const double &deltaTime = timeStats.getDeltaTime();
-
-		if (consoleSystem->isPlay) {
+		if (editorSystem->command->isPlay) {
 			systemSeer->tick<ESystemTickType::gameplay>(deltaTime);
 			renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
 		}

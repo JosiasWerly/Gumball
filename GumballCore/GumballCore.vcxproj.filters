@@ -26,8 +26,9 @@
     <ClCompile Include="WidgetOverlay.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="template.cpp" />
-    <ClCompile Include="ConsoleSystem.cpp" />
+    <ClCompile Include="CommandPalette.cpp" />
     <ClCompile Include="ShaderUniform.cpp" />
+    <ClCompile Include="EditorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.hpp" />
@@ -57,8 +58,9 @@
     <ClInclude Include="WidgetOverlay.hpp" />
     <ClInclude Include="World.hpp" />
     <ClInclude Include="template.hpp" />
-    <ClInclude Include="ConsoleSystem.hpp" />
+    <ClInclude Include="CommandPalette.hpp" />
     <ClInclude Include="ShaderUniform.hpp" />
+    <ClInclude Include="EditorSystem.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\readme.txt" />
