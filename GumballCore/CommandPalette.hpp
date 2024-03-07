@@ -1,13 +1,21 @@
 #pragma once
-#ifndef _consolesystem
-#define _consolesystem
+#ifndef _consolepalette
+#define _consolepalette
 
-//Vis consolari.
-class CommandPalette {
-public:
+#include "WidgetOverlay.hpp"
+
+class ToolbarWidget : public UserWidget {
+private:
+	UI::Button play;
+	UI::Button stop;
+	UI::Button reload;
+	Engine *engine;
+
 	bool isPlay = false;
-	bool isReload = false;
-	
-	CommandPalette();
+public:
+	ToolbarWidget();
+	void render(const double &deltaTime) override;
 };
-#endif // !_consolesystem
+
+
+#endif // !_consolepalette

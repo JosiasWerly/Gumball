@@ -16,6 +16,8 @@
 #include <string>
 using namespace std;
 
+
+
 Engine::Engine() {
 	projectLinker = new ProjectLinker;
 	
@@ -24,7 +26,7 @@ Engine::Engine() {
 	assetSystem = systemController->addSystem<AssetsSystem>();
 	inputSystem = systemController->addSystem<InputSystem>();
 	editorSystem = systemController->addSystem<EditorSystem>();
-	worldSystem = systemController->addSystem<WorldSystem>();
+	worldSystem = systemController->addSystem<WorldSystem>();	
 }
 Engine::~Engine() {
 }
@@ -38,74 +40,37 @@ void Engine::args(int argc, char *argv[]) {
 void Engine::tick() {
 	systemController->initialize();
 	systemController->lateInitialize();
+	
+	projectLinker->load();
 
 	while (true) {
-		if (projectLinker->hasNewVersion() || editorSystem->command->isReload) {
-			systemController->endPlay();
-			projectLinker->unload();
+		if (toLoad) {
 			if (projectLinker->load()) {
-				systemController->beginPlay();
+				
 			}
-			
-			editorSystem->command->isReload = false;
+			toLoad = false;
 		}
-
+		
 		timeStats.capture();
 		const double &deltaTime = timeStats.getDeltaTime();
-		if (editorSystem->command->isPlay) {
-			systemController->tick<ESystemTickType::gameplay>(deltaTime);
-			renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
-		}
-		else {
-			systemController->tick<ESystemTickType::editor>(deltaTime);
+		
+		systemController->tick<ESystemTickType::editor>(deltaTime);
+
+		switch (state) {
+			case EPlayState::beginPlay:
+				systemController->beginPlay();
+				state = EPlayState::playing;
+				break;
+			case EPlayState::playing:
+				systemController->tick<ESystemTickType::gameplay>(deltaTime);
+				renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
+				break;
+			case EPlayState::endPlay:
+				systemController->endPlay();
+				state = EPlayState::disabled;
+				break;
 		}
 	}
 	systemController->endPlay();
 	systemController->shutdown();
 }
-
-//systemSeer->initialize();
-//systemSeer->lateInitialize();
-
-//auto widget = dynamic_cast<WidgetOverlay*>(renderSystem->getLayer("widget"));
-//auto scene = dynamic_cast<SceneOverlay *>(renderSystem->getLayer("scene"));
-
-///// crappy way of controlling the play and stop button
-//bool isPlaying = false;
-//UI::Canvas win;
-//UI::Text txt;
-//UI::Button bt;
-//bt.text = ">";
-//(*widget) << &win;
-//win << &txt << &bt;	
-////////////////////////////////////////////////////////////////////
-
-//while (true) {
-//	hotReload();
-//	
-//	timeStats.capture();
-//	const double& deltaTime = timeStats.getDeltaTime();
-//	
-//	if (isPlaying) {
-//		systemSeer->tick<ESystemTickType::gameplay>(deltaTime);
-//		renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
-//	}
-//	else 
-//		systemSeer->tick<ESystemTickType::editor>(deltaTime);
-
-
-//	if (bt.isClicked()) {
-//		if (isPlaying) {
-//			isPlaying = false;
-//			systemSeer->endPlay();
-//			bt.text = ">";
-//		}
-//		else {
-//			isPlaying = true;
-//			systemSeer->beginPlay();
-//			bt.text = "||";
-//		}
-//	}
-//}
-//systemSeer->endPlay();
-//systemSeer->shutdown();

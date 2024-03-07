@@ -69,7 +69,7 @@ void WidgetContainer::render(const double &deltaTime) {
 	endDraw();
 }
 void WidgetContainer::beginDraw() {
-	ImGui::Begin(reinterpret_cast<const char *>(this));
+	ImGui::Begin(getName().c_str());
 }
 void WidgetContainer::endDraw() {
 	ImGui::End();

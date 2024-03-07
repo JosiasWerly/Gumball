@@ -7,6 +7,7 @@
 class EditorSystem : 
 	public System {
 public:
+	class ToolbarWidget *toolbar;
 	class CommandPalette *command;
 	void lateInitialize() override;
 	ESystemTickType tickType() override { return ESystemTickType::none; }

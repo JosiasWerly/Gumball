@@ -17,6 +17,7 @@ class InputSystem;
 class WorldSystem;
 
 
+
 class GBCORE Engine : 
 	public Singleton<Engine>{
 private:
@@ -26,11 +27,22 @@ private:
 	ProjectLinker *projectLinker;	
 	SystemController *systemController;
 	
+	bool toLoad = false;
+	enum class EPlayState {
+		disabled, beginPlay, playing, endPlay,
+	} state = EPlayState::disabled;
+	
 	Engine();
 	~Engine();	
 public:
 	void args(int argc, char *argv[]);
 	void tick();
+
+	void signalLoad() { toLoad = true; }
+	void signalPlay() { state = EPlayState::beginPlay; }
+	void signalPause() { state = EPlayState::disabled; }
+	void signalStop() { state = EPlayState::endPlay; }
+	
 
 	//self explanatory names
 	RenderSystem *renderSystem;
@@ -39,6 +51,4 @@ public:
 	WorldSystem *worldSystem;
 	EditorSystem *editorSystem;
 };
-
-
 #endif // !_engine

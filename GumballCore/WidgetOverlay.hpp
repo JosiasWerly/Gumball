@@ -34,12 +34,16 @@ class Widget {
 
 	bool isVisible = true;
 	WidgetContainer *parent = nullptr;
+	string name = "widget";
 
 public:
     virtual void render(const double &deltaTime);
 	virtual void setVisibility(bool newVisible);
-	
 	Inline bool getVisibility() const { return isVisible; }
+	
+	void setName(string name) { this->name = name; }
+	string getName() { return name; }
+
     Inline WidgetContainer *getParent() const { return parent; }
 };
 

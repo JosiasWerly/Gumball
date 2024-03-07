@@ -112,7 +112,6 @@ void WorldSystem::shutdown() {
 void WorldSystem::beginPlay() {
 }
 void WorldSystem::endPlay() {
-	scene.unload();
 }
 void WorldSystem::tick(const double &deltaTime) {
 	scene.tick(deltaTime);
