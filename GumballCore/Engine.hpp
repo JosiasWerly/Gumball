@@ -5,6 +5,7 @@
 
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
+#include "Activator.hpp"
 
 class SystemController;
 class ProjectLinker;
@@ -19,7 +20,7 @@ class WorldSystem;
 
 
 class GBCORE Engine : 
-	public Singleton<Engine>{
+	public Singleton<Engine> {
 private:
 	friend int main(int, char *[]);
 
@@ -27,10 +28,12 @@ private:
 	ProjectLinker *projectLinker;	
 	SystemController *systemController;
 	
-	bool toLoad = false;
 	enum class EPlayState {
 		disabled, beginPlay, playing, endPlay,
-	} state = EPlayState::disabled;
+	} playState = EPlayState::disabled;
+	enum class ELoadState {
+		none, load, unload
+	} loadState = ELoadState::none;
 	
 	Engine();
 	~Engine();	
@@ -38,10 +41,11 @@ public:
 	void args(int argc, char *argv[]);
 	void tick();
 
-	void signalLoad() { toLoad = true; }
-	void signalPlay() { state = EPlayState::beginPlay; }
-	void signalPause() { state = EPlayState::disabled; }
-	void signalStop() { state = EPlayState::endPlay; }
+	void signalLoad() { loadState = ELoadState::load; }
+	void signalUnload() { loadState = ELoadState::unload; }
+	void signalPlay() { playState = EPlayState::beginPlay; }
+	void signalPause() { playState = EPlayState::disabled; }
+	void signalStop() { playState = EPlayState::endPlay; }
 	
 
 	//self explanatory names

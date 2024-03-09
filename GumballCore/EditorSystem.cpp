@@ -3,6 +3,8 @@
 
 void EditorSystem::lateInitialize() {
 	toolbar = new ToolbarWidget;
-	toolbar->setName("toolbar");
 	toolbar->show();
+	
+	command = new CommandPalette;
+	command->show();
 }

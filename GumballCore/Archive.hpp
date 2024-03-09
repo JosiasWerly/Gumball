@@ -2,7 +2,6 @@
 #ifndef _archive
 #define _archive
 
-
 #include <string>
 #include <fstream>
 using namespace std;
@@ -41,5 +40,3 @@ public:
 };
 
 #endif // !_archive
-
-

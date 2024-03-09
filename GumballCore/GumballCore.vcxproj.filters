@@ -29,6 +29,8 @@
     <ClCompile Include="CommandPalette.cpp" />
     <ClCompile Include="ShaderUniform.cpp" />
     <ClCompile Include="EditorSystem.cpp" />
+    <ClCompile Include="Activator.cpp" />
+    <ClCompile Include="Activator.Core.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.hpp" />
@@ -61,6 +63,8 @@
     <ClInclude Include="CommandPalette.hpp" />
     <ClInclude Include="ShaderUniform.hpp" />
     <ClInclude Include="EditorSystem.hpp" />
+    <ClInclude Include="Activator.hpp" />
+    <ClInclude Include="Activator.Core.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\readme.txt" />

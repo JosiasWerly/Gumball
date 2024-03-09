@@ -1,14 +1,16 @@
 #include "Engine.hpp"
-#include "SystemController.hpp"
 #include "SceneOverlay.hpp"
 #include "WidgetOverlay.hpp"
 #include "ProjectLinker.hpp"
 #include "CommandPalette.hpp"
 
+#include "SystemController.hpp"
 #include "AssetSystem.hpp"
 #include "RenderSystem.hpp"
 #include "EditorSystem.hpp"
 #include "WorldSystem.hpp"
+
+#include "Activator.Core.hpp"
 
 #include "EnviromentVariables.hpp"
 
@@ -19,6 +21,8 @@ using namespace std;
 
 
 Engine::Engine() {
+	Activator::setInstance(new Activator);
+	Activator::instance()->add("core", ActivatorPackage_Core());
 	projectLinker = new ProjectLinker;
 	
 	systemController = new SystemController;
@@ -44,22 +48,28 @@ void Engine::tick() {
 	projectLinker->load();
 
 	while (true) {
-		if (toLoad) {
-			if (projectLinker->load()) {
-				
-			}
-			toLoad = false;
-		}
-		
 		timeStats.capture();
 		const double &deltaTime = timeStats.getDeltaTime();
+
+		//cheapest state machine ever created
+		switch (loadState) {
+			case ELoadState::load:
+				projectLinker->load();
+				loadState = ELoadState::none;
+				break;
+			case ELoadState::unload:
+				worldSystem->shutdown();//TEMPORARY CALL FOR
+				projectLinker->unload();
+				loadState = ELoadState::none;
+				break;
+		}
 		
 		systemController->tick<ESystemTickType::editor>(deltaTime);
 
-		switch (state) {
+		switch (playState) {
 			case EPlayState::beginPlay:
 				systemController->beginPlay();
-				state = EPlayState::playing;
+				playState = EPlayState::playing;
 				break;
 			case EPlayState::playing:
 				systemController->tick<ESystemTickType::gameplay>(deltaTime);
@@ -67,7 +77,7 @@ void Engine::tick() {
 				break;
 			case EPlayState::endPlay:
 				systemController->endPlay();
-				state = EPlayState::disabled;
+				playState = EPlayState::disabled;
 				break;
 		}
 	}

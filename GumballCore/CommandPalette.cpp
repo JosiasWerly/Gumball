@@ -4,15 +4,16 @@
 #include "WidgetOverlay.hpp"
 
 ToolbarWidget::ToolbarWidget() {
+	setName("toolbar");
 	engine = Engine::instance();
-	(*this) << &reload << &play << &stop;
-	reload.text = "reload";
+	(*this) << &load << &play << &stop;
+	load.text = "unload";
 	play.text = "play";
 	stop.text = "stop";
 }
 void ToolbarWidget::render(const double &deltaTime){
 	beginDraw();
-	reload.render(deltaTime);	ImGui::SameLine();
+	load.render(deltaTime);	ImGui::SameLine();
 	stop.render(deltaTime);		ImGui::SameLine();
 	play.render(deltaTime);
 	endDraw();
@@ -32,48 +33,58 @@ void ToolbarWidget::render(const double &deltaTime){
 	else if (stop.isClicked()) {
 		engine->signalStop();
 	}
-	else if (reload.isClicked()) {
-		engine->signalLoad();
+	else if (load.isClicked()) {
+		isLoaded = !isLoaded;
+		if (isLoaded) {
+			load.text = "unload";
+			engine->signalLoad();
+		}
+		else {
+			load.text = "load";
+			engine->signalUnload();
+		}
 	}
 }
 
-//class CommandPaletteWidget : public UserWidget {
-//public:
-//	/*CommandPalette *owner;
-//	UI::InputText input;
-//	UI::Button play;
-//	UI::Button reload;
-//	CommandPaletteWidget() {
-//		(*this) << &reload << &play << &input;
-//		play.text = "play";
-//		reload.text = "rld";
-//	}
-//	void render(const double &deltaTime) override {
-//		reload.render(deltaTime);
-//		ImGui::SameLine();
-//		play.render(deltaTime);
-//		input.render(deltaTime);
-//
-//
-//		if (play.isClicked()) {
-//			bool &isPlay = owner->isPlay;
-//			isPlay = !isPlay;
-//			if (isPlay) {
-//				play.text = "stop";
-//			}
-//			else {
-//				play.text = "play";
-//			}
-//		}
-//		else if (reload.isClicked()) {
-//			bool &isReload = owner->isReload;
-//			isReload = true;
-//		}
-//	}*/
-//};
-//
-//CommandPalette::CommandPalette() {
-//	CommandPaletteWidget *widget = new CommandPaletteWidget;
-//	widget->owner = this;
-//	widget->show();
-//}
+
+
+void SpawnCommand(const vector<string> &Args) {
+
+}
+
+CommandPalette::CommandPalette() {
+	setName("command");
+	engine = Engine::instance();
+	(*this) << &input;
+
+	commands["spawn"] = SpawnCommand;
+}
+void CommandPalette::render(const double &deltaTime) {
+	beginDraw();
+	input.render(deltaTime);
+	endDraw();
+
+	string in;
+	if (input.getInput(in)) {
+		vector<string> arguments;
+
+		{
+			size_t j = 0;
+			for (size_t i = 0; i < in.size(); ++i) {
+				if (in[i] == ' ' && j < i) {
+					arguments.push_back(in.substr(j, (i - j)));
+				}
+			}
+		}
+
+		if (!arguments.size()) {
+			return;
+		}
+		
+		string command = arguments[0];
+		arguments.erase(arguments.begin());
+		if (commands.contains(command)) {
+			commands[command](arguments);
+		}
+	}
+}

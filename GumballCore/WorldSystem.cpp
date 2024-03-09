@@ -19,7 +19,7 @@ void GameObject::setTickEnable(bool newState) {
 		return;
 	tickEnable = newState;
 	static WorldSystem &w = *Engine::instance()->worldSystem;
-	w.scene.changeTick(this);
+	w.entityController.changeTick(this);
 }
 void GameObject::setTickInterval(float newValue) {
 	tickInterval = newValue;
@@ -27,16 +27,16 @@ void GameObject::setTickInterval(float newValue) {
 void *GameObject::operator new(unsigned long long sz) {
 	static WorldSystem &w = *Engine::instance()->worldSystem;
 	GameObject *go = reinterpret_cast<GameObject *>(::operator new(sz));
-	w.scene.root(go);
+	w.entityController.root(go);
 	return go;
 }
 void destroy(GameObject *trg) {
 	static WorldSystem &w = *Engine::instance()->worldSystem;
-	w.scene.unRoot(trg);
+	w.entityController.unRoot(trg);
 }
 
 
-void GameScene::unload() {
+void WorldEntityController::unload() {
 	toBegin.clear();
 	toEnd.clear();
 	toTick.clear();
@@ -46,12 +46,12 @@ void GameScene::unload() {
 	}
 	entities.clear();
 }
-void GameScene::root(GameObject *go) {
+void WorldEntityController::root(GameObject *go) {
 	entities.emplace_back(go);
 	go->state = EGameObjectState::spawn;
 	toBegin.push_back(entities.back());
 }
-void GameScene::unRoot(GameObject *go) {
+void WorldEntityController::unRoot(GameObject *go) {
 	if (!go->isValid())
 		return;
 
@@ -62,10 +62,10 @@ void GameScene::unRoot(GameObject *go) {
 		changeTick(go);
 	}
 }
-void GameScene::changeTick(GameObject *go) {
+void WorldEntityController::changeTick(GameObject *go) {
 	toChangeTick.push_back(go);
 }
-Inline void GameScene::tick(const double &deltaTime) {
+void WorldEntityController::tick(const double &deltaTime) {
 	if (toBegin.size()) {
 		for (auto &e : toBegin) {
 			e->beginPlay();
@@ -107,12 +107,16 @@ WorldSystem::WorldSystem() {
 void WorldSystem::initialize() {
 }
 void WorldSystem::shutdown() {
-	scene.unload();
+	entityController.unload();
 }
 void WorldSystem::beginPlay() {
+	//for (auto e : entityController.entities) {
+	//	
+	//}
 }
 void WorldSystem::endPlay() {
+
 }
 void WorldSystem::tick(const double &deltaTime) {
-	scene.tick(deltaTime);
+	entityController.tick(deltaTime);
 }

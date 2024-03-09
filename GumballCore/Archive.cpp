@@ -1,6 +1,5 @@
 #include "Archive.hpp"
 
-
 Archive::Archive(string filePath) {
 	open(filePath);
 }
@@ -41,7 +40,6 @@ Inline void Archive::close() {
 bool Archive::getLine(string &str) {
 	return (bool)std::getline(*fs, str);
 }
-
 template<class T>Archive &Archive::operator<<(T &val) {
 	fs.operator<<<T>(val);
 	return *this;
@@ -50,7 +48,6 @@ template<class T>Archive &Archive::operator>>(T &val) {
 	fs.operator>><T>(val);
 	return *this;
 }
-
 Archive &Archive::operator=(const string filePath) {
 	open(filePath);
 	return *this;

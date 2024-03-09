@@ -8,8 +8,7 @@
 
 class Actor;
 
-class GBCORE ActorComponent :
-	public GameObject {
+class GBCORE ActorComponent : public GameObject {
 	friend class Actor;
 private:
 	bool isActive = true;
@@ -58,8 +57,7 @@ public:
 
 };
 
-class GBCORE Actor :
-	public GameObject {
+class GBCORE Actor : public GameObject {
 	friend class World;
 private:
 	list<ActorComponent *> components;

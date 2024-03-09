@@ -10,14 +10,14 @@
 using namespace std;
 
 class GameObject;
-class GameScene;
+class WorldEntityController;
 class WorldSystem;
 
 enum class EGameObjectState {
 	spawn, nominal, destroy
 };
 class GBCORE GameObject {
-	friend class GameScene;
+	friend class WorldEntityController;
 private:
 	EGameObjectState state;
 	bool tickEnable = false;
@@ -40,8 +40,8 @@ public:
 	void *operator new(unsigned long long sz);
 };
 
-class GBCORE GameScene {
-	friend class GameObject;
+class GBCORE WorldEntityController {
+	friend class WorldSystem;
 private:
 	deque<GameObject*> entities;
 	deque<GameObject*> toBegin, toEnd, toTick;
@@ -58,16 +58,13 @@ public:
 	void root(GameObject *go);
 	void unRoot(GameObject *go);
 	void changeTick(GameObject *go);
-	Inline void tick(const double &deltaTime);
+	void tick(const double &deltaTime);
 };
 
-
 Extern GBCORE void destroy(GameObject *trg);
-
-class WorldSystem : 
-	public System {
+class WorldSystem : public System {
 public:
-	GameScene scene;
+	WorldEntityController entityController;
 
 	WorldSystem();
 	virtual void initialize() override;
