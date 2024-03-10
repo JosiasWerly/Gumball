@@ -47,9 +47,17 @@ void ToolbarWidget::render(const double &deltaTime){
 }
 
 
-
-void SpawnCommand(const vector<string> &Args) {
-
+#include "Actor.hpp"
+void SpawnCommand(const vector<string> &args) {
+	//TypeWrapper *type = getTypeString(args[0].c_str());
+	//if (!type) {
+	//	return;
+	//}
+	//if (Actor *actor = static_cast<Actor *>(type->getNew())) {
+	//	actor->transform.position.x = std::stof(args[1]);
+	//	actor->transform.position.y = std::stof(args[2]);
+	//	actor->transform.position.z = std::stof(args[3]);
+	//}
 }
 
 CommandPalette::CommandPalette() {
@@ -67,12 +75,20 @@ void CommandPalette::render(const double &deltaTime) {
 	string in;
 	if (input.getInput(in)) {
 		vector<string> arguments;
-
+		//spawn Actor 2 3 4
 		{
-			size_t j = 0;
-			for (size_t i = 0; i < in.size(); ++i) {
+			size_t j = 0, i = 0;
+			while(true) {
 				if (in[i] == ' ' && j < i) {
 					arguments.push_back(in.substr(j, (i - j)));
+					j = i + 1;
+				}
+				
+				if (!(++i < in.size())) {
+					if (j < i) {
+						arguments.push_back(in.substr(j, (i - j)));
+					}
+					break;
 				}
 			}
 		}

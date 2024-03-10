@@ -4,7 +4,7 @@
 
 void MyProject::attached() {
 	cout << "loaded" << endl;
-	Activator::instance()->add("project", ActivatorPackage_Project());
+	//Activator::instance()->add("project", ActivatorPackage_Project());
 
 
 	srand(0);
@@ -21,7 +21,7 @@ void MyProject::attached() {
 }
 void MyProject::detached() {
 	cout << "unloaded" << endl;
-	Activator::instance()->del("project");
+	//Activator::instance()->del("project");
 }
 
 Extern GBPROJECT void *EntryPoint() { 

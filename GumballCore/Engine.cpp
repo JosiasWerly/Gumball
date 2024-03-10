@@ -22,7 +22,8 @@ using namespace std;
 
 Engine::Engine() {
 	Activator::setInstance(new Activator);
-	Activator::instance()->add("core", ActivatorPackage_Core());
+	//Activator::instance()->add("core", ActivatorPackage_Core());
+	test();
 	projectLinker = new ProjectLinker;
 	
 	systemController = new SystemController;

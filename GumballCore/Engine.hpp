@@ -17,7 +17,7 @@ class AssetsSystem;
 class InputSystem;
 class WorldSystem;
 
-
+void test();
 
 class GBCORE Engine : 
 	public Singleton<Engine> {

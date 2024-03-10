@@ -141,7 +141,7 @@ namespace UI {
 		if (ImGui::InputText("Input", inBuffer, IM_ARRAYSIZE(inBuffer), inFlags, InputCallback, this)) {
 			str = string(inBuffer);			
 			ImGui::SetKeyboardFocusHere(-1);
-			strcpy(inBuffer, "");
+			strcpy_s(inBuffer, "");
 		}
 	}
 	bool InputText::getInput(string &out) const {

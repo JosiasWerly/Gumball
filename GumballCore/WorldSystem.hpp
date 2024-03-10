@@ -61,6 +61,10 @@ public:
 	void tick(const double &deltaTime);
 };
 
+class GBCORE Level {
+public:
+};
+
 Extern GBCORE void destroy(GameObject *trg);
 class WorldSystem : public System {
 public:

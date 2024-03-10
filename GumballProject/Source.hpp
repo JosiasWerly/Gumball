@@ -9,30 +9,7 @@ using namespace std;
 #include <GumballCore/Actor.hpp>
 
 
-class Super {
-public:
-	Super() {
-		cout << "Super ";
-	}
-};
-class A : public Super {
-public:
-	A() {
-		cout << "A" << endl;
-	}
-};
-class B : public Super {
-public:
-	B() {
-		cout << "B" << endl;
-	}
-};
-class C : public Super {
-public:
-	C() {
-		cout << "C" << endl;
-	}
-};
+
 
 class MyComp :
 	public MeshComponent {

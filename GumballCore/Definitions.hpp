@@ -2,7 +2,7 @@
 #ifndef _definitions
 #define _definitions
 
-#define Stringfy(s)#s
+#define Stringfy(...)#__VA_ARGS__
 #define Inline __forceinline
 
 
