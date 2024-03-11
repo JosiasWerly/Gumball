@@ -10,6 +10,7 @@
 #include "EditorSystem.hpp"
 #include "WorldSystem.hpp"
 
+#include "Activator.hpp"
 #include "Activator.Core.hpp"
 
 #include "EnviromentVariables.hpp"

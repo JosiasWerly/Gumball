@@ -5,7 +5,7 @@
 
 #include "Patterns.hpp"
 #include "TimeStat.hpp"
-#include "Activator.hpp"
+//#include "Activator.hpp"
 
 class SystemController;
 class ProjectLinker;

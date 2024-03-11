@@ -1,6 +1,6 @@
 #include <GumballCore/Definitions.hpp>
 #include <GumballCore/ProjectLinker.hpp>
-#include <GumballCore/Activator.hpp>
+//#include <GumballCore/Activator.hpp>
 
 //struct ActivatorPackage_Project : public ActivatorPackage {
 //	ActivatorPackage_Project();
