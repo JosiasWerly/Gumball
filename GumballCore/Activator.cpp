@@ -58,7 +58,7 @@ Class *Activator::load(const string &data) {
 	return obj;
 }
 string Activator::save(Class *obj) { 
-	ClassType *classType = obj->getType();
+	ClassType *classType = obj->getClassType();
 	if (!classType) {
 		return "nullptr";
 	}
@@ -76,33 +76,4 @@ string Activator::save(Class *obj) {
 
 	jsonObject["data"] = picojson::value("todo");
 	return picojson::value(jsonObject).serialize(false);
-}
-template<class T> void Activator::addPackage() {
-	ClassTypePackage *data = new T;
-	const string &packageName = data->name();
-	if (!packages.contains(packageName)) {
-		packages.emplace(packageName, Package());
-	}
-	Package &package = packages[packageName];
-
-	std::list<ClassType *> types = data->types();
-	for (auto type : types) {
-		add(type);
-		package.push_back(type->getName());
-	}
-	delete data;
-}
-template<class T> void Activator::delPackage() {
-	ClassTypePackage *data = new T;
-	const string packageName = data->name();
-	
-	if (!packages.contains(packageName))
-		return;
-
-	Package &package = packages[packageName];
-	for (auto &name : package) {
-		del(name);
-	}
-	packages.erase(packageName);
-	delete data;
 }

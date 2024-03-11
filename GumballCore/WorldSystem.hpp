@@ -18,11 +18,12 @@ enum class EGameObjectState {
 };
 class GBCORE GameObject {
 	friend class WorldEntityController;
+
 private:
 	EGameObjectState state;
 	bool tickEnable = false;
 	float tickInterval = 0;
-protected:
+
 public:
 	GameObject();
 	virtual ~GameObject();
@@ -42,10 +43,11 @@ public:
 
 class GBCORE WorldEntityController {
 	friend class WorldSystem;
+
 private:
-	deque<GameObject*> entities;
-	deque<GameObject*> toBegin, toEnd, toTick;
-	list<GameObject*> toChangeTick;
+	deque<GameObject *> entities;
+	deque<GameObject *> toBegin, toEnd, toTick;
+	list<GameObject *> toChangeTick;
 
 	Inline void __erase(deque<GameObject *> &dq, GameObject *trg) {
 		auto found = std::find(dq.begin(), dq.end(), trg);
@@ -53,6 +55,7 @@ private:
 			dq.erase(found);
 		}
 	}
+
 public:
 	void unload();
 	void root(GameObject *go);

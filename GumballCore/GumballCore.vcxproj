@@ -55,7 +55,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Activator.Core.hpp" />
+    <ClInclude Include="Package.Gumball.hpp" />
+    <ClInclude Include="ActivatorProperties.hpp" />
     <ClInclude Include="Actor.hpp" />
     <ClInclude Include="Archive.hpp" />
     <ClInclude Include="AssetSystem.hpp" />
@@ -89,7 +90,8 @@
     <ClInclude Include="template.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Activator.Core.cpp" />
+    <ClCompile Include="Package.Gumball.cpp" />
+    <ClCompile Include="ActivatorProperties.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Archive.cpp" />
     <ClCompile Include="AssetSystem.cpp" />

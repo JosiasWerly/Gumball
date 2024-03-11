@@ -10,6 +10,7 @@ class Actor;
 
 class GBCORE ActorComponent : public GameObject {
 	friend class Actor;
+
 private:
 	bool isActive = true;
 	
@@ -19,6 +20,7 @@ protected:
 	virtual void activate();
 	virtual void deactivate();
 	virtual void newOwner(Actor* newOwner, Actor* oldOwner);
+
 public:
 	ActorComponent();
 	virtual ~ActorComponent();
@@ -32,21 +34,22 @@ public:
 	Actor *getOwner() const { return owner; }
 };
 
-class GBCORE MeshComponent :
-	public ActorComponent {
+class GBCORE MeshComponent : public ActorComponent {
 	DrawHandle draw;
+
 protected:
 	void activate() override;
 	void deactivate() override;
 	void newOwner(Actor *newOwner, Actor *oldOwner) override;
+
 public:
 	MeshComponent();
 	virtual ~MeshComponent();
 };
 
-class GBCORE CameraComponent :
-	public ActorComponent {
+class GBCORE CameraComponent : public ActorComponent {
 	ViewHandle view;
+
 protected:
 	void activate() override;
 	void deactivate() override;
@@ -59,8 +62,10 @@ public:
 
 class GBCORE Actor : public GameObject {
 	friend class World;
+
 private:
 	list<ActorComponent *> components;
+
 public:
 	Transform transform;
 

@@ -11,7 +11,7 @@
 #include "WorldSystem.hpp"
 
 #include "Activator.hpp"
-#include "Activator.Core.hpp"
+#include "Package.Gumball.hpp"
 
 #include "EnviromentVariables.hpp"
 
@@ -23,8 +23,9 @@ using namespace std;
 
 Engine::Engine() {
 	Activator::setInstance(new Activator);
-	//Activator::instance()->add("core", ActivatorPackage_Core());
+	Activator::instance()->addPackage<ClassTypePackage_Core>();
 	test();
+
 	projectLinker = new ProjectLinker;
 	
 	systemController = new SystemController;

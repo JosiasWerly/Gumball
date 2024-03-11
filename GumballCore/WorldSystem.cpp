@@ -75,7 +75,7 @@ void WorldEntityController::tick(const double &deltaTime) {
 	}
 	if (toChangeTick.size()) {
 		for (auto &e : toChangeTick) {
-			if(e->isValid()) {
+			if (e->isValid()) {
 				if (e->getTickEnable()) {
 					toTick.push_back(e);
 				}
@@ -95,7 +95,7 @@ void WorldEntityController::tick(const double &deltaTime) {
 		}
 		toEnd.clear();
 	}
-	
+
 	for (auto &e : toTick) {
 		e->tick(deltaTime);
 	}

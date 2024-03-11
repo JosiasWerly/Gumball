@@ -1,15 +1,3 @@
-#pragma once
-#ifndef _activator
-#define _activator
-
-#include "Patterns.hpp"
-#include "Archive.hpp"
-
-#include <list>
-#include <unordered_map>
-#include <string>
-
-
 /*
 #################### SUMMARY ####################
 after failed attemps of making libtool work I've decided to implement a quick real time reflection.
@@ -71,10 +59,10 @@ public:
 
 void main(){
 	auto activator = Activator::instance();
-	
+
 	activator->add(
 		ClassTypeCtor<A>("A")
-	);	
+	);
 	activator->add(
 		ClassTypeCtor<B>("B")
 		.prop<int>("a", &B::a)
@@ -83,7 +71,7 @@ void main(){
 		.prop<string>("str", &B::str)
 		.prop<A>("obj", &B::obj)
 	);
-	
+
 	B bObj;
 	bObj.a = 0xABCDDCBA;
 	bObj.b = 0xFAFAAFAF;
@@ -91,7 +79,7 @@ void main(){
 	bObj.str = "mystring";
 	bObj.obj.fa = 1.123f;
 	bObj.obj.fb = -4.321f;
-	
+
 	string data = activator->save(&bObj);
 	Class *ca = activator->load(data);
 }
@@ -136,11 +124,19 @@ void main() {
 }
 */
 
+#pragma once
+#ifndef _activator
+#define _activator
 
+#include "Patterns.hpp"
+
+#include <list>
+#include <unordered_map>
+#include <string>
 
 class Class {
 public:
-	virtual class ClassType *getType() = 0;
+	virtual class ClassType *getClassType() = 0;
 };
 
 class Property {
@@ -179,29 +175,6 @@ public:
 	}
 };
 
-template<class TClass>
-class TProperty<TClass, string> : public Property {
-	typename typedef string TProp;
-
-private:
-	TProp TClass:: *ptr;
-
-public:
-	TProperty(TProp TClass:: *ptr) : ptr(ptr) {}
-	void set(TClass *obj, TProp propValue) {
-		obj->*ptr = propValue;
-	}
-	TProp &get(TClass *obj) {
-		return obj->*ptr;
-	}
-
-	const string save(void *obj) override final {
-		return (static_cast<TClass *>(obj)->*ptr);
-	}
-	void load(void *obj, const string &str) override final {
-		(static_cast<TClass *>(obj)->*ptr) = str;
-	}
-};
 
 typedef unordered_map<string, Property *> Porperties;
 class ClassType {
@@ -232,6 +205,11 @@ public:
 	operator bool() const { return name != "" && fnxNew; }
 };
 
+struct ClassTypePackage {
+	virtual string name() = 0;
+	virtual std::list<ClassType*> types() = 0;
+};
+
 template<class TClass>
 class ClassTypeCtor {
 	ClassType *instance;
@@ -258,11 +236,6 @@ public:
 	}
 };
 
-struct ClassTypePackage {
-	virtual string name() = 0;
-	virtual std::list<ClassType*> types() = 0;
-};
-
 class GBCORE Activator : public Singleton<Activator> {
 private:
 	typedef std::list<string> Package;
@@ -280,7 +253,36 @@ public:
 	Class *load(const string &data);
 	string save(Class *obj);
 
-	template<class T> void addPackage();
-	template<class T> void delPackage();
+	template<class T> void addPackage() {
+		ClassTypePackage *data = new T;
+		const string &packageName = data->name();
+		if (!packages.contains(packageName)) {
+			packages.emplace(packageName, Package());
+		}
+		Package &package = packages[packageName];
+
+		std::list<ClassType *> types = data->types();
+		for (auto type : types) {
+			add(type);
+			package.push_back(type->getName());
+		}
+		delete data;
+	}
+	template<class T> void delPackage() {
+		ClassTypePackage *data = new T;
+		const string packageName = data->name();
+
+		if (!packages.contains(packageName))
+			return;
+
+		Package &package = packages[packageName];
+		for (auto &name : package) {
+			del(name);
+		}
+		packages.erase(packageName);
+		delete data;
+	}
 };
+
+#include "ActivatorProperties.hpp"
 #endif //_activator
