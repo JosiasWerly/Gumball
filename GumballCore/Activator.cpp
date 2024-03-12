@@ -49,7 +49,7 @@ Class *Activator::load(const string &data) {
 	picojson::object props = jsonObject["props"].get<picojson::object>();
 	for (auto kv : props) {
 		if (properties.contains(kv.first)) {
-			properties[kv.first]->load(obj, kv.second.to_str());
+			properties[kv.first]->serialize(obj, kv.second.to_str());
 		}
 	}
 
@@ -69,7 +69,7 @@ string Activator::save(Class *obj) {
 
 	picojson::object props;
 	for (auto kv : classType->getProperties()) {
-		props[kv.first] = picojson::value(kv.second->save(obj));
+		props[kv.first] = picojson::value(kv.second->serialize(obj));
 	}	
 	jsonObject["props"] = picojson::value(props);
 

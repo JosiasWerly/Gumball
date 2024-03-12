@@ -10,7 +10,7 @@ public:
 	Super() {
 		cout << "Super ";
 	}
-
+	int q, w;
 	virtual ClassType *getClassType() { return Activator::instance()->get("Super"); }
 };
 class A : public Super {
@@ -44,6 +44,16 @@ public:
 	virtual ClassType *getClassType() { return Activator::instance()->get("C"); }
 };
 
+class D : public C {
+public:
+	D() {
+		cout << "D" << endl;
+	}
+
+	A objA;
+	virtual ClassType *getClassType() { return Activator::instance()->get("D"); }
+};
+
 std::list<ClassType *> ClassTypePackage_Core::types() {
 	return {
 		ClassTypeCtor<Super>("Super"),
@@ -62,19 +72,7 @@ std::list<ClassType *> ClassTypePackage_Core::types() {
 	};
 }
 
-template<class T> 
-class Foo {
-public:
-	int ImConcrete;
-};
-
-
 void test() {
-	//C cObj;
-	//TProperty<C, int*> prop(&C::pa);
-	
-
-
 	auto activator = Activator::instance();
 
 	B bObj;
@@ -86,7 +84,29 @@ void test() {
 	bObj.obj.fb = -4.321f;
 
 	string data = activator->save(&bObj);
-	Class *ca = activator->load(data);
 
+	bObj.a = 0xAAABBB;
+	bObj.b = 0xCCCDDD;
+	bObj.c = 0xEEEFFF;
+	bObj.str = "superfun";
+	bObj.obj.fa = 333.333f;
+	bObj.obj.fb = -111.111f;
+
+
+	Class *ca = activator->load(data);
+	ClassType *caType = ca->getClassType();
+	
+	Properties properties = caType->getProperties();
+	for (auto &kv : properties) {
+		string name = kv.first;
+		Property *prop = kv.second;
+
+		if (prop->is<int>()) {
+			cout << "int " << name << " " << *prop->as<int>(ca) << endl;
+		}
+		if (string *casted = prop->as<string>(ca)) {
+			cout << "string " << name << " " << *casted << endl;
+		}
+	}
 	return;
 }

@@ -134,6 +134,8 @@ void main() {
 #include <unordered_map>
 #include <string>
 
+template<class TType> class TProperty;
+
 class Class {
 public:
 	virtual class ClassType *getClassType() = 0;
@@ -143,40 +145,32 @@ class Property {
 public:
 	Property() = default;
 	virtual ~Property() = default;
-	virtual const string save(void *obj) = 0;
-	virtual void load(void *obj, const string &str) = 0;
+	
+	virtual const string serialize(Class *obj) = 0;
+	virtual void serialize(Class *obj, const string &str) = 0;
+
+	template<class t> bool is() { return static_cast<bool>(dynamic_cast<TProperty<t>*>(this)); }
+	template<class t> t *as(Class *obj) { 
+		if (auto casted = dynamic_cast<TProperty<t> *>(this)) {
+			return casted->get(obj);
+		}		
+		return nullptr;
+	}
 };
 
-template<class TClass, class TProp>
+template<class TType>
 class TProperty : public Property {
-	TProp TClass:: *ptr;
+private:
+	intptr_t ptr;
 
 public:
-	TProperty(TProp TClass:: *ptr) : ptr(ptr) {}
-	void set(TClass *obj, TProp propValue) {
-		obj->*ptr = propValue;
-	}
-	TProp &get(TClass *obj) {
-		return obj->*ptr;
-	}
-
-	const string save(void *obj) override final {
-		std::string out;
-		char *ptrIt = reinterpret_cast<char *>(&(static_cast<TClass *>(obj)->*ptr));
-		out.assign(ptrIt, sizeof(TProp));
-		return out;
-	}
-	void load(void *obj, const string &str) override final {
-		if (str.size() != sizeof(TProp)) {
-			return; //Corrupt data, size mismatch
-		}
-		TProp *itPtr = &(static_cast<TClass *>(obj)->*ptr);
-		std::memcpy(itPtr, str.data(), sizeof(TProp));
-	}
+	TProperty(intptr_t ptr) : ptr(ptr) {}
+	TType *get(Class *obj) { return reinterpret_cast<TType *>(reinterpret_cast<uintptr_t>(obj) + ptr); }
+	const string serialize(Class *obj) override final { return std::string(reinterpret_cast<char *>(get(obj)), sizeof(TType)); }
+	void serialize(Class *obj, const string &str) override final { std::memcpy(get(obj), str.data(), sizeof(TType)); }
 };
 
-
-typedef unordered_map<string, Property *> Porperties;
+typedef unordered_map<string, Property *> Properties;
 class ClassType {
 	template<class TClass> friend class ClassTypeCtor;
 	friend class Activator;
@@ -185,7 +179,7 @@ class ClassType {
 private:
 	string name;
 	TFnxNew fnxNew;
-	Porperties properties;
+	Properties properties;
 
 public:
 	ClassType() {
@@ -199,7 +193,7 @@ public:
 
 	const string &getName() const { return name; }
 	Class *getNew() const { return fnxNew(); }
-	Porperties &getProperties() { return properties; }
+	Properties &getProperties() { return properties; }
 
 	bool operator==(const ClassType &other) const { return getName() == other.getName(); }
 	operator bool() const { return name != "" && fnxNew; }
@@ -226,7 +220,8 @@ public:
 
 	template<class TProp> 
 	ClassTypeCtor<TClass> &prop(const string &name, TProp TClass:: *val) {
-		instance->properties[name] = new TProperty<TClass, TProp>(val);
+		intptr_t ptr = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*val));
+		instance->properties[name] = new TProperty<TProp>(ptr);
 		return *this;
 	}
 	operator ClassType *() { 
