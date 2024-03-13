@@ -134,148 +134,158 @@ void main() {
 #include <unordered_map>
 #include <string>
 
-template<class TType> class TProperty;
+
+
+
+class Class;
+class ClassType;
+
+class Property;
+
+
+typedef unordered_map<string, Property *> Properties;
 
 class Class {
 public:
 	virtual class ClassType *getClassType() = 0;
 };
 
-class Property {
-public:
-	Property() = default;
-	virtual ~Property() = default;
-	
-	virtual const string serialize(Class *obj) = 0;
-	virtual void serialize(Class *obj, const string &str) = 0;
-
-	template<class t> bool is() { return static_cast<bool>(dynamic_cast<TProperty<t>*>(this)); }
-	template<class t> t *as(Class *obj) { 
-		if (auto casted = dynamic_cast<TProperty<t> *>(this)) {
-			return casted->get(obj);
-		}		
-		return nullptr;
-	}
-};
-
-template<class TType>
-class TProperty : public Property {
-private:
-	intptr_t ptr;
-
-public:
-	TProperty(intptr_t ptr) : ptr(ptr) {}
-	TType *get(Class *obj) { return reinterpret_cast<TType *>(reinterpret_cast<uintptr_t>(obj) + ptr); }
-	const string serialize(Class *obj) override final { return std::string(reinterpret_cast<char *>(get(obj)), sizeof(TType)); }
-	void serialize(Class *obj, const string &str) override final { std::memcpy(get(obj), str.data(), sizeof(TType)); }
-};
-
-typedef unordered_map<string, Property *> Properties;
 class ClassType {
-	template<class TClass> friend class ClassTypeCtor;
-	friend class Activator;
-	typedef Class *(*TFnxNew)(void);
+	template<class TClass>	friend class ClassCtor;
+	typedef void *(*FnClone)(void);
 
-private:
-	string name;
-	TFnxNew fnxNew;
+	FnClone fnClone;
 	Properties properties;
+	string name;
 
 public:
 	ClassType() {
 	}
-	~ClassType() {
-		for (auto kv : properties) {
-			delete kv.second;
-		}
-		properties.clear();
+	virtual ~ClassType() { 
+		for (auto p : properties) 
+			delete p.second; 
 	}
-
-	const string &getName() const { return name; }
-	Class *getNew() const { return fnxNew(); }
 	Properties &getProperties() { return properties; }
-
-	bool operator==(const ClassType &other) const { return getName() == other.getName(); }
-	operator bool() const { return name != "" && fnxNew; }
+	const string &getName() { return name; }
 };
 
-struct ClassTypePackage {
-	virtual string name() = 0;
-	virtual std::list<ClassType*> types() = 0;
-};
-
-template<class TClass>
-class ClassTypeCtor {
-	ClassType *instance;
-
+class PropertyData {
 public:
-	ClassTypeCtor(const string &name) {
-		instance = new ClassType;
-		instance->name = name;
-		instance->fnxNew = []()->Class * { return new TClass; };
+	PropertyData() = default;
+	virtual ~PropertyData() = default;
+
+	virtual ClassType *getClassType() { return nullptr; }
+};
+
+template<class TType>
+class TPropertyValue : public PropertyData {
+	template<class TClass>	friend class ClassCtor;
+
+	intptr_t address;
+public:
+	TPropertyValue() = default;
+	TType *get(void *obj) { return reinterpret_cast<TType *>(reinterpret_cast<uintptr_t>(obj) + address); }
+};
+
+template<class TType>
+class TPropertyClass : public TPropertyValue<TType> {
+	template<class TClass>	friend class ClassCtor;
+
+	ClassType *classType;
+public:
+	TPropertyClass() = default;
+	ClassType *getClassType() override { return classType; }
+};
+
+class Property {
+	template<class TClass>	friend class ClassCtor;
+
+	string name;
+	PropertyData *data;
+public:
+	Property() = default;
+	virtual ~Property() = default;
+
+	const string &getName() { return name; }
+
+	template<class t> bool is() {
+		return static_cast<bool>(dynamic_cast<TPropertyValue<t>*>(data));
 	}
-	~ClassTypeCtor() {
-		delete instance;		
+	template<> bool is<ClassType>() {		
+		return static_cast<bool>(data->getClassType());
 	}
 
-	template<class TProp> 
-	ClassTypeCtor<TClass> &prop(const string &name, TProp TClass:: *val) {
-		intptr_t ptr = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*val));
-		instance->properties[name] = new TProperty<TProp>(ptr);
-		return *this;
+	template<class t> t *as() = delete;
+	template<> ClassType *as<ClassType>() {
+		return data->getClassType();
 	}
-	operator ClassType *() { 
-		ClassType *out = instance;
-		instance = nullptr;
-		return out;
+	template<class t> t *as(void *obj) {
+		auto casted = dynamic_cast<TPropertyValue<t>*>(data);
+		return casted ? casted->get(obj) : nullptr;
 	}
 };
+
+
 
 class GBCORE Activator : public Singleton<Activator> {
 private:
-	typedef std::list<string> Package;
-	typedef std::unordered_map<string, ClassType*> Signatures;
-	typedef std::unordered_map<string, Package> Packages;
+	typedef std::unordered_map<string, ClassType *> ClassTypes;
 
-	Signatures signatures;
-	Packages packages;
+	ClassTypes classTypes;
 
-public:	
+public:
 	void add(ClassType *classType);
 	void del(const string &name);
 	ClassType *get(const string className);
 
 	Class *load(const string &data);
 	string save(Class *obj);
+};
 
-	template<class T> void addPackage() {
-		ClassTypePackage *data = new T;
-		const string &packageName = data->name();
-		if (!packages.contains(packageName)) {
-			packages.emplace(packageName, Package());
-		}
-		Package &package = packages[packageName];
+template<class TClass>
+class ClassCtor {
+	ClassType *instance;
 
-		std::list<ClassType *> types = data->types();
-		for (auto type : types) {
-			add(type);
-			package.push_back(type->getName());
-		}
-		delete data;
+public:
+	ClassCtor(const string &name) {
+		instance = new ClassType;
+		instance->fnClone = []()->void * { return new TClass; };
+		instance->name = name;
 	}
-	template<class T> void delPackage() {
-		ClassTypePackage *data = new T;
-		const string packageName = data->name();
+	~ClassCtor() {
+		delete instance;
+	}
 
-		if (!packages.contains(packageName))
-			return;
+	template<class TProp>
+	ClassCtor<TClass> &prop(const string &name, TProp TClass:: *address) {
+		Property *prop = new Property;
 
-		Package &package = packages[packageName];
-		for (auto &name : package) {
-			del(name);
-		}
-		packages.erase(packageName);
-		delete data;
+		TPropertyValue<TProp> *pValue = new TPropertyValue<TProp>;
+		pValue->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
+		prop->data = pValue;
+
+		prop->name = name;
+		instance->properties[name] = prop;
+		return *this;
+	}
+	
+	template<class TProp>
+	ClassCtor<TClass> &prop(const string className, const string &name, TProp TClass:: *address) {
+		Property *prop = new Property;
+
+		TPropertyClass<TProp> *pClass = new TPropertyClass<TProp>;
+		pClass->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
+		pClass->classType = Activator::instance()->get(className);		
+		prop->data = pClass;
+
+		prop->name = name;
+		instance->properties[name] = prop;
+		return *this;
+	}
+	operator ClassType *() {
+		ClassType *out = instance;
+		instance = nullptr;
+		return out;
 	}
 };
 

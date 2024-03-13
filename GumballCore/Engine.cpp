@@ -23,7 +23,7 @@ using namespace std;
 
 Engine::Engine() {
 	Activator::setInstance(new Activator);
-	Activator::instance()->addPackage<ClassTypePackage_Core>();
+	//Activator::instance()->addPackage<ClassTypePackage_Core>();
 	test();
 
 	projectLinker = new ProjectLinker;
