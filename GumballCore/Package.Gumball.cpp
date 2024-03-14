@@ -5,183 +5,210 @@
 
 
 
-class Super : public Class {
+class Super : public ImplClass {
 public:
+	const string getClassName() { return "Super"; }
+
 	Super() {
 		cout << "Super ";
 	}
-	int q, w;
-	virtual ClassType *getClassType() { return Activator::instance()->get("Super"); }
+	double q, w;
+
+	//virtual FieldObject *getClass() { return Activator::instance()->get("Super"); }
 };
-class A : public Super {
+class A : public ImplClass {
 public:
+	const string getClassName() { return "A"; }
+
 	A() {
 		cout << "A" << endl;
 	}
-
 	float fa, fb;
-	virtual ClassType *getClassType() { return Activator::instance()->get("A"); }
 };
-class B : public Super {
+class B : public ImplClass {
 public:
+	const string getClassName() { return "B"; }
+
 	B() {
 		cout << "B" << endl;
 	}
-
 	int a, b, c;
 	string str;
 	A obj0;
 	Super obj1;
-
-	virtual ClassType *getClassType() { return Activator::instance()->get("B"); }
 };
-class C : public Super {
+class C : public ImplClass {
 public:
+	const string getClassName() { return "C"; }
+
 	C() {
 		cout << "C" << endl;
 	}
-
 	int *pa;
-	virtual ClassType *getClassType() { return Activator::instance()->get("C"); }
 };
-
 class D : public C {
 public:
+	const string getClassName() { return "D"; }
+
 	D() {
 		cout << "D" << endl;
 	}
-
 	A objA;
-	virtual ClassType *getClassType() { return Activator::instance()->get("D"); }
 };
 
-//std::list<ClassType *> ClassTypePackage_Core::types() {
-//	return {
-//		ClassTypeCtor<Super>("Super"),
-//
-//		ClassTypeCtor<A>("A"),
-//
-//		ClassTypeCtor<B>("B")
-//		.prop<int>("a", &B::a)
-//		.prop<int>("b", &B::b)
-//		.prop<int>("c", &B::c)
-//		.prop<string>("str", &B::str)
-//		.prop<A>("obj", &B::obj),
-//
-//		//ClassTypeCtor<C>("B")
-//		//.prop<int *>("pa", &C::pa),
-//	};
-//}
 
 void test() {
+
+
 	auto activator = Activator::instance();
 
 	activator->add(
-		ClassCtor<Super>("Super")
-		.prop<int>("q", &Super::q)
-		.prop<int>("w", &Super::w)
+		TFieldCtor<Super>("Super")
+		.prop<double>("q", &Super::q)
+		.prop<double>("w", &Super::w)
 	);
+
 	activator->add(
-		ClassCtor<A>("A")
+		TFieldCtor<A>("A")
 		.prop<float>("q", &A::fa)
 		.prop<float>("w", &A::fb)
 	);
 
 	activator->add(
-		ClassCtor<B>("B")
+		TFieldCtor<B>("B")
 		.prop<int>("a", &B::a)
-		.prop<A>("A", "obj0", &B::obj0)
-		.prop<Super>("Super", "obj1", &B::obj1)
 		.prop<int>("b", &B::b)
 		.prop<int>("c", &B::c)
 		.prop<string>("str", &B::str)
+		.prop<A>("A", "obj0", &B::obj0)
+		.prop<Super>("Super", "obj1", &B::obj1)
 	);
 
-	B bObj;
-	bObj.a = 0xABCDDCBA;
-	bObj.b = 0xFAFAAFAF;
-	bObj.c = 0xCADAADCA;
-	bObj.str = "mystring";
-	bObj.obj0.fa = 1.123f;
-	bObj.obj0.fb = -4.321f;
-	bObj.obj1.q = 4444;
-	bObj.obj1.w = 1111;
+	
+	B b;
+	b.a = 11;
+	b.b = 22;
+	b.c = 33;
+	b.str = "mystring";
+	b.obj0.fa = 0.123f;
+	b.obj0.fb = -321.0f;
+	b.obj1.q = 55.55;
+	b.obj1.w = 66.66;
 
-	Class *bClass = &bObj;
-	ClassType *bClassType = bObj.getClassType();
-	Properties &properties = bClassType->getProperties();
 
-	//##### Concrete #####//
-	for (auto kv : properties) {
-		Property *prop = kv.second;
+	B t0;
+	t0.getClass().fromStream(b.getClass().toStream());
+	Class t0Class = t0.getClass();
 
-		if (prop->is<int>()) {
-			cout << "int " << prop->getName() << " " << *prop->as<int>(bClass) << endl;
-		}
-		
-		if (string *str = prop->as<string>(bClass)) {
-			cout << "str " << prop->getName() << " " << *str << endl;
-		}
-		
-		if (A *a = prop->as<A>(bClass)) {
-			cout << "A " << prop->getName() << " " << a->fa << "," << a->fb << endl;
-		}
-
-		if (Super *super = prop->as<Super>(bClass)) {
-			cout << "Super " << prop->getName() << " " << super->q << "," << super->w << endl;
+	{
+		std::ofstream outFile("output.json");
+		if (outFile.is_open()) {
+			outFile << t0Class.toStream().toString();
+			outFile.close();
 		}
 	}
 
-	//##### Abstract #####//
-	for (auto kv : properties) {
-		Property *prop = kv.second;
-		
-		if (prop->is<ClassType>()) {
-			cout << "class " << prop->getName() << endl;
+	{
+		cout << endl;
+		cout << t0Class.getName() << " cast ";
+		if (t0Class.is<A>()) {
+			cout << (t0Class.as<A>() ? "true" : "false") << endl;
 		}
 
-		if (auto classType = prop->as<ClassType>()) {
-			cout << "class " << prop->getName() << " props: " << classType->getProperties().size() << endl;
+		if (t0Class.is<B>()) {
+			cout << (t0Class.as<B>() ? "true" : "false") << endl;
+		}
+
+		if (t0Class.is<Super>()) {
+			cout << (t0Class.as<Super>() ? "true" : "false") << endl;
 		}
 	}
 
+	{
+		cout << endl;
+		auto properties = t0Class.getProperties();
+		for (auto &it : properties) {
+			if (it.is<Class>()) {
+				if (Class subclass = it.asClass()) {
+					cout << "########" << "class " << it.getName() << "########" << endl;
+					for (auto &subit : subclass.getProperties()) {
+						if (subit.is<int>()) {
+							cout << "int ";
+						}
 
-	//string data = activator->save(&bObj);
-	//
-	//bObj.a = 0xAAABBB;
-	//bObj.b = 0xCCCDDD;
-	//bObj.c = 0xEEEFFF;
-	//bObj.str = "superfun";
-	//bObj.obj.fa = 333.333f;
-	//bObj.obj.fb = -111.111f;
+						if (subit.is<float>()) {
+							cout << "float ";
+						}
 
+						if (subit.is<double>()) {
+							cout << "double ";
+						}
 
-	//Class *classObj = activator->load(data);
-	//ClassType *classType = classObj->getClassType();	
-	//Properties properties = classType->getProperties();
-	//
-	//
-	////##### Concrete #####//
-	//for (auto &kv : properties) {
-	//	string name = kv.first;
-	//	Property *prop = kv.second;
-	//
-	//	if (prop->is<int>()) {
-	//		cout << "int " << name << " " << *prop->as<int>(classObj) << endl;
-	//	}
-	//	if (string *casted = prop->as<string>(classObj)) {
-	//		cout << "string " << name << " " << *casted << endl;
-	//	}
-	//}
-	//
-	////##### Abstraction #####//
-	//for (auto &kv : properties) {
-	//	string name = kv.first;
-	//	Property *prop = kv.second;
-	//
-	//	if (Property *innerProp = prop->as<Property>(classObj)) {
-	//		cout << "prop " << innerProp->
-	//	}
-	//}
-	//return;
+						if (subit.is<string>()) {
+							cout << "string ";
+						}
+
+						cout << subit.getName() << " = ";
+
+						if (int *ptr = subit.as<int>()) {
+							cout << *ptr;
+						}
+
+						if (float *ptr = subit.as<float>()) {
+							cout << *ptr;
+						}
+
+						if (double *ptr = subit.as<double>()) {
+							cout << *ptr;
+						}
+
+						if (string *ptr = subit.as<string>()) {
+							cout << *ptr;
+						}
+						
+						cout << endl;
+					}
+					cout << "################" << endl;
+				}
+			}
+			else {
+				if (it.is<int>()) {
+					cout << "int ";
+				}
+
+				if (it.is<float>()) {
+					cout << "float ";
+				}
+
+				if (it.is<double>()) {
+					cout << "double ";
+				}
+
+				if (it.is<string>()) {
+					cout << "string ";
+				}
+
+				cout << it.getName() << " = ";
+
+				if (int *ptr = it.as<int>()) {
+					cout << *ptr;
+				}
+
+				if (float *ptr = it.as<float>()) {
+					cout << *ptr;
+				}
+
+				if (double *ptr = it.as<double>()) {
+					cout << *ptr;
+				}
+
+				if (string *ptr = it.as<string>()) {
+					cout << *ptr;
+				}
+				cout << endl;
+			}
+		}
+
+		cout << endl << endl;
+	}
 }

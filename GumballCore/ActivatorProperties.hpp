@@ -4,29 +4,19 @@
 
 #include "Activator.hpp"
 
-//template<class TClass>
-//class TProperty<TClass, string> : public Property {
-//	typename typedef string TProp;
-//
-//private:
-//	TProp TClass:: *ptr;
-//
-//public:
-//	TProperty(TProp TClass:: *ptr) : ptr(ptr) {}
-//	void set(TClass *obj, TProp propValue) {
-//		obj->*ptr = propValue;
-//	}
-//	TProp &get(TClass *obj) {
-//		return obj->*ptr;
-//	}
-//
-//	const string serialize(Class *obj) override final {
-//		return (static_cast<TClass *>(obj)->*ptr);
-//	}
-//	void serialize(Class *obj, const string &str) override final {
-//		(static_cast<TClass *>(obj)->*ptr) = str;
-//	}
-//};
 
+template<> class FieldValue<string> : public Field {
+public:
+	string *get(const intptr_t &obj) { return reinterpret_cast<string *>(obj); }
+
+	SerialStream toStream(const intptr_t &obj) {
+		string *str = get(obj);
+		return JsonValue(str->c_str(), str->size());
+	}
+	void fromStream(const intptr_t &obj, SerialStream &stream) {
+		string *str = get(obj);
+		*str = stream.getJsonValue().to_str();
+	}
+};
 
 #endif //_activatorproperties

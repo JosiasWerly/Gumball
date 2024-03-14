@@ -3,79 +3,36 @@
 using namespace std;
 
 
-void Activator::add(ClassType *classType) {
-	if (!classType)
+Class Property::asClass() {
+	return is<Class>() ? Class(address, dynamic_cast<FieldObject *>(field)->getClass()) : Class();
+}
+SerialStream Property::toStream() {
+	return is<Class>() ? asClass().toStream() : field->toStream(address);
+}
+void Property::fromStream(SerialStream stream) {
+	return is<Class>() ? asClass().fromStream(stream) : field->fromStream(address, stream);
+}
+
+void Activator::add(FieldClass *object) {
+	if (!object)
 		return;
 
-	if (classTypes.contains(classType->getName()))
+	if (objects.contains(object->getName()))
 		return;
 
-	classTypes[classType->getName()] = classType;
+	objects[object->getName()] = object;
 }
 void Activator::del(const string &name) {
-	if (!classTypes.contains(name))
+	if (!objects.contains(name))
 		return;
 
-	if (!classTypes.contains(name))
-		return;
-
-	delete classTypes[name];
-	classTypes.erase(name);
+	delete objects[name];
+	objects.erase(name);
 }
-ClassType *Activator::get(const string className) {
-	return classTypes.contains(className) ? classTypes[className] : nullptr;
+FieldClass *Activator::get(const string &name) {
+	return objects.contains(name) ? objects[name] : nullptr;
 }
-Class *Activator::load(const string &data) {
-	//picojson::object jsonObject;
-	//{
-	//	picojson::value jsonValue;
-	//	string err = picojson::parse(jsonValue, data);
-	//	if (!err.empty() || !jsonValue.is<picojson::object>()) {
-	//		return nullptr;
-	//	}
-	//	jsonObject = jsonValue.get<picojson::object>();
-	//}
-	//
-	//ClassType *classType = get(jsonObject["class"].to_str());
-	//if (!classType) {
-	//	return nullptr;
-	//}
 
-	//Class *obj = classType->getNew();
-	//if (!obj) {
-	//	return nullptr;
-	//}
-
-	//auto &properties = classType->getProperties();
-	//picojson::object props = jsonObject["props"].get<picojson::object>();
-	//for (auto kv : props) {
-	//	if (properties.contains(kv.first)) {
-	//		properties[kv.first]->serialize(obj, kv.second.to_str());
-	//	}
-	//}
-	////jsonObject["data"] TODO
-	//return obj;
-	return nullptr;
-}
-string Activator::save(Class *obj) { 
-	/*ClassType *classType = obj->getClassType();
-	if (!classType) {
-		return "nullptr";
-	}
-	
-	picojson::object jsonObject;
-	jsonObject["class"] = picojson::value(classType->getName());
-
-
-	picojson::object props;
-	for (auto kv : classType->getProperties()) {
-		props[kv.first] = picojson::value(kv.second->serialize(obj));
-	}	
-	jsonObject["props"] = picojson::value(props);
-
-
-	jsonObject["data"] = picojson::value("todo");
-	return picojson::value(jsonObject).serialize(false);*/
-
-	return "";
+Class ImplClass::getClass(){
+	return Class(reinterpret_cast<intptr_t>(this), Activator::instance()->get(getClassName()));
 }

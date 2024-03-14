@@ -1,289 +1,242 @@
-/*
-#################### SUMMARY ####################
-after failed attemps of making libtool work I've decided to implement a quick real time reflection.
-objectives:
--send a string and it should create the right object with properties values properly assigned
--minimal overhead to objects
--json as output and input, simple schema
--extensibility, enable its improvements as time goes by
--minimal boilerplate code, although the odds are against me
--at this version it is not optimized
-
-
-Note the following classes, observe how boring and lacking in reflection they are,
-because of that we cannot "save" these objects.
-
-class Super {
-public:
-};
-
-class A : public Super {
-public:
-	float fa, fb;
-};
-
-class B : public Super {
-public:
-	int a, b, c;
-	string str;
-	A obj;
-};
-
-the steps that you need to do:
-1)Extend the classes from "Class"
-2)Make class schema description
-	a) using ClassTypeCtor<T> enables the declaration of single types
-	b) using ClassTypePackage enables the declaration of multiple types that are considered in the same "package"
-3)Enjoy the wonders os reflection
-
-#################### ClassTypeCtor<T> Example ####################
-class Super : public Class {
-public:
-	virtual ClassType *getType() { return Activator::instance()->get("Super"); }
-};
-
-class A : public Super {
-public:
-	float fa, fb;
-
-	virtual ClassType *getType() { return Activator::instance()->get("A"); }
-};
-class B : public Super {
-public:
-	int a, b, c;
-	string str;
-	A obj;
-
-	virtual ClassType *getType() { return Activator::instance()->get("B"); }
-};
-
-void main(){
-	auto activator = Activator::instance();
-
-	activator->add(
-		ClassTypeCtor<A>("A")
-	);
-	activator->add(
-		ClassTypeCtor<B>("B")
-		.prop<int>("a", &B::a)
-		.prop<int>("b", &B::b)
-		.prop<int>("c", &B::c)
-		.prop<string>("str", &B::str)
-		.prop<A>("obj", &B::obj)
-	);
-
-	B bObj;
-	bObj.a = 0xABCDDCBA;
-	bObj.b = 0xFAFAAFAF;
-	bObj.c = 0xCADAADCA;
-	bObj.str = "mystring";
-	bObj.obj.fa = 1.123f;
-	bObj.obj.fb = -4.321f;
-
-	string data = activator->save(&bObj);
-	Class *ca = activator->load(data);
-}
-
-
-#################### ClassTypePackage Example ####################
-struct ClassPackage_Test : public ClassTypePackage {
-	string name() { return "test"; }
-	std::list<ClassType *> types() {
-		return {
-			ClassTypeCtor<Super>("Super"),
-			ClassTypeCtor<A>("A"),
-		};
-	}
-};
-
-void main() {
-	auto activator = Activator::instance();
-	activator->addPackage<ClassPackage_Test>();
-
-	activator->add(
-		ClassTypeCtor<B>("B")
-		.prop<int>("a", &B::a)
-		.prop<int>("b", &B::b)
-		.prop<int>("c", &B::c)
-		.prop<string>("str", &B::str)
-		.prop<A>("obj", &B::obj)
-	);
-
-	B bObj;
-	bObj.a = 0xABCDDCBA;
-	bObj.b = 0xFAFAAFAF;
-	bObj.c = 0xCADAADCA;
-	bObj.str = "mystring";
-	bObj.obj.fa = 1.123f;
-	bObj.obj.fb = -4.321f;
-
-	string data = activator->save(&bObj);
-	Class *ca = activator->load(data);
-
-	activator->delPackage<ClassPackage_Test>();
-}
-*/
-
 #pragma once
 #ifndef _activator
 #define _activator
 
 #include "Patterns.hpp"
+#include "picojson.h" //json library for now
 
 #include <list>
 #include <unordered_map>
 #include <string>
 
-
-
-
+class Field;
+class FieldClass;
+class FieldObject;
+template<class TType> class FieldValue;
+template<class TClass> class TFieldCtor;
 class Class;
-class ClassType;
 
-class Property;
+typedef unordered_map<string, Field *> Fields;
+typedef unordered_map<string, FieldClass *> FObjects;
 
+typedef picojson::object JsonObject;
+typedef picojson::value JsonValue;
 
-typedef unordered_map<string, Property *> Properties;
-
-class Class {
+class SerialStream {
+	JsonValue jvalue;
 public:
-	virtual class ClassType *getClassType() = 0;
+	SerialStream() {}
+	SerialStream(JsonValue jvalue) : jvalue(jvalue) {}
+	string toString() const { return jvalue.serialize(true); }
+	JsonValue getJsonValue() const { return jvalue; }
+	operator JsonValue &() { return jvalue; }
 };
 
-class ClassType {
-	template<class TClass>	friend class ClassCtor;
-	typedef void *(*FnClone)(void);
+class Field {
+	template<class TClass> friend class TFieldCtor;
 
-	FnClone fnClone;
-	Properties properties;
+protected:
+	intptr_t address;
 	string name;
 
 public:
-	ClassType() {
-	}
-	virtual ~ClassType() { 
-		for (auto p : properties) 
-			delete p.second; 
-	}
-	Properties &getProperties() { return properties; }
+	virtual ~Field() {};
 	const string &getName() { return name; }
+	const intptr_t &getAddress() { return address; }
+
+	template<class t> bool is() { return static_cast<bool>(dynamic_cast<FieldValue<t> *>(this)); }
+	template<class t> t* get(const intptr_t &obj) { return is<t>() ? dynamic_cast<FieldValue<t> *>(this)->get(obj) : nullptr; }
+
+	virtual SerialStream toStream(const intptr_t &obj) { return SerialStream(); }
+	virtual void fromStream(const intptr_t &obj, SerialStream &stream) {}
 };
 
-class PropertyData {
+template<class TType> class FieldValue : public Field {
 public:
-	PropertyData() = default;
-	virtual ~PropertyData() = default;
+	TType *get(const intptr_t &obj) { return reinterpret_cast<TType *>(obj); }
 
-	virtual ClassType *getClassType() { return nullptr; }
+	SerialStream toStream(const intptr_t &obj) {
+		return JsonValue(string(reinterpret_cast<char *>(get(obj)), sizeof(TType)));
+	}
+	void fromStream(const intptr_t &obj, SerialStream &stream) {
+		std::memcpy(get(obj), stream.getJsonValue().to_str().c_str(), sizeof(TType));
+	}
 };
 
-template<class TType>
-class TPropertyValue : public PropertyData {
-	template<class TClass>	friend class ClassCtor;
-
-	intptr_t address;
+class FieldObject : public Field {
+	template<class TClass> friend class TFieldCtor;
+	FieldClass *objectClass;
 public:
-	TPropertyValue() = default;
-	TType *get(void *obj) { return reinterpret_cast<TType *>(reinterpret_cast<uintptr_t>(obj) + address); }
+	FieldObject(FieldClass *objectClass) : objectClass(objectClass) {}
+	FieldClass *getClass() { return objectClass; }
+
 };
 
-template<class TType>
-class TPropertyClass : public TPropertyValue<TType> {
-	template<class TClass>	friend class ClassCtor;
-
-	ClassType *classType;
+class FieldClassType {
+	template<class TClass> friend class TFieldCtor;
 public:
-	TPropertyClass() = default;
-	ClassType *getClassType() override { return classType; }
+	virtual ~FieldClassType() = default;
+	string name;
+};
+
+template<class TClass> class TFieldClassType : public FieldClassType {
+public:
+};
+
+class FieldClass {
+	template<class TClass> friend class TFieldCtor;
+	FieldClassType *type;
+	Fields fields;
+public:
+
+	FieldClass() = default;
+	~FieldClass() {	delete type; }
+	const string &getName() { return type->name; }
+	Fields &getFields() { return fields; }
+	template<class t> bool is() { return static_cast<bool>(dynamic_cast<TFieldClassType<t> *>(type)); }
 };
 
 class Property {
-	template<class TClass>	friend class ClassCtor;
-
-	string name;
-	PropertyData *data;
+	intptr_t address;
+	Field *field;
 public:
-	Property() = default;
-	virtual ~Property() = default;
-
-	const string &getName() { return name; }
-
+	Property(intptr_t address, Field *field) : address(address), field(field) {}
+	const string &getName() {
+		return field->getName();
+	}
 	template<class t> bool is() {
-		return static_cast<bool>(dynamic_cast<TPropertyValue<t>*>(data));
+		return field->is<t>();
 	}
-	template<> bool is<ClassType>() {		
-		return static_cast<bool>(data->getClassType());
+	template<class t> t *as() {
+		return field->get<t>(address);
 	}
 
-	template<class t> t *as() = delete;
-	template<> ClassType *as<ClassType>() {
-		return data->getClassType();
+	template<> bool is<Class>() {
+		return static_cast<bool>(dynamic_cast<FieldObject*>(field));
 	}
-	template<class t> t *as(void *obj) {
-		auto casted = dynamic_cast<TPropertyValue<t>*>(data);
-		return casted ? casted->get(obj) : nullptr;
-	}
+	
+	Class asClass();
+	operator bool() { return address != 0 && field; }
+
+	SerialStream toStream();
+	void fromStream(SerialStream stream);
 };
 
+class Class {
+	intptr_t address;
+	FieldClass *fclass;
+public:
+	Class() = default;
+	~Class() = default;
+	Class(intptr_t address, FieldClass *fclass) :
+		address(address), 
+		fclass(fclass) {
+	}
+	
 
+	list<Property> getProperties() {
+		Fields &fields = fclass->getFields();
+		list<Property> out;
+		for (auto kv : fields) {
+			Field *field = kv.second;
+			Property newProp(address + field->getAddress(), field);
+			out.push_back(newProp);
+		}
+		return out;
+	}
+	const string &getName() {
+		return fclass->getName();
+	}
+	template<class t> bool is() {
+		return fclass->is<t>();
+	}
+	template<class t> t *as() {
+		return is<t>() ? reinterpret_cast<t *>(address) : nullptr;
+	}
+	
+	SerialStream toStream() {
+		picojson::object jsonObject;
+		picojson::object jfields;
+		
+		auto properties = getProperties();
+		for (auto p : properties) {
+			jfields[p.getName()] = p.toStream();
+		}
+
+		jsonObject["class"] = picojson::value(fclass->getName());
+		jsonObject["fields"] = picojson::value(jfields);
+		return SerialStream(picojson::value(jsonObject));
+	}
+
+	void fromStream(SerialStream stream) {
+		JsonObject jobj = stream.getJsonValue().get<picojson::object>();
+
+		if (fclass->getName() != jobj["class"].to_str()) {
+			return;
+		}
+
+		JsonObject jfields = jobj["fields"].get<picojson::object>();
+		auto properties = getProperties();
+		for (auto p : properties) {
+			if (jfields.contains(p.getName())) {
+				p.fromStream(jfields[p.getName()]);
+			}
+		}
+	}
+	operator bool() { return address != 0 && fclass; }
+};
+
+class ImplClass {
+public:
+	Class getClass();
+	virtual const string getClassName() { return ""; }
+};
 
 class GBCORE Activator : public Singleton<Activator> {
 private:
-	typedef std::unordered_map<string, ClassType *> ClassTypes;
-
-	ClassTypes classTypes;
+	FObjects objects;
 
 public:
-	void add(ClassType *classType);
+	void add(FieldClass *object);
 	void del(const string &name);
-	ClassType *get(const string className);
-
-	Class *load(const string &data);
-	string save(Class *obj);
+	FieldClass *get(const string &name);
 };
 
-template<class TClass>
-class ClassCtor {
-	ClassType *instance;
 
+template<class TClass> class TFieldCtor {
+	typedef TFieldCtor Ctor;
+
+	FieldClass *instance;
 public:
-	ClassCtor(const string &name) {
-		instance = new ClassType;
-		instance->fnClone = []()->void * { return new TClass; };
-		instance->name = name;
+	TFieldCtor(const string &name) {
+		instance = new FieldClass;
+		instance->type = new TFieldClassType<TClass>();
+		instance->type->name = name;
 	}
-	~ClassCtor() {
+	~TFieldCtor() {
 		delete instance;
 	}
-
 	template<class TProp>
-	ClassCtor<TClass> &prop(const string &name, TProp TClass:: *address) {
-		Property *prop = new Property;
-
-		TPropertyValue<TProp> *pValue = new TPropertyValue<TProp>;
-		pValue->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
-		prop->data = pValue;
-
-		prop->name = name;
-		instance->properties[name] = prop;
+	Ctor &prop(const string &name, TProp TClass:: *address) {
+		Field *field = new FieldValue<TProp>;
+		field->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
+		field->name = name;
+		instance->fields[name] = field;
 		return *this;
 	}
-	
+
 	template<class TProp>
-	ClassCtor<TClass> &prop(const string className, const string &name, TProp TClass:: *address) {
-		Property *prop = new Property;
-
-		TPropertyClass<TProp> *pClass = new TPropertyClass<TProp>;
-		pClass->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
-		pClass->classType = Activator::instance()->get(className);		
-		prop->data = pClass;
-
-		prop->name = name;
-		instance->properties[name] = prop;
+	Ctor &prop(const string className, const string &name, TProp TClass:: *address) {
+		FieldObject *field = new FieldObject(nullptr);
+		field->name = name;
+		field->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
+		field->objectClass = Activator::instance()->get(className);;
+		instance->fields[name] = field;
 		return *this;
 	}
-	operator ClassType *() {
-		ClassType *out = instance;
+
+	operator FieldClass *() {
+		FieldClass *out = instance;
 		instance = nullptr;
 		return out;
 	}
