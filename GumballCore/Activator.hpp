@@ -10,14 +10,16 @@
 #include <string>
 
 class Field;
-class FieldClass;
+class FieldObjectProxy;
 class FieldObject;
 template<class TType> class FieldValue;
 template<class TClass> class TFieldCtor;
-class Class;
+
+class MetaObject;
+class MetaField;
 
 typedef unordered_map<string, Field *> Fields;
-typedef unordered_map<string, FieldClass *> FObjects;
+typedef unordered_map<string, FieldObject *> FObjects;
 
 typedef picojson::object JsonObject;
 typedef picojson::value JsonValue;
@@ -45,7 +47,7 @@ public:
 	const intptr_t &getAddress() { return address; }
 
 	template<class t> bool is() { return static_cast<bool>(dynamic_cast<FieldValue<t> *>(this)); }
-	template<class t> t* get(const intptr_t &obj) { return is<t>() ? dynamic_cast<FieldValue<t> *>(this)->get(obj) : nullptr; }
+	template<class t> t *get(const intptr_t &obj) { return is<t>() ? dynamic_cast<FieldValue<t> *>(this)->get(obj) : nullptr; }
 
 	virtual SerialStream toStream(const intptr_t &obj) { return SerialStream(); }
 	virtual void fromStream(const intptr_t &obj, SerialStream &stream) {}
@@ -63,44 +65,81 @@ public:
 	}
 };
 
-class FieldObject : public Field {
+class FieldObjectProxy : public Field {
 	template<class TClass> friend class TFieldCtor;
-	FieldClass *objectClass;
-public:
-	FieldObject(FieldClass *objectClass) : objectClass(objectClass) {}
-	FieldClass *getClass() { return objectClass; }
 
+	FieldObject *objectClass;
+
+public:
+	FieldObjectProxy(FieldObject *objectClass) : objectClass(objectClass) {}
+	FieldObject *getMetaObject() { return objectClass; }
 };
 
-class FieldClassType {
+class FieldObject {
 	template<class TClass> friend class TFieldCtor;
 public:
-	virtual ~FieldClassType() = default;
-	string name;
-};
+	class Type {
+		template<class TClass> friend class TFieldCtor;
+	public:
+		virtual ~Type() = default;
+	};
+	template<class TClass> class TType : public Type {
+	public:
+	};
 
-template<class TClass> class TFieldClassType : public FieldClassType {
-public:
-};
-
-class FieldClass {
-	template<class TClass> friend class TFieldCtor;
-	FieldClassType *type;
+private:
+	Type *type;
 	Fields fields;
-public:
+	string name;
 
-	FieldClass() = default;
-	~FieldClass() {	delete type; }
-	const string &getName() { return type->name; }
+public:
+	FieldObject() = default;
+	~FieldObject() { delete type; }
+	const string &getName() { return name; }
 	Fields &getFields() { return fields; }
-	template<class t> bool is() { return static_cast<bool>(dynamic_cast<TFieldClassType<t> *>(type)); }
+	template<class t> bool is() { return static_cast<bool>(dynamic_cast<TType<t> *>(type)); }
 };
 
-class Property {
+class MetaObject {
+	intptr_t address;
+	FieldObject *object;
+
+public:
+	MetaObject() = default;
+	~MetaObject() = default;
+	MetaObject(intptr_t address, FieldObject *metaObject) :
+		address(address),
+		object(metaObject) {
+	}
+
+	list<MetaField> getFields();
+	SerialStream toStream();
+	void fromStream(SerialStream stream);
+
+	const string &getName() {
+		return object->getName();
+	}
+	template<class t> bool is() {
+		return object->is<t>();
+	}
+	template<class t> t *as() {
+		return is<t>() ? reinterpret_cast<t *>(address) : nullptr;
+	}
+
+	operator bool() { return address != 0 && object; }
+};
+
+class MetaField {
 	intptr_t address;
 	Field *field;
+
 public:
-	Property(intptr_t address, Field *field) : address(address), field(field) {}
+	MetaField(intptr_t address, Field *field) : address(address), field(field) {}
+	bool isObject();
+	MetaObject asObject();
+	SerialStream toStream();
+	void fromStream(SerialStream stream);
+
 	const string &getName() {
 		return field->getName();
 	}
@@ -111,84 +150,13 @@ public:
 		return field->get<t>(address);
 	}
 
-	template<> bool is<Class>() {
-		return static_cast<bool>(dynamic_cast<FieldObject*>(field));
-	}
-	
-	Class asClass();
 	operator bool() { return address != 0 && field; }
-
-	SerialStream toStream();
-	void fromStream(SerialStream stream);
 };
 
-class Class {
-	intptr_t address;
-	FieldClass *fclass;
-public:
-	Class() = default;
-	~Class() = default;
-	Class(intptr_t address, FieldClass *fclass) :
-		address(address), 
-		fclass(fclass) {
-	}
-	
-
-	list<Property> getProperties() {
-		Fields &fields = fclass->getFields();
-		list<Property> out;
-		for (auto kv : fields) {
-			Field *field = kv.second;
-			Property newProp(address + field->getAddress(), field);
-			out.push_back(newProp);
-		}
-		return out;
-	}
-	const string &getName() {
-		return fclass->getName();
-	}
-	template<class t> bool is() {
-		return fclass->is<t>();
-	}
-	template<class t> t *as() {
-		return is<t>() ? reinterpret_cast<t *>(address) : nullptr;
-	}
-	
-	SerialStream toStream() {
-		picojson::object jsonObject;
-		picojson::object jfields;
-		
-		auto properties = getProperties();
-		for (auto p : properties) {
-			jfields[p.getName()] = p.toStream();
-		}
-
-		jsonObject["class"] = picojson::value(fclass->getName());
-		jsonObject["fields"] = picojson::value(jfields);
-		return SerialStream(picojson::value(jsonObject));
-	}
-
-	void fromStream(SerialStream stream) {
-		JsonObject jobj = stream.getJsonValue().get<picojson::object>();
-
-		if (fclass->getName() != jobj["class"].to_str()) {
-			return;
-		}
-
-		JsonObject jfields = jobj["fields"].get<picojson::object>();
-		auto properties = getProperties();
-		for (auto p : properties) {
-			if (jfields.contains(p.getName())) {
-				p.fromStream(jfields[p.getName()]);
-			}
-		}
-	}
-	operator bool() { return address != 0 && fclass; }
-};
 
 class ImplClass {
 public:
-	Class getClass();
+	MetaObject getClass();
 	virtual const string getClassName() { return ""; }
 };
 
@@ -197,21 +165,21 @@ private:
 	FObjects objects;
 
 public:
-	void add(FieldClass *object);
+	void add(FieldObject *object);
 	void del(const string &name);
-	FieldClass *get(const string &name);
+	FieldObject *get(const string &name);
 };
 
 
 template<class TClass> class TFieldCtor {
 	typedef TFieldCtor Ctor;
 
-	FieldClass *instance;
+	FieldObject *instance;
 public:
 	TFieldCtor(const string &name) {
-		instance = new FieldClass;
-		instance->type = new TFieldClassType<TClass>();
-		instance->type->name = name;
+		instance = new FieldObject;
+		instance->name = name;
+		instance->type = new FieldObject::TType<TClass>();
 	}
 	~TFieldCtor() {
 		delete instance;
@@ -227,7 +195,7 @@ public:
 
 	template<class TProp>
 	Ctor &prop(const string className, const string &name, TProp TClass:: *address) {
-		FieldObject *field = new FieldObject(nullptr);
+		FieldObjectProxy *field = new FieldObjectProxy(nullptr);
 		field->name = name;
 		field->address = reinterpret_cast<intptr_t>(&(((TClass *)nullptr)->*address));
 		field->objectClass = Activator::instance()->get(className);;
@@ -235,8 +203,8 @@ public:
 		return *this;
 	}
 
-	operator FieldClass *() {
-		FieldClass *out = instance;
+	operator FieldObject *() {
+		FieldObject *out = instance;
 		instance = nullptr;
 		return out;
 	}

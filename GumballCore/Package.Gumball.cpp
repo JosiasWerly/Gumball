@@ -13,8 +13,6 @@ public:
 		cout << "Super ";
 	}
 	double q, w;
-
-	//virtual FieldObject *getClass() { return Activator::instance()->get("Super"); }
 };
 class A : public ImplClass {
 public:
@@ -97,8 +95,8 @@ void test() {
 
 
 	B t0;
-	t0.getClass().fromStream(b.getClass().toStream());
-	Class t0Class = t0.getClass();
+	t0.getClass().fromStream(b.getClass().toStream());	
+	MetaObject t0Class = t0.getClass();
 
 	{
 		std::ofstream outFile("output.json");
@@ -126,12 +124,12 @@ void test() {
 
 	{
 		cout << endl;
-		auto properties = t0Class.getProperties();
+		auto properties = t0Class.getFields();
 		for (auto &it : properties) {
-			if (it.is<Class>()) {
-				if (Class subclass = it.asClass()) {
+			if (it.isObject()) {
+				if (MetaObject subclass = it.asObject()) {
 					cout << "########" << "class " << it.getName() << "########" << endl;
-					for (auto &subit : subclass.getProperties()) {
+					for (auto &subit : subclass.getFields()) {
 						if (subit.is<int>()) {
 							cout << "int ";
 						}
