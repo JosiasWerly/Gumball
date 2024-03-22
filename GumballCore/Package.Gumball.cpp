@@ -5,7 +5,7 @@
 
 
 
-class Super : public ImplClass {
+class Super : public MetaClass {
 public:
 	const string getClassName() { return "Super"; }
 
@@ -14,7 +14,7 @@ public:
 	}
 	double q, w;
 };
-class A : public ImplClass {
+class A : public MetaClass {
 public:
 	const string getClassName() { return "A"; }
 
@@ -23,7 +23,7 @@ public:
 	}
 	float fa, fb;
 };
-class B : public ImplClass {
+class B : public MetaClass {
 public:
 	const string getClassName() { return "B"; }
 
@@ -35,7 +35,7 @@ public:
 	A obj0;
 	Super obj1;
 };
-class C : public ImplClass {
+class C : public MetaClass {
 public:
 	const string getClassName() { return "C"; }
 
@@ -61,19 +61,19 @@ void test() {
 	auto activator = Activator::instance();
 
 	activator->add(
-		TFieldCtor<Super>("Super")
+		FieldSchema::TCtor<Super>("Super")
 		.prop<double>("q", &Super::q)
 		.prop<double>("w", &Super::w)
 	);
 
 	activator->add(
-		TFieldCtor<A>("A")
+		FieldSchema::TCtor<A>("A")
 		.prop<float>("q", &A::fa)
 		.prop<float>("w", &A::fb)
 	);
 
 	activator->add(
-		TFieldCtor<B>("B")
+		FieldSchema::TCtor<B>("B")
 		.prop<int>("a", &B::a)
 		.prop<int>("b", &B::b)
 		.prop<int>("c", &B::c)
@@ -95,41 +95,41 @@ void test() {
 
 
 	B t0;
-	t0.getClass().fromStream(b.getClass().toStream());	
-	MetaObject t0Class = t0.getClass();
+	t0.getMetaObject().fromStream(b.getMetaObject().toStream());	
+	MetaObject t0MetaObj = t0.getMetaObject();
 
 	{
 		std::ofstream outFile("output.json");
 		if (outFile.is_open()) {
-			outFile << t0Class.toStream().toString();
+			outFile << t0MetaObj.toStream().toString();
 			outFile.close();
 		}
 	}
 
 	{
 		cout << endl;
-		cout << t0Class.getName() << " cast ";
-		if (t0Class.is<A>()) {
-			cout << (t0Class.as<A>() ? "true" : "false") << endl;
+		cout << t0MetaObj.getName() << " cast ";
+		if (t0MetaObj.is<A>()) {
+			cout << (t0MetaObj.as<A>() ? "true" : "false") << endl;
 		}
 
-		if (t0Class.is<B>()) {
-			cout << (t0Class.as<B>() ? "true" : "false") << endl;
+		if (t0MetaObj.is<B>()) {
+			cout << (t0MetaObj.as<B>() ? "true" : "false") << endl;
 		}
 
-		if (t0Class.is<Super>()) {
-			cout << (t0Class.as<Super>() ? "true" : "false") << endl;
+		if (t0MetaObj.is<Super>()) {
+			cout << (t0MetaObj.as<Super>() ? "true" : "false") << endl;
 		}
 	}
 
 	{
 		cout << endl;
-		auto properties = t0Class.getFields();
+		auto properties = t0MetaObj.getValues();
 		for (auto &it : properties) {
 			if (it.isObject()) {
 				if (MetaObject subclass = it.asObject()) {
 					cout << "########" << "class " << it.getName() << "########" << endl;
-					for (auto &subit : subclass.getFields()) {
+					for (auto &subit : subclass.getValues()) {
 						if (subit.is<int>()) {
 							cout << "int ";
 						}
