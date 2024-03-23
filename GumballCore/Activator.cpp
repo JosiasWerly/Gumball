@@ -98,6 +98,6 @@ void MetaObject::stream(SerialStream stream) {
 }
 
 
-MetaObject MetaClass::getMetaObject(){
-	return MetaObject(reinterpret_cast<intptr_t>(this), Activator::instance()->get(getClassName()));
+MetaObject MetaClass::metaObject(){
+	return MetaObject(reinterpret_cast<intptr_t>(this), Activator::instance()->get(metaName()));
 }

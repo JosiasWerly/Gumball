@@ -7,7 +7,7 @@
 
 class Super : public MetaClass {
 public:
-	const string getClassName() { return "Super"; }
+	const string metaName() { return "Super"; }
 
 	Super() {
 		cout << "Super ";
@@ -16,7 +16,7 @@ public:
 };
 class A : public MetaClass {
 public:
-	const string getClassName() { return "A"; }
+	const string metaName() { return "A"; }
 
 	A() {
 		cout << "A" << endl;
@@ -25,7 +25,7 @@ public:
 };
 class B : public MetaClass {
 public:
-	const string getClassName() { return "B"; }
+	const string metaName() { return "B"; }
 
 	B() {
 		cout << "B" << endl;
@@ -37,7 +37,7 @@ public:
 };
 class C : public MetaClass {
 public:
-	const string getClassName() { return "C"; }
+	const string metaName() { return "C"; }
 
 	C() {
 		cout << "C" << endl;
@@ -46,7 +46,7 @@ public:
 };
 class D : public C {
 public:
-	const string getClassName() { return "D"; }
+	const string metaName() { return "D"; }
 
 	D() {
 		cout << "D" << endl;
@@ -93,13 +93,13 @@ void test() {
 	b.obj1.q = 55.55;
 	b.obj1.w = 66.66;
 
-	SerialStream stream = b.getMetaObject().stream();
+	SerialStream stream = b.metaObject().stream();
 	
 	B *pb = stream.toMetaClass<B>();
 
 	B &t0 = *pb;
-	t0.getMetaObject().stream(b.getMetaObject().stream());
-	MetaObject t0MetaObj = t0.getMetaObject();
+	t0.metaObject().stream(b.metaObject().stream());
+	MetaObject t0MetaObj = t0.metaObject();
 
 	{
 		std::ofstream outFile("output.json");

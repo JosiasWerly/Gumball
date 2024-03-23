@@ -257,7 +257,7 @@ public:
 	virtual ~MetaClass() = default;
 
 	MetaObject metaObject();
-	virtual const string className() = 0;
+	virtual const string metaName() = 0;
 };
 
 #include "ActivatorProperties.hpp"
