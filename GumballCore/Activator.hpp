@@ -1,14 +1,14 @@
 /* #################################### INTRO ####################################
-simplest real time reflection that I could have think of. Support:
-- manually your objects using FieldSchema::TCtor<T>("T")
+simplest real time reflection that I could have think of; supports:
+- manually declare your objects using FieldSchema::TCtor<T>("T")
 - inherit all the intended classes from MetaClass and implement the "metaName" method.
 - after that you will be able to:
 -- seamlessly convert objects to stream(json) or the other way around.
 -- iterate all fields of an object like arrays.
 -- check concrete type of said fields.
--- dynamically instantiate the metaobject.
+-- dynamically instantiate the metaObject.
 
-minimal overhead, the inheritance from MetaClass is to allow a common pointer instead of void* and to dispose the metaName for the system.
+minimal overhead, the inheritance from MetaClass is to allow a common pointer instead of void* and dispose the metaName for the system.
 */
 
 /* #################################### EXAMPLE ####################################
