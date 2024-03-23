@@ -2,6 +2,24 @@
 #include "picojson.h"
 using namespace std;
 
+void *SerialStream::toMetaClass() {
+	JsonObject jsonObject = getJsonValue().get<picojson::object>();
+
+	if (!jsonObject.contains("class")) {
+		return nullptr;
+	}
+
+	FieldSchema::FieldObject *fieldObject = Activator::instance()->get(jsonObject["class"].to_str());
+	if (!fieldObject) {
+		return nullptr;
+	}
+
+	return fieldObject->instantiate();
+}
+string SerialStream::toString(bool pretty) const { 
+	return jvalue.serialize(pretty); 
+}
+
 void Activator::add(FieldSchema::FieldObject *object) {
 	if (!object)
 		return;
@@ -29,11 +47,11 @@ bool MetaValue::isObject() {
 MetaObject MetaValue::asObject() {
 	return isObject() ? MetaObject(address, dynamic_cast<FieldSchema::FieldObjectProxy *>(field)->getMetaObject()) : MetaObject();
 }
-SerialStream MetaValue::toStream() {
-	return isObject() ? asObject().toStream() : field->toStream(address);
+SerialStream MetaValue::stream() {
+	return isObject() ? asObject().stream() : field->stream(address);
 }
-void MetaValue::fromStream(SerialStream stream) {
-	return isObject() ? asObject().fromStream(stream) : field->fromStream(address, stream);
+void MetaValue::stream(SerialStream stream) {
+	return isObject() ? asObject().stream(stream) : field->stream(address, stream);
 }
 
 
@@ -47,31 +65,34 @@ list<MetaValue> MetaObject::getValues() {
 	}
 	return out;
 }
-SerialStream MetaObject::toStream() {
+list<string> MetaObject::getNames() { return {}; }
+MetaValue MetaObject::operator[](const string name) { return MetaValue(0, 0); }
+bool MetaObject::operator==(const MetaObject &other) { return false; }
+SerialStream MetaObject::stream() {
 	picojson::object jsonObject;
-	picojson::object jfields;
+	picojson::object jsonValues;
 
 	auto properties = getValues();
 	for (auto p : properties) {
-		jfields[p.getName()] = p.toStream();
+		jsonValues[p.getName()] = p.stream();
 	}
 
 	jsonObject["class"] = picojson::value(object->getName());
-	jsonObject["fields"] = picojson::value(jfields);
+	jsonObject["fields"] = picojson::value(jsonValues);
 	return SerialStream(picojson::value(jsonObject));
 }
-void MetaObject::fromStream(SerialStream stream) {
-	JsonObject jobj = stream.getJsonValue().get<picojson::object>();
+void MetaObject::stream(SerialStream stream) {
+	JsonObject jsonObject = stream.getJsonValue().get<picojson::object>();
 
-	if (object->getName() != jobj["class"].to_str()) {
+	if (object->getName() != jsonObject["class"].to_str()) {
 		return;
 	}
 
-	JsonObject jfields = jobj["fields"].get<picojson::object>();
+	JsonObject jsonValues = jsonObject["fields"].get<picojson::object>();
 	auto properties = getValues();
 	for (auto p : properties) {
-		if (jfields.contains(p.getName())) {
-			p.fromStream(jfields[p.getName()]);
+		if (jsonValues.contains(p.getName())) {
+			p.stream(jsonValues[p.getName()]);
 		}
 	}
 }

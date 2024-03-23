@@ -93,15 +93,18 @@ void test() {
 	b.obj1.q = 55.55;
 	b.obj1.w = 66.66;
 
+	SerialStream stream = b.getMetaObject().stream();
+	
+	B *pb = stream.toMetaClass<B>();
 
-	B t0;
-	t0.getMetaObject().fromStream(b.getMetaObject().toStream());	
+	B &t0 = *pb;
+	t0.getMetaObject().stream(b.getMetaObject().stream());
 	MetaObject t0MetaObj = t0.getMetaObject();
 
 	{
 		std::ofstream outFile("output.json");
 		if (outFile.is_open()) {
-			outFile << t0MetaObj.toStream().toString();
+			outFile << t0MetaObj.stream().toString(true);
 			outFile.close();
 		}
 	}
@@ -110,15 +113,15 @@ void test() {
 		cout << endl;
 		cout << t0MetaObj.getName() << " cast ";
 		if (t0MetaObj.is<A>()) {
-			cout << (t0MetaObj.as<A>() ? "true" : "false") << endl;
+			cout << (t0MetaObj.get<A>() ? "true" : "false") << endl;
 		}
 
 		if (t0MetaObj.is<B>()) {
-			cout << (t0MetaObj.as<B>() ? "true" : "false") << endl;
+			cout << (t0MetaObj.get<B>() ? "true" : "false") << endl;
 		}
 
 		if (t0MetaObj.is<Super>()) {
-			cout << (t0MetaObj.as<Super>() ? "true" : "false") << endl;
+			cout << (t0MetaObj.get<Super>() ? "true" : "false") << endl;
 		}
 	}
 
@@ -148,19 +151,19 @@ void test() {
 
 						cout << subit.getName() << " = ";
 
-						if (int *ptr = subit.as<int>()) {
+						if (int *ptr = subit.get<int>()) {
 							cout << *ptr;
 						}
 
-						if (float *ptr = subit.as<float>()) {
+						if (float *ptr = subit.get<float>()) {
 							cout << *ptr;
 						}
 
-						if (double *ptr = subit.as<double>()) {
+						if (double *ptr = subit.get<double>()) {
 							cout << *ptr;
 						}
 
-						if (string *ptr = subit.as<string>()) {
+						if (string *ptr = subit.get<string>()) {
 							cout << *ptr;
 						}
 						
@@ -188,19 +191,19 @@ void test() {
 
 				cout << it.getName() << " = ";
 
-				if (int *ptr = it.as<int>()) {
+				if (int *ptr = it.get<int>()) {
 					cout << *ptr;
 				}
 
-				if (float *ptr = it.as<float>()) {
+				if (float *ptr = it.get<float>()) {
 					cout << *ptr;
 				}
 
-				if (double *ptr = it.as<double>()) {
+				if (double *ptr = it.get<double>()) {
 					cout << *ptr;
 				}
 
-				if (string *ptr = it.as<string>()) {
+				if (string *ptr = it.get<string>()) {
 					cout << *ptr;
 				}
 				cout << endl;
