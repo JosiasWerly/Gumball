@@ -2,24 +2,6 @@
 #include "picojson.h"
 using namespace std;
 
-void *SerialStream::toMetaClass() {
-	JsonObject jsonObject = getJsonValue().get<picojson::object>();
-
-	if (!jsonObject.contains("class")) {
-		return nullptr;
-	}
-
-	FieldSchema::FieldObject *fieldObject = Activator::instance()->get(jsonObject["class"].to_str());
-	if (!fieldObject) {
-		return nullptr;
-	}
-
-	return fieldObject->instantiate();
-}
-string SerialStream::toString(bool pretty) const { 
-	return jvalue.serialize(pretty); 
-}
-
 void Activator::add(FieldSchema::FieldObject *object) {
 	if (!object)
 		return;
@@ -38,6 +20,25 @@ void Activator::del(const string &name) {
 }
 FieldSchema::FieldObject *Activator::get(const string &name) {
 	return objects.contains(name) ? objects[name] : nullptr;
+}
+
+
+void *SerialStream::toMetaClass() {
+	JsonObject jsonObject = getJsonValue().get<picojson::object>();
+
+	if (!jsonObject.contains("class")) {
+		return nullptr;
+	}
+
+	FieldSchema::FieldObject *fieldObject = Activator::instance()->get(jsonObject["class"].to_str());
+	if (!fieldObject) {
+		return nullptr;
+	}
+
+	return fieldObject->instantiate();
+}
+string SerialStream::toString(bool pretty) const { 
+	return jvalue.serialize(pretty); 
 }
 
 

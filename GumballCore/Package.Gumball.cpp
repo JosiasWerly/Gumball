@@ -59,7 +59,7 @@ void test() {
 
 
 	auto activator = Activator::instance();
-
+	
 	activator->add(
 		FieldSchema::TCtor<Super>("Super")
 		.prop<double>("q", &Super::q)
@@ -209,7 +209,6 @@ void test() {
 				cout << endl;
 			}
 		}
-
 		cout << endl << endl;
 	}
 }
