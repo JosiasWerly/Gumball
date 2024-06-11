@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\objLoader">
+      <UniqueIdentifier>{8F276BAC-7BF5-5EB2-6489-CFD850F63A17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\stbImage">
+      <UniqueIdentifier>{A929A3B7-15EA-1EEE-DE24-686B4AA463CA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{B3F7140E-1F0C-3DBF-E88D-E01E546139F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Widget">
+      <UniqueIdentifier>{E97974DA-D51B-9FB0-BED6-B204AA172601}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\GLBuffer.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GLUtils.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Mesh.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ShaderUniform.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Shaders.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Texture.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\objLoader\objloader.hpp">
+      <Filter>Core\objLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\objLoader\vboindexer.hpp">
+      <Filter>Core\objLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\stbImage\stb_image.h">
+      <Filter>Core\stbImage</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.module.hpp" />
+    <ClInclude Include="RenderOverlay.hpp" />
+    <ClInclude Include="Scene\SceneOverlay.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\WidgetOverlay.hpp">
+      <Filter>Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\GLBuffer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GLUtils.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Mesh.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ShaderUniform.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Shaders.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Texture.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\objLoader\objloader.cpp">
+      <Filter>Core\objLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\objLoader\vboindexer.cpp">
+      <Filter>Core\objLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\stbImage\stb_image.cpp">
+      <Filter>Core\stbImage</Filter>
+    </ClCompile>
+    <ClCompile Include="Render.module.cpp" />
+    <ClCompile Include="RenderOverlay.cpp" />
+    <ClCompile Include="Scene\SceneOverlay.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\WidgetOverlay.cpp">
+      <Filter>Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+</Project>
