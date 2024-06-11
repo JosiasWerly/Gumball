@@ -8,7 +8,7 @@
 void injectModules(ModuleController *mCtrl) {
 	mCtrl->addModule<ContentModule>();
 	mCtrl->addModule<RenderModule>();
-	mCtrl->addModule<InputModule>();
 	mCtrl->addModule<EditorModule>();
+	mCtrl->addModule<InputModule>();
 	mCtrl->addModule<WorldModule>();
 }
