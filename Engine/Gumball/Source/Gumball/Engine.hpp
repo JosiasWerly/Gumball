@@ -1,10 +1,10 @@
 #pragma once
-#ifndef _engine
-#define _engine
+#ifndef __engine
+#define __engine
 #include <list>
 
-#include "Patterns.hpp"
-
+#include "Singleton.hpp"
+#include "Codex.hpp"
 
 class ModuleController;
 class ProjectTarget;
@@ -14,9 +14,6 @@ struct EngineInit {
 	char **argv;
 	void (*fnInjectModules)(ModuleController *mCtrl);
 };
-
-
-
 
 class GENGINE Engine : public Singleton<Engine> {
 public:
@@ -53,6 +50,7 @@ private:
 	ModuleController *moduleController;
 	ProjectTarget *projectTarget;
 	State state;
+	Codex codex;
 
 	Engine();
 	~Engine();
@@ -62,6 +60,20 @@ private:
 public:
 	ModuleController *getModuleController() { return moduleController; }
 	State &getState() { return state; }
+	Codex &getCodex() { return codex; }
 	
 };
-#endif // !_engine
+
+template<class T> class EngineSingleton {
+protected:
+	EngineSingleton() = default;
+	virtual ~EngineSingleton() = default;
+
+public:
+	static T *instance() {
+		static T *inst = Engine::instance()->getCodex().get<T>();
+		return inst;
+	}
+};
+
+#endif // !__engine

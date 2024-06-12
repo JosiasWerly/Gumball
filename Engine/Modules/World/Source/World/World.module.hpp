@@ -66,7 +66,7 @@ public:
 };
 
 Extern GMODULE void destroy(GameObject *trg);
-class GMODULE WorldModule : public TModule<WorldModule> {
+class GMODULE WorldModule : public ModuleSingleton<WorldModule> {
 public:
 	WorldEntityController entityController;
 

@@ -1,22 +1,21 @@
 #pragma once
-#ifndef _domain
-#define _domain
+#ifndef __domain
+#define __domain
 
-#include "Patterns.hpp"
+#include "Engine.hpp"
+#include "Singleton.hpp"
 #include <string>
-using namespace std;
 
-class GENGINE Domain : public Singleton<Domain> {
+class GENGINE Domain : public EngineSingleton<Domain> {
 	friend class Engine;
-
-	string applicationPath;
-	string applicationDir;
-	string contentPath;
+	std::string applicationPath;
+	std::string applicationDir;
+	std::string contentPath;
 
 	Domain() = default;
 public:
-	const string &getApplicationPath() { return applicationPath; }
-	const string &getApplicationDir() { return applicationDir; }
-	const string &getContentPath() { return contentPath; }
+	const std::string &getApplicationPath() const { return applicationPath; }
+	const std::string &getApplicationDir() const { return applicationDir; }
+	const std::string &getContentPath() const { return contentPath; }
 };
-#endif // !_domain
+#endif // !__domain

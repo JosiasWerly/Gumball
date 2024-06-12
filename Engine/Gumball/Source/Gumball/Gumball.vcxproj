@@ -111,8 +111,8 @@
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Module.hpp" />
-    <ClInclude Include="Patterns.hpp" />
     <ClInclude Include="ProjectTarget.hpp" />
+    <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="StateMachine.hpp" />
     <ClInclude Include="Var.hpp" />
   </ItemGroup>
@@ -124,8 +124,8 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Module.cpp" />
-    <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="ProjectTarget.cpp" />
+    <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>

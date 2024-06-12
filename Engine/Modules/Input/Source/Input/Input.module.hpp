@@ -100,7 +100,7 @@ public:
 	Inline bool hasEvents() { return events.size(); }
 };
 
-class GMODULE InputModule : public TModule<InputModule> {
+class GMODULE InputModule : public ModuleSingleton<InputModule> {
 	friend bool Input::isKeyDown(Input::EKeyCode);
 	friend bool Input::onKeyPressed(Input::EKeyCode Key);
 	friend bool Input::onKeyReleased(Input::EKeyCode Key);

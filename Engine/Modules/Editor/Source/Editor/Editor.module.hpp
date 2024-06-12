@@ -2,7 +2,7 @@
 #ifndef __editormodule
 #define __editormodule
 
-class GMODULE EditorModule : public TModule<EditorModule> {	
+class GMODULE EditorModule : public ModuleSingleton<EditorModule> {
 	class UserWidget *editor;
 	
 	void posLoad() override;

@@ -8,7 +8,7 @@
 #include <set>
 #include <string>
 
-class GMODULE ContentModule : public TModule<ContentModule> {
+class GMODULE ContentModule : public ModuleSingleton<ContentModule> {
 private:
 	std::list<BaseAssetFactory *> factories;
 	std::list<Asset *> assets;

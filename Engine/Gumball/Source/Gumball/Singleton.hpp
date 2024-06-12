@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _patterns
-#define _patterns
+#ifndef __singleton
+#define __singleton
 
 
 #include <unordered_map>
@@ -10,6 +10,7 @@ template<typename T>
 class Singleton {
 protected:
 	static inline T *inst = nullptr;
+
 	Singleton() { 
 		if (inst)
 			throw;
@@ -23,4 +24,4 @@ public:
 	static T *instance() { return inst; }
 };
 
-#endif // !_patterns
+#endif // !__singleton

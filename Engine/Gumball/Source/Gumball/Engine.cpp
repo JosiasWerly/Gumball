@@ -1,7 +1,7 @@
 #include "Engine.hpp"
+
 #include "Module.hpp"
 #include "ProjectTarget.hpp"
-
 #include "Domain.hpp"
 
 #include <iostream>
@@ -24,6 +24,8 @@ void Engine::initialize(EngineInit data) {
 	domain->applicationPath = data.argv[0];
 	domain->applicationDir = domain->applicationPath.substr(0, domain->applicationPath.find_last_of("\\")) + "\\";
 	domain->contentPath = domain->applicationDir + "content\\";
+
+	codex.add<Domain>(domain);
 }
 void Engine::tick() {
 	moduleController->load();
@@ -107,48 +109,3 @@ void Engine::tick() {
 	moduleController->shutdown();
 	moduleController->unload();
 }
-
-//moduleController->attach();
-//moduleController->startup();
-//
-//
-//projectTarget->load();
-//playState = EPlayState::beginPlay;
-//while (true) {
-//	const double deltaTime = 0.1;
-//	//timeStats.capture();
-//	//const double &deltaTime = timeStats.getDeltaTime();
-//
-//	//cheapest state machine ever created
-//	switch (loadState) {
-//		case ELoadState::load:
-//			projectTarget->load();
-//			loadState = ELoadState::none;
-//			break;
-//		case ELoadState::unload:
-//			// worldSystem->shutdown();//TEMPORARY CALL FOR
-//			projectTarget->unload();
-//			loadState = ELoadState::none;
-//			break;
-//	}
-//	
-//	moduleController->tick<EModuleTickType::editor>(deltaTime);
-//
-//	switch (playState) {
-//		case EPlayState::beginPlay:
-//			moduleController->beginPlay();
-//			playState = EPlayState::playing;
-//			break;
-//		case EPlayState::playing:
-//			moduleController->tick<EModuleTickType::gameplay>(deltaTime);
-//			//renderSystem->mainWindow.setTitle(to_string(timeStats.getFPS()));
-//			break;
-//		case EPlayState::endPlay:
-//			moduleController->endPlay();
-//			playState = EPlayState::disabled;
-//			break;
-//	}
-//}
-//moduleController->endPlay();
-//moduleController->shutdown();
-//moduleController->detach();

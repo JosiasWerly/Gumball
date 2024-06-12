@@ -13,7 +13,7 @@ using namespace std;
 class SceneOverlay;
 class WidgetOverlay;
 
-class GMODULE RenderModule : public TModule<RenderModule> {
+class GMODULE RenderModule : public ModuleSingleton<RenderModule> {
     list<RenderOverlay*> overlays;
     SceneOverlay *const scene;
     WidgetOverlay *const widget;

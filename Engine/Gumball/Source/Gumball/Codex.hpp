@@ -3,6 +3,7 @@
 #define __codex
 
 #include <unordered_map>
+#include <typeinfo>
 
 class GENGINE Codex {
 	std::unordered_map<size_t, void *> data;

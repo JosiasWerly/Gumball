@@ -5,7 +5,6 @@
 #include <list>
 #include <unordered_map>
 
-#include "Codex.hpp"
 #include "Engine.hpp"
 
 enum class EModuleTickType {
@@ -77,10 +76,10 @@ public:
 	template<class T> T *getModule() { return codex.get<T>(); }
 };
 
-template<class T> class TModule : public Module {
+template<class T> class ModuleSingleton : public Module {
 protected:
-	TModule() = default;
-	virtual ~TModule() = default;
+	ModuleSingleton() = default;
+	virtual ~ModuleSingleton() = default;
 
 public:
 	static T *instance() {
