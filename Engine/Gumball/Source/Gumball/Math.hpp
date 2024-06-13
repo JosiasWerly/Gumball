@@ -129,7 +129,8 @@ public:
 class Vector2i :
 	public TVector<glm::ivec2> {
 public:
-	int	&x = rawVector.x,
+	int	
+		&x = rawVector.x,
 		&y = rawVector.y;
 	
 	using TParent::TParent;
@@ -155,7 +156,8 @@ public:
 class Vector3i :
 	public TVector<glm::ivec3> {
 public:
-	int	&x = rawVector.x,
+	int	
+		&x = rawVector.x,
 		&y = rawVector.y,
 		&z = rawVector.z;
 
@@ -183,7 +185,8 @@ public:
 class Vector4i :
 	public TVector<glm::ivec4> {
 public:
-	int &x = rawVector.x,
+	int 
+		&x = rawVector.x,
 		&y = rawVector.y,
 		&z = rawVector.z,
 		&w = rawVector.w;
@@ -213,7 +216,8 @@ public:
 class Vector2 : 
 	public TVector<glm::vec2> {
 public:	
-	float &x = rawVector.x,
+	float 
+		&x = rawVector.x,
 		&y = rawVector.y;
 
 	using TParent::TParent;
@@ -239,7 +243,8 @@ public:
 class Vector3 : 
 	public TVector<glm::vec3> {
 public:
-	float &x = rawVector.x,
+	float 
+		&x = rawVector.x,
 		&y = rawVector.y,
 		&z = rawVector.z;
 
@@ -295,72 +300,48 @@ public:
 	operator Vector3();
 };
 
-class Rotator {
-protected:
-	glm::mat4 rot = glm::mat4(1); //EVALUATE perhaps I should transform this into a quat..
+class GENGINE Quat {
 public:
-	Rotator() {
+	glm::quat rawQuat;
+
+	Quat() : 
+		rawQuat(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)) {
+	}
+	Quat(float w, float x, float y, float z) : 
+		rawQuat(glm::quat(w, x, y, z)) {
 	}
 
-	Vector3 forward() {
-		return Vector3(normalize(glm::vec3(rot[2])));
-	}
-	Vector3 right() {
-		return Vector3(normalize(glm::vec3(rot[0])));
-	}
-	Vector3 up() {
-		return Vector3(normalize(glm::vec3(rot[1])));
-	}
+	Vector3 forward() const;
+	Vector3 right() const;
+	Vector3 up() const;
+	Vector3 eulerAngles() const;
+	void eulerAngles(Vector3 direction);
 
-	Rotator &rotate(float pitch, float roll, float yaw) {
-		rot = glm::rotate(rot, glm::radians(pitch), glm::vec3(1, 0, 0));
-		rot = glm::rotate(rot, glm::radians(roll), glm::vec3(0, 1, 0));
-		rot = glm::rotate(rot, glm::radians(yaw), glm::vec3(0, 0, 1));
-		return *this;
-	}
-	Rotator &rotateAround(float angle, Vector3 axis) {
-		rot = glm::rotate(rot, glm::radians(angle), axis.rawVector);
-		return *this;
-	}
-	Vector3 eulerAngles() {
-		return Vector3(glm::eulerAngles(glm::quat_cast(rot)));
-	}
-	glm::mat4& getMat() {
-		return rot;
-	}
+	glm::mat4 getMatrix() const;	
+	void rotate(float pitch, float roll, float yaw);
+	void rotateAround(Vector3 axis, float angle);
 };
 
-class Transform {
+class GENGINE Transform {
+private:
 	Transform* parent = nullptr;
+	
+	glm::mat4 getRelativeMatrix(glm::mat4 mat) const;
+
 public:
 	Vector3 position;
 	Vector3 scale;
-	Rotator rotator;
+	Quat rotation;
 
-	Transform() {
-	}
-	Transform(glm::mat4 m) {
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::quat rotation;//THIS IS INCOMPLETE | why?
-		glm::decompose(m, scale.rawVector, rotation, position.rawVector, skew, perspective);
-	}
-
-	glm::mat4 getMat() {
-		glm::mat4 out(1);
-		out = glm::translate(out, position.rawVector);
-		out = out * rotator.getMat();
-		//out = glm::scale(out, scale.rawVec()); //TODO: whthell with the scale
-		return out;
-	}
-	glm::mat4 getRelativeMat(glm::mat4 mat) {
-		if (parent)
-			return parent->getRelativeMat(getMat());
-		else
-			return getMat() * mat;
-	}
+	Transform();
+	Transform(glm::mat4 mat);
 
 	void setParent(Transform* newParent) { parent = newParent; }
 	Transform* getParent() { return parent; }
+	
+	void setMatrix(const glm::mat4 &mat);
+	glm::mat4 getMatrix() const;
+	glm::mat4 getRelativeMatrix() const { return getRelativeMatrix(getMatrix()); }
+
 };
 #endif // !_math

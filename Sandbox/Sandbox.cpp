@@ -20,6 +20,7 @@ public:
 	}
 	void beginPlay() {
 		MeshComponent::beginPlay();
+		owner->transform.scale = Vector3(1, 1, 1);
 		vel = Vector3(rand() % 2 + 1, rand() % 2 + 1, rand() % 2 + 1);
 		vel = vel.normalize() * 0.01;
 		if (rand() % 2) {
@@ -27,7 +28,7 @@ public:
 		}
 	}
 	void tick(const double &deltaTime) {
-		owner->transform.rotator.rotate(0, .5, 0);
+		owner->transform.rotation.rotate(.05, .05, .05);
 		owner->transform.position += vel;
 		auto &pos = owner->transform.position;
 		if (pos.x < -10) {
@@ -87,16 +88,16 @@ public:
 		Actor::tick(deltaTime);
 		
 		if (Input::isKeyDown(Input::EKeyCode::A)) {
-			camera->transform.position.z -= .1f;
+			camera->transform.rotation.rotate(0, 0, 1.);
 		}
 		else if (Input::isKeyDown(Input::EKeyCode::D)) {
-			camera->transform.position.z += .1f;
+			camera->transform.rotation.rotate(0, 0, -1.);
 		}
 		if (Input::isKeyDown(Input::EKeyCode::W)) {
-			camera->transform.position.y -= .1f;
+			camera->transform.rotation.rotate(0, 1, 0);
 		}
 		else if (Input::isKeyDown(Input::EKeyCode::S)) {
-			camera->transform.position.y += .1f;
+			camera->transform.rotation.rotate(0, -1, 0);
 		}
 	}
 };

@@ -96,8 +96,8 @@ void FboHandle::render() {
 }
 
 
-static ViewHandle *hView;
-static DrawHandle *hDraw;
+//static ViewHandle *hView;
+//static DrawHandle *hDraw;
 void SceneOverlay::onAttach() {
 	gbuffer = new FboHandle;
 	gbuffer->setShader(ContentModule::instance()->getContent<Shader>("gbuffer"));
@@ -108,23 +108,23 @@ void SceneOverlay::onAttach() {
 
 
 
-	hView = new ViewHandle;
-	hView->viewMode.setProjectionPerspective();
-	hView->enable();
-	hView->transform = new Transform;
-	hView->transform->position.z = -30;
-
-	ContentModule *cm = ContentModule::instance();
-	hDraw = new DrawHandle;
-	auto &drawParam = hDraw->getShaderInstance().getParameters();
-	drawParam.activate({ "uTexture", "uColor" });
-	drawParam.set<Texture *>("uTexture", cm->getContent<Texture>("uv_grid"));
-	drawParam.set<Color>("uColor", 0xffffffff);
-	hDraw->setMesh(cm->getContent<MeshData>("cube"));
-	hDraw->enable();
-	hDraw->transform = new Transform;
-	hDraw->transform->scale = Vector3(0.001, 0.001, 0.001);
-	hDraw->transform->position = Vector3(10, 0, 0);
+	//hView = new ViewHandle;
+	//hView->viewMode.setProjectionPerspective();
+	//hView->enable();
+	//hView->transform = new Transform;
+	//hView->transform->position.z = -30;
+	//
+	//ContentModule *cm = ContentModule::instance();
+	//hDraw = new DrawHandle;
+	//auto &drawParam = hDraw->getShaderInstance().getParameters();
+	//drawParam.activate({ "uTexture", "uColor" });
+	//drawParam.set<Texture *>("uTexture", cm->getContent<Texture>("uv_grid"));
+	//drawParam.set<Color>("uColor", 0xffffffff);
+	//hDraw->setMesh(cm->getContent<MeshData>("cube"));
+	//hDraw->enable();
+	//hDraw->transform = new Transform;
+	//hDraw->transform->scale = Vector3(0.001, 0.001, 0.001);
+	//hDraw->transform->position = Vector3(10, 0, 0);
 }
 void SceneOverlay::onDetach() {
 
@@ -143,14 +143,14 @@ void SceneOverlay::onRender(const double &deltaTime) {
 	geometryShader->bind();
 	geometryUniforms.uploadActive();
 	for (auto &v : views) {
-		const auto mView = v->transform->getMat();
+		const auto mView = v->transform->getMatrix();
 		const auto mProjection = v->viewMode.mProjection;
 		geometryUniforms.sync<glm::mat4>("uView", mView);
 		geometryUniforms.sync<glm::mat4>("uProj", mProjection);
 
 		for (auto &d : draws) {
 			auto &mesh = d->meshInstance;
-			geometryUniforms.sync<glm::mat4>("uModel", d->transform->getMat());
+			geometryUniforms.sync<glm::mat4>("uModel", d->transform->getMatrix());
 			d->shaderInstance.getParameters().uploadActive();
 			mesh.bind();
 			mesh.draw();
