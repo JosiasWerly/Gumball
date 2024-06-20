@@ -7,23 +7,20 @@
 #include "Core/GLUtils.hpp"
 #include "Render.module.hpp"
 
+ImVec2 toImVec(const Vector2 &vec) { return ImVec2(vec.x, vec.y); }
+
+void WidgetContainer::beginDraw() {
+	ImGui::Begin(getLabel().c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+}
 void WidgetContainer::render(const double &deltaTime) {
 	if (getVisibility() == EVisibility::hidden)
 		return;
 
-	auto horizontal = []() { ImGui::SameLine(); };
-	auto vertical = [](){};
-
 	beginDraw();
-	for (auto i : items) {
+	for (auto &i : items) {
 		i->render(deltaTime);
-		if (layout == ELayout::horizontal)
-			ImGui::SameLine();
 	}
 	endDraw();
-}
-void WidgetContainer::beginDraw() {
-	ImGui::Begin(getLabel().c_str());
 }
 void WidgetContainer::endDraw() {
 	ImGui::End();
@@ -43,15 +40,25 @@ WidgetContainer &WidgetContainer::operator>>(Widget *item) {
 	item->container = nullptr;
 	return *this;
 }
-void WidgetContainer::pushItems(list<Widget *> items) {
+WidgetContainer &WidgetContainer::operator<<(std::list<Widget *> items){
 	for (auto i : items) {
 		(*this) << i;
 	}
+	return *this;
 }
-void WidgetContainer::popItems(list<Widget *> items) {
+WidgetContainer &WidgetContainer::operator>>(std::list<Widget *> items) {
 	for (auto i : items) {
 		(*this) >> i;
 	}
+	return *this;
+}
+Widget *WidgetContainer::operator[](const string &label) {
+	for (auto &i : items) {
+		if (i->getLabel() == label) {
+			return i;
+		}
+	}
+	return nullptr;
 }
 
 UserWidget::UserWidget() {
@@ -109,5 +116,35 @@ namespace Clay {
 			state = !state;
 			onClick.broadcast(this, state);
 		}
+	}
+
+	void ProgressBar::render(const double &deltaTime) {
+		ImGui::ProgressBar(getFraction(), toImVec(getSize()));
+	}
+	void ProgressBar::setValue(float newValue) {
+		value = std::fmax(newValue, 0.f);
+		value = std::fmin(value, maxValue);
+	}
+	void ProgressBar::setMaxValue(float newValue) {
+		newValue = std::fmax(newValue, 1.f);
+		value = std::fmin(value, newValue);
+	}
+
+	Histogram::Histogram() {
+		valuesCount = 20;
+		values = new float[20];
+	}
+	Histogram::~Histogram() {
+		valuesCount = 0;
+		delete[] values;
+	}
+	void Histogram::render(const double &deltaTime) {
+		ImGui::PlotHistogram(getLabel().c_str(), values, valuesCount, 0, nullptr, -1.f, 1.f, toImVec(getSize()));
+	}
+
+	void Histogram::pushValue(float newValue) {
+		for (int i = 0; i < valuesCount - 1; ++i)
+			values[i] = values[i + 1];
+		values[valuesCount - 1] = newValue;
 	}
 };

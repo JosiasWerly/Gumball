@@ -11,44 +11,49 @@ enum class ELayout {
 };
 
 class GMODULE Widget {
-	friend class WidgetOverlay;
 	friend class WidgetContainer;
 
 	WidgetContainer *container = nullptr;
 	EVisibility visibility = EVisibility::hidden;
 
-protected:
-	string label = "widget";
-	virtual void render(const double &deltaTime) {}
+	Vector2 size;
+	string label = "widget";	
 
 public:
+	virtual void render(const double &deltaTime) {}
+
 	void setLabel(string newLabel) { this->label = newLabel; }
 	void setVisibility(EVisibility newVisibility) { visibility = newVisibility; }
-	Inline const string& getLabel() { return label; }
+	void setSize(Vector2 newSize) { size = newSize; }
+
+	Inline const string& getLabel() const { return label; }
 	Inline EVisibility getVisibility() const { return visibility; }
+	Inline Vector2 getSize() const { return size; }
 	Inline WidgetContainer *getContainer() const { return container; }
 };
+typedef std::list<Widget *> Widgets;
 
 class GMODULE WidgetContainer : public Widget {
-	list<Widget *> items;
+private:
+	std::list<Widget *> items;
 
 protected:
-	virtual void render(const double &deltaTime) override;
 	virtual void beginDraw();
+	virtual void render(const double &deltaTime);
 	virtual void endDraw();
 
 public:
-	ELayout layout = ELayout::vertical;
-
+	
 	WidgetContainer &operator<<(Widget *item);
 	WidgetContainer &operator>>(Widget *item);
-	void pushItems(list<Widget *> items);
-	void popItems(list<Widget *> items);
+	WidgetContainer &operator<<(std::list<Widget *> items);
+	WidgetContainer &operator>>(std::list<Widget *> items);
+
+	Widget *operator[](const string &label);
 	Inline bool hasChild(Widget *item) const { return std::find(items.begin(), items.end(), item) != std::end(items); };
 };
 
 class GMODULE UserWidget : public WidgetContainer {
-
 public:
 	UserWidget();
 	void show();
@@ -60,13 +65,13 @@ public:
 namespace Clay {
 	class GMODULE Text : public Widget {
 		string text = "Text";
-	
-	protected:
+
 		void render(const double &deltaTime);
 
 	public:
 		void setText(string newText);
 		string getText() { return text; }
+		
 
 		Dispatcher<Widget *, string, string> onTextUpdated; //obj, old text, new text;
 	};
@@ -74,10 +79,9 @@ namespace Clay {
 	class GMODULE InputText : public Widget {
 		char inBuffer[256] = {};
 		string text;
-	
-	protected:
+
 		void render(const double &deltaTime);
-	
+
 	public:
 		string getText() const { return text; }
 
@@ -87,12 +91,38 @@ namespace Clay {
 	class GMODULE Button : public Widget {
 		bool state = false;
 
-	protected:
 		void render(const double &deltaTime);
 
 	public:
 		Inline bool getState() const { return state; }
 		Dispatcher<Widget *, bool> onClick; //obj, newState
+	};
+
+	class GMODULE ProgressBar : public Widget {
+		float value = 0.f, maxValue = 100.f;
+	
+		void render(const double &deltaTime);
+
+	public:
+		void setValue(float newValue);
+		void setMaxValue(float newValue);
+		float getValue() const { return value; }
+		float getMaxValue() const { return maxValue; }
+		float getFraction() const { return value / maxValue; }
+		bool atMax() const { return value == maxValue; }
+	};
+
+	class GMODULE Histogram : public Widget {
+		int valuesCount = 20;
+		float *values;
+
+		void render(const double &deltaTime);
+	
+	public:
+		Histogram();
+		~Histogram();
+
+		void pushValue(float newValue);
 	};
 };
 

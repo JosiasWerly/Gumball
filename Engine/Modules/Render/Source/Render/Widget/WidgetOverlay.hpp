@@ -4,7 +4,6 @@
 #include <Render/RenderOverlay.hpp>
 #include <Render/Widget/Widget.hpp>
 
-class WidgetOverlay;
 class Widget;
 
 class GMODULE WidgetOverlay : public RenderOverlay {
