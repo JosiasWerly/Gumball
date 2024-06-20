@@ -115,6 +115,7 @@
     <ClInclude Include="Render.module.hpp" />
     <ClInclude Include="RenderOverlay.hpp" />
     <ClInclude Include="Scene\SceneOverlay.hpp" />
+    <ClInclude Include="Widget\Widget.hpp" />
     <ClInclude Include="Widget\WidgetOverlay.hpp" />
     <ClInclude Include="Window.hpp" />
   </ItemGroup>
@@ -131,6 +132,7 @@
     <ClCompile Include="Render.module.cpp" />
     <ClCompile Include="RenderOverlay.cpp" />
     <ClCompile Include="Scene\SceneOverlay.cpp" />
+    <ClCompile Include="Widget\Widget.cpp" />
     <ClCompile Include="Widget\WidgetOverlay.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
