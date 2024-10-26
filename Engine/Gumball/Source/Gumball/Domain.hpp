@@ -10,12 +10,14 @@ class GENGINE Domain : public EngineSingleton<Domain> {
 	friend class Engine;
 	std::string applicationPath;
 	std::string applicationDir;
+	std::string engineDir;
 	std::string contentPath;
 
 	Domain() = default;
 public:
 	const std::string &getApplicationPath() const { return applicationPath; }
 	const std::string &getApplicationDir() const { return applicationDir; }
+	const std::string &getEngineDir() const { return engineDir; }
 	const std::string &getContentPath() const { return contentPath; }
 };
 #endif // !__domain

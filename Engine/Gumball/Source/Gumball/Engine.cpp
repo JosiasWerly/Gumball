@@ -23,8 +23,8 @@ void Engine::initialize(EngineInit data) {
 	Domain *domain = new Domain;
 	domain->applicationPath = data.argv[0];
 	domain->applicationDir = domain->applicationPath.substr(0, domain->applicationPath.find_last_of("\\")) + "\\";
-	domain->contentPath = domain->applicationDir + "content\\";
-
+	domain->engineDir = data.engineDir;
+	domain->contentPath = domain->engineDir + "Content\\";
 	codex.add<Domain>(domain);
 }
 void Engine::tick() {

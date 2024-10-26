@@ -4,10 +4,11 @@ Extern {
 }
 
 void injectModules(ModuleController *mCtrl);
+const char* engineDir();
 
 int main(int argc, char *argv[]) {
 	Engine *engine = new Engine;
-	engine->initialize({ argc, argv, injectModules });
+	engine->initialize({ argc, argv, engineDir(), injectModules });
 	engine->tick();
 	return 0;
 }

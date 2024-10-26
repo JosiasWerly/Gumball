@@ -12,6 +12,7 @@ class ProjectTarget;
 struct EngineInit {
 	int argc;
 	char **argv;
+	const char *engineDir;
 	void (*fnInjectModules)(ModuleController *mCtrl);
 };
 

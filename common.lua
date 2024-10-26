@@ -31,6 +31,7 @@ return {
 
 externalModules = {}
 engineModules = {}
+
 function Contains(array, value)
 	for _, v in ipairs(array) do
 		if v == value then
@@ -252,8 +253,21 @@ function Delc(projInfo)
 end
 
 function GenerateModulesFile(trg)
-	table.sort(engineModules, function(a, b) return a:upper() < b:upper() end)
-	local file = io.open(trg.path .. "modules.gen.cpp", "w")
+	table.sort(engineModules,
+		function(a, b)
+			local function CountDependencies(entry)
+				local i = 0
+				for _, v in ipairs(engineModules[entry]) do
+					if Contains(externalModules, v) == false and v ~= "Gumball" then
+						i = i + 1
+					end
+				end
+				return i
+			end
+			return Contains(engineModules[b], a)
+		end
+	)
+	local file = io.open(trg.path .. "runtime.gen.cpp", "w")
 	if file then
 		file:write("#include \"Runtime.hpp\"\n")
 		file:write("#include <Gumball/Engine.hpp>\n")
@@ -264,34 +278,13 @@ function GenerateModulesFile(trg)
 		for _, name in ipairs(engineModules) do
 			file:write("\tmCtrl->addModule<".. name .. "Module>();\n")
 		end
-		file:write("}")
+		file:write("}\n")
+
+		file:write("const char* engineDir() {\n")
+		file:write("\treturn ".."\""..os.getcwd():gsub("/", "\\".."\\").."\\".."\\".."\";\n")
+		file:write("}\n")
 		file:close()
 	end
-	-- table.sort(engineModules, function(a, b) return a:upper() < b:upper() end)
-
-	-- local path = trg.path
-	-- local file = io.open(path .. "Modules.hpp", "w")
-	-- if file then
-	-- 	file:write("#include <list>\nstd::list<Module*> getModules();")
-	-- 	file:close()
-	-- end
-
-	-- local file = io.open(path .. "Modules.cpp", "w")
-	-- if file then
-	-- 	file:write("#include \"Modules.hpp\"\n")
-	-- 	local includes = [[]]
-	-- 	for _, name in ipairs(engineModules) do
-	-- 		includes = includes .. "#include <" .. name .. "/" .. name .. ".module.hpp>\n"
-	-- 	end
-	-- 	file:write(includes)
-
-	-- 	file:write("std::list<Module*> getModules() {\n\treturn {\n")
-	-- 	for _, name in ipairs(engineModules) do
-	-- 		file:write("\t\tnew " .. name .. "Module,\n")
-	-- 	end
-	-- 	file:write("\t};\n}")
-	-- 	file:close()
-	-- end
 end
 
 function DelcProject(projInfo)
@@ -314,6 +307,7 @@ function DelcModule(groupName, moduleInfo, isEngine)
 	if isEngine then
 		InjectGumball(moduleInfo)
 		table.insert(engineModules, moduleInfo.name)
+		engineModules[moduleInfo.name] = moduleInfo.links
 		table.insert(moduleInfo.defines, "GMODULE")
 	else
 		table.insert(externalModules, moduleInfo.name)
