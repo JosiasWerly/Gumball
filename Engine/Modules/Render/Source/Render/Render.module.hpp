@@ -24,8 +24,8 @@ protected:
     void unload() override;
     void posLoad() override;
     void tick(const double &deltaTime) override;
-    EModuleTickType tickType() override { return EModuleTickType::all; }
-
+    EModuleTickType tickType() const override { return EModuleTickType::all; }
+    const char* name() const override { return "Render"; }
 public:
     RenderModule();
     ~RenderModule();

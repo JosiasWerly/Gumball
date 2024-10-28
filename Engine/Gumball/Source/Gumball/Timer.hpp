@@ -9,7 +9,7 @@ class GENGINE Timer {
 
 public:
     Timer();
-    void capture();
+    void start();
     float getSeconds() const { return seconds; }
     double getMilliseconds() const { return milliseconds; }
 };

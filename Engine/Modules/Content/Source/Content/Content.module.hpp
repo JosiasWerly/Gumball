@@ -18,8 +18,8 @@ private:
 protected:
 	void posLoad() override;
 	void unload() override;
-	EModuleTickType tickType() override { return EModuleTickType::none; }
-
+	EModuleTickType tickType() const override { return EModuleTickType::none; }
+	const char* name() const override { return "Content"; }
 public:
 
 	ContentModule();

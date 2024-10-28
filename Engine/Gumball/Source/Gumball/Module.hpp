@@ -9,12 +9,15 @@
 
 enum class EModuleTickType {
 	none,
-	editor,//remove this
+	editor,
 	gameplay,
-	all,//change this to "always"
+	all,
 };
 
 class GENGINE Module {
+private:
+	double msCost;
+
 protected:
 	friend class ModuleController;
 	friend class Engine;
@@ -33,9 +36,12 @@ protected:
 	virtual void beginPlay();
 	virtual void endPlay();
 	virtual void tick(const double &deltaTime);
-	//TODO: name()?
 
-	virtual EModuleTickType tickType();
+	virtual EModuleTickType tickType() const;
+
+public:
+	virtual const char* name() const;
+	double getMsCost() const { return msCost; }
 };
 
 class GENGINE ModuleController {
@@ -58,14 +64,8 @@ protected:
 	void endPlay();
 
 	template<EModuleTickType> void tick(const double &deltaTime) = delete;
-	template<> void tick<EModuleTickType::editor>(const double &deltaTime) {
-		for (auto &s : editorTick)
-			s->tick(deltaTime);
-	}
-	template<> void tick<EModuleTickType::gameplay>(const double &deltaTime) {
-		for (auto &s : gameplayTick)
-			s->tick(deltaTime);
-	}
+	template<> void tick<EModuleTickType::editor>(const double &deltaTime);
+	template<> void tick<EModuleTickType::gameplay>(const double &deltaTime);
 
 public:
 	template<class T> void addModule() {
@@ -74,6 +74,7 @@ public:
 		_addModule(newModule);
 	}
 	template<class T> T *getModule() { return codex.get<T>(); }
+	std::list<Module *> &getModules() { return modules; }
 };
 
 template<class T> class ModuleSingleton : public Module {

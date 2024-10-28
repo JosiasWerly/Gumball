@@ -6,6 +6,12 @@
 #include "Core/GLUtils.hpp"
 #include "Render.module.hpp"
 
+WidgetOverlay::~WidgetOverlay() {
+	for (Widget *e : elements) {
+		delete e;
+		e = nullptr;
+	}	
+}
 void WidgetOverlay::onAttach() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

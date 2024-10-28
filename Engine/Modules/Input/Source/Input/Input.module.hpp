@@ -114,7 +114,8 @@ class GMODULE InputModule : public ModuleSingleton<InputModule> {
 
 	void posLoad() override;
 	void tick(const double &deltaTime) override;
-	EModuleTickType tickType() override { return EModuleTickType::all; }
+	EModuleTickType tickType() const override { return EModuleTickType::all; }
+    const char* name() const override { return "Input"; }
 
 	void onInputCallback(int key, int scancode, int action, int mods);
 

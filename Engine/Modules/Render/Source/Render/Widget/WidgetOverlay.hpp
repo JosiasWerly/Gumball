@@ -13,6 +13,7 @@ class GMODULE WidgetOverlay : public RenderOverlay {
     std::list<Widget *> elements;
 
 public:
+    ~WidgetOverlay();
     void onAttach() override;
     void onDetach() override;
     void onRender(const double &deltaTime) override;

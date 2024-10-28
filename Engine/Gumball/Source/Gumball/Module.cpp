@@ -1,4 +1,5 @@
 #include "Module.hpp"
+#include "Timer.hpp"
 
 void Module::load() {}
 void Module::posLoad() {}
@@ -9,7 +10,8 @@ void Module::hotreload() {}
 void Module::beginPlay() {}
 void Module::endPlay() {}
 void Module::tick(const double &deltaTime) {}
-EModuleTickType Module::tickType() { return EModuleTickType::none; }
+EModuleTickType Module::tickType() const { return EModuleTickType::none; }
+const char* Module::name() const { return "Module"; }
 
 ModuleController::ModuleController() {
 }
@@ -54,4 +56,20 @@ void ModuleController::beginPlay() {
 void ModuleController::endPlay() {
 	for (auto &s : modules)
 		s->endPlay();
+}
+template<> void ModuleController::tick<EModuleTickType::editor>(const double& deltaTime) {
+	Timer t;
+	for (auto &m : editorTick) {
+		t.start();
+		m->tick(deltaTime);
+		m->msCost = t.getMilliseconds();
+	}
+}
+template<> void ModuleController::tick<EModuleTickType::gameplay>(const double& deltaTime) {
+	Timer t;
+	for (auto &m : gameplayTick) {
+		t.start();
+		m->tick(deltaTime);
+		m->msCost = t.getMilliseconds();		
+	}
 }

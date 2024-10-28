@@ -75,7 +75,8 @@ public:
 	void beginPlay() override;
 	void endPlay() override;
 	void tick(const double &deltaTime) override;
-	EModuleTickType tickType() override { return EModuleTickType::gameplay; }
+	EModuleTickType tickType() const override { return EModuleTickType::gameplay; }
+	const char* name() const override { return "World"; }
 };
 
 #endif // _worldmodule

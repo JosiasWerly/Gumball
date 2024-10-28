@@ -10,6 +10,7 @@ private:
 	ProgressBar prog;
 	Histogram hist;
 	float a = 0;
+
 public:
 	EditorToolbar() {
 		(*this) << Widgets{&play, &stop, &prog, &hist,};
@@ -53,7 +54,38 @@ public:
 	}
 };
 
+class ModuleControllerDebug : public UserWidget {
+private:
+	vector<Histogram> histogram;
+
+public:
+	ModuleControllerDebug() {
+		setLabel("ModuleControllerDebug");
+		std::list<Module *> &modules = Engine::instance()->getModuleController()->getModules();
+		histogram.resize(modules.size());
+		
+		int i = 0;
+		for (auto m : modules) {
+			histogram[i].setLabel(m->name());
+			(*this)<<&histogram[i];
+			i++;
+		}
+	}
+	void render(const double &deltaTime) {
+		std::list<Module *> &modules = Engine::instance()->getModuleController()->getModules();
+		histogram.resize(modules.size());
+
+		int i = 0;
+		for (auto m:modules) {
+			histogram[i++].pushValue(m->getMsCost());
+		}
+	}
+};
+
 void EditorModule::posLoad() {
 	editor = new EditorToolbar;
 	editor->show();
+
+	ModuleControllerDebug *debug = new ModuleControllerDebug();
+	debug->show();
 }
