@@ -3,12 +3,13 @@
 #define __widgetoverlay
 #include <Render/RenderOverlay.hpp>
 
+//TODO: remove deltatime from render method, add tick methodm rename to UIElement
 class GMODULE IWidgetElement {
 	friend class WidgetOverlay;
 public:
     IWidgetElement() = default;
 	~IWidgetElement() = default;
-    virtual void render(const double &deltaTime) = 0;
+    virtual void render() = 0;
 };
 
 class GMODULE WidgetOverlay : public RenderOverlay {

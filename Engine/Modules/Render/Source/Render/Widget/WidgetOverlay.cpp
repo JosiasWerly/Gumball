@@ -31,7 +31,7 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 	ImGui::NewFrame();
 	
 	for (auto e : elements)
-		e->render(deltaTime);
+		e->render();
 
 	ImGui::ShowDemoWindow();
 

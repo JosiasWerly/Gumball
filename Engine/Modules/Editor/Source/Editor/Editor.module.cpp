@@ -9,7 +9,7 @@ class EditorToolbar : public UserWidget {
 public:
 	EditorToolbar() {
 		using namespace Glyph;
-
+		setLabel("EditorToolbar");
 		setVisibility(eVisibility::visible);
 
 		Text *text = new Text;
@@ -18,22 +18,25 @@ public:
 		
 		TextInput *textInA = new TextInput;
 		textInA->setText("asdf");
-		
-		//TextInput *textInB = new TextInput;
-		//textInB->setText("BARR\nKIA");
+		textInA->setMultiline(true);
+
+		TextInput *textInB = new TextInput;
+		textInB->setText("FOO_BAR");
+		textInB->setMultiline(false);
 
 		ColorPicker *color = new ColorPicker;
 
 		Combo *combo = new Combo;
 		combo->setItems(std::vector<string>{"a", "B", "c"});
-		combo->setLabel("comboson");
+		combo->setLabel("combox");
 
 		WidgetContainer *horizontalCtn = new WidgetContainer;
+		horizontalCtn->setLabel("BunchOfButtons");
 		horizontalCtn->setLayout(eLayout::horizontal);
 		for (size_t i = 0; i < 4; i++)
 			(*horizontalCtn) << new Button;
 
-		(*this) << Widgets { text, horizontalCtn, textInA, /*textInB,*/ combo, color };
+		(*this) << Widgets { horizontalCtn, text, textInA, textInB, combo, color, new IntergerInput(1), new FloatInput(2) };
 		(*this) << new ProgressBar;
 		(*this) << new Histogram;
 	}

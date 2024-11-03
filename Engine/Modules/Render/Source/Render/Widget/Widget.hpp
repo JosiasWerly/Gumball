@@ -4,6 +4,7 @@
 #include <Gumball/Event.hpp>
 #include "WidgetOverlay.hpp"
 
+struct ImGuiInputTextCallbackData;
 class Widget;
 class WidgetContainer;
 
@@ -17,22 +18,27 @@ enum class eLayout {
 	vertical, horizontal
 };
 
+enum class eInputControl {
+	input, drag, slider
+};
+
 class GMODULE Widget {
 	friend class WidgetContainer;
+	friend class UserWidget;
 
-	string label = "widget";
+	string label;
 	Vector2 size = Vector2(0, 0);
 	eVisibility visibility = eVisibility::hidden;
 
 	WidgetContainer *container = nullptr;
 protected:
-	virtual void render(const double &deltaTime) = 0;
+	virtual void render() = 0;
 
 public:
 	Dispatcher<Widget *, bool> onClick;
 	Dispatcher<Widget *, eVisibility> onVisibilityChange;
 
-	Widget() = default;
+	Widget();
 	virtual ~Widget() = default;
 
 	void setLabel(string label);
@@ -51,7 +57,7 @@ private:
 	Widgets widgets;
 
 protected:
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	WidgetContainer() = default;
@@ -64,36 +70,40 @@ public:
 	WidgetContainer &operator>>(Widget *widget);
 	WidgetContainer &operator<<(Widgets widgets);
 	WidgetContainer &operator>>(Widgets widgets);
-	Widget *operator[](const string &label);
+	const Widget *operator[](const string &label);
+	Inline const Widgets &getWidgets() const { return widgets; };
 	Inline bool hasChild(Widget *item) const { return std::find(widgets.begin(), widgets.end(), item) != std::end(widgets); };
 };
 
 class GMODULE UserWidget : public IWidgetElement, public WidgetContainer {
 	void onShowEvent(Widget * , eVisibility);	
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	UserWidget();
 	~UserWidget();
 };
 
-struct ImGuiInputTextCallbackData;
+
 namespace Glyph {
 	class Button;
 	class CheckBox;
 	class Combo;
 	class Text;
 	class TextInput;
-	class ControlInput; //TODO
 	class ColorPicker;
 	class ProgressBar;
 	class Histogram;
+	
+	class ControlInputData {};
+	class IntergerInput;
+	class FloatInput;
 };
 
 class GMODULE Glyph::Button : public Widget {
 	bool state = false;
 
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	Inline bool getState() const { return state; }
@@ -102,7 +112,7 @@ public:
 class GMODULE Glyph::CheckBox : public Widget {
 	bool state = false;
 
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	Inline bool getState() const { return state; }
@@ -112,7 +122,7 @@ class GMODULE Glyph::Combo : public Widget {
 	int selectedIndex = -1;
 	std::vector<string> items;
 	
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	void setItems(std::vector<string> items);
@@ -126,33 +136,35 @@ public:
 class GMODULE Glyph::Text : public Widget {
 	string text = "Text";
 
-	void render(const double &deltaTime);
-public:
-	Dispatcher<Widget *, string, string> onTextUpdated;
+	void render();
 
+public:
 	void setText(string newText);
 	const string& getText() const { return text; }
+
+	Dispatcher<Widget *, string, string> onTextUpdated;
 };
 
 class GMODULE Glyph::TextInput : public Widget {
 	friend int callback(ImGuiInputTextCallbackData *data);
-
+	bool isMultiline = false;
 	string text;
 
-	void render(const double &deltaTime);
+	void render();
 	static int callback(ImGuiInputTextCallbackData *data);
+
 public:
-	Dispatcher<Widget *, const string&> onTextUpdated;
-
-	void setText(string text);
+	void setMultiline(bool multiline) { this->isMultiline = multiline; }
+	void setText(string text);	
+	bool getMultiline() const { return isMultiline; }
 	const string &getText() const { return text; }
+	
+	Dispatcher<Widget *, const string&> onTextUpdated;
 };
-
-class GMODULE Glyph::ControlInput : public Widget {};
 
 class GMODULE Glyph::ColorPicker : public Widget {
 	float color[4];
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	ColorPicker();
@@ -163,7 +175,7 @@ public:
 class GMODULE Glyph::ProgressBar : public Widget {
 	float value = 0.f, maxValue = 100.f;
 
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	ProgressBar();
@@ -179,12 +191,34 @@ class GMODULE Glyph::Histogram : public Widget {
 	int valuesCount = 20;
 	float *values;
 
-	void render(const double &deltaTime);
+	void render();
 
 public:
 	Histogram();
 	~Histogram();
 	void pushValue(float newValue);
+};
+
+class GMODULE Glyph::IntergerInput : public Widget {
+	int *pValues = nullptr;
+	unsigned pValuesSize = 0;
+
+	void render();
+
+public:
+	IntergerInput(unsigned size);
+	~IntergerInput();
+};
+
+class GMODULE Glyph::FloatInput : public Widget {
+	float *pValues = nullptr;
+	unsigned pValuesSize = 0;
+
+	void render();
+
+public:
+	FloatInput(unsigned size);
+	~FloatInput();
 };
 
 #endif // !__widget

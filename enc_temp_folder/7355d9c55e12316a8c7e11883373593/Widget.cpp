@@ -277,6 +277,6 @@ FloatInput::~FloatInput() {
 void FloatInput::render() {
 	ImGui::InputScalarN(getLabel().c_str(), ImGuiDataType_Float, pValues, pValuesSize, NULL, NULL, "%.2f", 0);
 }
-//ImGui::InputScalarN(getLabel().c_str(), ImGuiDataType_Float, pValues, pValuesSize, NULL, NULL, "%.2f", 0);
+
 //DragScalarN(label, ImGuiDataType_S32, v, 2, v_speed, &v_min, &v_max, format, flags)
 //SliderScalarN(label, ImGuiDataType_S32, v, 2, &v_min, &v_max, format, flags);
