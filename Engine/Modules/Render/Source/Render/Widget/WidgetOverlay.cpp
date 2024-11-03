@@ -7,9 +7,8 @@
 #include "Render.module.hpp"
 
 WidgetOverlay::~WidgetOverlay() {
-	for (Widget *e : elements) {
-		delete e;
-		e = nullptr;
+	for (auto *h : elements) {
+		delete h;
 	}	
 }
 void WidgetOverlay::onAttach() {
@@ -34,7 +33,7 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 	for (auto e : elements)
 		e->render(deltaTime);
 
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 
 	ImGui::Render();	
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -49,11 +48,11 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 		glfwMakeContextCurrent(backup_current_context);
 	}
 }
-WidgetOverlay &WidgetOverlay::operator<<(Widget *element) {
+WidgetOverlay &WidgetOverlay::operator<<(IWidgetElement *element) {
 	elements.push_back(element);
 	return *this;
 }
-WidgetOverlay &WidgetOverlay::operator>>(Widget *element) {
+WidgetOverlay &WidgetOverlay::operator>>(IWidgetElement *element) {
 	elements.remove(element);
 	return *this;
 }

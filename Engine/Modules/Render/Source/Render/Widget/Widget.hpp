@@ -2,129 +2,189 @@
 #ifndef __widget
 #define __widget
 #include <Gumball/Event.hpp>
+#include "WidgetOverlay.hpp"
 
-enum class EVisibility {
+class Widget;
+class WidgetContainer;
+
+typedef std::list<Widget *> Widgets;
+
+enum class eVisibility {
 	visible, hidden
 };
-enum class ELayout {
+
+enum class eLayout {
 	vertical, horizontal
 };
 
 class GMODULE Widget {
 	friend class WidgetContainer;
 
-	WidgetContainer *container = nullptr;
-	EVisibility visibility = EVisibility::hidden;
+	string label = "widget";
+	Vector2 size = Vector2(0, 0);
+	eVisibility visibility = eVisibility::hidden;
 
-	Vector2 size;
-	string label = "widget";	
+	WidgetContainer *container = nullptr;
+protected:
+	virtual void render(const double &deltaTime) = 0;
 
 public:
-	virtual void render(const double &deltaTime) {}
+	Dispatcher<Widget *, bool> onClick;
+	Dispatcher<Widget *, eVisibility> onVisibilityChange;
 
-	void setLabel(string newLabel) { this->label = newLabel; }
-	void setVisibility(EVisibility newVisibility) { visibility = newVisibility; }
-	void setSize(Vector2 newSize) { size = newSize; }
+	Widget() = default;
+	virtual ~Widget() = default;
 
-	Inline const string& getLabel() const { return label; }
-	Inline EVisibility getVisibility() const { return visibility; }
+	void setLabel(string label);
+	void setSize(Vector2 size);
+	void setVisibility(eVisibility visibility);
+
+	Inline const string &getLabel() const { return label; }
 	Inline Vector2 getSize() const { return size; }
+	Inline eVisibility getVisibility() const { return visibility; }
 	Inline WidgetContainer *getContainer() const { return container; }
 };
-typedef std::list<Widget *> Widgets;
 
 class GMODULE WidgetContainer : public Widget {
 private:
-	std::list<Widget *> items;
+	eLayout layout = eLayout::vertical;
+	Widgets widgets;
 
 protected:
-	virtual void beginDraw();
-	virtual void render(const double &deltaTime);
-	virtual void endDraw();
+	void render(const double &deltaTime);
 
 public:
-	
-	WidgetContainer &operator<<(Widget *item);
-	WidgetContainer &operator>>(Widget *item);
-	WidgetContainer &operator<<(std::list<Widget *> items);
-	WidgetContainer &operator>>(std::list<Widget *> items);
+	WidgetContainer() = default;
+	virtual ~WidgetContainer();
 
+	void setLayout(eLayout layout) { this->layout = layout; }
+	Inline eLayout getLayout() { return layout; }
+
+	WidgetContainer &operator<<(Widget *widget);
+	WidgetContainer &operator>>(Widget *widget);
+	WidgetContainer &operator<<(Widgets widgets);
+	WidgetContainer &operator>>(Widgets widgets);
 	Widget *operator[](const string &label);
-	Inline bool hasChild(Widget *item) const { return std::find(items.begin(), items.end(), item) != std::end(items); };
+	Inline bool hasChild(Widget *item) const { return std::find(widgets.begin(), widgets.end(), item) != std::end(widgets); };
 };
 
-class GMODULE UserWidget : public WidgetContainer {
+class GMODULE UserWidget : public IWidgetElement, public WidgetContainer {
+	void onShowEvent(Widget * , eVisibility);	
+	void render(const double &deltaTime);
+
 public:
 	UserWidget();
-	void show();
-	void hide();
+	~UserWidget();
 };
 
-
-
-namespace Clay {
-	class GMODULE Text : public Widget {
-		string text = "Text";
-
-		void render(const double &deltaTime);
-
-	public:
-		void setText(string newText);
-		string getText() { return text; }
-		
-
-		Dispatcher<Widget *, string, string> onTextUpdated; //obj, old text, new text;
-	};
-
-	class GMODULE InputText : public Widget {
-		char inBuffer[256] = {};
-		string text;
-
-		void render(const double &deltaTime);
-
-	public:
-		string getText() const { return text; }
-
-		Dispatcher<Widget *, string, string> onTextUpdated; //obj, old text, new text;
-	};
-
-	class GMODULE Button : public Widget {
-		bool state = false;
-
-		void render(const double &deltaTime);
-
-	public:
-		Inline bool getState() const { return state; }
-		Dispatcher<Widget *, bool> onClick; //obj, newState
-	};
-
-	class GMODULE ProgressBar : public Widget {
-		float value = 0.f, maxValue = 100.f;
-	
-		void render(const double &deltaTime);
-
-	public:
-		void setValue(float newValue);
-		void setMaxValue(float newValue);
-		float getValue() const { return value; }
-		float getMaxValue() const { return maxValue; }
-		float getFraction() const { return value / maxValue; }
-		bool atMax() const { return value == maxValue; }
-	};
-
-	class GMODULE Histogram : public Widget {
-		int valuesCount = 20;
-		float *values;
-
-		void render(const double &deltaTime);
-	
-	public:
-		Histogram();
-		~Histogram();
-
-		void pushValue(float newValue);
-	};
+struct ImGuiInputTextCallbackData;
+namespace Glyph {
+	class Button;
+	class CheckBox;
+	class Combo;
+	class Text;
+	class TextInput;
+	class ControlInput; //TODO
+	class ColorPicker;
+	class ProgressBar;
+	class Histogram;
 };
 
+class GMODULE Glyph::Button : public Widget {
+	bool state = false;
+
+	void render(const double &deltaTime);
+
+public:
+	Inline bool getState() const { return state; }
+};
+
+class GMODULE Glyph::CheckBox : public Widget {
+	bool state = false;
+
+	void render(const double &deltaTime);
+
+public:
+	Inline bool getState() const { return state; }
+};
+
+class GMODULE Glyph::Combo : public Widget {
+	int selectedIndex = -1;
+	std::vector<string> items;
+	
+	void render(const double &deltaTime);
+
+public:
+	void setItems(std::vector<string> items);
+	void setSelectedIndex(int index);
+
+	const std::vector<string> &getItems() const { return items; }
+	int getSelectedIndex() const { return selectedIndex; }
+	const string *getSelectedItem() const { return selectedIndex != -1 ? &items[selectedIndex] : nullptr; }
+};
+
+class GMODULE Glyph::Text : public Widget {
+	string text = "Text";
+
+	void render(const double &deltaTime);
+public:
+	Dispatcher<Widget *, string, string> onTextUpdated;
+
+	void setText(string newText);
+	const string& getText() const { return text; }
+};
+
+class GMODULE Glyph::TextInput : public Widget {
+	friend int callback(ImGuiInputTextCallbackData *data);
+
+	string text;
+
+	void render(const double &deltaTime);
+	static int callback(ImGuiInputTextCallbackData *data);
+public:
+	Dispatcher<Widget *, const string&> onTextUpdated;
+
+	void setText(string text);
+	const string &getText() const { return text; }
+};
+
+class GMODULE Glyph::ControlInput : public Widget {};
+
+class GMODULE Glyph::ColorPicker : public Widget {
+	float color[4];
+	void render(const double &deltaTime);
+
+public:
+	ColorPicker();
+	void setColor(Color);
+	Color getColor() const;
+};
+
+class GMODULE Glyph::ProgressBar : public Widget {
+	float value = 0.f, maxValue = 100.f;
+
+	void render(const double &deltaTime);
+
+public:
+	ProgressBar();
+	void setValue(float newValue);
+	void setMaxValue(float newValue);
+	float getValue() const { return value; }
+	float getMaxValue() const { return maxValue; }
+	float getFraction() const { return value / maxValue; }
+	bool atMax() const { return value == maxValue; }
+};
+
+class GMODULE Glyph::Histogram : public Widget {
+	int valuesCount = 20;
+	float *values;
+
+	void render(const double &deltaTime);
+
+public:
+	Histogram();
+	~Histogram();
+	void pushValue(float newValue);
+};
 
 #endif // !__widget

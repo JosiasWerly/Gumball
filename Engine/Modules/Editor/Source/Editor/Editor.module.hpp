@@ -3,7 +3,7 @@
 #define __editormodule
 
 class GMODULE EditorModule : public ModuleSingleton<EditorModule> {
-	class UserWidget *editor;
+	//class UserWidget *editor;
 	
 	void posLoad() override;
 	EModuleTickType tickType() const override { return EModuleTickType::gameplay; }

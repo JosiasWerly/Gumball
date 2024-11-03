@@ -2,15 +2,18 @@
 #ifndef __widgetoverlay
 #define __widgetoverlay
 #include <Render/RenderOverlay.hpp>
-#include <Render/Widget/Widget.hpp>
 
-class Widget;
+class GMODULE IWidgetElement {
+	friend class WidgetOverlay;
+public:
+    IWidgetElement() = default;
+	~IWidgetElement() = default;
+    virtual void render(const double &deltaTime) = 0;
+};
 
 class GMODULE WidgetOverlay : public RenderOverlay {
-    friend class Widget;
-
     struct ImGuiIO *guiIO = nullptr;
-    std::list<Widget *> elements;
+    std::list<IWidgetElement *> elements;
 
 public:
     ~WidgetOverlay();
@@ -19,8 +22,8 @@ public:
     void onRender(const double &deltaTime) override;
 	string name() override { return "widget"; }
 
-    WidgetOverlay &operator<<(Widget *element);
-    WidgetOverlay &operator>>(Widget *element);
+    WidgetOverlay &operator<<(IWidgetElement *element);
+    WidgetOverlay &operator>>(IWidgetElement *element);
 };
 
 #endif // !__widgetoverlay

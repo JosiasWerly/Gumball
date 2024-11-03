@@ -9,51 +9,73 @@
 
 ImVec2 toImVec(const Vector2 &vec) { return ImVec2(vec.x, vec.y); }
 
-void WidgetContainer::beginDraw() {
-	ImGui::Begin(getLabel().c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+void Widget::setLabel(string label) {
+	this->label = label;
 }
-void WidgetContainer::render(const double &deltaTime) {
-	if (getVisibility() == EVisibility::hidden)
+void Widget::setSize(Vector2 size) {
+	this->size = size; 
+}
+void Widget::setVisibility(eVisibility visibility) {
+	if (this->visibility == visibility)
 		return;
 
-	beginDraw();
-	for (auto &i : items) {
-		i->render(deltaTime);
-	}
-	endDraw();
+	this->visibility = visibility;
+	onVisibilityChange.broadcast(this, this->visibility);
 }
-void WidgetContainer::endDraw() {
+
+WidgetContainer::~WidgetContainer() {
+	for (auto w : widgets) {
+		delete w;
+	}
+	widgets.clear();
+}
+void WidgetContainer::render(const double &deltaTime) {
+	ImGui::Begin(getLabel().c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	switch (layout) {
+		case eLayout::vertical:
+			for (auto &w : widgets) {
+				w->render(deltaTime);
+			}
+			break;
+		case eLayout::horizontal:
+			auto it = widgets.begin();
+			(*it)->render(deltaTime);
+			for(;it != widgets.end(); ++it){
+				ImGui::SameLine();
+				(*it)->render(deltaTime);
+			}
+			break;
+	}
 	ImGui::End();
 }
-WidgetContainer &WidgetContainer::operator<<(Widget *item) {
-	if (item->container)
-		item->container->operator>>(item);
-	items.push_back(item);
-	item->container = this;
+WidgetContainer &WidgetContainer::operator<<(Widget *widget) {
+	if (widget->container)
+		widget->container->operator>>(widget);
+	widgets.push_back(widget);
+	widget->container = this;
 	return *this;
 }
-WidgetContainer &WidgetContainer::operator>>(Widget *item) {
-	if (this != item->container)
+WidgetContainer &WidgetContainer::operator>>(Widget *widget) {
+	if (this != widget->container)
 		return *this;
 
-	items.remove(item);
-	item->container = nullptr;
+	widgets.remove(widget);
+	widget->container = nullptr;
 	return *this;
 }
-WidgetContainer &WidgetContainer::operator<<(std::list<Widget *> items){
-	for (auto i : items) {
-		(*this) << i;
-	}
+WidgetContainer &WidgetContainer::operator<<(Widgets widgets) {
+	for (auto w : widgets)
+		(*this) << w;
 	return *this;
 }
-WidgetContainer &WidgetContainer::operator>>(std::list<Widget *> items) {
-	for (auto i : items) {
-		(*this) >> i;
-	}
+WidgetContainer &WidgetContainer::operator>>(Widgets widgets) {
+	for (auto w : widgets)
+		(*this) >> w;
 	return *this;
 }
 Widget *WidgetContainer::operator[](const string &label) {
-	for (auto &i : items) {
+	for (auto &i : widgets) {
 		if (i->getLabel() == label) {
 			return i;
 		}
@@ -61,90 +83,151 @@ Widget *WidgetContainer::operator[](const string &label) {
 	return nullptr;
 }
 
+
 UserWidget::UserWidget() {
+	onVisibilityChange.bindMethod(this, &UserWidget::onShowEvent);
+	setSize({ 300, 400 });
 }
-void UserWidget::show() {
-	if (getVisibility() == EVisibility::visible)
-		return;
-	RenderModule::instance()->getWidgetOverlay() << this;
-	setVisibility(EVisibility::visible);
+UserWidget::~UserWidget() {
+	setVisibility(eVisibility::hidden);
 }
-void UserWidget::hide() {
-	if (getVisibility() == EVisibility::hidden)
-		return;
-	RenderModule::instance()->getWidgetOverlay() >> this;
-	setVisibility(EVisibility::hidden);
+void UserWidget::onShowEvent(Widget *, eVisibility) {
+	if (getVisibility() == eVisibility::visible)
+		RenderModule::instance()->getWidgetOverlay() << this;
+	else
+		RenderModule::instance()->getWidgetOverlay() >> this;
+}
+void UserWidget::render(const double &deltaTime) {
+	WidgetContainer::render(deltaTime);
 }
 
-namespace Clay {
-	void Text::render(const double &deltaTime) {
-		ImGui::Text(text.c_str());
+
+using namespace Glyph;
+
+void Button::render(const double &deltatime) {
+	if (ImGui::Button(getLabel().c_str())) {
+		state = !state;
+		onClick.broadcast(this, state);
 	}
-	void Text::setText(string newText) {
-		string old = text;
-		text = newText;
-		onTextUpdated.broadcast(this, old, text);
+}
+
+void CheckBox::render(const double &deltatime) {
+	if (ImGui::Checkbox(getLabel().c_str(), &state)) {
+		onClick.broadcast(this, state);
 	}
+}
 
-	void InputText::render(const double &deltaTime) {
-		const auto InputCallback = [](ImGuiInputTextCallbackData *data)->int {
-			InputText *self = static_cast<InputText *>(data->UserData);
-			switch (data->EventFlag) {
-				case ImGuiInputTextFlags_CallbackCompletion: {
-					break;
-				}
-				case ImGuiInputTextFlags_CallbackHistory: {
-					break;
-				}
-			}
-			return 0;
-		};
-		const ImGuiInputTextFlags inFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
+void Combo::setItems(std::vector<string> items) {
+	this->items = items;
+	selectedIndex = -1;
+}
+void Combo::setSelectedIndex(int index) {
+	this->items = items;
+}
+void Combo::render(const double &deltaTime) {
+	if (ImGui::BeginCombo(getLabel().c_str(), selectedIndex == -1 ? "" : items[selectedIndex].c_str(), 0)) {
+		for (int i = 0; i < items.size(); ++i) {
+			const bool isSelected = (selectedIndex == i);
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
 
-		if (ImGui::InputText(getLabel().c_str(), inBuffer, IM_ARRAYSIZE(inBuffer), inFlags, InputCallback, this)) {
-			string old = text;
-			text = string(inBuffer);
-			ImGui::SetKeyboardFocusHere(-1);
-			strcpy_s(inBuffer, "");
-			onTextUpdated.broadcast(this, old, text);
+			if (ImGui::Selectable(items[i].c_str(), isSelected))
+				selectedIndex = i;
 		}
+		ImGui::EndCombo();
 	}
+}
 
-	void Button::render(const double &deltaTime) {
-		ImGui::Button(getLabel().c_str());
-		if (ImGui::IsItemClicked(0)) {
-			state = !state;
-			onClick.broadcast(this, state);
-		}
-	}
+void Text::render(const double &deltaTime) {
+	ImGui::TextWrapped(text.c_str());
+	ImGui::Spacing();
+}
+void Text::setText(string newText) {
+	string old = text;
+	text = newText;
+	onTextUpdated.broadcast(this, old, text);
+}
 
-	void ProgressBar::render(const double &deltaTime) {
-		ImGui::ProgressBar(getFraction(), toImVec(getSize()));
+int TextInput::callback(ImGuiInputTextCallbackData *data) {
+	TextInput *self = static_cast<TextInput *>(data->UserData);
+	switch (data->EventFlag) {
+		case ImGuiInputTextFlags_CallbackResize:
+			self->text.resize(data->BufTextLen);
+			data->Buf = const_cast<char*>(self->text.c_str());
+			break;
+		case ImGuiInputTextFlags_CallbackCompletion:
+			self->onTextUpdated.broadcast(self, self->text);
+			break;
 	}
-	void ProgressBar::setValue(float newValue) {
-		value = std::fmax(newValue, 0.f);
-		value = std::fmin(value, maxValue);
-	}
-	void ProgressBar::setMaxValue(float newValue) {
-		newValue = std::fmax(newValue, 1.f);
-		value = std::fmin(value, newValue);
-	}
+	return 0;
+}
+void TextInput::setText(string text) {
+	this->text = text;
+}
+void TextInput::render(const double &deltaTime) {
+	const bool edited = ImGui::InputTextMultiline(
+		"##fixMe", //because this is input we need to add "##", really edgy...
+		const_cast<char *>(text.c_str()), text.size() + 1,
+		toImVec(getSize()),
+		ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CtrlEnterForNewLine |
+		ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCompletion,
+		TextInput::callback,
+		this
+	);
+}
 
-	Histogram::Histogram() {
-		valuesCount = 20;
-		values = new float[20];
+ColorPicker::ColorPicker() {
+	std::memset(color, 0, sizeof(float) * 4);
+}
+void ColorPicker::render(const double &deltaTime) {
+	if (ImGui::ColorEdit4("##fixMe2", color, ImGuiColorEditFlags_Uint8)) {
+		;
 	}
-	Histogram::~Histogram() {
-		valuesCount = 0;
-		delete[] values;
-	}
-	void Histogram::render(const double &deltaTime) {
-		ImGui::PlotHistogram(getLabel().c_str(), values, valuesCount, 0, nullptr, -1.f, 1.f, toImVec(getSize()));
-	}
+}
+void ColorPicker::setColor(Color color) {
+	this->color[0] = static_cast<float>(color.r)/255.f;
+	this->color[1] = static_cast<float>(color.g)/255.f;
+	this->color[2] = static_cast<float>(color.b)/255.f;
+	this->color[3] = static_cast<float>(color.a)/255.f;
+}
+Color ColorPicker::getColor() const {
+	return {
+		static_cast<unsigned char>(color[0]*255.f),
+		static_cast<unsigned char>(color[1]*255.f),
+		static_cast<unsigned char>(color[2]*255.f),
+		static_cast<unsigned char>(color[3]*255.f)
+	};
+}
 
-	void Histogram::pushValue(float newValue) {
-		for (int i = 0; i < valuesCount - 1; ++i)
-			values[i] = values[i + 1];
-		values[valuesCount - 1] = newValue;
-	}
-};
+ProgressBar::ProgressBar() {
+	setSize({ 150, 20 });
+}
+void ProgressBar::render(const double &deltaTime) {
+	ImGui::ProgressBar(getFraction(), toImVec(getSize()));
+}
+void ProgressBar::setValue(float newValue) {
+	value = std::fmax(newValue, 0.f);
+	value = std::fmin(value, maxValue);
+}
+void ProgressBar::setMaxValue(float newValue) {
+	newValue = std::fmax(newValue, 1.f);
+	value = std::fmin(value, newValue);
+}
+
+Histogram::Histogram() {
+	setSize({ 150, 100 });
+	valuesCount = 20;
+	values = new float[20];
+}
+Histogram::~Histogram() {
+	valuesCount = 0;
+	delete[] values;
+}
+void Histogram::render(const double &deltaTime) {
+	ImGui::PlotHistogram(getLabel().c_str(), values, valuesCount, 0, nullptr, -1.f, 1.f, toImVec(getSize()));
+}
+void Histogram::pushValue(float newValue) {
+	for (int i = 0; i < valuesCount - 1; ++i)
+		values[i] = values[i + 1];
+	values[valuesCount - 1] = newValue;
+}
