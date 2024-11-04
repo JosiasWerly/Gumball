@@ -6,7 +6,7 @@
 
 struct ImGuiInputTextCallbackData;
 class Widget;
-class WidgetContainer;
+class IWidgetContainer;
 
 typedef std::list<Widget *> Widgets;
 
@@ -23,6 +23,7 @@ enum class eInputControl {
 };
 
 class GMODULE Widget {
+	friend class IWidgetContainer;
 	friend class WidgetContainer;
 	friend class UserWidget;
 
@@ -30,7 +31,7 @@ class GMODULE Widget {
 	Vector2 size = Vector2(0, 0);
 	eVisibility visibility = eVisibility::hidden;
 
-	WidgetContainer *container = nullptr;
+	IWidgetContainer *container = nullptr;
 protected:
 	virtual void render() = 0;
 
@@ -48,34 +49,38 @@ public:
 	Inline const string &getLabel() const { return label; }
 	Inline Vector2 getSize() const { return size; }
 	Inline eVisibility getVisibility() const { return visibility; }
-	Inline WidgetContainer *getContainer() const { return container; }
+	Inline IWidgetContainer *getContainer() const { return container; }
 };
 
-class GMODULE WidgetContainer : public Widget {
-private:
+class GMODULE IWidgetContainer : public Widget {
+protected:
 	eLayout layout = eLayout::vertical;
 	Widgets widgets;
 
-protected:
-	void render();
+	virtual void render() = 0;
 
 public:
-	WidgetContainer() = default;
-	virtual ~WidgetContainer();
+	IWidgetContainer() = default;
+	virtual ~IWidgetContainer();
 
 	void setLayout(eLayout layout) { this->layout = layout; }
 	Inline eLayout getLayout() { return layout; }
 
-	WidgetContainer &operator<<(Widget *widget);
-	WidgetContainer &operator>>(Widget *widget);
-	WidgetContainer &operator<<(Widgets widgets);
-	WidgetContainer &operator>>(Widgets widgets);
+	IWidgetContainer &operator<<(Widget *widget);
+	IWidgetContainer &operator>>(Widget *widget);
+	IWidgetContainer &operator<<(Widgets widgets);
+	IWidgetContainer &operator>>(Widgets widgets);
 	const Widget *operator[](const string &label);
 	Inline const Widgets &getWidgets() const { return widgets; };
 	Inline bool hasChild(Widget *item) const { return std::find(widgets.begin(), widgets.end(), item) != std::end(widgets); };
 };
 
-class GMODULE UserWidget : public IWidgetElement, public WidgetContainer {
+class GMODULE WidgetContainer : public IWidgetContainer {
+	void render();
+public:
+};
+
+class GMODULE UserWidget : public IWidgetElement, public IWidgetContainer {
 	void onShowEvent(Widget * , eVisibility);	
 	void render();
 

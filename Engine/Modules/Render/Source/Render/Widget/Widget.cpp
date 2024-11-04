@@ -27,12 +27,46 @@ void Widget::setVisibility(eVisibility visibility) {
 	onVisibilityChange.broadcast(this, this->visibility);
 }
 
-WidgetContainer::~WidgetContainer() {
+IWidgetContainer::~IWidgetContainer() {
 	for (auto w : widgets) {
 		delete w;
 	}
 	widgets.clear();
 }
+IWidgetContainer &IWidgetContainer::operator<<(Widget *widget) {
+	if (widget->container)
+		widget->container->operator>>(widget);
+	widgets.push_back(widget);
+	widget->container = this;
+	return *this;
+}
+IWidgetContainer &IWidgetContainer::operator>>(Widget *widget) {
+	if (this != widget->container)
+		return *this;
+
+	widgets.remove(widget);
+	widget->container = nullptr;
+	return *this;
+}
+IWidgetContainer &IWidgetContainer::operator<<(Widgets widgets) {
+	for (auto w : widgets)
+		(*this) << w;
+	return *this;
+}
+IWidgetContainer &IWidgetContainer::operator>>(Widgets widgets) {
+	for (auto w : widgets)
+		(*this) >> w;
+	return *this;
+}
+const Widget *IWidgetContainer::operator[](const string &label) {
+	for (auto &i : widgets) {
+		if (i->getLabel() == label) {
+			return i;
+		}
+	}
+	return nullptr;
+}
+
 void WidgetContainer::render() {
 	if (ImGui::TreeNode(getLabel().c_str())) {
 		switch (layout) {
@@ -44,7 +78,7 @@ void WidgetContainer::render() {
 			case eLayout::horizontal:
 				auto it = widgets.begin();
 				(*it)->render();
-				for(;it != widgets.end(); ++it){
+				for (; it != widgets.end(); ++it) {
 					ImGui::SameLine();
 					(*it)->render();
 				}
@@ -53,40 +87,6 @@ void WidgetContainer::render() {
 		ImGui::TreePop();
 	}
 }
-WidgetContainer &WidgetContainer::operator<<(Widget *widget) {
-	if (widget->container)
-		widget->container->operator>>(widget);
-	widgets.push_back(widget);
-	widget->container = this;
-	return *this;
-}
-WidgetContainer &WidgetContainer::operator>>(Widget *widget) {
-	if (this != widget->container)
-		return *this;
-
-	widgets.remove(widget);
-	widget->container = nullptr;
-	return *this;
-}
-WidgetContainer &WidgetContainer::operator<<(Widgets widgets) {
-	for (auto w : widgets)
-		(*this) << w;
-	return *this;
-}
-WidgetContainer &WidgetContainer::operator>>(Widgets widgets) {
-	for (auto w : widgets)
-		(*this) >> w;
-	return *this;
-}
-const Widget *WidgetContainer::operator[](const string &label) {
-	for (auto &i : widgets) {
-		if (i->getLabel() == label) {
-			return i;
-		}
-	}
-	return nullptr;
-}
-
 
 UserWidget::UserWidget() {
 	onVisibilityChange.bindMethod(this, &UserWidget::onShowEvent);
