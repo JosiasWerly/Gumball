@@ -48,11 +48,11 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 		glfwMakeContextCurrent(backup_current_context);
 	}
 }
-WidgetOverlay &WidgetOverlay::operator<<(IWidgetElement *element) {
+WidgetOverlay &WidgetOverlay::operator<<(UIDrawable *element) {
 	elements.push_back(element);
 	return *this;
 }
-WidgetOverlay &WidgetOverlay::operator>>(IWidgetElement *element) {
+WidgetOverlay &WidgetOverlay::operator>>(UIDrawable *element) {
 	elements.remove(element);
 	return *this;
 }

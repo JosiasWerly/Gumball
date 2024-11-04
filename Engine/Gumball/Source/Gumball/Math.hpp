@@ -19,7 +19,7 @@ struct GENGINE Color {
 	Color();
 	Color(unsigned int hex);
 	Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 0);
-	
+
 	Color(glm::vec4 glmVec4);
 	operator glm::vec4();
 };
@@ -31,7 +31,7 @@ class Vector2;
 class Vector3;
 class Vector4;
 
-template<class T> 
+template<class T>
 class TVector {
 public:
 	typedef TVector<T> TParent;
@@ -39,11 +39,11 @@ public:
 
 	TVec rawVector;
 
-	TVector() : 
+	TVector() :
 		rawVector(TVec(0)) {
 	}
 	TVector(TVec rawVector) :
-		rawVector(rawVector){
+		rawVector(rawVector) {
 	}
 	operator TVec &() { return rawVector; }
 
@@ -78,19 +78,19 @@ public:
 	}
 
 
-	TVector& operator+=(float v) {
+	TVector &operator+=(float v) {
 		rawVector += v;
 		return *this;
 	}
-	TVector& operator-=(float v) {
+	TVector &operator-=(float v) {
 		rawVector -= v;
 		return *this;
 	}
-	TVector& operator*=(float v) {
+	TVector &operator*=(float v) {
 		rawVector *= v;
 		return *this;
 	}
-	TVector& operator/=(float v) {
+	TVector &operator/=(float v) {
 		rawVector /= v;
 		return *this;
 	}
@@ -108,12 +108,8 @@ public:
 		return TVector(rawVector / v);
 	}
 
-	Inline TVector normalize() const {
-		return glm::normalize(rawVector);
-	}
-	Inline float length() const {
-		return glm::length(rawVector);
-	}
+	Inline TVector normalize() const { return glm::normalize(rawVector); }
+	Inline float length() const { return glm::length(rawVector); }
 
 	static TVector direction(TVector a, TVector b) {
 		return (b - a).normalize();
@@ -126,26 +122,26 @@ public:
 	}
 };
 
-class Vector2i :
-	public TVector<glm::ivec2> {
+class Vector2i : public TVector<glm::ivec2> {
 public:
-	int	
-		&x = rawVector.x,
-		&y = rawVector.y;
-	
 	using TParent::TParent;
 	Vector2i() = default;
 	Vector2i(int x, int y) :
 		TParent(TVec(x, y)) {
 	}
-	Vector2i(TParent && init) :
+	Vector2i(TParent &&init) :
 		TParent(init) {
 	}
-	Vector2i &operator=(const Vector2i & other) {
-		x = other.x;
-		y = other.y;
+	Vector2i &operator=(const Vector2i &other) {
+		x() = other.x();
+		y() = other.y();
 		return *this;
 	};
+	
+	Inline int &x() { return rawVector.x; }
+	Inline int &y() { return rawVector.y; }
+	Inline const int &x() const { return rawVector.x; }
+	Inline const int &y() const { return rawVector.y; }
 
 	operator Vector3i();
 	operator Vector4i();
@@ -153,28 +149,29 @@ public:
 	operator Vector3();
 	operator Vector4();
 };
-class Vector3i :
-	public TVector<glm::ivec3> {
+class Vector3i : public TVector<glm::ivec3> {
 public:
-	int	
-		&x = rawVector.x,
-		&y = rawVector.y,
-		&z = rawVector.z;
-
 	using TParent::TParent;
 	Vector3i() = default;
 	Vector3i(int x, int y, int z) :
 		TParent(TVec(x, y, z)) {
 	}
-	Vector3i(TParent && init) :
+	Vector3i(TParent &&init) :
 		TParent(init) {
 	}
 	Vector3i &operator=(const Vector3i &other) {
-		x = other.x;
-		y = other.y;
-		z = other.z;
+		x() = other.x();
+		y() = other.y();
+		z() = other.z();
 		return *this;
 	};
+
+	Inline int &x() { return rawVector.x; }
+	Inline int &y() { return rawVector.y; }
+	Inline int &z() { return rawVector.z; }
+	Inline const int &x() const { return rawVector.x; }
+	Inline const int &y() const { return rawVector.y; }
+	Inline const int &z() const { return rawVector.z; }
 
 	operator Vector2i();
 	operator Vector4i();
@@ -182,15 +179,8 @@ public:
 	operator Vector3();
 	operator Vector4();
 };
-class Vector4i :
-	public TVector<glm::ivec4> {
+class Vector4i : public TVector<glm::ivec4> {
 public:
-	int 
-		&x = rawVector.x,
-		&y = rawVector.y,
-		&z = rawVector.z,
-		&w = rawVector.w;
-
 	using TParent::TParent;
 	Vector4i() = default;
 	Vector4i(int x, int y, int z, int w) :
@@ -200,12 +190,21 @@ public:
 		TParent(init) {
 	}
 	Vector4i &operator=(const Vector4i &other) {
-		x = other.x;
-		y = other.y;
-		z = other.z;
-		w = other.w;
+		x() = other.x();
+		y() = other.y();
+		z() = other.z();
+		w() = other.w();
 		return *this;
 	};
+
+	Inline int &x() { return rawVector.x; }
+	Inline int &y() { return rawVector.y; }
+	Inline int &z() { return rawVector.z; }
+	Inline int &w() { return rawVector.w; }
+	Inline const int &x() const { return rawVector.x; }
+	Inline const int &y() const { return rawVector.y; }
+	Inline const int &z() const { return rawVector.z; }
+	Inline const int &w() const { return rawVector.w; }
 
 	operator Vector2i();
 	operator Vector3i();
@@ -213,13 +212,8 @@ public:
 	operator Vector3();
 	operator Vector4();
 };
-class Vector2 : 
-	public TVector<glm::vec2> {
-public:	
-	float 
-		&x = rawVector.x,
-		&y = rawVector.y;
-
+class Vector2 : public TVector<glm::vec2> {
+public:
 	using TParent::TParent;
 	Vector2() = default;
 	Vector2(float x, float y) :
@@ -229,10 +223,15 @@ public:
 		TParent(init) {
 	}
 	Vector2 &operator=(const Vector2 &other) {
-		x = other.x;
-		y = other.y;
+		x() = other.x();
+		y() = other.y();
 		return *this;
 	};
+
+	Inline float &x() { return rawVector.x; }
+	Inline float &y() { return rawVector.y; }
+	Inline const float &x() const { return rawVector.x; }
+	Inline const float &y() const { return rawVector.y; }
 
 	operator Vector2i();
 	operator Vector3i();
@@ -240,14 +239,8 @@ public:
 	operator Vector3();
 	operator Vector4();
 };
-class Vector3 : 
-	public TVector<glm::vec3> {
+class Vector3 :	public TVector<glm::vec3> {
 public:
-	float 
-		&x = rawVector.x,
-		&y = rawVector.y,
-		&z = rawVector.z;
-
 	using TParent::TParent;
 	Vector3() = default;
 	Vector3(float x, float y, float z) :
@@ -257,11 +250,18 @@ public:
 		TParent(init) {
 	}
 	Vector3 &operator=(const Vector3 &other) {
-		x = other.x;
-		y = other.y;
-		z = other.z;
+		x() = other.x();
+		y() = other.y();
+		z() = other.z();
 		return *this;
 	};
+
+	Inline float &x() { return rawVector.x; }
+	Inline float &y() { return rawVector.y; }
+	Inline float &z() { return rawVector.z; }
+	Inline const float &x() const { return rawVector.x; }
+	Inline const float &y() const { return rawVector.y; }
+	Inline const float &z() const { return rawVector.z; }
 
 	operator Vector2i();
 	operator Vector3i();
@@ -269,14 +269,8 @@ public:
 	operator Vector2();
 	operator Vector4();
 };
-class Vector4 :
-	public TVector<glm::vec4> {
+class Vector4 :	public TVector<glm::vec4> {
 public:
-	float &x = rawVector.x,
-		&y = rawVector.y,
-		&z = rawVector.z,
-		&w = rawVector.w;
-
 	using TParent::TParent;
 	Vector4() = default;
 	Vector4(float x, float y, float z, float w) :
@@ -286,12 +280,22 @@ public:
 		TParent(init) {
 	}
 	Vector4 &operator=(const Vector4 &other) {
-		x = other.x;
-		y = other.y;
-		z = other.z;
-		w = other.w;
+		x() = other.x();
+		y() = other.y();
+		z() = other.z();
+		w() = other.w();
 		return *this;
 	};
+
+	Inline float &x() { return rawVector.x; }
+	Inline float &y() { return rawVector.y; }
+	Inline float &z() { return rawVector.z; }
+	Inline float &w() { return rawVector.w; }
+
+	Inline const float &x() const { return rawVector.x; }
+	Inline const float &y() const { return rawVector.y; }
+	Inline const float &z() const { return rawVector.z; }
+	Inline const float &w() const { return rawVector.w; }
 
 	operator Vector2i();
 	operator Vector3i();
@@ -304,10 +308,10 @@ class GENGINE Quat {
 public:
 	glm::quat rawQuat;
 
-	Quat() : 
+	Quat() :
 		rawQuat(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)) {
 	}
-	Quat(float w, float x, float y, float z) : 
+	Quat(float w, float x, float y, float z) :
 		rawQuat(glm::quat(w, x, y, z)) {
 	}
 
@@ -317,15 +321,15 @@ public:
 	Vector3 eulerAngles() const;
 	void eulerAngles(Vector3 direction);
 
-	glm::mat4 getMatrix() const;	
+	glm::mat4 getMatrix() const;
 	void rotate(float pitch, float roll, float yaw);
 	void rotateAround(Vector3 axis, float angle);
 };
 
 class GENGINE Transform {
 private:
-	Transform* parent = nullptr;
-	
+	Transform *parent = nullptr;
+
 	glm::mat4 getRelativeMatrix(glm::mat4 mat) const;
 
 public:
@@ -336,9 +340,9 @@ public:
 	Transform();
 	Transform(glm::mat4 mat);
 
-	void setParent(Transform* newParent) { parent = newParent; }
-	Transform* getParent() { return parent; }
-	
+	void setParent(Transform *newParent) { parent = newParent; }
+	Transform *getParent() { return parent; }
+
 	void setMatrix(const glm::mat4 &mat);
 	glm::mat4 getMatrix() const;
 	glm::mat4 getRelativeMatrix() const { return getRelativeMatrix(getMatrix()); }

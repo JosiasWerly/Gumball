@@ -9,38 +9,51 @@ class EditorToolbar : public UserWidget {
 public:
 	EditorToolbar() {
 		using namespace Glyph;
-		setLabel("EditorToolbar");
-		setVisibility(eVisibility::visible);
+		label("EditorToolbar");
+		visibility(eVisibility::visible);
 
 		Text *text = new Text;
-		text->setText("AUSDIUHASDIUHASIUDHIUASHDIUHASDIUHASIUDHIUASHDILUHASDLIUHALIUSHDLIUASHDLIUHASLDIUHLIUASHDLIUHASDLIUHASLIUDHLIUASHDILUHASILUDH");
+		text->text("AUSDIUHASDIUHASIUDHIUASHDIUHASDIUHASIUDHIUASHDILUHASDLIUHALIUSHDLIUASHDLIUHASLDIUHLIUASHDLIUHASDLIUHASLIUDHLIUASHDILUHASILUDH");
 		
 		
 		TextInput *textInA = new TextInput;
-		textInA->setText("asdf");
-		textInA->setMultiline(true);
-
+		textInA->text("asdf");
+		textInA->multiline(true);
+		
 		TextInput *textInB = new TextInput;
-		textInB->setText("FOO_BAR");
-		textInB->setMultiline(false);
-
+		textInB->text("FOO_BAR");
+		textInB->multiline(false);
+		
 		ColorPicker *color = new ColorPicker;
-
+		
 		Combo *combo = new Combo;
 		combo->setItems(std::vector<string>{"a", "B", "c"});
-		combo->setLabel("combox");
-
-		WidgetContainer *horizontalCtn = new WidgetContainer;
-		horizontalCtn->setLabel("BunchOfButtons");
-		horizontalCtn->setLayout(eLayout::horizontal);
+		combo->label("combox");
+		
+		Container *horizontalBox = new Container;
+		horizontalBox->label("BunchOfButtons");
+		horizontalBox->layout(eLayout::horizontal);
 		for (size_t i = 0; i < 4; i++)
-			(*horizontalCtn) << new Button;
+			horizontalBox->container << new Button;
+		
+		
+		container << Widgets{
+			horizontalBox, text, textInA, textInB, combo, color, new IntergerInput(1), new FloatInput(2),
+			new ProgressBar,
+			new Histogram
+		};
 
-		(*this) << Widgets { horizontalCtn, text, textInA, textInB, combo, color, new IntergerInput(1), new FloatInput(2) };
-		(*this) << new ProgressBar;
-		(*this) << new Histogram;
+		Text *tMem = new Text;
+		tMem->text(std::to_string(RenderModule::instance()->getWidgetOverlay().memory));
+		container << tMem;
+		//2664
+		//1440
+		//2368
 	}
 };
+
+
+
 
 void EditorModule::posLoad() {
 	new EditorToolbar;

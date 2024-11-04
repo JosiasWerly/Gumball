@@ -52,41 +52,41 @@ Color::Color(glm::vec4 glmVec4) {
 Color::operator glm::vec4() { return glm::vec4(r/255.f, g/255.f, b/255.f, a/255.f); }
 
 
-Vector2i::operator Vector3i() { return Vector3i(x, y, 0); }
-Vector2i::operator Vector4i() { return Vector4i(x, y, 0, 0); }
-Vector2i::operator Vector2() { return Vector2(x, y); }
-Vector2i::operator Vector3() { return Vector3(x, y, 0); }
-Vector2i::operator Vector4() { return Vector4(x, y, 0, 0); }
+Vector2i::operator Vector3i() { return Vector3i(x(), y(), 0); }
+Vector2i::operator Vector4i() { return Vector4i(x(), y(), 0, 0); }
+Vector2i::operator Vector2() { return Vector2(x(), y()); }
+Vector2i::operator Vector3() { return Vector3(x(), y(), 0); }
+Vector2i::operator Vector4() { return Vector4(x(), y(), 0, 0); }
 
-Vector3i::operator Vector2i() { return Vector2i(x, y); }
-Vector3i::operator Vector4i() { return Vector4i(x, y, z, 0); }
-Vector3i::operator Vector2() { return Vector2(x, y); }
-Vector3i::operator Vector3() { return Vector3(x, y, z); }
-Vector3i::operator Vector4() { return Vector4(x, y, z, 0); }
+Vector3i::operator Vector2i() { return Vector2i(x(), y()); }
+Vector3i::operator Vector4i() { return Vector4i(x(), y(), z(), 0); }
+Vector3i::operator Vector2() { return Vector2(x(), y()); }
+Vector3i::operator Vector3() { return Vector3(x(), y(), z()); }
+Vector3i::operator Vector4() { return Vector4(x(), y(), z(), 0); }
 
-Vector4i::operator Vector2i() { return Vector2i(x, y); }
-Vector4i::operator Vector3i() { return Vector3i(x, y, z); }
-Vector4i::operator Vector2() { return Vector2(x, y); }
-Vector4i::operator Vector3() { return Vector3(x, y, z); }
-Vector4i::operator Vector4() { return Vector4(x, y, z, w); }
+Vector4i::operator Vector2i() { return Vector2i(x(), y()); }
+Vector4i::operator Vector3i() { return Vector3i(x(), y(), z()); }
+Vector4i::operator Vector2() { return Vector2(x(), y()); }
+Vector4i::operator Vector3() { return Vector3(x(), y(), z()); }
+Vector4i::operator Vector4() { return Vector4(x(), y(), z(), w()); }
 
-Vector2::operator Vector2i() { return Vector2i(x, y); }
-Vector2::operator Vector3i() { return Vector3i(x, y, 0); }
-Vector2::operator Vector4i() { return Vector4i(x, y, 0, 0); }
-Vector2::operator Vector3() { return Vector3(x, y, 0); }
-Vector2::operator Vector4() { return Vector4(x, y, 0, 0); }
+Vector2::operator Vector2i() { return Vector2i(x(), y()); }
+Vector2::operator Vector3i() { return Vector3i(x(), y(), 0); }
+Vector2::operator Vector4i() { return Vector4i(x(), y(), 0, 0); }
+Vector2::operator Vector3() { return Vector3(x(), y(), 0); }
+Vector2::operator Vector4() { return Vector4(x(), y(), 0, 0); }
 
-Vector3::operator Vector2i() { return Vector2i(x, y); }
-Vector3::operator Vector3i() { return Vector3i(x, y, z); }
-Vector3::operator Vector4i() { return Vector4i(x, y, z, 0); }
-Vector3::operator Vector2() { return Vector2(x, y); }
-Vector3::operator Vector4() { return Vector4(x, y, z, 0); }
+Vector3::operator Vector2i() { return Vector2i(x(), y()); }
+Vector3::operator Vector3i() { return Vector3i(x(), y(), z()); }
+Vector3::operator Vector4i() { return Vector4i(x(), y(), z(), 0); }
+Vector3::operator Vector2() { return Vector2(x(), y()); }
+Vector3::operator Vector4() { return Vector4(x(), y(), z(), 0); }
 
-Vector4::operator Vector2i() { return Vector2i(x, y); }
-Vector4::operator Vector3i() { return Vector3i(x, y, z); }
-Vector4::operator Vector4i() { return Vector4i(x, y, z, w); }
-Vector4::operator Vector2() { return Vector2(x, y); }
-Vector4::operator Vector3() { return Vector3(x, y, z); }
+Vector4::operator Vector2i() { return Vector2i(x(), y()); }
+Vector4::operator Vector3i() { return Vector3i(x(), y(), z()); }
+Vector4::operator Vector4i() { return Vector4i(x(), y(), z(), w()); }
+Vector4::operator Vector2() { return Vector2(x(), y()); }
+Vector4::operator Vector3() { return Vector3(x(), y(), z()); }
 
 Vector3 Quat::forward() const {
 	return Vector3(glm::normalize(glm::rotate(rawQuat, glm::vec3(0.0f, 0.0f, -1.0f))));
@@ -123,12 +123,12 @@ void Transform::setMatrix(const glm::mat4 &mat) {
 	position = glm::vec3(mat[3]);
 	
 	glm::mat3 rotationmat = glm::mat3(mat);
-	scale.x = glm::length(glm::vec3(rotationmat[0]));
-	scale.y = glm::length(glm::vec3(rotationmat[1]));
-	scale.z = glm::length(glm::vec3(rotationmat[2]));
-	rotationmat[0] /= scale.x;
-	rotationmat[1] /= scale.y;
-	rotationmat[2] /= scale.z;
+	scale.x() = glm::length(glm::vec3(rotationmat[0]));
+	scale.y() = glm::length(glm::vec3(rotationmat[1]));
+	scale.z() = glm::length(glm::vec3(rotationmat[2]));
+	rotationmat[0] /= scale.x();
+	rotationmat[1] /= scale.y();
+	rotationmat[2] /= scale.z();
 	rotation.rawQuat = glm::quat_cast(rotationmat);
 }
 glm::mat4 Transform::getMatrix() const 	{
