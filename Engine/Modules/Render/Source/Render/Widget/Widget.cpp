@@ -11,7 +11,7 @@ void *Widget::operator new(size_t size) {
 	RenderModule::instance()->getWidgetOverlay().memory += size;
 	return ::operator new (size);
 }
-ImVec2 toImVec(const Vector2 &vec) { return ImVec2(vec.x(), vec.y()); }
+ImVec2 toImVec(const Vector2 &vec) { return ImVec2(vec.x, vec.y); }
 
 Widget::Widget() :
 	label(this, std::to_string((int)this)) {

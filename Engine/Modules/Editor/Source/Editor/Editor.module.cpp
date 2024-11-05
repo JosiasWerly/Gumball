@@ -12,6 +12,9 @@ public:
 		label("EditorToolbar");
 		visibility(eVisibility::visible);
 
+		glm::fvec3 foo(1, 2, 3);
+		Vector3 vi = foo;
+
 		Text *text = new Text;
 		text->text("AUSDIUHASDIUHASIUDHIUASHDIUHASDIUHASIUDHIUASHDILUHASDLIUHALIUSHDLIUASHDLIUHASLDIUHLIUASHDLIUHASDLIUHASLIUDHLIUASHDILUHASILUDH");
 		
@@ -47,8 +50,7 @@ public:
 		tMem->text(std::to_string(RenderModule::instance()->getWidgetOverlay().memory));
 		container << tMem;
 		//2664
-		//1440
-		//2368
+		//2288
 	}
 };
 

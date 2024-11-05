@@ -31,30 +31,30 @@ public:
 		owner->transform.rotation.rotate(.05, .05, .05);
 		owner->transform.position += vel;
 		auto &pos = owner->transform.position;
-		if (pos.x() < -10) {
-			pos.x() = -10;
-			vel.x() *= -1;
+		if (pos.x < -10) {
+			pos.x = -10;
+			vel.x *= -1;
 		}
-		else if (pos.x() > 10) {
-			pos.x() = 10;
-			vel.x() *= -1;
+		else if (pos.x > 10) {
+			pos.x = 10;
+			vel.x *= -1;
 		}
 
-		if (pos.y() < -10) {
-			pos.y() = -10;
-			vel.y() *= -1;
+		if (pos.y < -10) {
+			pos.y = -10;
+			vel.y *= -1;
 		}
-		else if (pos.y() > 10) {
-			pos.y() = 10;
-			vel.y() *= -1;
+		else if (pos.y > 10) {
+			pos.y = 10;
+			vel.y *= -1;
 		}
-		if (pos.z() < -10) {
-			pos.z() = -10;
-			vel.z() *= -1;
+		if (pos.z < -10) {
+			pos.z = -10;
+			vel.z *= -1;
 		}
-		else if (pos.z() > 10) {
-			pos.z() = 10;
-			vel.z() *= -1;
+		else if (pos.z > 10) {
+			pos.z = 10;
+			vel.z *= -1;
 		}
 	}
 };
@@ -102,8 +102,6 @@ public:
 	}
 };
 
-
-
 class GGAME MyProject : public Project {
 public:	
 	void attached() {
@@ -121,7 +119,7 @@ public:
 		{
 			auto cameraComp = new CameraComponent;
 			cameraActor->addComponent(cameraComp);
-			cameraActor->transform.position.z() = -20;
+			cameraActor->transform.position.z = -20;
 		}
 
 		for (size_t i = 0; i < 5; i++) {

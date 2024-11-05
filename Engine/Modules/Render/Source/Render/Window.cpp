@@ -4,7 +4,7 @@
 
 void Window::create(string name, Vector2i size) {
 	winSize = size;
-	window = glfwCreateWindow(size.x(), size.y(), name.c_str(), NULL, NULL);
+	window = glfwCreateWindow(size.x, size.y, name.c_str(), NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -34,8 +34,8 @@ void Window::render() {
 }
 void Window::setSize(Vector2i newSize) {
 	winSize = newSize;
-	glfwSetWindowSize(window, winSize.x(), winSize.y());
-	glViewport(0, 0, winSize.x(), winSize.y());
+	glfwSetWindowSize(window, winSize.x, winSize.y);
+	glViewport(0, 0, winSize.x, winSize.y);
 }
 const Vector2i &Window::getSize() {
 	return winSize;
