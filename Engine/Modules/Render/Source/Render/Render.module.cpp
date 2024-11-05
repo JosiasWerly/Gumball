@@ -7,7 +7,6 @@
 #include "Core/Shaders.hpp"
 
 #include <Content/Content.module.hpp>
-#include <Gumball/Event.hpp>
 
 RenderModule::RenderModule() :
 	scene(new SceneOverlay),

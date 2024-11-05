@@ -4,7 +4,6 @@
 
 #include <unordered_map>
 #include <list>
-#include <Gumball/Event.hpp>
 
 namespace Input {
     enum class EKeyCode {

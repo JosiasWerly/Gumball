@@ -107,7 +107,7 @@
     <ClInclude Include="Domain.hpp" />
     <ClInclude Include="DynamicLib.hpp" />
     <ClInclude Include="Engine.hpp" />
-    <ClInclude Include="Event.hpp" />
+    <ClInclude Include="Delegate.hpp" />
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Module.hpp" />

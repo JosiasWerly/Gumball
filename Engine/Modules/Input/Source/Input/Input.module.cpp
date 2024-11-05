@@ -43,7 +43,7 @@ void InputModule::onInputCallback(int key, int scancode, int action, int mods) {
 		keyPool[keyCode].released = true;
 }
 void InputModule::posLoad() {
-	RenderModule::instance()->getWindow().onInput.bindMethod(this, &InputModule::onInputCallback);
+	RenderModule::instance()->getWindow().onInput.bind(this, &InputModule::onInputCallback);
 }
 void InputModule::tick(const double &deltaTime) {
 	eventPool.clearPool();

@@ -15,12 +15,12 @@ void Window::create(string name, Vector2i size) {
 	
 	glfwSetFramebufferSizeCallback(window,
 	   [](GLFWwindow *window, int width, int height) {
-			RenderModule::instance()->getWindow().onResize.broadcast(width, height);
+			RenderModule::instance()->getWindow().onResize.invoke(width, height);
 	   }
 	);
 	glfwSetKeyCallback(window,
 	   [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-		   RenderModule::instance()->getWindow().onInput.broadcast(key, scancode, action, mods);
+		   RenderModule::instance()->getWindow().onInput.invoke(key, scancode, action, mods);
 	   }
 	);
 }

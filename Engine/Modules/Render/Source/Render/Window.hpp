@@ -3,7 +3,6 @@
 #define __window
 
 #include <string>
-#include <Gumball/Event.hpp>
 using namespace std;
 
 class GMODULE Window {
@@ -19,8 +18,8 @@ public:
 	struct GLFWwindow *getGLWindow();
 	void setTitle(string newTitle);
 
-	Dispatcher<int, int> onResize;
-	Dispatcher<int, int, int, int> onInput;
+	Delegate<void(int width, int height)> onResize;
+	Delegate<void(int key, int scancode, int action, int mods)> onInput;
 };
 
 #endif // !__window

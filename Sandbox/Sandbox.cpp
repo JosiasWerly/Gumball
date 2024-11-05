@@ -11,6 +11,10 @@
 #include <World/Actor.hpp>
 
 
+#include <iostream>
+#include <list>
+#include <memory>
+#include <functional>
 
 class GGAME MyComp : public MeshComponent {
 public:

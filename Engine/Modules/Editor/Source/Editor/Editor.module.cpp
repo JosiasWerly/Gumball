@@ -49,8 +49,6 @@ public:
 		Text *tMem = new Text;
 		tMem->text(std::to_string(RenderModule::instance()->getWidgetOverlay().memory));
 		container << tMem;
-		//2664
-		//2288
 	}
 };
 

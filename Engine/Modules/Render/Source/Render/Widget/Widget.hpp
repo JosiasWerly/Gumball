@@ -1,7 +1,6 @@
 #pragma once
 #ifndef __widget
 #define __widget
-#include <Gumball/Event.hpp>
 #include "WidgetOverlay.hpp"
 
 struct ImGuiInputTextCallbackData;
@@ -45,7 +44,7 @@ private:
 	T value;
 
 public:
-	Dispatcher<const Widget *, const T &, const T &> notify;
+	Delegate<void(const Widget *obj, const T &oldValue, const T &newValue)> notify;
 
 	explicit TProp(Widget *owner) : owner(owner) {}
 	explicit TProp(Widget *owner, const T &&value) : owner(owner), value(value) {}
@@ -56,7 +55,7 @@ public:
 			return;
 		T oldValue = this->value;
 		this->value = value;
-		notify.broadcast(owner, oldValue, this->value);
+		notify.invoke(owner, oldValue, this->value);
 	}
 	Inline const T &operator()() const { return value; }
 	Inline T &operator()() { return value; }
@@ -126,7 +125,7 @@ namespace Glyph {
 		void render();
 
 	public:
-		Dispatcher<Widget *> onClick;
+		Delegate<void(Widget *obj)> onClick;
 		Button() = default;
 	};
 

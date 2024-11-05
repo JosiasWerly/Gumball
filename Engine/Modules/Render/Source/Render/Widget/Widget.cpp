@@ -23,7 +23,7 @@ UserWidget::UserWidget() :
 	size(this, { 300, 400 }),
 	container(this),
 	visibility(this, eVisibility::hidden) {
-	visibility.notify.bindMethod(this, &UserWidget::onShowEvent);
+	visibility.notify.bind(this, &UserWidget::onShowEvent);
 }
 UserWidget::~UserWidget() {
 	visibility(eVisibility::hidden);
@@ -71,7 +71,7 @@ void Container::render() {
 
 void Button::render() {
 	if (ImGui::Button(label().c_str())) {
-		onClick.broadcast(this);
+		onClick.invoke(this);
 	}
 }
 
@@ -80,7 +80,7 @@ CheckBox::CheckBox() :
 }
 void CheckBox::render() {
 	if (ImGui::Checkbox(label().c_str(), &state())) {
-		state.notify.broadcast(this, !state(), state());
+		state.notify.invoke(this, !state(), state());
 	}
 }
 
