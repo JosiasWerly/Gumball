@@ -57,6 +57,9 @@
       <Filter>Widget</Filter>
     </ClInclude>
     <ClInclude Include="Window.hpp" />
+    <ClInclude Include="Widget\Glyph.hpp">
+      <Filter>Widget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\GLBuffer.cpp">
@@ -98,5 +101,8 @@
       <Filter>Widget</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Widget\Glyph.cpp">
+      <Filter>Widget</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

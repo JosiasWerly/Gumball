@@ -1,6 +1,6 @@
 #include "Editor.module.hpp"
 #include <Render/Render.module.hpp>
-#include <Render/Widget/Widget.hpp>
+#include <Render/Widget/Glyph.hpp>
 #include <Input/Input.module.hpp>
 
 
