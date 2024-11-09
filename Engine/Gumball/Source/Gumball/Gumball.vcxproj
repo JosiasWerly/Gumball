@@ -104,10 +104,10 @@
     <ClInclude Include="Archive.hpp" />
     <ClInclude Include="Codex.hpp" />
     <ClInclude Include="Definitions.hpp" />
+    <ClInclude Include="Delegate.hpp" />
     <ClInclude Include="Domain.hpp" />
     <ClInclude Include="DynamicLib.hpp" />
     <ClInclude Include="Engine.hpp" />
-    <ClInclude Include="Delegate.hpp" />
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Module.hpp" />

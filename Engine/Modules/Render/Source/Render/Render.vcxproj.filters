@@ -50,6 +50,9 @@
     <ClInclude Include="Scene\SceneOverlay.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Widget\Glyph.hpp">
+      <Filter>Widget</Filter>
+    </ClInclude>
     <ClInclude Include="Widget\Widget.hpp">
       <Filter>Widget</Filter>
     </ClInclude>
@@ -57,9 +60,6 @@
       <Filter>Widget</Filter>
     </ClInclude>
     <ClInclude Include="Window.hpp" />
-    <ClInclude Include="Widget\Glyph.hpp">
-      <Filter>Widget</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\GLBuffer.cpp">
@@ -94,6 +94,9 @@
     <ClCompile Include="Scene\SceneOverlay.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\Glyph.cpp">
+      <Filter>Widget</Filter>
+    </ClCompile>
     <ClCompile Include="Widget\Widget.cpp">
       <Filter>Widget</Filter>
     </ClCompile>
@@ -101,8 +104,5 @@
       <Filter>Widget</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="Widget\Glyph.cpp">
-      <Filter>Widget</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

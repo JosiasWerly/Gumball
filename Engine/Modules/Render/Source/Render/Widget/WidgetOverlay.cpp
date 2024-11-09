@@ -2,6 +2,7 @@
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_glfw.h>
 #include <ImGui/imgui_impl_opengl3.h>
+#include <ImGui/imnodes.h>
 
 #include "Core/GLUtils.hpp"
 #include "Render.module.hpp"
@@ -14,16 +15,19 @@ WidgetOverlay::~WidgetOverlay() {
 void WidgetOverlay::onAttach() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImNodes::CreateContext();
 	guiIO = &ImGui::GetIO();
 	guiIO->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	guiIO->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	ImGui_ImplGlfw_InitForOpenGL(window()->getGLWindow(), true);
 	ImGui_ImplOpenGL3_Init("#version 440");
+	ImNodes::StyleColorsDark();
 	ImGui::StyleColorsDark();
 }
 void WidgetOverlay::onDetach() {
-
+	ImNodes::DestroyContext();
+	ImGui::DestroyContext();
 }
 void WidgetOverlay::onRender(const double &deltaTime) {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -32,6 +36,29 @@ void WidgetOverlay::onRender(const double &deltaTime) {
 	
 	for (auto e : elements)
 		e->render();
+
+	//ImGui::Begin("simple node editor");
+	//
+	//ImNodes::BeginNodeEditor();
+	//ImNodes::BeginNode(1);
+	//
+	//ImNodes::BeginNodeTitleBar();
+	//ImGui::TextUnformatted("simple node :)");
+	//ImNodes::EndNodeTitleBar();
+	//
+	//ImNodes::BeginInputAttribute(2);
+	//ImGui::Text("input");
+	//ImNodes::EndInputAttribute();
+	//
+	//ImNodes::BeginOutputAttribute(3);
+	//ImGui::Indent(40);
+	//ImGui::Text("output");
+	//ImNodes::EndOutputAttribute();
+	//
+	//ImNodes::EndNode();
+	//ImNodes::EndNodeEditor();
+
+	ImGui::End();
 
 	ImGui::ShowDemoWindow();
 
