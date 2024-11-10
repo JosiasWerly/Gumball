@@ -101,6 +101,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="example\graph.h" />
+    <ClInclude Include="example\node_editor.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
@@ -114,6 +116,8 @@
     <ClInclude Include="imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="example\color_node_editor.cpp" />
+    <ClCompile Include="example\multi_editor.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />

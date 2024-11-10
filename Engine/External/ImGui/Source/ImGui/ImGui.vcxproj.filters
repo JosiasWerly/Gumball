@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="example">
+      <UniqueIdentifier>{F1997D81-5D79-FC1C-6691-87F3D2EF627E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="example\graph.h">
+      <Filter>example</Filter>
+    </ClInclude>
+    <ClInclude Include="example\node_editor.h">
+      <Filter>example</Filter>
+    </ClInclude>
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
@@ -14,6 +25,12 @@
     <ClInclude Include="imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="example\color_node_editor.cpp">
+      <Filter>example</Filter>
+    </ClCompile>
+    <ClCompile Include="example\multi_editor.cpp">
+      <Filter>example</Filter>
+    </ClCompile>
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />

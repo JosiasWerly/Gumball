@@ -10,8 +10,8 @@ namespace Glyph {
 		void render();
 
 	public:
-		TProp<eLayout> layout;
-		TProp<Widgets> container;
+		WidgetProp<eLayout> layout;
+		WidgetPropArr<Widget> container;
 		Container();
 	};
 
@@ -27,7 +27,7 @@ namespace Glyph {
 		void render();
 
 	public:
-		TProp<bool> state;
+		WidgetProp<bool> state;
 		CheckBox();
 	};
 
@@ -50,7 +50,7 @@ namespace Glyph {
 		void render();
 
 	public:
-		TProp<string> text;
+		WidgetProp<string> text;
 		Text();
 	};
 
@@ -60,9 +60,9 @@ namespace Glyph {
 		void render();
 
 	public:
-		TProp<string> text;
-		TProp<bool> multiline;
-		TProp<Vector2> size;
+		WidgetProp<string> text;
+		WidgetProp<bool> multiline;
+		WidgetProp<Vector2> size;
 		TextInput();
 	};
 
@@ -82,7 +82,7 @@ namespace Glyph {
 		void render();
 
 	public:
-		TProp<Vector2> size;
+		WidgetProp<Vector2> size;
 
 		ProgressBar();
 		void setValue(float newValue);
@@ -100,7 +100,7 @@ namespace Glyph {
 		void render();
 
 	public:
-		TProp<Vector2> size;
+		WidgetProp<Vector2> size;
 
 		Histogram();
 		~Histogram();

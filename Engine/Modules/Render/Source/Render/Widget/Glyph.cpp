@@ -16,14 +16,14 @@ void Container::render() {
 	if (ImGui::TreeNode(label().c_str())) {
 		switch (layout()) {
 			case eLayout::vertical:
-				for (auto &w : container.getWidgets()) {
+				for (auto &w : container.getArr()) {
 					w->render();
 				}
 				break;
 			case eLayout::horizontal:
-				auto it = container.getWidgets().begin();
+				auto it = container.getArr().begin();
 				(*it)->render();
-				for (; it != container.getWidgets().end(); ++it) {
+				for (; it != container.getArr().end(); ++it) {
 					ImGui::SameLine();
 					(*it)->render();
 				}

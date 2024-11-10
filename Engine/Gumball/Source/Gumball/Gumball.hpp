@@ -4,4 +4,5 @@
 
 #include "Math.hpp"
 #include "Delegate.hpp"
+#include "Property.hpp"
 #include "Codex.hpp"

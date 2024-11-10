@@ -30,7 +30,7 @@ void UserWidget::onShowEvent(const Widget *, const eVisibility &, const eVisibil
 }
 void UserWidget::render() {
 	ImGui::Begin(label().c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	for (auto &w : container.getWidgets())
+	for (auto w : container.getArr())
 		w->render();
 	ImGui::End();
 }
