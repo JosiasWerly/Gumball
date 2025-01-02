@@ -3,12 +3,11 @@
 #define _var
 #include <iostream>
 
-class IVarTarget {
+class VarTarget {
 public:
-	virtual ~IVarTarget() {}
+	virtual ~VarTarget() {}
 };
-template<class T> class TVarTarget : 
-	public IVarTarget {
+template<class T> class TVarTarget : public VarTarget {
 public:
 	T *ptr = nullptr;
 	TVarTarget(T *ptr) : 
@@ -22,9 +21,9 @@ public:
 class VarContainer {
 public:
 	unsigned references = 1;
-	IVarTarget *var = nullptr;
+	VarTarget *var = nullptr;
 
-	VarContainer(IVarTarget *var) : 
+	VarContainer(VarTarget *var) :
 		var(var) {
 	}
 	~VarContainer() {
@@ -33,17 +32,18 @@ public:
 };
 
 
-class IVar {
+class Var {
 protected:
-	IVar() {}
+	Var() {}
+
 public:
-	virtual ~IVar() {}
+	virtual ~Var() {}
 	virtual bool isValid() { return false; }
 };
 
-template<class T> class Var : public IVar{
+template<class T> class TVar : public Var {
 	typedef VarContainer Container;
-	template<class t> friend class Var;
+	template<class t> friend class TVar;
 
 protected:
 	Container *container = nullptr;
@@ -55,11 +55,11 @@ protected:
 			container = nullptr;
 		}
 	}
-	Inline void addRef(const Var &newTarget) {
+	Inline void addRef(const TVar &newTarget) {
 		setRef(newTarget);
 		++container->references;
 	}
-	Inline void setRef(const Var &newTarget) {
+	Inline void setRef(const TVar &newTarget) {
 		container = newTarget.container;
 		ptr = newTarget.ptr;
 	}
@@ -71,27 +71,27 @@ protected:
 	}
 	
 
-	Var(Container *container, long ptrAddress) :
+	TVar(Container *container, long ptrAddress) :
 		container(container),
 		ptr((T*&)ptrAddress) {
 	}
 public:
-	virtual ~Var() {
+	virtual ~TVar() {
 		unRef();
 	}
-	Var(T *newValue = nullptr) : 
+	TVar(const TVar &other) :
+		ptr(other.ptr) {
+		addRef(other);
+	}
+	TVar(TVar &&other) noexcept :
+		ptr(other.ptr) {
+		addRef(other);
+	}
+	TVar(T *newValue = nullptr) :
 		container(new Container(new TVarTarget<T>(newValue))),
 		ptr(dynamic_cast<TVarTarget<T>*>(container->var)->ptr) {
 	}
-	Var(const Var &other) : 
-		ptr(other.ptr) {
-		addRef(other);
-	}
-	Var(Var &&other) noexcept : 
-		ptr(other.ptr) {
-		addRef(other);
-	}
-	Var &operator=(const Var &other) {
+	TVar &operator=(const TVar &other) {
 		unRef();
 		addRef(other);
 		return *this;
@@ -101,7 +101,7 @@ public:
 	T *&operator->() { return ptr; }
 	bool isValid() override { return *this; }
 	operator bool() { return container && container->var && ptr; }
-	bool operator==(const Var &other) const { return container == other.container; }
+	bool operator==(const TVar &other) const { return container == other.container; }
 	Inline unsigned references() { container->references; }
 	Inline T *pin() { return ptr; }
 	template<class t> t *pin() { return static_cast<t *>(ptr); }
@@ -115,9 +115,7 @@ public:
 		free();
 		getRefTracker() = init;
 	}
-
 };
-
 #endif
 //Var<Object> b;
 //{

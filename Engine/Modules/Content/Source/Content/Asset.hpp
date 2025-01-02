@@ -17,10 +17,10 @@ private:
 	string name = "";
 
 protected:
-	IVar *content = nullptr;
+	Var *content = nullptr;
 
 public:
-	Inline IVar *getContent() { return content; }
+	Inline Var *getContent() { return content; }
 	Inline bool isValid() { return content != nullptr; }
 	Inline const string &getName() { return name; }
 	Inline const string &getPath() { return filePath; }
@@ -29,26 +29,27 @@ public:
 class GMODULE BaseAssetFactory {
 protected:
 	set<string> extensions;
+
 public:
 	BaseAssetFactory() {}
 	bool hasExtension(const string &extention) const { return extensions.contains(extention); }
-	virtual bool archiveLoad(Archive &ar, IVar *&var) = 0;
-	virtual bool archiveSave(Archive &ar, const IVar *var) = 0;
+	virtual bool archiveLoad(Archive &ar, Var *&var) = 0;
+	virtual bool archiveSave(Archive &ar, const Var *var) = 0;
 };
 
 template<class T> class GMODULE TAssetFactory : public BaseAssetFactory {
 public:
-	bool archiveLoad(Archive &ar, IVar *&var) override final {
+	bool archiveLoad(Archive &ar, Var *&var) override final {
 		delete var;
 		T *trg = new T;
 		if (load(ar, *trg)) {
-			var = new Var<T>(trg);
+			var = new TVar<T>(trg);
 			return true;
 		}
 		delete trg;
 		return false;
 	}
-	bool archiveSave(Archive &ar, const IVar *var) override final {
+	bool archiveSave(Archive &ar, const Var *var) override final {
 		throw;
 		return false;
 	}

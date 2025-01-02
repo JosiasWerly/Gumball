@@ -30,7 +30,7 @@ public:
 	Asset *getAsset(string name);
 	template<class t> t *getContent(string name) {
 		if (auto asset = getAsset(name)) {
-			if (auto var = dynamic_cast<Var<t>*>(asset->getContent())) {
+			if (auto var = dynamic_cast<TVar<t>*>(asset->getContent())) {
 				return var->pin();
 			}
 		}
