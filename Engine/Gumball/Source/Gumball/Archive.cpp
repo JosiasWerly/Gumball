@@ -4,7 +4,7 @@
 
 namespace Path {
 	string fileName(string path) {
-		string fName = std::filesystem::path(path).filename().string();
+		const string fName = std::filesystem::path(path).filename().string();
 		return fName.substr(0, fName.find_last_of("."));
 	}
 	string extention(string path) {
@@ -17,9 +17,6 @@ Archive::Archive(string filePath) {
 }
 Archive::Archive(const char *filePath) {
 	open(filePath);
-}
-Archive::Archive(const Archive &other) {
-	fs = other.fs;
 }
 Archive::~Archive() {
 	close();
@@ -34,7 +31,7 @@ void Archive::open(string filePath) {
 	fs->open(filePath, std::fstream::in | std::fstream::out);
 
 	if (fs->is_open())
-		fsPath = filePath;
+		this->filePath = FilePath{ filePath };
 	else
 		delete fs;
 }
@@ -46,7 +43,7 @@ Inline void Archive::close() {
 		fs->close();
 		delete fs;
 		fs = nullptr;
-		fsPath = "";
+		filePath = FilePath{ "" };
 	}
 }
 bool Archive::getLine(string &str) {

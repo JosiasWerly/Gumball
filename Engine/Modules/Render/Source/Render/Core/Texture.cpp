@@ -79,7 +79,7 @@ AssetFactory<Texture>::AssetFactory() {
 	extensions = { "png" };
 }
 bool AssetFactory<Texture>::load(Archive &ar, Texture &val) {
-	const string filePath = ar.filePath();
+	const string filePath = ar.getFilePath().getPath();
 	ar.close();
 
 	int ch = 0;

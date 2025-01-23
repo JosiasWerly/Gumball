@@ -131,6 +131,7 @@
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Var.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\External\GLM\Source\GLM\GLM.vcxproj">

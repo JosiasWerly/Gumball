@@ -4,6 +4,7 @@
 #include <map>
 #include <regex>
 #include <map>
+#include <string>
 using namespace std;
 
 
@@ -145,14 +146,15 @@ AssetFactory<MeshData>::AssetFactory() {
 	extensions = { "obj" };
 }
 bool AssetFactory<MeshData>::load(Archive &ar, MeshData &val) {
-	const char *path = ar.filePath().c_str();
+	std::string path = ar.getFilePath().getPath().c_str();
+	ar.close();
 	vector<MeshVertexData> &meshBuffer = val.mesh;
 	vector<unsigned> &index = val.index;
 	{
 		vector<glm::fvec3> vertex, normal;
 		vector<glm::fvec2> uv;
 
-		if (LoadObjFile(path, vertex, uv, normal)) {
+		if (LoadObjFile(path.c_str(), vertex, uv, normal)) {
 			vector<glm::fvec3> out_vertex, out_normal;
 			vector<glm::fvec2> out_uv;
 			CalculateIndexData(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
