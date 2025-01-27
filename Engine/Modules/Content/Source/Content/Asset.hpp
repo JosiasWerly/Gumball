@@ -2,8 +2,6 @@
 #define _asset
 
 #include <Gumball/Archive.hpp>
-#include <Gumball/Var.hpp>
-
 #include <list>
 #include <set>
 using namespace std;
@@ -17,47 +15,42 @@ private:
 	string name = "";
 
 protected:
-	Var *content = nullptr;
+	Ptr content;
 
 public:
-	Inline Var *getContent() { return content; }
-	Inline bool isValid() { return content != nullptr; }
+	Inline Ptr& getContent() { return content; }
+	Inline bool isValid() { return content; }
 	Inline const string &getName() { return name; }
 	Inline const string &getPath() { return filePath; }
 };
 
-class GMODULE BaseAssetFactory {
-protected:
-	set<string> extensions;
-
+class GMODULE AssetBuilder {
 public:
-	BaseAssetFactory() {}
-	bool hasExtension(const string &extention) const { return extensions.contains(extention); }
-	virtual bool archiveLoad(Archive &ar, Var *&var) = 0;
-	virtual bool archiveSave(Archive &ar, const Var *var) = 0;
+	virtual bool load(Archive &ar, Ptr &p) = 0;
+	virtual bool save(Archive &ar, Ptr &p) = 0;
+	virtual bool hasExtension(const string &extention) const = 0;
 };
 
-template<class T> class GMODULE TAssetFactory : public BaseAssetFactory {
-public:
-	bool archiveLoad(Archive &ar, Var *&var) override final {
-		delete var;
-		T *trg = new T;
-		if (load(ar, *trg)) {
-			var = new TVar<T>(trg);
-			return true;
-		}
-		delete trg;
-		return false;
+template<class T> 
+class TAssetBuilder : public AssetBuilder {
+	virtual bool load(Archive &ar, T &p) = 0;
+	virtual bool save(Archive &ar, T &p) = 0;
+	virtual bool hasExtension(const string &extention) const = 0;
+
+	bool load(Archive &ar, Ptr &p) {
+		TPtr newPtr(new T);
+		if (!load(ar, *newPtr))
+			~newPtr;
+		p = newPtr.ptr();
+		return newPtr;
 	}
-	bool archiveSave(Archive &ar, const Var *var) override final {
-		throw;
-		return false;
+	bool save(Archive &ar, Ptr &p) {
+		if (!p)
+			return false;
+		return save(ar, *p.ref<T>());
 	}
-
-	virtual bool load(Archive &ar, T &val) = 0;
-	virtual bool save(Archive &ar, const T &val) = 0;
 };
 
-template<class T> class GMODULE AssetFactory : public TAssetFactory<T> {
-};
+template<class T>
+class WAssetBuilder : public TAssetBuilder<T> {};
 #endif // !_asset

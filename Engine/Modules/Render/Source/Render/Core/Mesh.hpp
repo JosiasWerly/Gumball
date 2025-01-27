@@ -36,10 +36,11 @@ public:
 	Inline MeshData *getMeshData();
 };
 
-template<> class AssetFactory<MeshData> : public TAssetFactory<MeshData> {
+template<>
+class GMODULE WAssetBuilder<MeshData> : public TAssetBuilder<MeshData> {
 public:
-	AssetFactory();
 	bool load(Archive &ar, MeshData &val);
-	bool save(Archive &ar, const MeshData &val);
+	bool save(Archive &ar, MeshData &val);
+	bool hasExtension(const string &extention) const;
 };
 #endif // !_mesh

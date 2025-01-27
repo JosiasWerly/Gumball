@@ -39,11 +39,12 @@ public:
 	Inline const unsigned &getId() { return id; }
 };
 
-template<> class GMODULE AssetFactory<Texture> : public TAssetFactory<Texture> {
-public:
-	AssetFactory();
-	bool load(Archive &ar, Texture &val);
-	bool save(Archive &ar, const Texture &val);
-};
 
+template<>
+class GMODULE WAssetBuilder<Texture> : public TAssetBuilder<Texture> {
+public:
+	bool load(Archive &ar, Texture &val);
+	bool save(Archive &ar, Texture &val);
+	bool hasExtension(const string &extention) const;
+};
 #endif // !__texture

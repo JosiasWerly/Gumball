@@ -10,38 +10,38 @@
 
 class GMODULE ContentModule : public ModuleSingleton<ContentModule> {
 private:
-	std::list<BaseAssetFactory *> factories;
+	std::list<AssetBuilder *> builders;
 	std::list<Asset *> assets;
 
-	BaseAssetFactory *findFactory(const string &extension);
 
 protected:
 	void posLoad() override;
 	void unload() override;
 	EModuleTickType tickType() const override { return EModuleTickType::none; }
 	const char* name() const override { return "Content"; }
-public:
 
+public:
 	ContentModule();
-	void addFactory(BaseAssetFactory *factory);
-	void delFactory(BaseAssetFactory *factory);
+	~ContentModule();
+	void addBuilder(AssetBuilder *builder);
+	AssetBuilder *getBuilder(const string &extension);
+	
 	void addAsset(Asset *asset);
 	void delAsset(Asset *asset);
 	Asset *getAsset(string name);
-	template<class t> t *getContent(string name) {
+	
+	template<class t> 
+	t *getContent(string name) {
 		if (auto asset = getAsset(name)) {
-			if (auto var = dynamic_cast<TVar<t>*>(asset->getContent())) {
-				return var->pin();
+			if (TPtr<t> p = asset->content.ptr<t>()) {
+				return &(*p);
 			}
 		}
 		return nullptr;
 	}
 
-	bool save(Asset *asset);
-	bool load(Asset *asset);
-
-	void loadFromFolder(string root);
-	void loadAssetFromFile(const string &assetPath);
+	void loadFile(const string &filePath);
+	void loadFolder(const string &folderPath);
 };
 
 #endif // !__assetmodule

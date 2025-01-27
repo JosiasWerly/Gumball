@@ -75,10 +75,7 @@ void Texture::setBuffer(Color *newBuffer) {
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x, size.y, format, type, buffer);
 }
 
-AssetFactory<Texture>::AssetFactory() {
-	extensions = { "png" };
-}
-bool AssetFactory<Texture>::load(Archive &ar, Texture &val) {
+bool WAssetBuilder<Texture>::load(Archive &ar, Texture &val) {
 	const string filePath = ar.getFilePath().getPath();
 	ar.close();
 
@@ -92,7 +89,10 @@ bool AssetFactory<Texture>::load(Archive &ar, Texture &val) {
 	}
 	return false;
 }
-bool AssetFactory<Texture>::save(Archive &ar, const Texture &val) {
+bool WAssetBuilder<Texture>::save(Archive &ar, Texture &val) {
 	throw;
 	return false;
+}
+bool WAssetBuilder<Texture>::hasExtension(const string &extention) const {
+	return extention == "png";
 }

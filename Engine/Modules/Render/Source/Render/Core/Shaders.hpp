@@ -35,11 +35,11 @@ public:
 	ShaderParams &getParameters() { return params; }
 };
 
-template<> class AssetFactory<Shader> : public TAssetFactory<Shader> {
+template<>
+class GMODULE WAssetBuilder<Shader> : public TAssetBuilder<Shader> {
 public:
-	AssetFactory();
 	bool load(Archive &ar, Shader &val);
-	bool save(Archive &ar, const Shader &val);
+	bool save(Archive &ar, Shader &val);
+	bool hasExtension(const string &extention) const;
 };
-
 #endif // !_shader

@@ -18,9 +18,9 @@ RenderModule::~RenderModule() {
 }
 void RenderModule::load() {
 	ContentModule *content = ContentModule::instance();
-	content->addFactory(new AssetFactory<MeshData>);
-	content->addFactory(new AssetFactory<Shader>);
-	content->addFactory(new AssetFactory<Texture>);
+	content->addBuilder(new WAssetBuilder<MeshData>);
+	content->addBuilder(new WAssetBuilder<Shader>);
+	content->addBuilder(new WAssetBuilder<Texture>);
 
 	glfwInit();
 

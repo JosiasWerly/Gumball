@@ -142,10 +142,29 @@ bool LoadObjFile(
 	return false;
 }
 
-AssetFactory<MeshData>::AssetFactory() {
-	extensions = { "obj" };
+MeshInstance::MeshInstance() {
+	drawable = new DrawableBuffer;
 }
-bool AssetFactory<MeshData>::load(Archive &ar, MeshData &val) {
+MeshInstance::~MeshInstance() {
+	delete drawable;
+}
+void MeshInstance::setMeshData(MeshData *NewMeshData) {
+	meshData = NewMeshData;
+	drawable->bindAll();
+	VboBuilder()
+		.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))
+		.addAttrib<float>(3)//pos
+		.addAttrib<float>(3)//normal
+		.addAttrib<float>(2)//uv
+		.build();
+	auto &ibo = drawable->getIbo();
+	ibo.setBuffer(
+		meshData->index.data(),
+		static_cast<unsigned int> (meshData->index.size() * sizeof(unsigned)));
+	drawable->unbindAll();
+}
+
+bool WAssetBuilder<MeshData>::load(Archive &ar, MeshData &val) {
 	std::string path = ar.getFilePath().getPath().c_str();
 	ar.close();
 	vector<MeshVertexData> &meshBuffer = val.mesh;
@@ -170,29 +189,10 @@ bool AssetFactory<MeshData>::load(Archive &ar, MeshData &val) {
 	}
 	return false;
 }
-bool AssetFactory<MeshData>::save(Archive &ar, const MeshData &val) {
+bool WAssetBuilder<MeshData>::save(Archive &ar, MeshData &val) {
 	throw;
 	return false;
 }
-
-MeshInstance::MeshInstance() {
-	drawable = new DrawableBuffer;
-}
-MeshInstance::~MeshInstance() {
-	delete drawable;
-}
-void MeshInstance::setMeshData(MeshData *NewMeshData) {
-	meshData = NewMeshData;
-	drawable->bindAll();
-	VboBuilder()
-		.setBuffer<void>(meshData->mesh.data(), (unsigned)meshData->mesh.size() * sizeof(MeshVertexData))
-		.addAttrib<float>(3)//pos
-		.addAttrib<float>(3)//normal
-		.addAttrib<float>(2)//uv
-		.build();
-	auto &ibo = drawable->getIbo();
-	ibo.setBuffer(
-		meshData->index.data(),
-		static_cast<unsigned int> (meshData->index.size() * sizeof(unsigned)));
-	drawable->unbindAll();
+bool WAssetBuilder<MeshData>::hasExtension(const string &extention) const { 
+	return extention == "obj"; 
 }

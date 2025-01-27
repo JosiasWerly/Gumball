@@ -4,12 +4,14 @@
 
 #include <string>
 #include <fstream>
-#include "Var.hpp"
+#include "Pointer.hpp"
 using namespace std;
 
 namespace Path {
+	//TODO: change to constString, and rename this namespace...
 	string GENGINE fileName(string path);
 	string GENGINE extention(string path);
+	bool GENGINE exists(string path);
 };
 
 struct FilePath {
@@ -54,61 +56,5 @@ public:
 	Inline bool isOpen() const { return fs->is_open(); }
 	Inline const FilePath &getFilePath() const { return filePath; }
 };
-
-
-class GMODULE Serializer {
-public:
-	virtual bool load(Archive &ar, Var &var) = 0;
-	virtual bool save(Archive &ar, const Var &var) = 0;
-};
-
-template<class T>
-class GMODULE TSerializer : public Serializer {
-	virtual bool load(Archive &ar, T &var) = 0;
-	virtual bool save(Archive &ar, const T &var) = 0;
-
-	bool load(Archive &ar, Var &var) {
-		//TVar<T> newValue();
-		//var = newValue;
-		//return load(ar, newValue.pin());
-		return false;
-	}
-	bool save(Archive &ar, const Var &var) {
-		return false;//save(ar, var);
-	}
-public:
-	TSerializer() = default;
-};
-
-
-
-
-//template<class T> 
-//class GMODULE TArchiveSerializer : public ArchiveSerializer {
-//protected:
-//	bool loadObj(Archive &ar, T &obj) = delete;
-//	bool saveObj(Archive &ar, T &obj) = delete;
-//
-//public:
-//	bool load(Archive &ar, Var *&var) {
-//		if (var) {
-//			delete var;
-//			var = nullptr;
-//		}
-//		TVar<T> *newVar = new TVar<T>(new T);
-//		if (!loadObj(ar, *newVar)) {
-//			delete newVar;
-//			newVar = nullptr;
-//		}
-//		var = newVar;
-//		return newVar;
-//	}
-//	bool save(Archive &ar, Var &var) {
-//		TVar<T> *newVar = static_cast<TVar<T>*>(&var);
-//		if (!newVar || !newVar->isValid())
-//			return false;
-//		return saveObj(ar, *newVar);
-//	}
-//};
 
 #endif // !_archive

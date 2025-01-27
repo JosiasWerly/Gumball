@@ -97,10 +97,7 @@ void ShaderInstance::setShader(Shader *newShader) {
 	params.setParent(&newShader->getUniforms());
 }
 
-AssetFactory<Shader>::AssetFactory() {
-	extensions = { "shader", "glsl" };
-}
-bool AssetFactory<Shader>::load(Archive &ar, Shader &val) {
+bool WAssetBuilder<Shader>::load(Archive &ar, Shader &val) {
 	string vertex, fragment;
 	{
 		enum class ESType {
@@ -131,7 +128,10 @@ bool AssetFactory<Shader>::load(Archive &ar, Shader &val) {
 	}
 	return false;
 }
-bool AssetFactory<Shader>::save(Archive &ar, const Shader &val) {
+bool WAssetBuilder<Shader>::save(Archive &ar, Shader &val) {
 	throw;
 	return false;
+}
+bool WAssetBuilder<Shader>::hasExtension(const string &extention) const {
+	return extention == "shader";
 }

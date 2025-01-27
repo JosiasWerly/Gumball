@@ -10,6 +10,9 @@ namespace Path {
 	string extention(string path) {
 		return std::filesystem::path(path).extension().string().substr(1);
 	}
+	bool exists(string path) {
+		return std::filesystem::exists(path);
+	}
 };
 
 Archive::Archive(string filePath) {

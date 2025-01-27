@@ -67,6 +67,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -116,7 +117,7 @@
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="StateMachine.hpp" />
     <ClInclude Include="Timer.hpp" />
-    <ClInclude Include="Var.hpp" />
+    <ClInclude Include="Pointer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />
@@ -126,12 +127,12 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Module.cpp" />
+    <ClCompile Include="Pointer.cpp" />
     <ClCompile Include="ProjectTarget.cpp" />
     <ClCompile Include="Property.cpp" />
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Var.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\External\GLM\Source\GLM\GLM.vcxproj">

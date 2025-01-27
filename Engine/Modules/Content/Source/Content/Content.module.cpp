@@ -9,26 +9,29 @@ using namespace std;
 
 ContentModule::ContentModule() {
 }
-BaseAssetFactory *ContentModule::findFactory(const string &extension) {
-	for (auto &f : factories) {
-		if (f->hasExtension(extension))
-			return f;
-	}
-	return nullptr;
+ContentModule::~ContentModule() {
+	for (auto b : builders)
+		delete b;
+	unload();
 }
 void ContentModule::posLoad() {
-	loadFromFolder(Domain::instance()->getContentPath());
+	loadFolder(Domain::instance()->getContentPath());
 }
 void ContentModule::unload() {
 	for (auto a : assets)
 		delete a;
 }
-void ContentModule::addFactory(BaseAssetFactory *factory) {
-	factories.push_back(factory);
+void ContentModule::addBuilder(AssetBuilder *builder) {
+	builders.push_back(builder);
 }
-void ContentModule::delFactory(BaseAssetFactory *factory) {
-	factories.remove(factory);
+AssetBuilder *ContentModule::getBuilder(const string &extension) {
+	for (auto &b : builders) {
+		if (b->hasExtension(extension))
+			return b;
+	}
+	return nullptr;
 }
+
 void ContentModule::addAsset(Asset *asset) {
 	if (!getAsset(asset->name))
 		assets.push_back(asset);
@@ -43,41 +46,36 @@ Asset *ContentModule::getAsset(string name) {
 	}
 	return nullptr;
 }
-bool ContentModule::save(Asset *asset) {
-	return false;
+
+void ContentModule::loadFile(const string &filePath) {
+	string assetName = Path::fileName(filePath);
+	string assetExt = Path::extention(filePath);
+
+	if (getAsset(assetName))
+		return;//already loaded
+
+	AssetBuilder *builder = getBuilder(assetExt);
+	if (!builder)
+		return;//no builder
+
+	Asset *newAsset = new Asset;
+	newAsset->name = assetName;
+	newAsset->filePath = filePath;
+
+	Archive ar(filePath);
+	const bool loaded = builder->load(ar, newAsset->content);
+	
+	if(loaded)
+		addAsset(newAsset);
+	else
+		delete newAsset;
+	
+	cout << assetName << "." << assetExt << " --- " << (loaded ? "ok" : "fail") << endl;
 }
-bool ContentModule::load(Asset *asset) {
-	Archive ar(asset->filePath);
-	if (ar.isOpen()) {
-		string assetExt = Path::extention(asset->filePath);
-		if (auto factory = findFactory(assetExt)) {
-			if (factory->archiveLoad(ar, asset->content)) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-void ContentModule::loadFromFolder(string root) {
+void ContentModule::loadFolder(const string &folderPath) {
 	namespace fs = std::filesystem;
-	for (fs::recursive_directory_iterator i(root), end; i != end; ++i) {
-		if (!is_directory(i->path())) {
-			loadAssetFromFile(i->path().string());
-		}
-	}
-}
-void ContentModule::loadAssetFromFile(const string &assetPath) {
-	bool loaded = false;
-	string assetName = Path::fileName(assetPath);
-	string assetExt = Path::extention(assetPath);
-	if (!getAsset(assetName)) {
-		Asset *newAsset = new Asset;
-		newAsset->name = assetName;
-		newAsset->filePath = assetPath;
-		if (loaded = load(newAsset))
-			addAsset(newAsset);
-		else
-			delete newAsset;
-		cout << assetName << "." << assetExt << " --- " << (loaded ? "ok" : "fail") << endl;
+	for (fs::recursive_directory_iterator i(folderPath), end; i != end; ++i) {
+		if (!is_directory(i->path()))
+			loadFile(i->path().string());
 	}
 }
