@@ -1,6 +1,6 @@
 #include "Sandbox.hpp"
 
-#include <Content/Content.module.hpp>
+#include <Asset/Asset.module.hpp>
 #include <Render/Render.module.hpp>
 #include <Gumball/Domain.hpp>
 #include <Gumball/Engine.hpp>
@@ -112,7 +112,7 @@ public:
 		cout << "loaded" << endl;
 		srand(0);
 
-		ContentModule *m = ContentModule::instance();
+		AssetModule *m = AssetModule::instance();
 		WorldModule *w = WorldModule::instance();
 		RenderModule *r = RenderModule::instance();
 		InputModule *i = InputModule::instance();

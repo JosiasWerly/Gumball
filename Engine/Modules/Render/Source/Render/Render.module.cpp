@@ -6,7 +6,7 @@
 #include "Core/Mesh.hpp"
 #include "Core/Shaders.hpp"
 
-#include <Content/Content.module.hpp>
+#include <Asset/Asset.module.hpp>
 
 RenderModule::RenderModule() :
 	scene(new SceneOverlay),
@@ -17,7 +17,7 @@ RenderModule::~RenderModule() {
 		delete l;
 }
 void RenderModule::load() {
-	ContentModule *content = ContentModule::instance();
+	AssetModule *content = AssetModule::instance();
 	content->addBuilder(new WAssetBuilder<MeshData>);
 	content->addBuilder(new WAssetBuilder<Shader>);
 	content->addBuilder(new WAssetBuilder<Texture>);

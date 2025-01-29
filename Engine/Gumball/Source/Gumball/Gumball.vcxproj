@@ -67,7 +67,6 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
-      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,12 +111,12 @@
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Module.hpp" />
+    <ClInclude Include="Pointer.hpp" />
     <ClInclude Include="ProjectTarget.hpp" />
     <ClInclude Include="Property.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="StateMachine.hpp" />
     <ClInclude Include="Timer.hpp" />
-    <ClInclude Include="Pointer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />

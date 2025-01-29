@@ -8,7 +8,7 @@ using namespace std;
 
 
 class GMODULE Asset {
-	friend class ContentModule;
+	friend class AssetModule;
 
 private:
 	string filePath = "";

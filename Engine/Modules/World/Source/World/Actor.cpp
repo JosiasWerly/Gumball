@@ -1,6 +1,6 @@
 #include "Actor.hpp"
 
-#include <Content/Content.module.hpp>
+#include <Asset/Asset.module.hpp>
 #include <Render/Core/Texture.hpp>
 #include <Render/Core/Mesh.hpp>
 
@@ -37,7 +37,7 @@ void ActorComponent::setActive(bool newActive) {
 }
 
 MeshComponent::MeshComponent() {
-	auto cm = ContentModule::instance();
+	auto cm = AssetModule::instance();
 	auto &params = draw.getShaderInstance().getParameters();
 	params.activate({ "uTexture", "uColor" });
 	params.set<Texture *>("uTexture", cm->getContent<Texture>("uv_grid"));

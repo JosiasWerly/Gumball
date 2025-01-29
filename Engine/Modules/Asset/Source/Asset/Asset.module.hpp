@@ -8,7 +8,7 @@
 #include <set>
 #include <string>
 
-class GMODULE ContentModule : public ModuleSingleton<ContentModule> {
+class GMODULE AssetModule : public ModuleSingleton<AssetModule> {
 private:
 	std::list<AssetBuilder *> builders;
 	std::list<Asset *> assets;
@@ -21,8 +21,8 @@ protected:
 	const char* name() const override { return "Content"; }
 
 public:
-	ContentModule();
-	~ContentModule();
+	AssetModule();
+	~AssetModule();
 	void addBuilder(AssetBuilder *builder);
 	AssetBuilder *getBuilder(const string &extension);
 	

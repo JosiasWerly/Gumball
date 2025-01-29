@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _shader
 #define _shader
-#include <Content/Asset.hpp>
+#include <Asset/Asset.hpp>
 #include "ShaderUniform.hpp"
 
 class GMODULE Shader {

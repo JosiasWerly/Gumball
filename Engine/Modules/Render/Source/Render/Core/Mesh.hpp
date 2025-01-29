@@ -2,7 +2,7 @@
 #ifndef _mesh
 #define _mesh
 
-#include <Content/Asset.hpp>
+#include <Asset/Asset.hpp>
 #include <vector>
 
 struct GMODULE MeshVertexData {

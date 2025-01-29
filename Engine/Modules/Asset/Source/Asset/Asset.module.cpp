@@ -1,4 +1,4 @@
-#include "Content.module.hpp"
+#include "Asset.module.hpp"
 #include <Gumball\Domain.hpp>
 #include <Gumball\Engine.hpp>
 
@@ -7,24 +7,24 @@
 
 using namespace std;
 
-ContentModule::ContentModule() {
+AssetModule::AssetModule() {
 }
-ContentModule::~ContentModule() {
+AssetModule::~AssetModule() {
 	for (auto b : builders)
 		delete b;
 	unload();
 }
-void ContentModule::posLoad() {
+void AssetModule::posLoad() {
 	loadFolder(Domain::instance()->getContentPath());
 }
-void ContentModule::unload() {
+void AssetModule::unload() {
 	for (auto a : assets)
 		delete a;
 }
-void ContentModule::addBuilder(AssetBuilder *builder) {
+void AssetModule::addBuilder(AssetBuilder *builder) {
 	builders.push_back(builder);
 }
-AssetBuilder *ContentModule::getBuilder(const string &extension) {
+AssetBuilder *AssetModule::getBuilder(const string &extension) {
 	for (auto &b : builders) {
 		if (b->hasExtension(extension))
 			return b;
@@ -32,14 +32,14 @@ AssetBuilder *ContentModule::getBuilder(const string &extension) {
 	return nullptr;
 }
 
-void ContentModule::addAsset(Asset *asset) {
+void AssetModule::addAsset(Asset *asset) {
 	if (!getAsset(asset->name))
 		assets.push_back(asset);
 }
-void ContentModule::delAsset(Asset *asset) {
+void AssetModule::delAsset(Asset *asset) {
 	assets.remove(asset);
 }
-Asset *ContentModule::getAsset(string name) {
+Asset *AssetModule::getAsset(string name) {
 	for (auto a : assets) {
 		if (a->getName() == name)
 			return a;
@@ -47,7 +47,7 @@ Asset *ContentModule::getAsset(string name) {
 	return nullptr;
 }
 
-void ContentModule::loadFile(const string &filePath) {
+void AssetModule::loadFile(const string &filePath) {
 	string assetName = Path::fileName(filePath);
 	string assetExt = Path::extention(filePath);
 
@@ -72,7 +72,7 @@ void ContentModule::loadFile(const string &filePath) {
 	
 	cout << assetName << "." << assetExt << " --- " << (loaded ? "ok" : "fail") << endl;
 }
-void ContentModule::loadFolder(const string &folderPath) {
+void AssetModule::loadFolder(const string &folderPath) {
 	namespace fs = std::filesystem;
 	for (fs::recursive_directory_iterator i(folderPath), end; i != end; ++i) {
 		if (!is_directory(i->path()))

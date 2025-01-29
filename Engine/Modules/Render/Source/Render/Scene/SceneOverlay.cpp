@@ -2,7 +2,7 @@
 #include "Core/GLBuffer.hpp"
 #include "Render.module.hpp"
 
-#include <Content/Content.module.hpp>
+#include <Asset/Asset.module.hpp>
 
 
 ViewHandle::ViewMode::ViewMode() {
@@ -37,7 +37,7 @@ void ViewHandle::disable() {
 }
 
 DrawHandle::DrawHandle() {
-	static Shader *geometry = ContentModule::instance()->getContent<Shader>("geometry");
+	static Shader *geometry = AssetModule::instance()->getContent<Shader>("geometry");
 	setShader(geometry);
 }
 DrawHandle::~DrawHandle() {
@@ -57,7 +57,7 @@ void DrawHandle::setShader(Shader *newShader) {
 }
 
 FboHandle::FboHandle() {
-	screenMesh.setMeshData(ContentModule::instance()->getContent<MeshData>("screenPlane"));
+	screenMesh.setMeshData(AssetModule::instance()->getContent<MeshData>("screenPlane"));
 	fbo = new Fbo;
 }
 FboHandle::~FboHandle() {
@@ -100,9 +100,9 @@ void FboHandle::render() {
 //static DrawHandle *hDraw;
 void SceneOverlay::onAttach() {
 	gbuffer = new FboHandle;
-	gbuffer->setShader(ContentModule::instance()->getContent<Shader>("gbuffer"));
+	gbuffer->setShader(AssetModule::instance()->getContent<Shader>("gbuffer"));
 
-	geometryShader = ContentModule::instance()->getContent<Shader>("geometry");
+	geometryShader = AssetModule::instance()->getContent<Shader>("geometry");
 	auto &params = geometryShader->getUniforms();
 	params.activate({ "gAlbedo" });
 

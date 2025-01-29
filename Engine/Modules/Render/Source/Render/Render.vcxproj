@@ -60,7 +60,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>DEBUG;GMODULE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Content\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Asset\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -81,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;CURL_STATICLIB;GMODULE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Content\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Asset\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
@@ -148,8 +148,8 @@
     <ProjectReference Include="..\..\..\..\External\ImGui\Source\ImGui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Content\Source\Content\Content.vcxproj">
-      <Project>{60013234-CCE0-B0CF-D5F8-3BA641571731}</Project>
+    <ProjectReference Include="..\..\..\Asset\Source\Asset\Asset.vcxproj">
+      <Project>{253FD80C-9153-00BE-5AD5-A31DC6A8FCEE}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Gumball\Source\Gumball\Gumball.vcxproj">
       <Project>{89DFFD75-F5BE-7C11-FED6-07E86A35E372}</Project>
