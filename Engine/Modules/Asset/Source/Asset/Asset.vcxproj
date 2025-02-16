@@ -60,7 +60,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>DEBUG;GMODULE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\Json\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -81,7 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;CURL_STATICLIB;GMODULE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\Json\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
@@ -105,12 +105,18 @@
   <ItemGroup>
     <ClInclude Include="Asset.hpp" />
     <ClInclude Include="Asset.module.hpp" />
+    <ClInclude Include="AssetBuilder.hpp" />
+    <ClInclude Include="AssetFactory.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="Asset.module.cpp" />
+    <ClCompile Include="AssetFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\External\Json\Source\Json\Json.vcxproj">
+      <Project>{7F9B877C-6BD2-880D-14BF-6E1000D5040F}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Gumball\Source\Gumball\Gumball.vcxproj">
       <Project>{89DFFD75-F5BE-7C11-FED6-07E86A35E372}</Project>
     </ProjectReference>

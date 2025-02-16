@@ -2,6 +2,8 @@
 #ifndef __assetmodule
 #define __assetmodule
 
+#include "AssetFactory.hpp"
+#include "AssetBuilder.hpp"
 #include "Asset.hpp"
 
 #include <list>
@@ -9,10 +11,12 @@
 #include <string>
 
 class GMODULE AssetModule : public ModuleSingleton<AssetModule> {
-private:
-	std::list<AssetBuilder *> builders;
-	std::list<Asset *> assets;
+	friend class AssetFactory;
 
+private:
+	std::list<AssetFactory *> factories;
+	std::list<AssetBuilder *> builders;
+	std::unordered_map<u64, Asset *> assets;
 
 protected:
 	void posLoad() override;
@@ -29,11 +33,12 @@ public:
 	void addAsset(Asset *asset);
 	void delAsset(Asset *asset);
 	Asset *getAsset(string name);
+	Asset *getAsset(u64 hash);
 	
 	template<class t> 
 	t *getContent(string name) {
 		if (auto asset = getAsset(name)) {
-			if (TPtr<t> p = asset->content.ptr<t>()) {
+			if (TPtr<t> p = asset->getContent().ptr<t>()) {
 				return &(*p);
 			}
 		}
@@ -42,6 +47,7 @@ public:
 
 	void loadFile(const string &filePath);
 	void loadFolder(const string &folderPath);
+	
 };
 
 #endif // !__assetmodule

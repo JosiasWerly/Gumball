@@ -1,7 +1,7 @@
 #pragma once
 #ifndef __texture
 #define __texture
-#include <Asset/Asset.hpp>
+#include <Asset/AssetBuilder.hpp>
 #include <iostream>
 class GMODULE Texture {
 public:

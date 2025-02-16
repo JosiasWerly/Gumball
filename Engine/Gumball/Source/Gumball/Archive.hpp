@@ -4,23 +4,24 @@
 
 #include <string>
 #include <fstream>
+#include <set>
 #include "Pointer.hpp"
 using namespace std;
 
-namespace Path {
-	//TODO: change to constString, and rename this namespace...
-	string GENGINE fileName(string path);
-	string GENGINE extention(string path);
-	bool GENGINE exists(string path);
-};
+struct GENGINE FilePath {
+private:
+	string rpath;
 
-struct FilePath {
-	string path = "";
-
-	Inline const string &getPath() const { return path; }
-	Inline const string getName() const { return Path::fileName(path); }
-	Inline const string getExtension() const { return Path::extention(path); }
-	operator bool() const { return path != ""; }
+public:
+	FilePath() : rpath("") {}
+	FilePath(const string &path) : rpath(path) {}
+	string path() const;
+	string name() const;
+	string extension() const;
+	u64 hash() const;
+	bool exists() const;
+	operator bool() const { return rpath != ""; }
+	bool operator==(const FilePath &o) const { return rpath == o.rpath; }
 };
 
 class GENGINE Archive {
@@ -43,6 +44,8 @@ public:
 
 	template<class T>Archive &operator<<(T &val);
 	template<class T>Archive &operator>>(T &val);
+	//template<class T>Archive &operator<<(T &val);
+	template<>Archive &operator>>(std::string &val);
 
 	Archive &operator=(const Archive &other) = delete;
 	Archive &operator=(Archive other) = delete;
@@ -56,5 +59,19 @@ public:
 	Inline bool isOpen() const { return fs->is_open(); }
 	Inline const FilePath &getFilePath() const { return filePath; }
 };
+
+
+template<class T> Archive &Archive::operator<<(T &val) {
+	fs->operator<<<T>(val);
+	return *this;
+}
+template<class T> Archive &Archive::operator>>(T &val) {
+	fs->operator>><T>(val);
+	return *this;
+}
+template<> Archive &Archive::operator>><std::string>(std::string &val) {
+	val.assign(std::istreambuf_iterator<char>(*fs), std::istreambuf_iterator<char>());
+	return *this;
+}
 
 #endif // !_archive

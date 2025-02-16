@@ -165,7 +165,7 @@ void MeshInstance::setMeshData(MeshData *NewMeshData) {
 }
 
 bool WAssetBuilder<MeshData>::load(Archive &ar, MeshData &val) {
-	std::string path = ar.getFilePath().getPath().c_str();
+	std::string path = ar.getFilePath().path().c_str();
 	ar.close();
 	vector<MeshVertexData> &meshBuffer = val.mesh;
 	vector<unsigned> &index = val.index;

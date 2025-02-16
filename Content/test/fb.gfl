@@ -1,0 +1,7 @@
+{
+    "type": "savefile",
+    "dependencies":["foo", "bar"],
+    "content": {
+        812389808
+    }
+}

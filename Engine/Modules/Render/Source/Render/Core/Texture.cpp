@@ -76,7 +76,7 @@ void Texture::setBuffer(Color *newBuffer) {
 }
 
 bool WAssetBuilder<Texture>::load(Archive &ar, Texture &val) {
-	const string filePath = ar.getFilePath().getPath();
+	const string filePath = ar.getFilePath().path();
 	ar.close();
 
 	int ch = 0;

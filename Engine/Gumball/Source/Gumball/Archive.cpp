@@ -2,18 +2,22 @@
 
 #include <filesystem>
 
-namespace Path {
-	string fileName(string path) {
-		const string fName = std::filesystem::path(path).filename().string();
-		return fName.substr(0, fName.find_last_of("."));
-	}
-	string extention(string path) {
-		return std::filesystem::path(path).extension().string().substr(1);
-	}
-	bool exists(string path) {
-		return std::filesystem::exists(path);
-	}
-};
+string FilePath::path() const {
+	return rpath;
+}
+string FilePath::name() const {
+	const string fName = std::filesystem::path(rpath).filename().string();
+	return fName.substr(0, fName.find_last_of(".")); 
+}
+string FilePath::extension() const {
+	return std::filesystem::path(rpath).extension().string().substr(1);
+}
+u64 FilePath::hash() const {
+	return std::hash<string>{}(path());
+}
+bool FilePath::exists() const {
+	return std::filesystem::exists(rpath);
+}
 
 Archive::Archive(string filePath) {
 	open(filePath);
@@ -34,7 +38,7 @@ void Archive::open(string filePath) {
 	fs->open(filePath, std::fstream::in | std::fstream::out);
 
 	if (fs->is_open())
-		this->filePath = FilePath{ filePath };
+		this->filePath = FilePath(filePath);
 	else
 		delete fs;
 }
@@ -51,14 +55,6 @@ Inline void Archive::close() {
 }
 bool Archive::getLine(string &str) {
 	return (bool)std::getline(*fs, str);
-}
-template<class T>Archive &Archive::operator<<(T &val) {
-	fs.operator<<<T>(val);
-	return *this;
-}
-template<class T>Archive &Archive::operator>>(T &val) {
-	fs.operator>><T>(val);
-	return *this;
 }
 Archive &Archive::operator=(const string filePath) {
 	open(filePath);

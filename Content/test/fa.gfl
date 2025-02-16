@@ -1,0 +1,7 @@
+{
+    "type": "aa",
+    "dependencies":["aa", "bb"],
+    "content": {
+        111
+    }
+}
