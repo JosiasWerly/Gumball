@@ -3,7 +3,6 @@
 #define __assetmodule
 
 #include "AssetFactory.hpp"
-#include "AssetBuilder.hpp"
 #include "Asset.hpp"
 
 #include <list>
@@ -14,8 +13,7 @@ class GMODULE AssetModule : public ModuleSingleton<AssetModule> {
 	friend class AssetFactory;
 
 private:
-	std::list<AssetFactory *> factories;
-	std::list<AssetBuilder *> builders;
+	std::list<FileSerializer *> serializers;
 	std::unordered_map<u64, Asset *> assets;
 
 protected:
@@ -27,8 +25,8 @@ protected:
 public:
 	AssetModule();
 	~AssetModule();
-	void addBuilder(AssetBuilder *builder);
-	AssetBuilder *getBuilder(const string &extension);
+	void addSerializer(FileSerializer *builder);
+	FileSerializer *getSerializer(const string &extension);
 	
 	void addAsset(Asset *asset);
 	void delAsset(Asset *asset);
@@ -47,7 +45,6 @@ public:
 
 	void loadFile(const string &filePath);
 	void loadFolder(const string &folderPath);
-	
 };
 
 #endif // !__assetmodule

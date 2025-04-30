@@ -164,16 +164,14 @@ void MeshInstance::setMeshData(MeshData *NewMeshData) {
 	drawable->unbindAll();
 }
 
-bool WAssetBuilder<MeshData>::load(Archive &ar, MeshData &val) {
-	std::string path = ar.getFilePath().path().c_str();
-	ar.close();
+bool WFileSerializer<MeshData>::load(const FilePath &fp, MeshData &val) {
 	vector<MeshVertexData> &meshBuffer = val.mesh;
 	vector<unsigned> &index = val.index;
 	{
 		vector<glm::fvec3> vertex, normal;
 		vector<glm::fvec2> uv;
 
-		if (LoadObjFile(path.c_str(), vertex, uv, normal)) {
+		if (LoadObjFile(fp.path().c_str(), vertex, uv, normal)) {
 			vector<glm::fvec3> out_vertex, out_normal;
 			vector<glm::fvec2> out_uv;
 			CalculateIndexData(vertex, uv, normal, index, out_vertex, out_uv, out_normal);
@@ -189,10 +187,10 @@ bool WAssetBuilder<MeshData>::load(Archive &ar, MeshData &val) {
 	}
 	return false;
 }
-bool WAssetBuilder<MeshData>::save(Archive &ar, MeshData &val) {
+bool WFileSerializer<MeshData>::save(const FilePath &fp, MeshData &val) {
 	throw;
 	return false;
 }
-bool WAssetBuilder<MeshData>::hasExtension(const string &extention) const { 
-	return extention == "obj"; 
+bool WFileSerializer<MeshData>::supports(const FilePath &fp) const {
+	return fp.path() == "obj";
 }

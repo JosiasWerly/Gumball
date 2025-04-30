@@ -2,7 +2,7 @@
 #ifndef _mesh
 #define _mesh
 
-#include <Asset/AssetBuilder.hpp>
+#include <Asset/AssetFactory.hpp>
 #include <vector>
 
 struct GMODULE MeshVertexData {
@@ -37,10 +37,10 @@ public:
 };
 
 template<>
-class GMODULE WAssetBuilder<MeshData> : public TAssetBuilder<MeshData> {
+class GMODULE WFileSerializer<MeshData> : public TFileSerializer<MeshData> {
 public:
-	bool load(Archive &ar, MeshData &val);
-	bool save(Archive &ar, MeshData &val);
-	bool hasExtension(const string &extention) const;
+	bool load(const FilePath &fp, MeshData &val);
+	bool save(const FilePath &fp, MeshData &val);
+	bool supports(const FilePath &fp) const;
 };
 #endif // !_mesh

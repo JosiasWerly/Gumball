@@ -1,7 +1,5 @@
 {
-    "type": "savefile",
-    "dependencies":["foo", "bar"],
-    "content": {
-        812389808
-    }
+    "type": "fun",
+    "dependencies":["aa"],
+    "content": "1234"
 }

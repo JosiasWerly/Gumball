@@ -7,6 +7,7 @@
 using namespace std;
 
 class GMODULE Asset {
+	friend class AssetFactory;
 private:
 	FilePath filepath;
 	string type;
@@ -14,10 +15,6 @@ private:
 	Ptr content;
 
 public:
-	Asset(FilePath filepath, list<FilePath> dependencies = {}) :
-		filepath(filepath),
-		dependencies(dependencies)
-	{}
 	Inline FilePath &getPath() { return filepath; }
 	Inline list<FilePath> &getDependencies() { return dependencies; }
 	Inline Ptr& getContent() { return content; }

@@ -36,10 +36,10 @@ public:
 };
 
 template<>
-class GMODULE WAssetBuilder<Shader> : public TAssetBuilder<Shader> {
+class GMODULE WFileSerializer<Shader> : public TFileSerializer<Shader> {
 public:
-	bool load(Archive &ar, Shader &val);
-	bool save(Archive &ar, Shader &val);
-	bool hasExtension(const string &extention) const;
+	bool load(const FilePath &fp, Shader &val);
+	bool save(const FilePath &fp, Shader &val);
+	bool supports(const FilePath &fp) const;
 };
 #endif // !_shader

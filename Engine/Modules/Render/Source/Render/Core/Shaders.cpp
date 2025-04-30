@@ -97,8 +97,9 @@ void ShaderInstance::setShader(Shader *newShader) {
 	params.setParent(&newShader->getUniforms());
 }
 
-bool WAssetBuilder<Shader>::load(Archive &ar, Shader &val) {
+bool WFileSerializer<Shader>::load(const FilePath &fp, Shader &val) {
 	string vertex, fragment;
+	Archive ar(fp.path());
 	{
 		enum class ESType {
 			none = -1, vertex, fragment
@@ -128,10 +129,10 @@ bool WAssetBuilder<Shader>::load(Archive &ar, Shader &val) {
 	}
 	return false;
 }
-bool WAssetBuilder<Shader>::save(Archive &ar, Shader &val) {
+bool WFileSerializer<Shader>::save(const FilePath &fp, Shader &val) {
 	throw;
 	return false;
 }
-bool WAssetBuilder<Shader>::hasExtension(const string &extention) const {
-	return extention == "shader";
+bool WFileSerializer<Shader>::supports(const FilePath &fp) const {
+	return fp.path() == "shader";
 }

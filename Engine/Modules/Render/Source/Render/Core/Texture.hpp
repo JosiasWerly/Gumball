@@ -1,8 +1,9 @@
 #pragma once
 #ifndef __texture
 #define __texture
-#include <Asset/AssetBuilder.hpp>
 #include <iostream>
+#include "Gumball/Archive.hpp"
+
 class GMODULE Texture {
 public:
 	enum class EInternalFormat {
@@ -39,12 +40,11 @@ public:
 	Inline const unsigned &getId() { return id; }
 };
 
-
 template<>
-class GMODULE WAssetBuilder<Texture> : public TAssetBuilder<Texture> {
+class GMODULE WFileSerializer<Texture> : public TFileSerializer<Texture> {
 public:
-	bool load(Archive &ar, Texture &val);
-	bool save(Archive &ar, Texture &val);
-	bool hasExtension(const string &extention) const;
+	bool load(const FilePath &fp, Texture &val);
+	bool save(const FilePath &fp, Texture &val);
+	bool supports(const FilePath &fp) const;
 };
 #endif // !__texture

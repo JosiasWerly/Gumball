@@ -1,7 +1,5 @@
 {
-    "type": "aa",
-    "dependencies":["aa", "bb"],
-    "content": {
-        111
-    }
+    "type": "fun",
+    "dependencies":[],
+    "content": "4321"
 }

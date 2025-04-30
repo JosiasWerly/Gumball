@@ -75,24 +75,21 @@ void Texture::setBuffer(Color *newBuffer) {
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x, size.y, format, type, buffer);
 }
 
-bool WAssetBuilder<Texture>::load(Archive &ar, Texture &val) {
-	const string filePath = ar.getFilePath().path();
-	ar.close();
-
+bool WFileSerializer<Texture>::load(const FilePath &fp, Texture &val) {
 	int ch = 0;
 	int width = 0, height = 0;
 	unsigned char *imageBuffer = nullptr;
 	stbi_set_flip_vertically_on_load(true);
-	if (imageBuffer = stbi_load(filePath.c_str(), &width, &height, &ch, 4)) {
+	if (imageBuffer = stbi_load(fp.path().c_str(), &width, &height, &ch, 4)) {
 		val.create({ width, height }, reinterpret_cast<Color *>(imageBuffer));
 		return true;
 	}
 	return false;
 }
-bool WAssetBuilder<Texture>::save(Archive &ar, Texture &val) {
+bool WFileSerializer<Texture>::save(const FilePath &fp, Texture &val) {
 	throw;
 	return false;
 }
-bool WAssetBuilder<Texture>::hasExtension(const string &extention) const {
-	return extention == "png";
+bool WFileSerializer<Texture>::supports(const FilePath &fp) const {
+	return fp.path() == "png";
 }

@@ -18,9 +18,9 @@ RenderModule::~RenderModule() {
 }
 void RenderModule::load() {
 	AssetModule *content = AssetModule::instance();
-	content->addBuilder(new WAssetBuilder<MeshData>);
-	content->addBuilder(new WAssetBuilder<Shader>);
-	content->addBuilder(new WAssetBuilder<Texture>);
+	content->addSerializer(new WFileSerializer<MeshData>);
+	content->addSerializer(new WFileSerializer<Shader>);
+	content->addSerializer(new WFileSerializer<Texture>);
 
 	glfwInit();
 
