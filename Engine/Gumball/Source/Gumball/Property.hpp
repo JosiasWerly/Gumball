@@ -2,7 +2,7 @@
 #ifndef __property
 #define __property
 
-#include "Delegate.hpp"
+#include "Dispatcher.hpp"
 
 template<class TOwner, class TObj>
 class TProperty {
@@ -11,7 +11,7 @@ protected:
 	TObj value;
 
 public:
-	Delegate<void(const TOwner *owner, const TObj &oldValue, const TObj &value)> notify;
+	Event<void(const TOwner *owner, const TObj &oldValue, const TObj &value)> notify;
 
 	explicit TProperty(TOwner *owner) : owner(owner) {}
 	explicit TProperty(TOwner *owner, const TObj &&init) : owner(owner), value(init) {}

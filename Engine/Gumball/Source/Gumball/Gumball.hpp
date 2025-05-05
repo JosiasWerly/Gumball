@@ -4,6 +4,6 @@
 
 #include "Pointer.hpp"
 #include "Math.hpp"
-#include "Delegate.hpp"
+#include "Dispatcher.hpp"
 #include "Property.hpp"
 #include "Codex.hpp"

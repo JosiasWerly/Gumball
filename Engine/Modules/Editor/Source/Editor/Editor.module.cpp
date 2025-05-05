@@ -18,7 +18,6 @@ public:
 		Text *text = new Text;
 		text->text("AUSDIUHASDIUHASIUDHIUASHDIUHASDIUHASIUDHIUASHDILUHASDLIUHALIUSHDLIUASHDLIUHASLDIUHLIUASHDLIUHASDLIUHASLIUDHLIUASHDILUHASILUDH");
 		
-		
 		TextInput *textInA = new TextInput;
 		textInA->text("asdf");
 		textInA->multiline(true);

@@ -18,8 +18,8 @@ public:
 	struct GLFWwindow *getGLWindow();
 	void setTitle(string newTitle);
 
-	Delegate<void(int width, int height)> onResize;
-	Delegate<void(int key, int scancode, int action, int mods)> onInput;
+	Event<void(int width, int height)> onResize;
+	Event<void(int key, int scancode, int action, int mods)> onInput;
 };
 
 #endif // !__window

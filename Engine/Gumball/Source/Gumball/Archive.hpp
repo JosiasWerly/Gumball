@@ -42,10 +42,10 @@ public:
 	Inline void close();
 
 
-	template<class T>Archive &operator<<(T &val);
-	template<class T>Archive &operator>>(T &val);
-	template<>Archive &operator>>(std::string &val);
-	template<>Archive &operator<<(std::string &val);
+	template<class T> Archive &operator<<(T &val);
+	template<class T> Archive &operator>>(T &val);
+	template<> Archive &operator>><std::string>(std::string &val);
+	template<> Archive &operator<<<std::string>(std::string &val);
 	template<class T> T read();
 	template<class T> void write(T);
 
@@ -61,12 +61,20 @@ public:
 	Inline bool isOpen() const { return fs->is_open(); }
 	Inline const FilePath &getFilePath() const { return filePath; }
 };
+template<class T> T Archive::read() {
+	T t;
+	this->operator>><T>(t);
+	return t;
+}
+template<class T> void Archive::write(T t) {
+	this->operator<<(t);
+}
 template<class T> Archive &Archive::operator<<(T &val) {
-	fs->operator<<<T>(val);
+	fs->operator<<(val);
 	return *this;
 }
 template<class T> Archive &Archive::operator>>(T &val) {
-	fs->operator>><T>(val);
+	fs->operator>>(val);
 	return *this;
 }
 template<> Archive &Archive::operator>><std::string>(std::string &val) {
@@ -76,14 +84,6 @@ template<> Archive &Archive::operator>><std::string>(std::string &val) {
 template<> Archive &Archive::operator<<<std::string>(std::string &val) {
 	fs->write(val.c_str(), val.size());
 	return *this;
-}
-template<class T> T Archive::read() {
-	T t;
-	this->operator>><T>(t);
-	return t;
-}
-template<class T> void Archive::write(T t) {
-	this->operator<<(t);
 }
 
 class GENGINE FileSerializer {
