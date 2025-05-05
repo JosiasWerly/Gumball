@@ -62,7 +62,7 @@ template<> void ModuleController::tick<EModuleTickType::editor>(const double& de
 	for (auto &m : editorTick) {
 		t.start();
 		m->tick(deltaTime);
-		m->msCost = t.getMilliseconds();
+		m->msCost = t.milliseconds();
 	}
 }
 template<> void ModuleController::tick<EModuleTickType::gameplay>(const double& deltaTime) {
@@ -70,6 +70,6 @@ template<> void ModuleController::tick<EModuleTickType::gameplay>(const double& 
 	for (auto &m : gameplayTick) {
 		t.start();
 		m->tick(deltaTime);
-		m->msCost = t.getMilliseconds();		
+		m->msCost = t.milliseconds();
 	}
 }

@@ -5,8 +5,9 @@
 
 
 
-class EditorToolbar : public UserWidget {
+class GMODULE EditorToolbar : public UserWidget {
 public:
+	vector<Glyph::Histogram*> histogram;
 	EditorToolbar() {
 		using namespace Glyph;
 		label("EditorToolbar");
@@ -38,24 +39,41 @@ public:
 		for (size_t i = 0; i < 4; i++)
 			horizontalBox->container << new Button;
 		
-		
 		container << Widgets{
 			horizontalBox, text, textInA, textInB, combo, color, new IntergerInput(1), new FloatInput(2),
 			new ProgressBar,
-			new Histogram
 		};
 
+		Engine *e = Engine::instance();
+		ModuleController *mc = e->getModuleController();
+		std::list<Module *> &modules = mc->getModules();
+		int i = 0;
+		for (auto m : modules) {
+			Histogram *hs = new Histogram;
+			hs->size().y = 100;
+			hs->label(m->name());
+			container << hs;
+			histogram.push_back(hs);
+			i++;
+		}
+		
 		Text *tMem = new Text;
 		tMem->text(std::to_string(RenderModule::instance()->getWidgetOverlay().memory));
 		container << tMem;
 	}
 };
 
-
-
-
 void EditorModule::posLoad() {
-	new EditorToolbar;
+	editor = new EditorToolbar;
+}
+void EditorModule::tick(const double &deltaTime) {
+	auto ed = static_cast<EditorToolbar *>(editor);
+	std::list<Module *> &modules = Engine::instance()->getModuleController()->getModules();
+
+	int i = 0;
+	for (auto m : modules) {
+		ed->histogram[i++]->pushValue(m->getMsCost());
+	}
 }
 
 //using namespace Clay;

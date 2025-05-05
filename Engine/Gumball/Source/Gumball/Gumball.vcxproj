@@ -116,6 +116,7 @@
     <ClInclude Include="Property.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="StateMachine.hpp" />
+    <ClInclude Include="Tickable.hpp" />
     <ClInclude Include="Timer.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +132,7 @@
     <ClCompile Include="Property.cpp" />
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="StateMachine.cpp" />
+    <ClCompile Include="Tickable.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,7 @@ enum class EModuleTickType {
 
 class GENGINE Module {
 private:
-	double msCost;
+	double msCost = 0.0;
 
 protected:
 	friend class ModuleController;

@@ -16,6 +16,9 @@
 #include <memory>
 #include <functional>
 
+#include <chrono>
+#include <thread>
+
 class GGAME MyComp : public MeshComponent {
 public:
 	Vector3 vel;
@@ -32,6 +35,7 @@ public:
 		}
 	}
 	void tick(const double &deltaTime) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		owner->transform.rotation.rotate(.05, .05, .05);
 		owner->transform.position += vel;
 		auto &pos = owner->transform.position;
