@@ -2,7 +2,7 @@
 #ifndef __property
 #define __property
 
-#include "Dispatcher.hpp"
+#include "Flow/Dispatcher.hpp"
 
 template<class TOwner, class TObj>
 class TProperty {

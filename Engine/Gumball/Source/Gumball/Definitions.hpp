@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _definitions
-#define _definitions
+#ifndef __definitions
+#define __definitions
 
 #define Stringfy(...)#__VA_ARGS__
 #define Inline __forceinline
@@ -38,4 +38,11 @@ typedef char s8;
 typedef short s16;
 typedef int s32;
 typedef long long s64;
-#endif // !_definitions
+
+#ifdef DEBUG
+#define if_debug(exp) exp;
+#else
+#define if_debug(exp)
+#endif
+
+#endif // !__definitions

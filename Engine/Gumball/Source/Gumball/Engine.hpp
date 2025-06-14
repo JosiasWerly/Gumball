@@ -4,7 +4,7 @@
 #include <list>
 
 #include "Singleton.hpp"
-#include "Codex.hpp"
+#include "Containers/Codex.hpp"
 
 class ModuleController;
 class ProjectTarget;

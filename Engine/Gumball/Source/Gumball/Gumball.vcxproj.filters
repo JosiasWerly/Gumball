@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Containers">
+      <UniqueIdentifier>{DB5A0216-C712-4463-301A-1DBF1CF1DE53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flow">
+      <UniqueIdentifier>{3D4C857C-2983-860D-D26F-6C10BE85020F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Archive.hpp" />
+    <ClInclude Include="Containers\Codex.hpp">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Containers\Pointer.hpp">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Containers\Property.hpp">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Containers\ShardMap.hpp">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions.hpp" />
+    <ClInclude Include="Domain.hpp" />
+    <ClInclude Include="DynamicLib.hpp" />
+    <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="Flow\Dispatcher.hpp">
+      <Filter>Flow</Filter>
+    </ClInclude>
+    <ClInclude Include="Flow\StateMachine.hpp">
+      <Filter>Flow</Filter>
+    </ClInclude>
+    <ClInclude Include="Gumball.hpp" />
+    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Module.hpp" />
+    <ClInclude Include="ProjectTarget.hpp" />
+    <ClInclude Include="Singleton.hpp" />
+    <ClInclude Include="Tickable.hpp" />
+    <ClInclude Include="Timer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Archive.cpp" />
+    <ClCompile Include="Containers\Codex.cpp">
+      <Filter>Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Containers\Pointer.cpp">
+      <Filter>Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Containers\Property.cpp">
+      <Filter>Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Containers\ShardMap.cpp">
+      <Filter>Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="DynamicLib.cpp" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Flow\StateMachine.cpp">
+      <Filter>Flow</Filter>
+    </ClCompile>
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Module.cpp" />
+    <ClCompile Include="ProjectTarget.cpp" />
+    <ClCompile Include="Singleton.cpp" />
+    <ClCompile Include="Tickable.cpp" />
+    <ClCompile Include="Timer.cpp" />
+  </ItemGroup>
+</Project>

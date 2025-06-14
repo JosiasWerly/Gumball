@@ -2,8 +2,9 @@
 #include "Definitions.hpp"
 #include "Module.hpp"
 
-#include "Pointer.hpp"
+#include "Containers/Codex.hpp"
+#include "Containers/Pointer.hpp"
+#include "Containers/Property.hpp"
+#include "Flow/Dispatcher.hpp"
+#include "Flow/StateMachine.hpp"
 #include "Math.hpp"
-#include "Dispatcher.hpp"
-#include "Property.hpp"
-#include "Codex.hpp"
