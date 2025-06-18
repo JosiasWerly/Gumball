@@ -58,53 +58,13 @@ namespace FSM {//NOTE: change to Flow
 		std::unordered_map<int, State> states;
 	
 	public:
-		StateMachine() : 
-			curKey(0) {
-			ctrl.event = Controller::Event::set;
-		}
-		void run() {
-			switch (ctrl.event) {
-				case Controller::Event::none: return;
-				case Controller::Event::set:
-					ctrl.event = Controller::Event::none;
-					states.at(curKey).onEnter(ctrl);
-					break;
-				case Controller::Event::move:
-					ctrl.event = Controller::Event::none;
-					const int oldKey = curKey;
-					{
-						State &oldState = states.at(curKey);
-						auto exitTo = oldState.onExitTo.find(ctrl.next);
-						if (exitTo != oldState.onExitTo.end())
-							exitTo->second(ctrl);
-						oldState.onExit(ctrl);
-					}
-					ctrl.last = curKey;
-					curKey = ctrl.next;
-					{
-						State &newState = states.at(curKey);
-						auto enterFrom = newState.onEnterFrom.find(oldKey);
-						if (enterFrom != newState.onEnterFrom.end())
-							enterFrom->second(ctrl);
-						newState.onEnter(ctrl);
-					}
-					break;
-			}
-		}
-		void set(THash key) {
-			ctrl.event = Controller::Event::set;
-			curKey = key;
-		}
-		State &push(THash key) {
-			states.emplace(key, State());
-			return states[key];
-		}
-		State &operator[](THash key) {
-			return states.at(key);
-		}
-		const State &getState(const THash &key) const { return states.at(key); }
-		const State &getActiveState() { return getState(curKey); }
+		StateMachine();
+		void run();
+		void set(THash key);
+		State &push(THash key);
+		State &operator[](THash key) { return states.at(key); }
+		const State &operator[](THash key) const { return states.at(key); }
+		const State &getActiveState() { return this->operator[](curKey); }
 	};
 };
-
 #endif // !__statemachine
