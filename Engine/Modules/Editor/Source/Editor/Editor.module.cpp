@@ -1,14 +1,46 @@
 #include "Editor.module.hpp"
+#include <Input/Input.module.hpp>
 #include <Render/Render.module.hpp>
 #include <Render/Widget/Glyph.hpp>
-#include <Input/Input.module.hpp>
 
 
 
 class GMODULE EditorToolbar : public UserWidget {
 public:
-	vector<Glyph::Histogram*> histogram;
-	EditorToolbar() {
+	bool playState = false;
+
+	EditorToolbar() {	
+		using namespace Glyph;
+		label("EditorToolbar");
+		visibility(eVisibility::visible);
+		Button *bt = new Button;
+		bt->label("play");
+		bt->onClick.bind(this, &EditorToolbar::PlayState_OnClick);
+
+		Button *bt2 = new Button;
+		bt2->label("reload");
+		bt2->onClick.bind(this, &EditorToolbar::ReloadState_OnClick);
+		
+		container << bt << bt2;
+	}
+	void PlayState_OnClick(Widget *obj) {
+		auto e = Engine::instance();
+		Glyph::Button *bt = (Glyph::Button*)obj;
+		if (playState) {
+			Engine::instance()->getState().newSignal(Engine::State::ESignal::pause);
+			bt->label("pause");
+		}
+		else {
+			Engine::instance()->getState().newSignal(Engine::State::ESignal::play);
+			bt->label("play");
+		}
+		playState = !playState;
+	}
+	void ReloadState_OnClick(Widget *obj) {
+		auto e = Engine::instance();
+		Engine::instance()->getState().newSignal(Engine::State::ESignal::stop);
+	}
+	void Example() {
 		using namespace Glyph;
 		label("EditorToolbar");
 		visibility(eVisibility::visible);
@@ -18,27 +50,27 @@ public:
 
 		Text *text = new Text;
 		text->text("AUSDIUHASDIUHASIUDHIUASHDIUHASDIUHASIUDHIUASHDILUHASDLIUHALIUSHDLIUASHDLIUHASLDIUHLIUASHDLIUHASDLIUHASLIUDHLIUASHDILUHASILUDH");
-		
+
 		TextInput *textInA = new TextInput;
 		textInA->text("asdf");
 		textInA->multiline(true);
-		
+
 		TextInput *textInB = new TextInput;
 		textInB->text("FOO_BAR");
 		textInB->multiline(false);
-		
+
 		ColorPicker *color = new ColorPicker;
-		
+
 		Combo *combo = new Combo;
 		combo->setItems(std::vector<string>{"a", "B", "c"});
 		combo->label("combox");
-		
+
 		Container *horizontalBox = new Container;
 		horizontalBox->label("BunchOfButtons");
 		horizontalBox->layout(eLayout::horizontal);
 		for (size_t i = 0; i < 4; i++)
 			horizontalBox->container << new Button;
-		
+
 		container << Widgets{
 			horizontalBox, text, textInA, textInB, combo, color, new IntergerInput(1), new FloatInput(2),
 			new ProgressBar,
@@ -53,10 +85,10 @@ public:
 			hs->size().y = 100;
 			hs->label(m->name());
 			container << hs;
-			histogram.push_back(hs);
+			//histogram.push_back(hs);
 			i++;
 		}
-		
+
 		Text *tMem = new Text;
 		tMem->text(std::to_string(RenderModule::instance()->getWidgetOverlay().memory));
 		container << tMem;
@@ -67,13 +99,13 @@ void EditorModule::posLoad() {
 	editor = new EditorToolbar;
 }
 void EditorModule::tick(const double &deltaTime) {
-	auto ed = static_cast<EditorToolbar *>(editor);
-	std::list<Module *> &modules = Engine::instance()->getModuleController()->getModules();
+	//auto ed = static_cast<EditorToolbar *>(editor);
+	//std::list<Module *> &modules = Engine::instance()->getModuleController()->getModules();
 
-	int i = 0;
-	for (auto m : modules) {
-		ed->histogram[i++]->pushValue(m->getMsCost());
-	}
+	//int i = 0;
+	//for (auto m : modules) {
+	//	ed->histogram[i++]->pushValue(m->getMsCost());
+	//}
 }
 
 //using namespace Clay;
