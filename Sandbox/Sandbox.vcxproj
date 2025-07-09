@@ -60,7 +60,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>DEBUG;GGAME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..\Engine\Modules\Asset\Source;..\Engine\Modules\Render\Source;..\Engine\Modules\Input\Source;..\Engine\Modules\World\Source;..\Engine\Modules\Editor\Source;..\Engine\Modules\Gumball\Source;..\Engine\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..\Engine\Modules\Input\Source;..\Engine\Modules\Editor\Source;..\Engine\Modules\World\Source;..\Engine\Modules\Render\Source;..\Engine\Modules\Asset\Source;..\Engine\Modules\Gumball\Source;..\Engine\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -80,7 +80,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;CURL_STATICLIB;GGAME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..\Engine\Modules\Asset\Source;..\Engine\Modules\Render\Source;..\Engine\Modules\Input\Source;..\Engine\Modules\World\Source;..\Engine\Modules\Editor\Source;..\Engine\Modules\Gumball\Source;..\Engine\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..\Engine\Modules\Input\Source;..\Engine\Modules\Editor\Source;..\Engine\Modules\World\Source;..\Engine\Modules\Render\Source;..\Engine\Modules\Asset\Source;..\Engine\Modules\Gumball\Source;..\Engine\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
@@ -107,20 +107,20 @@
     <ClCompile Include="Sandbox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine\Modules\Asset\Source\Asset\Asset.vcxproj">
-      <Project>{253FD80C-9153-00BE-5AD5-A31DC6A8FCEE}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Engine\Modules\Render\Source\Render\Render.vcxproj">
-      <Project>{C5BB87CE-B15D-B2A4-9A18-C6F8865939F5}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Engine\Modules\Input\Source\Input\Input.vcxproj">
       <Project>{953A660D-014F-8EBE-CAD0-311E36A48AEF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Modules\Editor\Source\Editor\Editor.vcxproj">
+      <Project>{8C1A20B0-78BC-4A86-6177-5EDA4DB8D1D6}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Modules\World\Source\World\World.vcxproj">
       <Project>{4D25640E-B939-8CBF-82BB-2F1FEE8E88F0}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Engine\Modules\Editor\Source\Editor\Editor.vcxproj">
-      <Project>{8C1A20B0-78BC-4A86-6177-5EDA4DB8D1D6}</Project>
+    <ProjectReference Include="..\Engine\Modules\Render\Source\Render\Render.vcxproj">
+      <Project>{C5BB87CE-B15D-B2A4-9A18-C6F8865939F5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\Modules\Asset\Source\Asset\Asset.vcxproj">
+      <Project>{253FD80C-9153-00BE-5AD5-A31DC6A8FCEE}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Gumball\Source\Gumball\Gumball.vcxproj">
       <Project>{89DFFD75-F5BE-7C11-FED6-07E86A35E372}</Project>

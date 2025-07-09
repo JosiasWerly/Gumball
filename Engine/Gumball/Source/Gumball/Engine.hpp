@@ -5,6 +5,7 @@
 
 #include "Singleton.hpp"
 #include "Containers/Codex.hpp"
+#include "Flow/StateMachine.hpp"
 
 class ModuleController;
 class ProjectTarget;
@@ -18,6 +19,9 @@ struct EngineInit {
 
 class GENGINE Engine : public Singleton<Engine> {
 public:
+	enum class eState {
+		play, pause, loading
+	};
 	struct GENGINE State {
 		friend class Engine;
 
@@ -52,6 +56,7 @@ private:
 	ProjectTarget *projectTarget;
 	State state;
 	Codex codex;
+	Flow::StateMachine fsm;
 
 	Engine();
 	~Engine();

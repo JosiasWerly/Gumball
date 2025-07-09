@@ -110,7 +110,9 @@
     <ClInclude Include="Domain.hpp" />
     <ClInclude Include="DynamicLib.hpp" />
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="Flow\Common.hpp" />
     <ClInclude Include="Flow\Dispatcher.hpp" />
+    <ClInclude Include="Flow\SignalPool.hpp" />
     <ClInclude Include="Flow\StateMachine.hpp" />
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
@@ -129,6 +131,8 @@
     <ClCompile Include="Domain.cpp" />
     <ClCompile Include="DynamicLib.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Flow\Common.cpp" />
+    <ClCompile Include="Flow\SignalPool.cpp" />
     <ClCompile Include="Flow\StateMachine.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Module.cpp" />

@@ -26,7 +26,13 @@
     <ClInclude Include="Domain.hpp" />
     <ClInclude Include="DynamicLib.hpp" />
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="Flow\Common.hpp">
+      <Filter>Flow</Filter>
+    </ClInclude>
     <ClInclude Include="Flow\Dispatcher.hpp">
+      <Filter>Flow</Filter>
+    </ClInclude>
+    <ClInclude Include="Flow\SignalPool.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
     <ClInclude Include="Flow\StateMachine.hpp">
@@ -57,6 +63,12 @@
     <ClCompile Include="Domain.cpp" />
     <ClCompile Include="DynamicLib.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Flow\Common.cpp">
+      <Filter>Flow</Filter>
+    </ClCompile>
+    <ClCompile Include="Flow\SignalPool.cpp">
+      <Filter>Flow</Filter>
+    </ClCompile>
     <ClCompile Include="Flow\StateMachine.cpp">
       <Filter>Flow</Filter>
     </ClCompile>
