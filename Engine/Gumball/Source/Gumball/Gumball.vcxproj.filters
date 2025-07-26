@@ -32,7 +32,7 @@
     <ClInclude Include="Flow\Dispatcher.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
-    <ClInclude Include="Flow\SignalPool.hpp">
+    <ClInclude Include="Flow\ChainMachine.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
     <ClInclude Include="Flow\StateMachine.hpp">
@@ -66,7 +66,7 @@
     <ClCompile Include="Flow\Common.cpp">
       <Filter>Flow</Filter>
     </ClCompile>
-    <ClCompile Include="Flow\SignalPool.cpp">
+    <ClCompile Include="Flow\ChainMachine.cpp">
       <Filter>Flow</Filter>
     </ClCompile>
     <ClCompile Include="Flow\StateMachine.cpp">

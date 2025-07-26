@@ -8,7 +8,7 @@
 #include "Render.module.hpp"
 
 Widget::Widget() :
-	label(this, std::to_string((int)this)) {
+	label(this, std::to_string(reinterpret_cast<__int64>(this))) {
 }
 Widget::~Widget() {
 }

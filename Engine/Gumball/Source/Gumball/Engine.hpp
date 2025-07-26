@@ -6,6 +6,7 @@
 #include "Singleton.hpp"
 #include "Containers/Codex.hpp"
 #include "Flow/StateMachine.hpp"
+#include "Flow/ChainMachine.hpp"
 
 class ModuleController;
 class ProjectTarget;
@@ -63,11 +64,13 @@ private:
 	void initialize(EngineInit data);
 	void tick();
 
+	void onLoad();
+	void onUnload();
+
 public:
 	ModuleController *getModuleController() { return moduleController; }
 	State &getState() { return state; }
-	Codex &getCodex() { return codex; }
-	
+	Codex &getCodex() { return codex; }	
 };
 
 template<class T> class EngineSingleton {

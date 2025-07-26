@@ -1,41 +1,33 @@
 #include "StateMachine.hpp"
 
 using namespace Flow;
-StateMachine::StateMachine() {
-}
 void StateMachine::run() {
 	switch (ctrl.event) {
-		case Controller::Event::update:
-			current->pin().onUpdate(ctrl);
-			return;
-		case Controller::Event::set:
-			ctrl.event = Controller::Event::update;
-			current->pin().onEnter(ctrl);
+		case Controller::eSignal::set:
+			ctrl.event = Controller::eSignal::update;
+			current->onEnter(ctrl);
 			break;
-		case Controller::Event::move:
-			ctrl.event = Controller::Event::update;
+		case Controller::eSignal::move:
+			ctrl.event = Controller::eSignal::update;
 			{
-				State &st = current->pin();
-				auto to = st.onExitTo.find(ctrl.next);
-				if (to != st.onExitTo.end())
+				auto to = current->onExitTo.find(ctrl.next);
+				if (to != current->onExitTo.end())
 					to->second(ctrl);
-				current->pin().onExit(ctrl);
+				current->onExit(ctrl);
 			}
 			ctrl.last = ctrl.current;
 			ctrl.current = ctrl.next;
 			ctrl.next = 0;
-			current = &root[ctrl.current];
+			current = &nodes[ctrl.current];
 			{
-				State &st = current->pin();
-				auto to = st.onEnterFrom.find(ctrl.next);
-				if (to != st.onEnterFrom.end())
-					to->second(ctrl);
-				current->pin().onEnter(ctrl);
+				current->onEnter(ctrl);
 			}
 			break;
 	}
+	if (current)
+		current->onUpdate(ctrl);
 }
 void StateMachine::set(THash key) {
-	ctrl.event = Controller::Event::set;
-	current = &root[key];
+	ctrl.event = Controller::eSignal::set;
+	current = &nodes[key];
 }

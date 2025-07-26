@@ -19,7 +19,7 @@ namespace Glyph {
 		void render();
 
 	public:
-		Event<void(Widget *obj)> onClick;
+		TEvent<void(Widget *obj)> onClick;
 		Button() = default;
 	};
 

@@ -11,9 +11,6 @@ using namespace std;
 
 Engine::Engine() {
 	moduleController = new ModuleController;
-	//Activator::setInstance(new Activator);
-	////Activator::instance()->addPackage<ClassTypePackage_Core>();
-
 	projectTarget = new ProjectTarget;
 }
 Engine::~Engine() {
@@ -26,26 +23,6 @@ void Engine::initialize(EngineInit data) {
 	domain->engineDir = data.engineDir;
 	domain->contentPath = domain->engineDir + "Content\\";
 	codex.add<Domain>(domain);
-
-	enum class SuperSet {
-		Attack = 1, Move, Idle
-	};
-	const char *SuperSetStrg[] = { "...", "Attack", "Move", "Idle" };
-	using Ctrl = Flow::StateMachine::Controller;
-
-	auto fnx = [&](Ctrl &ct) {
-		cout << "cur " << SuperSetStrg[int(ct.now())];
-		ct.to(1 + (rand() % 3));
-		cout << "\tto " << SuperSetStrg[int(ct.to())] << endl;
-	};
-	fsm[SuperSet::Attack].onEnter += fnx;
-	fsm[SuperSet::Move].onEnter += fnx;
-	fsm[SuperSet::Idle].onEnter += fnx;
-	fsm.set(SuperSet::Attack);
-
-	while (true) {
-		fsm.run();
-	}
 }
 void Engine::tick() {
 	moduleController->load();

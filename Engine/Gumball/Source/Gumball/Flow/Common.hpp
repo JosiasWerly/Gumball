@@ -7,6 +7,10 @@
 #include <deque>
 
 namespace Flow {
+	enum class eStatus : char {
+		nominal, success, fail
+	};
+
 	struct THash {
 		int val = 0;
 
@@ -27,24 +31,25 @@ namespace Flow {
 	};
 
 	template<class T>
-	class Node {
+	class TNode {
 		T val;
-		std::unordered_map<THash, Node<T>, THashOperations> nodes;
+		std::unordered_map<THash, TNode<T>, THashOperations> nodes;
 
 	public:
 		T &pin() { return val; }
 		const T &pin() const { return val; }
 		T *operator->() { return &val; }
 		const T *operator->() const { return &val; }
-		Node &operator[](THash key) { return nodes[key]; }
-		const Node &operator[](THash key) const { return nodes.at(key); }
+		TNode &operator[](THash key) { return nodes[key]; }
+		const TNode &operator[](THash key) const { return nodes.at(key); }
+		bool contains(THash key) const { return nodes.contains(key); }
 
 		class Nav {
 			const std::deque<THash> ls;
 		
 		public:
 			constexpr Nav(std::initializer_list<THash> ls) : ls(ls) {}
-			Node *find(Node *root) {
+			TNode *find(TNode *root) {
 				auto it = ls.begin();
 				while (it != ls.end()) {
 					root = &root[*(it)];
