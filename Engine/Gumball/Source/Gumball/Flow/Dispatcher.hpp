@@ -23,8 +23,14 @@ public:
 		target = std::move(function);
 	}
 	
-	Inline void invoke(TArgs... args) { target(args...); }
-	Inline void operator()(TArgs... args) { target(args...); }
+	Inline void invoke(TArgs... args) { 
+		if(target)
+			target(args...); 
+	}
+	Inline void operator()(TArgs... args) { 
+		if(target)
+			target(args...); 
+	}
 	bool isBound() const { return target.operator bool(); }
 
 private:

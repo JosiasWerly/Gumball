@@ -45,6 +45,9 @@
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="Tickable.hpp" />
     <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="Flow\SignalPool.hpp">
+      <Filter>Flow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />
@@ -78,5 +81,8 @@
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="Tickable.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Flow\SignalPool.cpp">
+      <Filter>Flow</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

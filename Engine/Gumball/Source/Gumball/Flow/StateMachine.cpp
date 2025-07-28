@@ -4,30 +4,34 @@ using namespace Flow;
 void StateMachine::run() {
 	switch (ctrl.event) {
 		case Controller::eSignal::set:
-			ctrl.event = Controller::eSignal::update;
-			current->onEnter(ctrl);
+			current.first = ctrl.next;
+			current.second = &nodes[ctrl.next];
+			current.second->onEnter(ctrl);
+			ctrl.event = Controller::eSignal::idle;
 			break;
 		case Controller::eSignal::move:
-			ctrl.event = Controller::eSignal::update;
 			{
-				auto to = current->onExitTo.find(ctrl.next);
-				if (to != current->onExitTo.end())
+				auto to = current.second->onExitTo.find(ctrl.next);
+				if (to != current.second->onExitTo.end())
 					to->second(ctrl);
-				current->onExit(ctrl);
+				current.second->onExit(ctrl);
 			}
 			ctrl.last = ctrl.current;
 			ctrl.current = ctrl.next;
 			ctrl.next = 0;
-			current = &nodes[ctrl.current];
+			current.second = &nodes[ctrl.current];
 			{
-				current->onEnter(ctrl);
+				current.second->onEnter(ctrl);
 			}
+			ctrl.event = Controller::eSignal::idle;
 			break;
 	}
-	if (current)
-		current->onUpdate(ctrl);
+}
+void StateMachine::tick() {
+	if (current.second)
+		current.second->onTick(ctrl);
 }
 void StateMachine::set(THash key) {
 	ctrl.event = Controller::eSignal::set;
-	current = &nodes[key];
+	ctrl.next = key;
 }

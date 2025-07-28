@@ -20,42 +20,15 @@ struct EngineInit {
 
 class GENGINE Engine : public Singleton<Engine> {
 public:
-	enum class eState {
-		play, pause, loading
+	enum class eSignal {
+		idle, play, hotreload, exit
 	};
-	struct GENGINE State {
-		friend class Engine;
 
-	public:
-		enum class EPlayState {
-			disabled, beginPlay, playing, endPlay,
-		};
-		enum class ELoadState {
-			none, load, unload
-		};
-
-		enum class ESignal {
-			stop, play, pause
-		};
-	private:
-		EPlayState playState = EPlayState::disabled;
-		ELoadState loadState = ELoadState::none;
-
-		bool hasSignal = false;
-		ESignal signal = ESignal::stop;
-
-	public:
-		Inline EPlayState getPlayState() const { return playState; }
-		Inline ELoadState getLoadState() const { return loadState; }
-
-		void newSignal(ESignal newSignal) { signal = newSignal; hasSignal = true; }
-	};
 
 private:
 	friend int main(int argc, char *argv[]);
 	ModuleController *moduleController;
 	ProjectTarget *projectTarget;
-	State state;
 	Codex codex;
 	Flow::StateMachine fsm;
 
@@ -64,13 +37,12 @@ private:
 	void initialize(EngineInit data);
 	void tick();
 
-	void onLoad();
-	void onUnload();
-
 public:
 	ModuleController *getModuleController() { return moduleController; }
-	State &getState() { return state; }
-	Codex &getCodex() { return codex; }	
+	void signal(eSignal signal) {
+		fsm.set(signal);
+	}
+	Codex &getCodex() { return codex; }
 };
 
 template<class T> class EngineSingleton {

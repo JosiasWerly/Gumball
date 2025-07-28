@@ -13,7 +13,7 @@ namespace Flow {
 		class Controller {
 			friend class StateMachine;
 
-			enum class eSignal : char { update, set, move };
+			enum class eSignal : char { idle, set, move };
 			eStatus status = eStatus::nominal;
 			eSignal event = eSignal::move;
 			int last, current, next;
@@ -33,7 +33,7 @@ namespace Flow {
 			using ConstDelegates = std::unordered_map<THash, ConstDelegate, THashOperations, THashOperations>;
 		
 			Delegate onEnter;
-			Delegate onUpdate;
+			Delegate onTick;
 			ConstDelegate onExit;
 			ConstDelegates onExitTo;
 			Node() = default;
@@ -41,16 +41,18 @@ namespace Flow {
 	
 		StateMachine() = default;
 		void run();
+		void tick();
 		void set(THash key);
 		Node &operator[](THash key) { return nodes[key]; }
-		const Node &operator[](THash key) const { return nodes.at(key); }
-		const Node &activeNode() const { return *current; }
+		const Node &operator[](THash key) const { return nodes.at(key); }		
+		const THash &hash() const { return current.first; }
+		const Node &node() const { return *current.second; }
 		eStatus status() const { return ctrl.status; }
 	
 	private:
 		Controller ctrl;
 		std::unordered_map<THash, Node, THashOperations> nodes;
-		Node* current = nullptr;
+		std::pair<THash, Node *> current;
 	};
 };
 #endif // !__statemachine

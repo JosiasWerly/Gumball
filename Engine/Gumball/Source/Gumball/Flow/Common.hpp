@@ -17,6 +17,7 @@ namespace Flow {
 		THash() = default;
 		THash(const THash &other) : val(other.val) {}
 		THash(THash &&other) noexcept : val(other.val) {}
+		THash operator=(THash other) { val = other.val; return *this; }
 		template<class T> THash(T value) : val(int(value)) {}
 		template<class T> operator T() { return T(val); }
 		template<class T> operator const T() const { return T(val); }

@@ -27,18 +27,18 @@ public:
 		auto e = Engine::instance();
 		Glyph::Button *bt = (Glyph::Button*)obj;
 		if (playState) {
-			Engine::instance()->getState().newSignal(Engine::State::ESignal::pause);
+			Engine::instance()->signal(Engine::eSignal::idle);
 			bt->label("pause");
 		}
 		else {
-			Engine::instance()->getState().newSignal(Engine::State::ESignal::play);
+			Engine::instance()->signal(Engine::eSignal::play);
 			bt->label("play");
 		}
 		playState = !playState;
 	}
 	void ReloadState_OnClick(Widget *obj) {
 		auto e = Engine::instance();
-		Engine::instance()->getState().newSignal(Engine::State::ESignal::stop);
+		Engine::instance()->signal(Engine::eSignal::hotreload);
 	}
 	void Example() {
 		using namespace Glyph;
