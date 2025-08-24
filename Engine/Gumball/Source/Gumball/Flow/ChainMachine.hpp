@@ -23,7 +23,7 @@ namespace Flow {
 			void next() { move = true; }
 			void finish(bool success) { status = success ? eStatus::success : eStatus::fail; }
 		};
-		using Delegate = TDelegate<void(Controller &)>;
+		using Delegate = Signal<void(Controller &)>;
 		using Chain = std::vector<Delegate>;
 	
 		ChainMachine() = default;

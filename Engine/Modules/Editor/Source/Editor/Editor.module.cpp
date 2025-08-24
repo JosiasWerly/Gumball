@@ -15,11 +15,11 @@ public:
 		visibility(eVisibility::visible);
 		Button *bt = new Button;
 		bt->label("play");
-		bt->onClick.bind(this, &EditorToolbar::PlayState_OnClick);
+		bt->onClick.bind({ this, &EditorToolbar::PlayState_OnClick });
 
 		Button *bt2 = new Button;
 		bt2->label("reload");
-		bt2->onClick.bind(this, &EditorToolbar::ReloadState_OnClick);
+		bt2->onClick.bind({ this, &EditorToolbar::ReloadState_OnClick });
 		
 		container << bt << bt2;
 	}

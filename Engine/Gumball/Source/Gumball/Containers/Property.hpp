@@ -11,7 +11,7 @@ protected:
 	TObj value;
 
 public:
-	TDelegate<void(const TOwner *owner, const TObj &oldValue, const TObj &value)> notify;
+	Signal<void(const TOwner *owner, const TObj &oldValue, const TObj &value)> notify;
 
 	explicit TProperty(TOwner *owner) : owner(owner) {}
 	explicit TProperty(TOwner *owner, const TObj &&init) : owner(owner), value(init) {}

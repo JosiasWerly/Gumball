@@ -17,7 +17,7 @@ UserWidget::UserWidget() :
 	size(this, { 300, 400 }),
 	container(this),
 	visibility(this, eVisibility::hidden) {
-	visibility.notify.bind(this, &UserWidget::onShowEvent);
+	visibility.notify.bind({ this, &UserWidget::onShowEvent });
 }
 UserWidget::~UserWidget() {
 	visibility(eVisibility::hidden);

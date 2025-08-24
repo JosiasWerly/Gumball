@@ -27,8 +27,8 @@ namespace Flow {
 			THash from() const { return last; }
 		};
 		struct Node {
-			using Delegate = TDelegate<void(Controller &ctrl)>;
-			using ConstDelegate = TDelegate<void(const Controller &ctrl)>;
+			using Delegate = Signal<void(Controller &ctrl)>;
+			using ConstDelegate = Signal<void(const Controller &ctrl)>;
 			using Delegates = std::unordered_map<THash, Delegate, THashOperations, THashOperations>;
 			using ConstDelegates = std::unordered_map<THash, ConstDelegate, THashOperations, THashOperations>;
 		

@@ -30,11 +30,14 @@ namespace Flow {
 		std::size_t operator()(const THash &key) const { return std::hash<int>()(key.val); }
 		bool operator()(const THash &a, const THash &b) const { return a.val == b.val; }
 	};
+	
+	template<class T>
+	using HashMap = std::unordered_map<THash, T, THashOperations>;
 
 	template<class T>
 	class TNode {
 		T val;
-		std::unordered_map<THash, TNode<T>, THashOperations> nodes;
+		HashMap<TNode> nodes;
 
 	public:
 		T &pin() { return val; }

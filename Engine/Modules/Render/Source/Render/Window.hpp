@@ -18,8 +18,8 @@ public:
 	struct GLFWwindow *getGLWindow();
 	void setTitle(string newTitle);
 
-	TEvent<void(int width, int height)> onResize;
-	TEvent<void(int key, int scancode, int action, int mods)> onInput;
+	Signals<void(int width, int height)> onResize;
+	Signals<void(int key, int scancode, int action, int mods)> onInput;
 };
 
 #endif // !__window

@@ -4,67 +4,117 @@
 #include <list>
 #include <functional>
 
-template<typename ...TSignature>class TDelegate;
-template<typename ...TSignature>class TEvent;
+namespace Dispatcher {
+	enum class ePolicy { single, multi };
 
-template <class TRet, class ...TArgs>
-class TDelegate<TRet(TArgs...)> {
-	using TObserver = std::function<TRet(TArgs...)>;
+	template<typename ...TSignature> struct TBind;
+	template<ePolicy, typename ...TSignature> class TSignal;
+	template<typename ...TSignature> class TSignalProxy;
 
-public:
-	TDelegate() = default;
-	~TDelegate() = default;
+	template<class TRet, class ...TArgs>
+	struct TBind<TRet(TArgs...)> {
+		using TFunction = std::function<TRet(TArgs...)>;
+		TFunction fn;
 
-	template<class TObj>
-	void bind(TObj *obj, void (TObj:: *method)(TArgs...)) {
-		target = [=](TArgs... args) { (obj->*method)(args...); };
-	}
-	void bind(TObserver &&function) {
-		target = std::move(function);
-	}
-	
-	Inline void invoke(TArgs... args) { 
-		if(target)
-			target(args...); 
-	}
-	Inline void operator()(TArgs... args) { 
-		if(target)
-			target(args...); 
-	}
-	bool isBound() const { return target.operator bool(); }
+		template<class TFn>
+		TBind(TFn &&fn) :
+			fn(std::move(fn)) {
+		}
 
-private:
-	TObserver target;
+		template<class TObj>
+		TBind(TObj *obj, TRet(TObj:: *method)(TArgs...)) :
+			fn(std::move([=](TArgs... args) { (obj->*method)(args...); })) {
+		}
+
+		TBind(const TBind &) = delete;
+		TBind(TBind &&) = delete;
+	};
+
+	template<class TChild, class TRet, class ...TArgs>
+	class TBase {
+		inline TChild &child() { return static_cast<TChild &>(*this); }
+	public:
+		using TBind = TBind<TRet(TArgs...)>;
+		using TFunction = std::function<TRet(TArgs...)>;
+
+		TBase() = default;
+		~TBase() = default;
+
+		void bind(TBind &&bind) {
+			child()._bind(std::move(bind.fn));
+		}
+		void unbind(TBind &&bind) {
+			child()._unbind(std::move(bind.fn));
+		}
+		TRet invoke(TArgs... args) {
+			return child()._invoke(args...);
+		}
+		TRet operator()(TArgs... args) {
+			return child()._invoke(args...);
+		}
+		
+		TRet invoke(TArgs... args) const {
+			return child()._invoke(args...);
+		}
+		TRet operator()(TArgs... args) const {
+			return child()._invoke(args...);
+		}
+		bool isBound() const {
+			return child()._isBound();
+		}
+	};
+
+	template<class TRet, class ...TArgs>
+	class TSignal<ePolicy::single, TRet(TArgs...)> :
+		public TBase<TSignal<ePolicy::single, TRet(TArgs...)>, TRet, TArgs...> {
+		template<class T, class TRet, class ...TArgs> friend class TBase;
+
+		using Base = TBase<TSignal<ePolicy::single, TRet(TArgs...)>, TRet, TArgs...>;
+		using TFunction = Base::TFunction;
+
+		TFunction target;
+
+		void _bind(TFunction &&fn) { target = fn; }
+		void _unbind(TFunction &&fn) { target = nullptr; }
+		TRet _invoke(TArgs... args) {
+			if (target)
+				return target(args...);
+			return TRet();
+		}
+		bool _isBound() { return static_cast<bool>(target); }
+
+	public:
+		TSignal() = default;
+		~TSignal() = default;
+	};
+
+	template<class ...TArgs>
+	class TSignal<ePolicy::multi, void(TArgs...)> :
+		public TBase<TSignal<ePolicy::multi, void(TArgs...)>, void, TArgs...> {
+		template<class T, class TRet, class ...TArgs> friend class TBase;
+
+		using Base = TBase<TSignal<ePolicy::multi, void(TArgs...)>, void, TArgs...>;
+		using TFunction = Base::TFunction;
+
+		std::list<TFunction> targets;
+
+		void _bind(TFunction &&fn) { targets.emplace_back(fn); }
+		void _unbind(TFunction &&fn) { targets.remove(fn); }
+		void _invoke(TArgs... args) {
+			for (auto &t : targets)
+				t(args...);
+		}
+		bool _isBound() { return !targets.empty(); }
+
+	public:
+		TSignal() = default;
+		~TSignal() = default;
+	};
 };
 
-template <class ...TArgs>
-class TEvent<void(TArgs...)> {
-public:
-	using TObserver = std::function<void(TArgs...)>;
+template<class TRet, class ...TArgs>
+using Signal = Dispatcher::TSignal<Dispatcher::ePolicy::single, TRet, TArgs...>;
 
-	TEvent() = default;
-	~TEvent() = default;
-	
-	template<class TObj>
-	void bind(TObj *obj, void (TObj:: *method)(TArgs...)) {
-		targets.emplace_back([=](TArgs... args) { (obj->*method)(args...); });
-	}
-	void bind(TObserver &&function) {
-		targets.push_back(std::move(function));
-	}
-
-	Inline void invoke(TArgs... args) { 
-		for (auto &t : targets)
-			t(args...);
-	}
-	Inline void operator()(TArgs... args) 
-	{ 
-		for (auto &t : targets)
-			t(args...);
-	}
-	bool isBound() const { return targets.size() > 0; }
-
-private:
-	std::list<TObserver> targets;
-};
+template<class ...TArgs>
+using Signals = Dispatcher::TSignal<Dispatcher::ePolicy::multi, TArgs...>;
 #endif // !__dispatcher
