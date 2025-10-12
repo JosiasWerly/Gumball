@@ -2,9 +2,7 @@
 #ifndef __flowcommon
 #define __flowcommon
 
-#include <bitset>
 #include <unordered_map>
-#include <deque>
 
 namespace Flow {
 	enum class eStatus : char {
@@ -33,35 +31,5 @@ namespace Flow {
 	
 	template<class T>
 	using HashMap = std::unordered_map<THash, T, THashOperations>;
-
-	template<class T>
-	class TNode {
-		T val;
-		HashMap<TNode> nodes;
-
-	public:
-		T &pin() { return val; }
-		const T &pin() const { return val; }
-		T *operator->() { return &val; }
-		const T *operator->() const { return &val; }
-		TNode &operator[](THash key) { return nodes[key]; }
-		const TNode &operator[](THash key) const { return nodes.at(key); }
-		bool contains(THash key) const { return nodes.contains(key); }
-
-		class Nav {
-			const std::deque<THash> ls;
-		
-		public:
-			constexpr Nav(std::initializer_list<THash> ls) : ls(ls) {}
-			TNode *find(TNode *root) {
-				auto it = ls.begin();
-				while (it != ls.end()) {
-					root = &root[*(it)];
-					++it;
-				}
-				return root;
-			}
-		};
-	};
 };
 #endif // !__flowcommon

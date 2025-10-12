@@ -102,6 +102,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Archive.hpp" />
+    <ClInclude Include="Concurrent\Thread.hpp" />
     <ClInclude Include="Containers\Codex.hpp" />
     <ClInclude Include="Containers\Pointer.hpp" />
     <ClInclude Include="Containers\Property.hpp" />
@@ -110,9 +111,9 @@
     <ClInclude Include="Domain.hpp" />
     <ClInclude Include="DynamicLib.hpp" />
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="Flow\ChainMachine.hpp" />
     <ClInclude Include="Flow\Common.hpp" />
     <ClInclude Include="Flow\Dispatcher.hpp" />
-    <ClInclude Include="Flow\ChainMachine.hpp" />
     <ClInclude Include="Flow\SignalPool.hpp" />
     <ClInclude Include="Flow\StateMachine.hpp" />
     <ClInclude Include="Gumball.hpp" />
@@ -125,15 +126,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />
+    <ClCompile Include="Concurrent\Thread.cpp" />
     <ClCompile Include="Containers\Codex.cpp" />
     <ClCompile Include="Containers\Pointer.cpp" />
     <ClCompile Include="Containers\Property.cpp" />
     <ClCompile Include="Containers\ShardMap.cpp" />
-    <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="Domain.cpp">
+      <ObjectFileName>$(IntDir)\Domain1.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="DynamicLib.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Flow\Common.cpp" />
     <ClCompile Include="Flow\ChainMachine.cpp" />
+    <ClCompile Include="Flow\Common.cpp" />
     <ClCompile Include="Flow\SignalPool.cpp" />
     <ClCompile Include="Flow\StateMachine.cpp" />
     <ClCompile Include="Math.cpp" />

@@ -21,6 +21,9 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <future>
+
+
 
 class GGAME MyComp : public MeshComponent {
 public:
@@ -143,179 +146,212 @@ public:
 };
 
 
+namespace Concurrent {
+	Scheduler::Scheduler() : 
+		queue(&q1), nqueue(&q2) {
+	}
+	void Scheduler::run() {
+		while (true) {
+			Task *task = nullptr;
+			{
+				GuardUnique lock(mqueue);
+				cvqueue.wait(lock, [this]() { return !active || !queue->empty(); });
+				if (!active)
+					return;
+				task = queue->front();
+				queue->pop();
+			}
+			if (!task) continue;
+			task->fn();
+			
+			if (task->hasNotify()) {
+				GuardUnique lock(mqueue);
+				task->notify(*nqueue);
+				task->clear();
+				if (queue->empty() && !nqueue->empty()) {
+					std::queue<Task *> *temp = queue;
+					queue = nqueue;
+					nqueue = temp;
+				}
+			}
+		}
+	}
+	void Scheduler::add(TaskHandler &task) {
+		std::unique_lock lock(mqueue);
+		task.tsk = &tasks.emplace_back();
+		queue->push(task.tsk);
+	}
+	void Scheduler::pop(TaskHandler &task) {
+		std::unique_lock lock(mqueue);
+	}
+	void Scheduler::start(unsigned threadCount) {
+		active = true;
+		for (size_t i = 0; i < threadCount; i++)
+			threads.emplace_back(jthread(&Scheduler::run, this));
+	}
+	void Scheduler::stop() {
+		active = false;
+	}
 
 
-//namespace Concurrent {
-//	class Thread;
-//	
-//	using Callback = Signal<void()>;
-//	using GuardLock = std::lock_guard<std::mutex>;
-//	using GuardUnique = std::unique_lock<std::mutex>;
-//	using GuardScoped = std::scoped_lock<std::mutex>;
-//
-//
-//
-//	class ThreadInfo : public Singleton<ThreadInfo> {
-//		friend class Thread;
-//		static thread_local Thread *localThread;
-//	
-//	public:
-//		static Thread *local() { return localThread; }
-//	};
-//	thread_local Thread *ThreadInfo::localThread = nullptr;
-//	
-//	struct IRunnable {
-//		virtual void execute() = 0;
-//	};
-//	struct Schedule : public IRunnable {
-//		void execute() override {}
-//	};
-//	struct Job : public IRunnable {
-//		Callback cb;
-//		void execute() override { cb(); }
-//	};
-//
-//	class Thread {
-//		friend class MainThread;
-//
-//		jthread th;
-//		TPtr<IRunnable> rn;
-//		atomic<bool> running;
-//		Thread *parent;
-//		list<Thread*>children;
-//
-//		void propagateStop(Thread *root, list<Thread *> &all) {
-//			root->th.request_stop();
-//			for (auto &n : root->children) {
-//				all.push_back(n);
-//				propagateStop(n, all);
-//			}
-//		}
-//		void run() {
-//			ThreadInfo::localThread = this;
-//			do { rn->execute(); } while (!th.get_stop_token().stop_requested());
-//			ThreadInfo::localThread = nullptr;
-//			running = false;
-//		}
-//	
-//	public:
-//		Thread() = default;
-//		void start(bool singleRun = false) {
-//			running = true;
-//			th = jthread(&Thread::run, this);
-//			if (singleRun)
-//				stop();
-//		}
-//		void stop() {
-//			list<Thread *> related;
-//			propagateStop(this, related);
-//			{
-//				list<Thread *> stopping = related;
-//				for (list<Thread *>::iterator it = related.begin(); related.size(); ) {
-//					Thread *leaf = (*it);
-//					if (leaf->children.empty() && leaf->th.joinable()) {
-//						leaf->th.join();						
-//						it = leaf->parent->children.erase(it);
-//					}
-//					else
-//						++it;
-//				}
-//			}
-//		}
-//		bool isRunning() const { return running; }
-//		bool operator==(const Thread &other) const { return th.get_id() == other.th.get_id(); }
-//		
-//		
-//		TPtr<IRunnable> &work () { return rn; }
-//	};
-//
-//};
+	void Task::pushRight(Task &trg) {
+		trg.right.push_back(this);
+		notified[&trg] = false;
+	}
+	void Task::popRight(Task &trg) {
+		trg.right.remove(this);
+		notified.erase(&trg);
+	}
+	void Task::notify(std::queue<Task *> &ready) {
+		for (auto &r : right) {
+			r->notified[this].store(true);
+			if (r->canRun())
+				ready.push(r);
+		}
+	}
+	void Task::clear() {
+		for (auto &[p, flag] : notified)
+			flag.store(false);
+	}
+	bool Task::canRun() const {
+		for (auto &[p, flag] : notified)
+			if (!flag.load())
+				return false;
+		return true;
+	}
+	bool Task::hasNotify() const {
+		return !right.empty();
+	}
 
-//using namespace Concurrent;
-//
-//static int arr[1024];
-//void generate() {
-//	cout << __FUNCTION__ << endl;
-//	for (int i = 0; i < 1024; ++i) {
-//		arr[i] = rand() % 100 + 1;
-//		//this_thread::sleep_for(1ms);
-//	}
-//}
-//void sort() {
-//	cout << __FUNCTION__ << endl;
-//	for (int i = 0; i < 1024; ++i) {
-//		arr[i] = rand() % 100 + 1;
-//		//this_thread::sleep_for(1ms);
-//	}
-//}
-//void sum() {
-//	this_thread::sleep_for(std::chrono::duration<long double, std::milli>(5000));
-//	//Thread *w = MainThread::instance()->local();
-//	//w->stop();
-//	cout << __FUNCTION__ << endl;
-//}
-//void sub() {
-//	this_thread::sleep_for(std::chrono::duration<long double, std::milli>(2000));
-//	//MainThread::instance()->local()->stop();
-//	cout << __FUNCTION__ << endl;
-//}
-//void async() {
-//	cout << __FUNCTION__ << endl;
-//	//Thread *cur = MainThread::local();
-//	//
-//	//Thread &wsum = MainThread::instance()->newThread();
-//	//wsum.target().bind(sum);
-//	//wsum.start();
-//	//
-//	//Thread &wsub = MainThread::instance()->newThread();
-//	//wsub.target().bind(sub);
-//	//wsub.start();
-//	
-//	//while (wsum.isRunning() || wsub.isRunning());
-//}
-//void conclude() {
-//	cout << __FUNCTION__ << endl;
-//	//MainThread::instance()->local()->stop();
-//}
-//
-//void A() {
-//	static int i = 0;
-//	cout << __FUNCTION__ << endl;
-//	this_thread::sleep_for(1ms);
-//	//if(++i == 10)
-//	ThreadInfo::local()->stop();
-//}
-//void B() {
-//	static int i = 0;
-//	cout << __FUNCTION__ << endl;
-//	this_thread::sleep_for(1ms);
-//	if (++i == 100)
-//		ThreadInfo::local()->stop();
-//}
+	TaskHandler &TaskHandler::operator<<(TaskHandler &other) {
+		tsk->pushRight(*other.tsk);
+		return *this;
+	}
+	TaskHandler &TaskHandler::operator>>(TaskHandler &other) {
+		tsk->popRight(*other.tsk);
+		return *this;
+	}
+};
 
 
-void render() {
-	//Thread &thRender = MainThread::instance()->newThread();
-	//thRender.sche().bind(generate);
-	//thRender.sche().bind(sort);
-	//thRender.sche().bind(async);
-	//thRender.sche().bind(conclude);
-	//thRender.start();
+using namespace Concurrent;
+
+static int arr[1024];
+void A() {
+	Trace;
+}
+void B() {
+	Trace;
+}
+void C() {
+	Trace;
+}
+void D() {
+	Trace;
+}
+void E() {
+	Trace;
+}
+void F() {
+	Trace;
 }
 
 Extern GGAME void *EntryPoint() {
-	//Thread a, b;
-	//a.work() = new Job{
-	//	
-	//};
-	//b.work() = new Schedule{
+	
+	Scheduler sc;
+	{
+		std::vector<TaskHandler> j(6);
+		for (int i = 0; i < 6; ++i)
+			sc.add(j[i]);
+		j[0].callback().bind(&A);
+		j[1].callback().bind(&B);
+		j[2].callback().bind(&C);
+		j[3].callback().bind(&D);
+		j[4].callback().bind(&E);
+		j[5].callback().bind(&F);
 
-	//};
-
-	//a.start(); 
-	//b.start();
-	//while (a.isRunning() || b.isRunning());
-
+		j[0] << j[2] << j[3] << j[4];
+		j[1] << j[0];
+		
+		sc.start();
+		while (true);
+	}
 	cout << "work complete" << endl;
 	return new MyProject;
 }
+
+
+//namespace Concurrent {
+//
+//	using Delegate = Signal<void()>;
+//
+//	using Mutex = std::mutex;
+//	using GuardLock = std::lock_guard<std::mutex>;
+//	using GuardUnique = std::unique_lock<std::mutex>;
+//	using GuardScoped = std::scoped_lock<std::mutex>;
+//	template<class T> using Writer = std::promise<T>;
+//	template<class T> using Reader = std::future<T>;
+//
+//
+//	thread_local Thread *Thread::localThread = nullptr;
+//
+//	struct Work;
+//	using WorkSignal = unordered_map<Work *, bool>;
+//
+//
+//	struct Work {
+//		struct Sync {
+//			WorkSignal *emit;
+//			WorkSignal receive;
+//
+//			void complete(Work *w) {
+//				(*emit)[w] = true;
+//
+//			}
+//		};
+//
+//		void *data;
+//		Delegate work;
+//		Sync *sync;
+//
+//		void complete() {
+//			if (sync) {
+//				sync->complete();
+//			}
+//		}
+//		bool canRun() const {
+//			bool out = true;
+//			for (auto kv : receive) {
+//				if (!kv.second)
+//					return false;
+//			}
+//			return true;
+//		}
+//	};
+//
+//	struct Job {
+//		Mutex mjobs;
+//		int curJob = 0;
+//		vector<Work> works;
+//
+//		Job() = default;
+//		void lock() { mjobs.lock(); }
+//		void unlock() { mjobs.unlock(); }
+//		Work *operator*() { return curJob > -1 && curJob < works.size() ? &works[curJob] : nullptr; }
+//		bool operator++() { return ++curJob < works.size(); }
+//		bool operator--() { return --curJob > -1; }
+//	};
+//
+//	struct Service {
+//
+//	};
+//
+//	class Schedule {
+//		vector<Job> jobs;
+//		vector<Sync> syncronization;
+//
+//		void tick() {
+//
+//		}
+//	};
+//};

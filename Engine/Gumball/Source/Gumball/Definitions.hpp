@@ -29,20 +29,20 @@
 #define Extern extern "C"
 
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned long long u64;
+using u8 = unsigned char;
+using u16 = unsigned short;
+using u32 = unsigned int;
+using u64 = unsigned long long;
 
-typedef char s8;
-typedef short s16;
-typedef int s32;
-typedef long long s64;
+using s8 = char;
+using s16 = short;
+using s32 = int;
+using s64 = long long;
 
 #ifdef DEBUG
-#define if_debug(exp) exp;
+#define DEBUG_ONLY(exp) exp;
 #else
-#define if_debug(exp)
+#define DEBUG_ONLY(exp)
 #endif
 
 #endif // !__definitions
