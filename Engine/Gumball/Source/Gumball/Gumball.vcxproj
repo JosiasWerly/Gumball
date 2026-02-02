@@ -102,6 +102,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Archive.hpp" />
+    <ClInclude Include="Concurrent\Common.hpp" />
+    <ClInclude Include="Concurrent\Scheduler.hpp" />
     <ClInclude Include="Concurrent\Thread.hpp" />
     <ClInclude Include="Containers\Codex.hpp" />
     <ClInclude Include="Containers\Pointer.hpp" />
@@ -126,14 +128,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archive.cpp" />
+    <ClCompile Include="Concurrent\Scheduler.cpp" />
     <ClCompile Include="Concurrent\Thread.cpp" />
     <ClCompile Include="Containers\Codex.cpp" />
     <ClCompile Include="Containers\Pointer.cpp" />
     <ClCompile Include="Containers\Property.cpp" />
     <ClCompile Include="Containers\ShardMap.cpp" />
-    <ClCompile Include="Domain.cpp">
-      <ObjectFileName>$(IntDir)\Domain1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="Domain.cpp" />
     <ClCompile Include="DynamicLib.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Flow\ChainMachine.cpp" />

@@ -145,213 +145,82 @@ public:
 	}
 };
 
-
-namespace Concurrent {
-	Scheduler::Scheduler() : 
-		queue(&q1), nqueue(&q2) {
-	}
-	void Scheduler::run() {
-		while (true) {
-			Task *task = nullptr;
-			{
-				GuardUnique lock(mqueue);
-				cvqueue.wait(lock, [this]() { return !active || !queue->empty(); });
-				if (!active)
-					return;
-				task = queue->front();
-				queue->pop();
-			}
-			if (!task) continue;
-			task->fn();
-			
-			if (task->hasNotify()) {
-				GuardUnique lock(mqueue);
-				task->notify(*nqueue);
-				task->clear();
-				if (queue->empty() && !nqueue->empty()) {
-					std::queue<Task *> *temp = queue;
-					queue = nqueue;
-					nqueue = temp;
-				}
-			}
-		}
-	}
-	void Scheduler::add(TaskHandler &task) {
-		std::unique_lock lock(mqueue);
-		task.tsk = &tasks.emplace_back();
-		queue->push(task.tsk);
-	}
-	void Scheduler::pop(TaskHandler &task) {
-		std::unique_lock lock(mqueue);
-	}
-	void Scheduler::start(unsigned threadCount) {
-		active = true;
-		for (size_t i = 0; i < threadCount; i++)
-			threads.emplace_back(jthread(&Scheduler::run, this));
-	}
-	void Scheduler::stop() {
-		active = false;
-	}
-
-
-	void Task::pushRight(Task &trg) {
-		trg.right.push_back(this);
-		notified[&trg] = false;
-	}
-	void Task::popRight(Task &trg) {
-		trg.right.remove(this);
-		notified.erase(&trg);
-	}
-	void Task::notify(std::queue<Task *> &ready) {
-		for (auto &r : right) {
-			r->notified[this].store(true);
-			if (r->canRun())
-				ready.push(r);
-		}
-	}
-	void Task::clear() {
-		for (auto &[p, flag] : notified)
-			flag.store(false);
-	}
-	bool Task::canRun() const {
-		for (auto &[p, flag] : notified)
-			if (!flag.load())
-				return false;
-		return true;
-	}
-	bool Task::hasNotify() const {
-		return !right.empty();
-	}
-
-	TaskHandler &TaskHandler::operator<<(TaskHandler &other) {
-		tsk->pushRight(*other.tsk);
-		return *this;
-	}
-	TaskHandler &TaskHandler::operator>>(TaskHandler &other) {
-		tsk->popRight(*other.tsk);
-		return *this;
-	}
-};
-
-
+#include <Gumball/Concurrent/Scheduler.hpp>
 using namespace Concurrent;
 
+static Mutex p;
+#define Trace { \
+GuardUnique trc_ln (p);\
+std::cout << this_thread::get_id() << " " << __FUNCTION__ << std::endl;\
+this_thread::sleep_for(std::chrono::duration<long double, std::milli>(500)); }
+
 static int arr[1024];
-void A() {
+
+static list<char> renderRequest;
+static list<string> renderInst;
+bool Render_Request() {
 	Trace;
+	if (!renderRequest.empty()) {
+		renderRequest.emplace_back();
+		
+		while(!renderRequest.empty()){
+			renderRequest.back() += renderRequest.front();
+			renderRequest.pop_front();
+		}
+	}
+	return renderInst.empty();
 }
-void B() {
-	Trace;
+bool Render_Order() {
+	Trace;	
+	return true;
 }
-void C() {
+bool Render_Draw() {
 	Trace;
-}
-void D() {
-	Trace;
-}
-void E() {
-	Trace;
-}
-void F() {
-	Trace;
+	return true;
 }
 
+bool Gameplay() {
+	Trace;
+	return true;
+}
+bool Gameplay_A() {
+	Trace;
+	return true;
+}
+bool Gameplay_B() {
+	Trace;
+	return true;
+}
 Extern GGAME void *EntryPoint() {
-	
 	Scheduler sc;
 	{
-		std::vector<TaskHandler> j(6);
-		for (int i = 0; i < 6; ++i)
-			sc.add(j[i]);
-		j[0].callback().bind(&A);
-		j[1].callback().bind(&B);
-		j[2].callback().bind(&C);
-		j[3].callback().bind(&D);
-		j[4].callback().bind(&E);
-		j[5].callback().bind(&F);
+		Job render("render");
+		Task &request = render.add("request");
+		request.fn.bind(&Render_Request);
 
-		j[0] << j[2] << j[3] << j[4];
-		j[1] << j[0];
-		
-		sc.start();
+		Task &order = render.add("order");
+		order.fn.bind(&Render_Order);
+
+		Task &draw = render.add("draw");
+		draw.fn.bind(&Render_Draw);
+
+		render.begin.bind([&]()->bool { Trace; return false; });
+		render.end.bind([&]()->bool { Trace;  sc.pop(render); return false; });
+		sc.add(render);
+
+		Job gameplay("gameplay");
+
+		Task &A = gameplay.add("tick");
+		A.fn.bind(&Gameplay_A);
+
+		Task &B = gameplay.add("tock");
+		B.fn.bind(&Gameplay_B);
+		gameplay.end.bind([&]()->bool { Trace;  sc.pop(gameplay); return false; });
+		sc.add(gameplay);
+
+		sc.start(4);
 		while (true);
 	}
 	cout << "work complete" << endl;
 	return new MyProject;
 }
-
-
-//namespace Concurrent {
-//
-//	using Delegate = Signal<void()>;
-//
-//	using Mutex = std::mutex;
-//	using GuardLock = std::lock_guard<std::mutex>;
-//	using GuardUnique = std::unique_lock<std::mutex>;
-//	using GuardScoped = std::scoped_lock<std::mutex>;
-//	template<class T> using Writer = std::promise<T>;
-//	template<class T> using Reader = std::future<T>;
-//
-//
-//	thread_local Thread *Thread::localThread = nullptr;
-//
-//	struct Work;
-//	using WorkSignal = unordered_map<Work *, bool>;
-//
-//
-//	struct Work {
-//		struct Sync {
-//			WorkSignal *emit;
-//			WorkSignal receive;
-//
-//			void complete(Work *w) {
-//				(*emit)[w] = true;
-//
-//			}
-//		};
-//
-//		void *data;
-//		Delegate work;
-//		Sync *sync;
-//
-//		void complete() {
-//			if (sync) {
-//				sync->complete();
-//			}
-//		}
-//		bool canRun() const {
-//			bool out = true;
-//			for (auto kv : receive) {
-//				if (!kv.second)
-//					return false;
-//			}
-//			return true;
-//		}
-//	};
-//
-//	struct Job {
-//		Mutex mjobs;
-//		int curJob = 0;
-//		vector<Work> works;
-//
-//		Job() = default;
-//		void lock() { mjobs.lock(); }
-//		void unlock() { mjobs.unlock(); }
-//		Work *operator*() { return curJob > -1 && curJob < works.size() ? &works[curJob] : nullptr; }
-//		bool operator++() { return ++curJob < works.size(); }
-//		bool operator--() { return --curJob > -1; }
-//	};
-//
-//	struct Service {
-//
-//	};
-//
-//	class Schedule {
-//		vector<Job> jobs;
-//		vector<Sync> syncronization;
-//
-//		void tick() {
-//
-//		}
-//	};
-//};

@@ -7,6 +7,7 @@
 #include "Containers/Codex.hpp"
 #include "Flow/StateMachine.hpp"
 #include "Flow/ChainMachine.hpp"
+#include "Flow/Dispatcher.hpp"
 
 class ModuleController;
 class ProjectTarget;

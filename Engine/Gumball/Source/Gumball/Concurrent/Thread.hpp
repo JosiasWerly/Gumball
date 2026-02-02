@@ -6,15 +6,10 @@
 #include <mutex>
 #include "Flow/Dispatcher.hpp"
 namespace Concurrent {
-	using Delegate = Signal<void()>;
-
-	using Mutex = std::mutex;
-	using GuardLock = std::lock_guard<std::mutex>;
-	using GuardUnique = std::unique_lock<std::mutex>;
-	using GuardScoped = std::scoped_lock<std::mutex>;
-
-
 	class Thread {
+		using Delegate = Signal<void()>;
+	
+	private:
 		static thread_local Thread *localThread;
 		Delegate dl;
 		std::jthread th;
@@ -39,5 +34,4 @@ namespace Concurrent {
 	};
 	thread_local Thread *Thread::localThread = nullptr;
 };
-
 #endif // __thread
