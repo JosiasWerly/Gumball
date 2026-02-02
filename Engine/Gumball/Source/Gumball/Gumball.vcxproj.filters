@@ -58,7 +58,6 @@
     <ClInclude Include="Module.hpp" />
     <ClInclude Include="ProjectTarget.hpp" />
     <ClInclude Include="Singleton.hpp" />
-    <ClInclude Include="Tickable.hpp" />
     <ClInclude Include="Timer.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -100,7 +99,6 @@
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ProjectTarget.cpp" />
     <ClCompile Include="Singleton.cpp" />
-    <ClCompile Include="Tickable.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
 </Project>

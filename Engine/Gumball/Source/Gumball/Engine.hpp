@@ -7,7 +7,7 @@
 #include "Containers/Codex.hpp"
 #include "Flow/StateMachine.hpp"
 #include "Flow/ChainMachine.hpp"
-#include "Flow/Dispatcher.hpp"
+#include "Concurrent/Scheduler.hpp"
 
 class ModuleController;
 class ProjectTarget;
@@ -24,7 +24,6 @@ public:
 	enum class eSignal {
 		idle, play, hotreload, exit
 	};
-
 
 private:
 	friend int main(int argc, char *argv[]);

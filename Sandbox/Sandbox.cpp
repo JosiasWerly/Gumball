@@ -192,7 +192,7 @@ bool Gameplay_B() {
 	return true;
 }
 Extern GGAME void *EntryPoint() {
-	Scheduler sc;
+	/*Scheduler sc;
 	{
 		Job render("render");
 		Task &request = render.add("request");
@@ -220,7 +220,7 @@ Extern GGAME void *EntryPoint() {
 
 		sc.start(4);
 		while (true);
-	}
+	}*/
 	cout << "work complete" << endl;
 	return new MyProject;
 }
