@@ -21,9 +21,7 @@ struct EngineInit {
 
 class GENGINE Engine : public Singleton<Engine> {
 public:
-	enum class eSignal {
-		idle, play, hotreload, exit
-	};
+	enum class eState { idle, play, hotreload, exit	};
 
 private:
 	friend int main(int argc, char *argv[]);
@@ -39,9 +37,7 @@ private:
 
 public:
 	ModuleController *getModuleController() { return moduleController; }
-	void signal(eSignal signal) {
-		fsm.to(signal);
-	}
+	void signal(eState signal) { fsm.to(signal); }
 	Codex &getCodex() { return codex; }
 };
 
