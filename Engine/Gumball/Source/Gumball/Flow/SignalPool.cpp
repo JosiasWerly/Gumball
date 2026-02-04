@@ -1,13 +1,13 @@
 #include "SignalPool.hpp"
 
 using namespace Flow;
-THash SignalPool::consumeFront() {
-	THash out = signals.front();
+TInt SignalPool::consumeFront() {
+	TInt out = signals.front();
 	signals.pop_front();
 	return out;
 }
-THash SignalPool::consumeBack() {
-	THash out = signals.back();
+TInt SignalPool::consumeBack() {
+	TInt out = signals.back();
 	signals.pop_front();
 	return out;
 }

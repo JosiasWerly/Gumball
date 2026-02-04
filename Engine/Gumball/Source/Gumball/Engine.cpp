@@ -23,36 +23,36 @@ void Engine::initialize(EngineInit data) {
 	domain->engineDir = data.engineDir;
 	domain->contentPath = domain->engineDir + "Content\\";
 	codex.add<Domain>(domain);
-}
-void Engine::tick() {
 
-	const double deltaTime = 0.1;
 	using Ctrl = Flow::StateMachine::Controller;
-	fsm[eSignal::play].onEnter.bind([&](Ctrl &) {
+	fsm[eSignal::play].onEnter.bind([&]() {
 		moduleController->beginPlay();
 	});
-	fsm[eSignal::play].onExit.bind([&](const Ctrl &) {
+	fsm[eSignal::play].onExit.bind([&]() {
 		moduleController->endPlay();
 	});
-	fsm[eSignal::play].onTick.bind([&](Ctrl &) {
+	fsm[eSignal::play].onTick.bind([&]() {
 		const double deltaTime = 0.1;
 		moduleController->tick<EModuleTickType::gameplay>(deltaTime);
 	});
 
-	fsm[eSignal::hotreload].onEnter.bind([&](Ctrl &c) {
+	fsm[eSignal::hotreload].onEnter.bind([&]() {
 		moduleController->shutdown();
 		projectTarget->unload();
 		projectTarget->load();
 		moduleController->startup();
-
-		c.to(eSignal::idle);
+		fsm.to(eSignal::idle);
 	});
-	fsm.set(eSignal::hotreload);
+}
+void Engine::tick() {
+
+	const double deltaTime = 0.1;
 
 	moduleController->load();
-	while (fsm.hash() != eSignal::exit) {
+	fsm.set(eSignal::hotreload);
+	fsm.tick();
+	while (fsm.now() != eSignal::exit) {
 		moduleController->tick<EModuleTickType::editor>(deltaTime);
-		fsm.run();
 		fsm.tick();
 	}
 	moduleController->endPlay();

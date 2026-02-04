@@ -18,8 +18,8 @@ namespace Flow {
 			int last, current;
 		
 		public:
-			THash from() const { return last; }
-			THash now() const { return current; }
+			TInt from() const { return last; }
+			TInt now() const { return current; }
 			void next() { move = true; }
 			void finish(bool success) { status = success ? eStatus::success : eStatus::fail; }
 		};
@@ -30,8 +30,8 @@ namespace Flow {
 		void run();
 	
 		ChainMachine &operator<<(Chain ls);
-		Delegate &operator[](THash key) { return chain[key]; }
-		const Delegate &operator[](THash key) const { return chain.at(key); }
+		Delegate &operator[](TInt key) { return chain[key]; }
+		const Delegate &operator[](TInt key) const { return chain.at(key); }
 		eStatus status() const { return ctrl.status; }
 	
 	private:

@@ -9,27 +9,24 @@ namespace Flow {
 		nominal, success, fail
 	};
 
-	struct THash {
-		int val = 0;
+	struct TInt {
+		unsigned val = 0;
 
-		THash() = default;
-		THash(const THash &other) : val(other.val) {}
-		THash(THash &&other) noexcept : val(other.val) {}
-		THash operator=(THash other) { val = other.val; return *this; }
-		template<class T> THash(T value) : val(int(value)) {}
-		template<class T> operator T() { return T(val); }
-		template<class T> operator const T() const { return T(val); }
-
-		bool operator==(const THash &other) const { return val == other.val; }
-		operator bool() const { return val; }
-		operator int() const { return val; }
+		TInt() = default;
+		TInt operator=(TInt other) { val = other.val; return *this; }
+		
+		template<class T> TInt(T value = 0) : val(int(value)) {}
+		template<class T> operator T() { return static_cast<T>(val); }
+		template<class T> operator const T() const { return static_cast<T>(val); }
+		bool operator==(TInt other) const { return val == other.val; }
 	};
-	struct THashOperations {
-		std::size_t operator()(const THash &key) const { return std::hash<int>()(key.val); }
-		bool operator()(const THash &a, const THash &b) const { return a.val == b.val; }
+	
+	struct TIntOperators {
+		std::size_t operator()(const TInt &key) const { return std::hash<int>()(key.val); }
+		bool operator()(const TInt &a, const TInt &b) const { return a.val == b.val; }
 	};
 	
 	template<class T>
-	using HashMap = std::unordered_map<THash, T, THashOperations>;
+	using TIntMap = std::unordered_map<TInt, T, TIntOperators>;
 };
 #endif // !__flowcommon

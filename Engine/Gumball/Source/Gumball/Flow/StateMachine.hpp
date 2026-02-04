@@ -7,52 +7,43 @@
 
 #include <unordered_map>
 
-namespace Flow {
-	class StateMachine {
+namespace Flow::StateMachine {
+	class Controller {
+	protected:
+		enum class eEvent : char { idle, set, move };
+		eEvent event = eEvent::move;
+		int last, current, next;
+
 	public:
-		class Controller {
-			friend class StateMachine;
+		Controller() : last(0), current(0), next(0) {}
+		void set(TInt next) { this->next = next; event = eEvent::set; };
+		void to(TInt next) { this->next = next; event = eEvent::move; }
+		TInt to() const { return next; }
+		TInt now() const { return current; }
+		TInt from() const { return last; }
+	};
 
-			enum class eSignal : char { idle, set, move };
-			eStatus status = eStatus::nominal;
-			eSignal event = eSignal::move;
-			int last, current, next;
+	struct State {
+		using Delegate = Signal<void()>;
+		using Delegates = std::unordered_map<TInt, Delegate, TIntOperators, TIntOperators>;
 
-		public:
-			Controller() : last(0), current(0), next(0) {}
-			void operator=(THash next) { this->next = next; event = eSignal::move; }
-			void to(THash next) { this->next = next; event = eSignal::move; }
-			THash to() const { return next; }
-			THash now() const { return current; }
-			THash from() const { return last; }
-		};
-		struct Node {
-			using Delegate = Signal<void(Controller &ctrl)>;
-			using ConstDelegate = Signal<void(const Controller &ctrl)>;
-			using Delegates = std::unordered_map<THash, Delegate, THashOperations, THashOperations>;
-			using ConstDelegates = std::unordered_map<THash, ConstDelegate, THashOperations, THashOperations>;
-		
-			Delegate onEnter;
-			Delegate onTick;
-			ConstDelegate onExit;
-			ConstDelegates onExitTo;
-			Node() = default;
-		};
-	
-		StateMachine() = default;
-		void run();
-		void tick();
-		void set(THash key);
-		Node &operator[](THash key) { return nodes[key]; }
-		const Node &operator[](THash key) const { return nodes.at(key); }		
-		const THash &hash() const { return current.first; }
-		const Node &node() const { return *current.second; }
-		eStatus status() const { return ctrl.status; }
-	
-	private:
+		Delegate onEnter;
+		Delegate onTick;
+		Delegate onExit;
+		Delegates onExitTo;
+	};
+
+	class StateMachine : public Controller {
 		Controller ctrl;
-		std::unordered_map<THash, Node, THashOperations> nodes;
-		std::pair<THash, Node *> current;
+		Flow::TIntMap<State> states;
+		std::pair<TInt, State *> currentState;
+	
+	public:	
+		StateMachine() = default;
+		void tick();
+		
+		State &operator[](TInt key) { return states[key]; }
+		const State &operator[](TInt key) const { return states.at(key); }
 	};
 };
 #endif // !__statemachine

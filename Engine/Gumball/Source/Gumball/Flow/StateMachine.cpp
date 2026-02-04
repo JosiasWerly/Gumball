@@ -1,37 +1,32 @@
 #include "StateMachine.hpp"
 
-using namespace Flow;
-void StateMachine::run() {
-	switch (ctrl.event) {
-		case Controller::eSignal::set:
-			current.first = ctrl.next;
-			current.second = &nodes[ctrl.next];
-			current.second->onEnter(ctrl);
-			ctrl.event = Controller::eSignal::idle;
-			break;
-		case Controller::eSignal::move:
-			{
-				auto to = current.second->onExitTo.find(ctrl.next);
-				if (to != current.second->onExitTo.end())
-					to->second(ctrl);
-				current.second->onExit(ctrl);
-			}
-			ctrl.last = ctrl.current;
-			ctrl.current = ctrl.next;
-			ctrl.next = 0;
-			current.second = &nodes[ctrl.current];
-			{
-				current.second->onEnter(ctrl);
-			}
-			ctrl.event = Controller::eSignal::idle;
-			break;
-	}
-}
+using namespace Flow::StateMachine;
+
 void StateMachine::tick() {
-	if (current.second)
-		current.second->onTick(ctrl);
-}
-void StateMachine::set(THash key) {
-	ctrl.event = Controller::eSignal::set;
-	ctrl.next = key;
+	switch (event) {
+		case Controller::eEvent::set:
+			currentState.first = next;
+			currentState.second = &states[next];
+			currentState.second->onEnter();
+			event = Controller::eEvent::idle;
+			break;
+		case Controller::eEvent::move:
+		{
+			auto to = currentState.second->onExitTo.find(next);
+			if (to != currentState.second->onExitTo.end())
+				to->second();
+			currentState.second->onExit();
+		}
+		last = current;
+		current = next;
+		next = 0;
+		currentState.first = current;
+		currentState.second = &states[current];
+		{
+			currentState.second->onEnter();
+		}
+		event = Controller::eEvent::idle;
+		break;
+	}
+	currentState.second->onTick();
 }

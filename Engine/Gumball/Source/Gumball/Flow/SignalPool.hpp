@@ -7,17 +7,17 @@
 
 namespace Flow {
 	class SignalPool {
-		std::deque<THash> signals;
+		std::deque<TInt> signals;
 
 	public:
-		THash consumeFront();
-		THash consumeBack();
-		Inline void pushFront(THash signal) { signals.push_front(signal); }
-		Inline void pushBack(THash signal) { signals.push_back(signal); }
-		Inline THash front() { return signals.front(); }
-		Inline THash back() { return signals.back(); }
-		Inline const THash front() const { return  signals.front(); }
-		Inline const THash back() const { return signals.back(); }
+		TInt consumeFront();
+		TInt consumeBack();
+		Inline void pushFront(TInt signal) { signals.push_front(signal); }
+		Inline void pushBack(TInt signal) { signals.push_back(signal); }
+		Inline TInt front() { return signals.front(); }
+		Inline TInt back() { return signals.back(); }
+		Inline const TInt front() const { return  signals.front(); }
+		Inline const TInt back() const { return signals.back(); }
 		Inline bool isEmpty() const { return signals.empty(); }
 	};
 };

@@ -30,7 +30,7 @@ private:
 	ModuleController *moduleController;
 	ProjectTarget *projectTarget;
 	Codex codex;
-	Flow::StateMachine fsm;
+	Flow::StateMachine::StateMachine fsm;
 
 	Engine();
 	~Engine();
@@ -40,7 +40,7 @@ private:
 public:
 	ModuleController *getModuleController() { return moduleController; }
 	void signal(eSignal signal) {
-		fsm.set(signal);
+		fsm.to(signal);
 	}
 	Codex &getCodex() { return codex; }
 };
