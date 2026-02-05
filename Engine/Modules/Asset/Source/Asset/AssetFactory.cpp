@@ -23,9 +23,13 @@ void AssetFactory::entry(FilePath fp) {
 		newAsset->type = fp.extension();
 		newAsset->dependencies = {};
 	}
-	am->getSerializer(newAsset->type)->load(fp, newAsset->content);
+	
+	if (FileSerializer *fs = am->getSerializer(newAsset->type)) {
+		fs->load(fp, newAsset->content);
+		am->addAsset(newAsset);
+	}
+
 	std::cout << newAsset->filepath.name() << "." << newAsset->filepath.extension() << " --- " << (newAsset->isValid() ? "ok" : "fail") << std::endl;
-	am->addAsset(newAsset);
 }
 void AssetFactory::flush() {
 }

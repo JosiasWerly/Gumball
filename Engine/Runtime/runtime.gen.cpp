@@ -8,9 +8,9 @@
 void injectModules(ModuleController *mCtrl) {
 	mCtrl->addModule<AssetModule>();
 	mCtrl->addModule<RenderModule>();
-	mCtrl->addModule<InputModule>();
-	mCtrl->addModule<EditorModule>();
-	mCtrl->addModule<WorldModule>();
+	//mCtrl->addModule<InputModule>();
+	//mCtrl->addModule<EditorModule>();
+	//mCtrl->addModule<WorldModule>();
 }
 const char* engineDir() {
 	return "C:\\Users\\josia\\source\\repos\\JosiasWerly\\Gumball\\";

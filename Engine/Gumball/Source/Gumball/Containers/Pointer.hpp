@@ -43,7 +43,7 @@ protected:
 	Inline void divest() { dref(); if (!ctrl->refs) { delCtrl(); } }
 	template<class U> const U *castT() const { return dynamic_cast<const U *>(this->operator->()); }
 
-	PtrPad(PtrController *ctrlInit) : ctrl(ctrlInit) {}
+	PtrPad(PtrController *ctrlInit = nullptr) : ctrl(ctrlInit) {}
 
 public:
 	PtrPad() = delete;
@@ -106,7 +106,6 @@ public:
 
 	auto ptr();
 	auto ref();
-
 };
 
 template<class T>
@@ -196,7 +195,7 @@ class Ptr : public PtrPad<void *> {
 
 	Ptr(PtrController &ctrl) : Super(&ctrl) { Super::iref(); }
 public:
-	Ptr() : Super(new PtrController(new char)) {}
+	Ptr() : Super(new PtrController(static_cast<void*>(nullptr))) {}
 	Ptr(const Ptr &init) : Super(init.ctrl) { Super::iref(); }
 	~Ptr() { Super::divest(); }
 
