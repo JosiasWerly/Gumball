@@ -20,12 +20,11 @@ class GMODULE RenderModule : public ModuleSingleton<RenderModule> {
     Window mainWindow;
 
 protected:
-    void load() override;
-    void unload() override;
-    void posLoad() override;
-    void tick(const double &deltaTime) override;
-    EModuleTickType tickType() const override { return EModuleTickType::all; }
-    const char* name() const override { return "Render"; }
+    bool Load() override;
+    void Unload() override;
+    void Tick(const double &deltaTime) override;
+    EModuleTickType TickType() const override { return EModuleTickType::all; }
+    const char* Name() const override { return "Render"; }
 public:
     RenderModule();
     ~RenderModule();

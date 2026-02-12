@@ -42,10 +42,11 @@ void InputModule::onInputCallback(int key, int scancode, int action, int mods) {
 	else
 		keyPool[keyCode].released = true;
 }
-void InputModule::posLoad() {
-	RenderModule::instance()->getWindow().onInput.bind({ this, &InputModule::onInputCallback });
+bool InputModule::Load() {
+	//RenderModule::instance()->getWindow().onInput.bind({ this, &InputModule::onInputCallback });
+	return true;
 }
-void InputModule::tick(const double &deltaTime) {
+void InputModule::Tick(const double &deltaTime) {
 	eventPool.clearPool();
 	Input::Event e;
 	for (auto &kv : keyPool) {

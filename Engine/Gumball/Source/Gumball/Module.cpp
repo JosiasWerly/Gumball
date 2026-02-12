@@ -1,23 +1,21 @@
 #include "Module.hpp"
 #include "Timer.hpp"
 
-void Module::load() {}
-void Module::posLoad() {}
-void Module::unload() {}
-void Module::startup() {}
-void Module::shutdown() {}
-void Module::hotreload() {}
-void Module::beginPlay() {}
-void Module::endPlay() {}
-void Module::tick(const double &deltaTime) {}
-EModuleTickType Module::tickType() const { return EModuleTickType::none; }
-const char* Module::name() const { return "Module"; }
+bool Module::Load() { return true; }
+void Module::Unload() {}
+void Module::BeginPlay() {}
+void Module::EndPlay() {}
+void Module::Tick(const double &deltaTime) {}
+EModuleTickType Module::TickType() const { return EModuleTickType::none; }
+const char* Module::Name() const { return "Module"; }
 
 ModuleController::ModuleController() {
 }
 void ModuleController::_addModule(Module *newModule) {
+	using namespace Concurrent;
+
 	modules.push_back(newModule);
-	EModuleTickType tick = newModule->tickType();
+	EModuleTickType tick = newModule->TickType();
 	switch (tick) {
 		case EModuleTickType::editor:
 			editorTick.push_back(newModule);
@@ -30,46 +28,51 @@ void ModuleController::_addModule(Module *newModule) {
 			gameplayTick.push_back(newModule);
 			break;
 	}
+
+	Concurrent::Scheduler &sc = Engine::instance()->Scheduler();
+	Job *newJob = sc.Add();
+	newJob->data = newModule;
+	
+	newJob->Add()->fn.bind({ newModule, &Module::Load });
+	newJob->end.bind({ this, &ModuleController::Callback_LoadCompleted });
+	loadingJobs.push_back(newModule);
 }
-void ModuleController::load() {
-	for (auto &m : modules)
-		m->load();
-	for (auto &m : modules)
-		m->posLoad();
+void ModuleController::Callback_LoadCompleted(Concurrent::Job *job) {
+	Module *m = static_cast<Module *>(job->data);
+	loadingJobs.remove(m);
+	Engine::instance()->Scheduler().Pop(job);
 }
-void ModuleController::unload() {
-	for (auto &m : modules)
-		m->unload();
+void ModuleController::Startup() {
+	//for (auto &m : modules) {
+	//	newJob->Add()->fn.bind({ m, &Module::Load });
+	//	loadingJobs.push_back(newJob);
+	//}
 }
-void ModuleController::startup() {
-	for (auto &m : modules)
-		m->startup();
+void ModuleController::Shutdown() {
+	//for (auto &m : modules)
+	//	m->Unload();
 }
-void ModuleController::shutdown() {
-	for (auto &m : modules)
-		m->shutdown();
-}
-void ModuleController::beginPlay() {
+void ModuleController::BeginPlay() {
 	for (auto &s : modules)
-		s->beginPlay();
+		s->BeginPlay();
 }
-void ModuleController::endPlay() {
+void ModuleController::EndPlay() {
 	for (auto &s : modules)
-		s->endPlay();
+		s->EndPlay();
 }
-template<> void ModuleController::tick<EModuleTickType::editor>(const double& deltaTime) {
+template<> void ModuleController::Tick<EModuleTickType::editor>(const double& deltaTime) {
 	Timer t;
 	for (auto &m : editorTick) {
 		t.start();
-		m->tick(deltaTime);
+		m->Tick(deltaTime);
 		m->msCost = t.milliseconds();
 	}
 }
-template<> void ModuleController::tick<EModuleTickType::gameplay>(const double& deltaTime) {
+template<> void ModuleController::Tick<EModuleTickType::gameplay>(const double& deltaTime) {
 	Timer t;
 	for (auto &m : gameplayTick) {
 		t.start();
-		m->tick(deltaTime);
+		m->Tick(deltaTime);
 		m->msCost = t.milliseconds();
 	}
 }

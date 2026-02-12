@@ -30,12 +30,13 @@ AssetModule::AssetModule() {
 AssetModule::~AssetModule() {
 	for (auto s : serializers)
 		delete s;
-	unload();
+	Unload();
 }
-void AssetModule::posLoad() {
+bool AssetModule::Load() {
 	loadFolder(Domain::instance()->getContentPath());
+	return true;
 }
-void AssetModule::unload() {
+void AssetModule::Unload() {
 	for (auto kv : assets)
 		delete kv.second;
 }

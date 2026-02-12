@@ -17,14 +17,15 @@ namespace Dispatcher {
 		TFunction fn;
 
 		template<class TFn>
-		TBind(TFn &&fn) :
-			fn(std::move(fn)) {
+		TBind(TFn &&f)
+			: fn(std::forward<TFn>(f)) {
 		}
-
 		template<class TObj>
-		TBind(TObj *obj, TRet(TObj:: *method)(TArgs...)) :
-			fn(std::move([=](TArgs... args) { (obj->*method)(args...); })) {
-		}
+		TBind(TObj *obj, TRet(TObj:: *method)(TArgs...))
+			: fn([obj, method](TArgs... args) -> TRet {
+			return (obj->*method)(std::forward<TArgs>(args)...);
+		}) 
+		{}
 
 		TBind(const TBind &) = delete;
 		TBind(TBind &&) = delete;

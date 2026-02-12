@@ -101,13 +101,13 @@ void WorldEntityController::tick(const double &deltaTime) {
 
 WorldModule::WorldModule() {
 }
-void WorldModule::shutdown() {
+void WorldModule::Unload() {
 	entityController.unload();
 }
-void WorldModule::beginPlay() {
+void WorldModule::BeginPlay() {
 }
-void WorldModule::endPlay() {
+void WorldModule::EndPlay() {
 }
-void WorldModule::tick(const double &deltaTime) {
+void WorldModule::Tick(const double &deltaTime) {
 	entityController.tick(deltaTime);
 }

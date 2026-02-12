@@ -25,22 +25,17 @@ protected:
 	Module() = default;
 	virtual ~Module() = default;
 
-	virtual void load();
-	virtual void unload();
-	virtual void posLoad();
+	virtual bool Load();
+	virtual void Unload();
 
-	virtual void startup();
-	virtual void shutdown();
-	virtual void hotreload();
+	virtual void BeginPlay();
+	virtual void EndPlay();
+	virtual void Tick(const double &deltaTime);
 
-	virtual void beginPlay();
-	virtual void endPlay();
-	virtual void tick(const double &deltaTime);
-
-	virtual EModuleTickType tickType() const;
+	virtual EModuleTickType TickType() const;
 
 public:
-	virtual const char* name() const;
+	virtual const char* Name() const;
 	double getMsCost() const { return msCost; }
 };
 
@@ -51,30 +46,32 @@ private:
 	Codex codex;
 	std::list<Module *> modules;
 	std::list<Module *> editorTick, gameplayTick;
+	std::list<Module *> loadingJobs;
 
 	ModuleController();
 	void _addModule(Module *module);
+	void Callback_LoadCompleted(Concurrent::Job *job);
 
 protected:
-	void load();
-	void unload();
-	void startup();
-	void shutdown();
-	void beginPlay();
-	void endPlay();
+	void Startup();
+	void Shutdown();
 
-	template<EModuleTickType> void tick(const double &deltaTime) = delete;
-	template<> void tick<EModuleTickType::editor>(const double &deltaTime);
-	template<> void tick<EModuleTickType::gameplay>(const double &deltaTime);
+	void BeginPlay();
+	void EndPlay();
+	void Tick();
+	template<EModuleTickType> void Tick(const double &deltaTime) = delete;
+	template<> void Tick<EModuleTickType::editor>(const double &deltaTime);
+	template<> void Tick<EModuleTickType::gameplay>(const double &deltaTime);
+	bool foo();
 
 public:
-	template<class T> void addModule() {
+	template<class T> void AddModule() {
 		T *newModule = new T;
 		codex.add<T>(newModule);
 		_addModule(newModule);
 	}
-	template<class T> T *getModule() { return codex.get<T>(); }
-	std::list<Module *> &getModules() { return modules; }
+	template<class T> T *ModuleAt() { return codex.get<T>(); }
+	std::list<Module *> &Modules() { return modules; }
 };
 
 template<class T> class ModuleSingleton : public Module {
@@ -84,7 +81,7 @@ protected:
 
 public:
 	static T *instance() {
-		static T *inst = Engine::instance()->getModuleController()->getModule<T>();
+		static T *inst = Engine::instance()->getModuleController()->ModuleAt<T>();
 		return inst;
 	}
 };

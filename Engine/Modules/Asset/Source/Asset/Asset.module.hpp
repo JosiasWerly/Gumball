@@ -17,10 +17,10 @@ private:
 	std::unordered_map<u64, Asset *> assets;
 
 protected:
-	void posLoad() override;
-	void unload() override;
-	EModuleTickType tickType() const override { return EModuleTickType::none; }
-	const char* name() const override { return "Content"; }
+	bool Load() override;
+	void Unload() override;
+	EModuleTickType TickType() const override { return EModuleTickType::none; }
+	const char* Name() const override { return "Content"; }
 
 public:
 	AssetModule();

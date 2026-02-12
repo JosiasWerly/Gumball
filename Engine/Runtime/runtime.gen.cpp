@@ -6,8 +6,8 @@
 #include <Editor/Editor.module.hpp>
 #include <World/World.module.hpp>
 void injectModules(ModuleController *mCtrl) {
-	mCtrl->addModule<AssetModule>();
-	mCtrl->addModule<RenderModule>();
+	mCtrl->AddModule<AssetModule>();
+	mCtrl->AddModule<RenderModule>();
 	//mCtrl->addModule<InputModule>();
 	//mCtrl->addModule<EditorModule>();
 	//mCtrl->addModule<WorldModule>();

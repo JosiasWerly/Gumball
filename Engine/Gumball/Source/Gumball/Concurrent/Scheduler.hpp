@@ -11,31 +11,24 @@
 namespace Concurrent {
 	using namespace std;
 
-	struct GENGINE Runnable {
-		const string name;
-
-		Runnable(const Runnable &) = default;
-		Runnable(const string &name) : name(name) {}
-		bool operator==(const Runnable &o) const { return name == o.name; }
-	};
-
-	struct GENGINE Task : public Runnable {
+	struct GENGINE Task {
 		using Delegate = Signal<bool()>;
 		Delegate fn;
 
-		using Runnable::Runnable;
+		bool operator==(const Task &other) const { return this == &other; }
 	};
 
-	struct GENGINE Job : public Runnable {
-		using Delegate = Signal<void()>;
-
+	struct GENGINE Job {
+		using Delegate = Signal<void(Job *)>;
+		
+		void *data = nullptr;
 		Delegate begin, end;
 		std::list<Task> tasks;
 
-		using Runnable::Runnable;
-		Task &add(const string name);
-		void pop(const string name);
-		void clear();
+		Task *Add();
+		void Pop(Task *task);
+		void Clear();
+		bool operator==(const Job &other) const { return this == &other; }
 	};
 
 	struct GENGINE Work {
@@ -49,14 +42,14 @@ namespace Concurrent {
 
 		Work() = default;
 		Work(Work &o);
-		void markStart();
-		void markTake();
-		void markRelease();
-		void markCompleted();
+		void MarkStart();
+		void MarkTake();
+		void MarkRelease();
+		void MarkCompleted();
 
-		bool isValid() const { return job && !job->tasks.empty(); }
-		bool canStart() const { return state == eState::idle; }
-		bool canTake() const { return !taken; }
+		bool IsValid() const { return job && !job->tasks.empty(); }
+		bool CanStart() const { return state == eState::idle; }
+		bool CanTake() const { return !taken; }
 		bool operator==(const Work &o) const { return this == &o; }
 	};
 
@@ -66,15 +59,16 @@ namespace Concurrent {
 
 		std::condition_variable cvjobs;
 		SharedList<Work> workPool;
+		SharedList<Job> jobPool;
 
-		void run();
+		void Run();
 
 	public:
 		Scheduler() = default;
-		void add(Job &job);
-		void pop(Job &job);
-		void start(unsigned threadCount);
-		void stop();
+		Job* Add();
+		void Pop(Job *job);
+		void Start(unsigned threadCount);
+		void Stop();
 	};
 };
 

@@ -78,12 +78,12 @@ public:
 
 		Engine *e = Engine::instance();
 		ModuleController *mc = e->getModuleController();
-		std::list<Module *> &modules = mc->getModules();
+		std::list<Module *> &modules = mc->Modules();
 		int i = 0;
 		for (auto m : modules) {
 			Histogram *hs = new Histogram;
 			hs->size().y = 100;
-			hs->label(m->name());
+			hs->label(m->Name());
 			container << hs;
 			//histogram.push_back(hs);
 			i++;
@@ -95,10 +95,10 @@ public:
 	}
 };
 
-void EditorModule::posLoad() {
+void EditorModule::Unload() {
 	editor = new EditorToolbar;
 }
-void EditorModule::tick(const double &deltaTime) {
+void EditorModule::Tick(const double &deltaTime) {
 	//auto ed = static_cast<EditorToolbar *>(editor);
 	//std::list<Module *> &modules = Engine::instance()->getModuleController()->getModules();
 

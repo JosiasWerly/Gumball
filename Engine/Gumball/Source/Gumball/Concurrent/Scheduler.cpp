@@ -1,48 +1,41 @@
 #include "Scheduler.hpp"
-
+#include <string>
 using namespace Concurrent;
 
-Task &Job::add(const string name) {
-	return tasks.emplace_back(Task(name));
+Task *Job::Add() {
+	return &tasks.emplace_back(Task());
 }
-void Job::pop(const string name) {
-	for (list<Task>::iterator it = tasks.begin(); it != tasks.end(); ++it) {
-		if ((*it) == name) {
-			tasks.erase(it);
-			return;
-		}
-	}
+void Job::Pop(Task *task) {
+	tasks.remove(*task);
 }
-void Job::clear() {
+void Job::Clear() {
 	tasks.clear();
 }
-
 
 Work::Work(Work &o) {
 	state = o.state;
 	job = o.job;
 	tasksCompleted = o.tasksCompleted;
 }
-void Work::markStart() {
+void Work::MarkStart() {
 	state = eState::schedule;
 	tasksMask = 0;
 	tasksCompleted = 0;
-	job->begin();
+	job->begin(job);
 }
-void Work::markTake() {
+void Work::MarkTake() {
 	taken = true;
 }
-void Work::markRelease() {
+void Work::MarkRelease() {
 	taken = false;
 }
-void Work::markCompleted() {
+void Work::MarkCompleted() {
 	taken = false;
 	state = eState::idle;
-	job->end();
+	job->end(job);
 }
 
-
-void Scheduler::run() {
+void Scheduler::Run() {
 	while (true) {
 		{
 			GuardUnique lock(workPool.m);
@@ -58,18 +51,18 @@ void Scheduler::run() {
 			if (!work)
 				continue;
 
-			if (!work->isValid()) {
+			if (!work->IsValid()) {
 				workPool.pop(*work);
 				work = nullptr;
 				continue;
 			}
 
-			if (work->canStart()) {
-				work->markStart();
-				work->markTake();
+			if (work->CanStart()) {
+				work->MarkStart();
+				work->MarkTake();
 			}
-			else if (work->canTake()) {
-				work->markTake();
+			else if (work->CanTake()) {
+				work->MarkTake();
 			}
 			else {
 				work = nullptr;
@@ -93,34 +86,36 @@ void Scheduler::run() {
 			{
 				GuardUnique lock(workPool.m);
 				if (work->tasksCompleted == tasks->size()) {
-					work->markCompleted();
+					work->MarkCompleted();
 				}
 				else {
-					work->markRelease();
+					work->MarkRelease();
 				}
 			}
 		}
 	}
 }
-void Scheduler::add(Job &job) {
+Job* Scheduler::Add() {
 	Work &work = workPool.add();
-	work.job = &job;
+	work.job = &jobPool.add();
+	return work.job;
 }
-void Scheduler::pop(Job &job) {
+void Scheduler::Pop(Job *job) {
 	Work *work = nullptr;
 	for (auto &w : workPool.pool) {
-		if (w.job == &job) {
+		if (w.job == job) {
 			work = &w;
 			work->job = nullptr;
 			break;
 		}
 	}
+	jobPool.pop(*job);
 }
-void Scheduler::start(unsigned threadCount) {
+void Scheduler::Start(unsigned threadCount) {
 	active = true;
 	for (size_t i = 0; i < threadCount; i++)
-		threads.emplace_back(jthread(&Scheduler::run, this));
+		threads.emplace_back(jthread(&Scheduler::Run, this));
 }
-void Scheduler::stop() {
+void Scheduler::Stop() {
 	active = false;
 }

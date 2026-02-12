@@ -29,6 +29,7 @@ private:
 	ProjectTarget *projectTarget;
 	Codex codex;
 	Flow::StateMachine::StateMachine fsm;
+	Concurrent::Scheduler scheduler;
 
 	Engine();
 	~Engine();
@@ -39,6 +40,7 @@ public:
 	ModuleController *getModuleController() { return moduleController; }
 	void signal(eState signal) { fsm.to(signal); }
 	Codex &getCodex() { return codex; }
+	Concurrent::Scheduler &Scheduler() { return scheduler; }
 };
 
 template<class T> class EngineSingleton {

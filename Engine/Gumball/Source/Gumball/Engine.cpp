@@ -26,36 +26,33 @@ void Engine::initialize(EngineInit data) {
 
 	using Ctrl = Flow::StateMachine::Controller;
 	fsm[eState::play].onEnter.bind([&]() {
-		moduleController->beginPlay();
+		moduleController->BeginPlay();
 	});
 	fsm[eState::play].onExit.bind([&]() {
-		moduleController->endPlay();
+		moduleController->EndPlay();
 	});
 	fsm[eState::play].onTick.bind([&]() {
 		const double deltaTime = 0.1;
-		moduleController->tick<EModuleTickType::gameplay>(deltaTime);
+		moduleController->Tick<EModuleTickType::gameplay>(deltaTime);
 	});
 
 	fsm[eState::hotreload].onEnter.bind([&]() {
-		moduleController->shutdown();
 		projectTarget->unload();
 		projectTarget->load();
-		moduleController->startup();
 		fsm.to(eState::idle);
 	});
 }
 void Engine::tick() {
 
 	const double deltaTime = 0.1;
-
-	moduleController->load();
-	fsm.set(eState::hotreload);
-	fsm.tick();
-	while (fsm.now() != eState::exit) {
-		moduleController->tick<EModuleTickType::editor>(deltaTime);
-		fsm.tick();
-	}
-	moduleController->endPlay();
-	moduleController->shutdown();
-	moduleController->unload();
+	scheduler.Start(0);
+	//moduleController->Startup();
+	//fsm.set(eState::hotreload);
+	//fsm.tick();
+	//scheduler.Start(1);
+	//while (fsm.now() != eState::exit) {
+	//	moduleController->Tick<EModuleTickType::editor>(deltaTime);
+	//	fsm.tick();
+	//}
+	//moduleController->Shutdown();
 }

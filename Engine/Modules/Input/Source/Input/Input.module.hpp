@@ -111,10 +111,10 @@ class GMODULE InputModule : public ModuleSingleton<InputModule> {
 	EventPool eventPool;
 	std::unordered_map<Input::EKeyCode, KeyCodeStatus> keysStatus, keyPool;
 
-	void posLoad() override;
-	void tick(const double &deltaTime) override;
-	EModuleTickType tickType() const override { return EModuleTickType::all; }
-    const char* name() const override { return "Input"; }
+	bool Load() override;
+	void Tick(const double &deltaTime) override;
+	EModuleTickType TickType() const override { return EModuleTickType::all; }
+    const char* Name() const override { return "Input"; }
 
 	void onInputCallback(int key, int scancode, int action, int mods);
 

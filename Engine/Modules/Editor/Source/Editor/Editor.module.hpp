@@ -6,10 +6,10 @@
 class GMODULE EditorModule : public ModuleSingleton<EditorModule> {
 	class UserWidget *editor;
 	
-	void posLoad() override;
-	void tick(const double &deltaTime) override;
-	EModuleTickType tickType() const override { return EModuleTickType::gameplay; }
-	const char* name() const override { return "Editor"; }
+	void Unload() override;
+	void Tick(const double &deltaTime) override;
+	EModuleTickType TickType() const override { return EModuleTickType::gameplay; }
+	const char* Name() const override { return "Editor"; }
 
 public:
     EditorModule() = default;

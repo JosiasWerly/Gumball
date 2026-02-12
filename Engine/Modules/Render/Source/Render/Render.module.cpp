@@ -16,7 +16,7 @@ RenderModule::~RenderModule() {
 	for (auto &l : overlays)
 		delete l;
 }
-void RenderModule::load() {
+bool RenderModule::Load() {
 	AssetModule *content = AssetModule::instance();
 	//content->addSerializer(new WFileSerializer<MeshData>);
 	//content->addSerializer(new WFileSerializer<Shader>);
@@ -46,15 +46,16 @@ void RenderModule::load() {
 	glDepthMask(GL_TRUE);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
+	return true;
 }
-void RenderModule::unload() {
+void RenderModule::Unload() {
 	glfwTerminate();
 }
-void RenderModule::posLoad() {
-	addOverlay(scene);
-	addOverlay(widget);
-}
-void RenderModule::tick(const double &deltaTime) {
+//void RenderModule::posLoad() {
+//	addOverlay(scene);
+//	addOverlay(widget);
+//}
+void RenderModule::Tick(const double &deltaTime) {
 	mainWindow.clearRender();
 
 	for (RenderOverlay *layer : overlays)

@@ -71,12 +71,13 @@ public:
 	WorldEntityController entityController;
 
 	WorldModule();
-	void shutdown() override;
-	void beginPlay() override;
-	void endPlay() override;
-	void tick(const double &deltaTime) override;
-	EModuleTickType tickType() const override { return EModuleTickType::gameplay; }
-	const char* name() const override { return "World"; }
+	void Unload() override;
+	
+	void BeginPlay() override;
+	void EndPlay() override;
+	void Tick(const double &deltaTime) override;
+	EModuleTickType TickType() const override { return EModuleTickType::gameplay; }
+	const char* Name() const override { return "World"; }
 };
 
 #endif // _worldmodule
