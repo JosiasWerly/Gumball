@@ -8,6 +8,8 @@
 #include "../Flow/Dispatcher.hpp"
 #include "Common.hpp"
 
+int main(int argc, char *argv[]);
+
 namespace Concurrent {
 	using namespace std;
 
@@ -54,6 +56,8 @@ namespace Concurrent {
 	};
 
 	class GENGINE Scheduler {
+		friend int ::main(int argc, char *argv[]);
+
 		std::atomic<bool> active;
 		vector<jthread> threads;
 
@@ -62,7 +66,7 @@ namespace Concurrent {
 		SharedList<Job> jobPool;
 
 		void Run();
-
+		void RunMainThread() { while (true); }
 	public:
 		Scheduler() = default;
 		Job* Add();

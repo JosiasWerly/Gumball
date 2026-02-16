@@ -120,7 +120,8 @@
     <ClInclude Include="Flow\StateMachine.hpp" />
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Module.hpp" />
+    <ClInclude Include="Plugin\Controller.hpp" />
+    <ClInclude Include="Plugin\Module.hpp" />
     <ClInclude Include="ProjectTarget.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="Timer.hpp" />
@@ -141,7 +142,8 @@
     <ClCompile Include="Flow\SignalPool.cpp" />
     <ClCompile Include="Flow\StateMachine.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Module.cpp" />
+    <ClCompile Include="Plugin\Controller.cpp" />
+    <ClCompile Include="Plugin\Module.cpp" />
     <ClCompile Include="ProjectTarget.cpp" />
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="Timer.cpp" />

@@ -1,6 +1,6 @@
 #include "Engine.hpp"
 
-#include "Module.hpp"
+#include "Plugin/Controller.hpp"
 #include "ProjectTarget.hpp"
 #include "Domain.hpp"
 
@@ -10,42 +10,43 @@
 using namespace std;
 
 Engine::Engine() {
-	moduleController = new ModuleController;
+	pluginCtrl = new Plugin::Controller;
 	projectTarget = new ProjectTarget;
 }
 Engine::~Engine() {
 }
 void Engine::initialize(EngineInit data) {
-	data.fnInjectModules(moduleController);
+	scheduler = data.scheduler;
+	data.fnInjectModules(pluginCtrl);
 	Domain *domain = new Domain;
 	domain->applicationPath = data.argv[0];
 	domain->applicationDir = domain->applicationPath.substr(0, domain->applicationPath.find_last_of("\\")) + "\\";
 	domain->engineDir = data.engineDir;
 	domain->contentPath = domain->engineDir + "Content\\";
-	codex.add<Domain>(domain);
+	codex.Add<Domain>(domain);
 
-	using Ctrl = Flow::StateMachine::Controller;
 	fsm[eState::play].onEnter.bind([&]() {
-		moduleController->BeginPlay();
+		pluginCtrl->BeginPlay();
 	});
 	fsm[eState::play].onExit.bind([&]() {
-		moduleController->EndPlay();
+		pluginCtrl->EndPlay();
 	});
 	fsm[eState::play].onTick.bind([&]() {
 		const double deltaTime = 0.1;
-		moduleController->Tick<EModuleTickType::gameplay>(deltaTime);
+		pluginCtrl->Tick<Plugin::eTick::gameplay>(deltaTime);
 	});
-
 	fsm[eState::hotreload].onEnter.bind([&]() {
+		pluginCtrl->BeginHotReload();
 		projectTarget->unload();
 		projectTarget->load();
+		pluginCtrl->EndHotReload();
 		fsm.to(eState::idle);
 	});
+	
+	pluginCtrl->Startup();
 }
 void Engine::tick() {
-
-	const double deltaTime = 0.1;
-	scheduler.Start(0);
+	while (true);
 	//moduleController->Startup();
 	//fsm.set(eState::hotreload);
 	//fsm.tick();

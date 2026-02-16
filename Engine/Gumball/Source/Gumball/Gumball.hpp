@@ -1,6 +1,6 @@
 #pragma once
 #include "Definitions.hpp"
-#include "Module.hpp"
+#include "Plugin/Controller.hpp"
 
 #include "Containers/Codex.hpp"
 #include "Containers/Pointer.hpp"

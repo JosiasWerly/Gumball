@@ -1,35 +1,34 @@
 #pragma once
-#ifndef __engine
-#define __engine
+#ifndef _engine_
+#define _engine_
 #include <list>
 
 #include "Singleton.hpp"
 #include "Containers/Codex.hpp"
 #include "Flow/StateMachine.hpp"
-#include "Flow/ChainMachine.hpp"
 #include "Concurrent/Scheduler.hpp"
 
-class ModuleController;
+namespace Plugin {
+	class Controller;
+};
 class ProjectTarget;
 
 struct EngineInit {
 	int argc;
 	char **argv;
 	const char *engineDir;
-	void (*fnInjectModules)(ModuleController *mCtrl);
+	Concurrent::Scheduler *scheduler;
+	void (*fnInjectModules)(Plugin::Controller *mCtrl);
 };
 
 class GENGINE Engine : public Singleton<Engine> {
-public:
-	enum class eState { idle, play, hotreload, exit	};
-
-private:
 	friend int main(int argc, char *argv[]);
-	ModuleController *moduleController;
+	
+	Plugin::Controller *pluginCtrl;
 	ProjectTarget *projectTarget;
 	Codex codex;
 	Flow::StateMachine::StateMachine fsm;
-	Concurrent::Scheduler scheduler;
+	Concurrent::Scheduler *scheduler;
 
 	Engine();
 	~Engine();
@@ -37,10 +36,12 @@ private:
 	void tick();
 
 public:
-	ModuleController *getModuleController() { return moduleController; }
+	enum class eState { idle, play, hotreload, exit	};
+
 	void signal(eState signal) { fsm.to(signal); }
-	Codex &getCodex() { return codex; }
-	Concurrent::Scheduler &Scheduler() { return scheduler; }
+	Codex &Codex() { return codex; }
+	Plugin::Controller &PluginController() { return *pluginCtrl; }
+	Concurrent::Scheduler &Scheduler() { return *scheduler; }
 };
 
 template<class T> class EngineSingleton {
@@ -50,7 +51,7 @@ protected:
 
 public:
 	static T *instance() {
-		static T *inst = Engine::instance()->getCodex().get<T>();
+		static T *inst = Engine::instance()->Codex().Get<T>();
 		return inst;
 	}
 };

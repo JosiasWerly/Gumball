@@ -33,6 +33,8 @@ AssetModule::~AssetModule() {
 	Unload();
 }
 bool AssetModule::Load() {
+	return false;
+	
 	loadFolder(Domain::instance()->getContentPath());
 	return true;
 }

@@ -77,8 +77,8 @@ public:
 		};
 
 		Engine *e = Engine::instance();
-		ModuleController *mc = e->getModuleController();
-		std::list<Module *> &modules = mc->Modules();
+		Plugin::Controller &pc = e->PluginController();
+		std::list<Plugin::Module *> &modules = pc.Modules();
 		int i = 0;
 		for (auto m : modules) {
 			Histogram *hs = new Histogram;

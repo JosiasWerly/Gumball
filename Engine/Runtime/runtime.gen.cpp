@@ -1,16 +1,16 @@
 #include "Runtime.hpp"
 #include <Gumball/Engine.hpp>
-#include <Asset/Asset.module.hpp>
 #include <Render/Render.module.hpp>
 #include <Input/Input.module.hpp>
-#include <Editor/Editor.module.hpp>
 #include <World/World.module.hpp>
-void injectModules(ModuleController *mCtrl) {
-	mCtrl->AddModule<AssetModule>();
+#include <Editor/Editor.module.hpp>
+#include <Asset/Asset.module.hpp>
+void injectModules(Plugin::Controller *mCtrl) {
 	mCtrl->AddModule<RenderModule>();
-	//mCtrl->addModule<InputModule>();
-	//mCtrl->addModule<EditorModule>();
-	//mCtrl->addModule<WorldModule>();
+	mCtrl->AddModule<InputModule>();
+	mCtrl->AddModule<WorldModule>();
+	mCtrl->AddModule<EditorModule>();
+	mCtrl->AddModule<AssetModule>();
 }
 const char* engineDir() {
 	return "C:\\Users\\josia\\source\\repos\\JosiasWerly\\Gumball\\";

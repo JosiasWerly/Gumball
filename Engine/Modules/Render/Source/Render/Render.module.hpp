@@ -13,7 +13,7 @@ using namespace std;
 class SceneOverlay;
 class WidgetOverlay;
 
-class GMODULE RenderModule : public ModuleSingleton<RenderModule> {
+class GMODULE RenderModule : public Plugin::Singleton<RenderModule> {
     list<RenderOverlay*> overlays;
     SceneOverlay *const scene;
     WidgetOverlay *const widget;
@@ -23,7 +23,7 @@ protected:
     bool Load() override;
     void Unload() override;
     void Tick(const double &deltaTime) override;
-    EModuleTickType TickType() const override { return EModuleTickType::all; }
+    Plugin::eTick TickType() const override { return Plugin::eTick::all; }
     const char* Name() const override { return "Render"; }
 public:
     RenderModule();

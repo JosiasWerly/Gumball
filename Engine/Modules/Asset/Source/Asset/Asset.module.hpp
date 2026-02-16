@@ -9,7 +9,7 @@
 #include <set>
 #include <string>
 
-class GMODULE AssetModule : public ModuleSingleton<AssetModule> {
+class GMODULE AssetModule : public Plugin::Singleton<AssetModule> {
 	friend class AssetFactory;
 
 private:
@@ -19,7 +19,7 @@ private:
 protected:
 	bool Load() override;
 	void Unload() override;
-	EModuleTickType TickType() const override { return EModuleTickType::none; }
+	Plugin::eTick TickType() const override { return Plugin::eTick::none; }
 	const char* Name() const override { return "Content"; }
 
 public:

@@ -274,9 +274,9 @@ function GenerateModulesFile(trg)
 		for _, name in ipairs(engineModules) do
 			file:write("#include <" .. name .. "/" .. name .. ".module.hpp>\n")
 		end
-		file:write("void injectModules(ModuleController *mCtrl) {\n")		
+		file:write("void injectModules(Plugin::Controller *mCtrl) {\n")		
 		for _, name in ipairs(engineModules) do
-			file:write("\tmCtrl->addModule<".. name .. "Module>();\n")
+			file:write("\tmCtrl->AddModule<".. name .. "Module>();\n")
 		end
 		file:write("}\n")
 

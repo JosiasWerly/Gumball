@@ -51,6 +51,21 @@ namespace Concurrent {
 		bool isLast() const { return it == pool.end(); }
 		bool isEmpty() const { return pool.empty(); }
 	};
-};
 
+	class SpinLock {
+		std::atomic_flag flag = ATOMIC_FLAG_INIT;
+
+	public:
+		void lock() noexcept {
+			while (flag.test_and_set(std::memory_order_acquire))
+				;
+		}
+		bool try_lock() noexcept {
+			return !flag.test_and_set(std::memory_order_acquire);
+		}
+		void unlock() noexcept {
+			flag.clear(std::memory_order_release);
+		}
+	};
+};
 #endif // __concurrentcommon

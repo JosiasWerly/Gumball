@@ -10,6 +10,9 @@
     <Filter Include="Flow">
       <UniqueIdentifier>{3D4C857C-2983-860D-D26F-6C10BE85020F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Plugin">
+      <UniqueIdentifier>{F4F95FCA-E09B-8AA0-C956-9EF4B59711F1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Archive.hpp" />
@@ -55,7 +58,12 @@
     </ClInclude>
     <ClInclude Include="Gumball.hpp" />
     <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Module.hpp" />
+    <ClInclude Include="Plugin\Controller.hpp">
+      <Filter>Plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="Plugin\Module.hpp">
+      <Filter>Plugin</Filter>
+    </ClInclude>
     <ClInclude Include="ProjectTarget.hpp" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="Timer.hpp" />
@@ -96,7 +104,12 @@
       <Filter>Flow</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Module.cpp" />
+    <ClCompile Include="Plugin\Controller.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugin\Module.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
     <ClCompile Include="ProjectTarget.cpp" />
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="Timer.cpp" />

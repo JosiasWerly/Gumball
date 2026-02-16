@@ -99,7 +99,7 @@ public:
 	Inline bool hasEvents() { return events.size(); }
 };
 
-class GMODULE InputModule : public ModuleSingleton<InputModule> {
+class GMODULE InputModule : public Plugin::Singleton<InputModule> {
 	friend bool Input::isKeyDown(Input::EKeyCode);
 	friend bool Input::onKeyPressed(Input::EKeyCode Key);
 	friend bool Input::onKeyReleased(Input::EKeyCode Key);
@@ -113,7 +113,7 @@ class GMODULE InputModule : public ModuleSingleton<InputModule> {
 
 	bool Load() override;
 	void Tick(const double &deltaTime) override;
-	EModuleTickType TickType() const override { return EModuleTickType::all; }
+    Plugin::eTick TickType() const override { return Plugin::eTick::all; }
     const char* Name() const override { return "Input"; }
 
 	void onInputCallback(int key, int scancode, int action, int mods);

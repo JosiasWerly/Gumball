@@ -66,7 +66,7 @@ public:
 };
 
 Extern GMODULE void destroy(GameObject *trg);
-class GMODULE WorldModule : public ModuleSingleton<WorldModule> {
+class GMODULE WorldModule : public Plugin::Singleton<WorldModule> {
 public:
 	WorldEntityController entityController;
 
@@ -76,7 +76,7 @@ public:
 	void BeginPlay() override;
 	void EndPlay() override;
 	void Tick(const double &deltaTime) override;
-	EModuleTickType TickType() const override { return EModuleTickType::gameplay; }
+	Plugin::eTick TickType() const override { return Plugin::eTick::gameplay; }
 	const char* Name() const override { return "World"; }
 };
 
