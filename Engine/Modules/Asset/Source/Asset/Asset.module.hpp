@@ -36,7 +36,7 @@ public:
 	template<class t> 
 	t *getContent(string name) {
 		if (auto asset = getAsset(name)) {
-			if (TPtr<t> p = asset->getContent().ptr<t>()) {
+			if (Ptr<t> p = asset->getContent()) {
 				return &(*p);
 			}
 		}

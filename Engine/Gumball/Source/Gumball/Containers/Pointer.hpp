@@ -1,255 +1,210 @@
 #ifndef __pointer
 #define __pointer
 #include <concepts>
+#include <type_traits>
 
-struct PtrWrapper {
-	virtual ~PtrWrapper() {}
-	virtual operator void *() = 0;
-};
-template<class T>
-struct TPtrWrapper : public PtrWrapper {
-	T *ptr = nullptr;
-	TPtrWrapper(T *init) : ptr(init) {}
-	~TPtrWrapper() { delete ptr; ptr = nullptr; }
-	operator void *() { return ptr; }
-};
-class PtrController {
-public:
-	unsigned refs = 1;
-	PtrWrapper *pw = nullptr;
+namespace Pointer {
+	/*this is analogous to shared_ptr and weak_ptr, plus allows abstraction to void*, 
+	safety is not enforced, you better know what you are doing */
 
-	template<class U> PtrController(U *init) : pw(new TPtrWrapper<U>(init)) {}
-	~PtrController() { delete pw; }
-};
+	struct IMemory {
+		virtual ~IMemory() {}
+		virtual operator void *() = 0;
+	};
+	
+	template<class T>
+	struct TMemory : public IMemory {
+		T *ptr = nullptr;
+		TMemory(T *init) : ptr(init) {}
+		~TMemory() { delete ptr; ptr = nullptr; }
+		operator void *() { return ptr; }
+	};
+	
+	class Memory {
+	public:
+		unsigned refs = 1;
+		IMemory *pw = nullptr;
 
-template<class T> class TPtr;
-template<class T> class TRef;
-class Ptr;
-class Ref;
+		template<class U> Memory(U *init) : pw(new TMemory<U>(init)) {}
+		~Memory() { delete pw; }
+	};
 
-template<class T>
-class PtrPad {
-	template<class t> friend class PtrPad;
+	template<class T> class Ptr;
+	template<class T> class Ref;
 
-protected:
-	PtrController *ctrl;
+	template<class T, class U>
+	concept InterOp = requires {
+		std::is_convertible_v<T, U>;
+		std::is_convertible_v<U, T>;
+		std::is_same_v<U, void *>;
+	};
 
-	Inline void iref() { ++ctrl->refs; }
-	Inline void dref() { --ctrl->refs; }
-	Inline void delCtrl() { delete ctrl; ctrl = nullptr; }
-	Inline void delPtr() { delete ctrl->pw; ctrl->pw = nullptr; }
+	template<class T>
+	class SmartPointer {
+		using Memory = Pointer::Memory;
+		template<class t> using TMemory = Pointer::TMemory<t>;
+		template<class t> friend class SmartPointer;
 
-	Inline void assing(PtrController *otherCtrl) { divest(); ctrl = otherCtrl; iref(); }
-	Inline void divest() { dref(); if (!ctrl->refs) { delCtrl(); } }
-	template<class U> const U *castT() const { return dynamic_cast<const U *>(this->operator->()); }
+	protected:
+		Memory *mem;
 
-	PtrPad(PtrController *ctrlInit = nullptr) : ctrl(ctrlInit) {}
+		Inline void iref() { ++mem->refs; }
+		Inline void dref() { --mem->refs; }
+		Inline void delMem() { delete mem; mem = nullptr; }
+		Inline void delPtr() { delete mem->pw; mem->pw = nullptr; }
 
-public:
-	PtrPad() = delete;
-	PtrPad(PtrPad &&) = delete;
-	PtrPad(const PtrPad &) = delete;
-	PtrPad &operator=(PtrPad &&other) = delete;
-	PtrPad &operator=(const PtrPad &other) = delete;
-	~PtrPad() = default;
+		Inline void reference(Memory *other) { mem = other; }
+		Inline void assing(Memory *other) { divest(); mem = other; iref(); }
+		Inline void divest() { dref(); if (!mem->refs) { delMem(); } }
+		SmartPointer(Memory *memInit = nullptr) : mem(memInit) {}
 
-	template<class U>
-	bool operator==(const PtrPad<U> &other) const
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		return ctrl == other.ctrl;
-	}
+	public:
+		SmartPointer() = delete;
+		SmartPointer(SmartPointer &&) = delete;
+		SmartPointer(const SmartPointer &) = delete;
+		SmartPointer &operator=(SmartPointer &&other) = delete;
+		SmartPointer &operator=(const SmartPointer &other) = delete;
+		~SmartPointer() = default;
 
-	T &operator*() {
-		return *static_cast<TPtrWrapper<T>*>(ctrl->pw)->ptr;
-	}
-	T *const operator->() {
-		return static_cast<TPtrWrapper<T>*>(ctrl->pw)->ptr;
-	}
-	const T &operator*() const {
-		return *static_cast<TPtrWrapper<T>*>(ctrl->pw)->ptr;
-	}
-	const T *const operator->() const {
-		return static_cast<TPtrWrapper<T>*>(ctrl->pw)->ptr;
-	}
-	operator bool() const {
-		return ctrl && ctrl->pw && ctrl->pw->operator void *();
-	}
-	operator void *() const {
-		return ctrl ? (*ctrl->pw) : nullptr;
-	}
+		template<class U> requires InterOp<T, U>
+		bool operator==(const SmartPointer<U> &other) const {
+			return mem == other.mem;
+		}
 
-	template<class U> 
-	const U *dcast() const { 
-		return dynamic_cast<const U *>(this->operator->()); 
-	}
+		template<class U> requires InterOp<T, U>
+		const U *As() const {
+			return dynamic_cast<const U *>(static_cast<const TMemory<U>*>(mem->pw)->ptr);
+		}
+		template<class U>
+		const U *To() const {
+			return static_cast<const TMemory<U>*>(mem->pw)->ptr;
+		}
+		template<class U>
+		U *To() {
+			return static_cast<const TMemory<U>*>(mem->pw)->ptr;
+		}
+		template<class U>
+		bool Is() const { static_cast<bool>(dynamic_cast<const U *>(static_cast<const TMemory<U>*>(mem->pw)->ptr)); }
 
-	template<class U>
-	const U *scast() const {
-		return static_cast<const U *>(this->operator->());
-	}
+		T &operator*() { return *To<T>(); }
+		const T &operator*() const { return *To<T>(); }
+		T *const operator->() { return To<T>(); }
+		const T *const operator->() const { return To<T>(); }
 
-	template<class U>
-	TPtr<U> ptr()
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		if (!castT<U>())
-			throw;
-		return TPtr<U>(*ctrl);
-	}
+		operator bool() const { return mem && mem->pw && To<T>(); }
+		operator void *() const { return mem ? (*mem->pw) : nullptr; }
+		
+		template<class U> requires InterOp<T, U>
+		operator Ptr<U>() 
+		{
+			return Ptr<U>(*mem);
+		}
+		
+		template<class U>
+		operator Ref<U>() requires InterOp<T, U> {
+			return Ref<U>(*mem);
+		}
+	};
 
-	template<class U>
-	TRef<U> ref()
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		if (!castT<U>())
-			throw;
-		return TRef<U>(*ctrl);
-	}
+	template<class T>
+	class Ptr : public SmartPointer<T> {
+		template<class t> friend class SmartPointer;
+		template<class t> friend class Ptr;
+		typedef SmartPointer<T> Super;
 
-	auto ptr();
-	auto ref();
-};
+		Ptr(Memory &mem) : Super(&mem) { Super::iref(); }
+	
+	public:
+		Ptr(T *pInit = nullptr) : Super(new Pointer::Memory(pInit)) {}
+		Ptr(const Ptr &init) : Super(init.mem) { Super::iref(); }
+		~Ptr() { Super::divest(); }
 
-template<class T>
-class TPtr : public PtrPad<T> {
-	template<class t> friend class PtrPad;
-	template<class t> friend class TPtr;
-	friend class Ptr;
-	friend class Ref;
-	typedef PtrPad<T> Super;
+		void operator~() {
+			Super::delPtr();
+		}
+		Ptr &operator=(const Ptr &other) {
+			Super::assing(other.mem);
+			return *this;
+		}
+		const Ptr<T> &operator=(Ptr<T> &&other) {
+			Super::assing(other.mem);
+			return *this;
+		}		
+	};
 
-	TPtr(PtrController &ctrl) : Super(&ctrl) { Super::iref(); }
+	template<class T>
+	class Ref : public SmartPointer<T> {
+		template<class t> friend class SmartPointer;
+		template<class t> friend class Ref;
+		typedef SmartPointer<T> Super;
 
-public:
-	TPtr(T *pInit = nullptr) : Super(new PtrController(pInit)) {}
-	TPtr(const TPtr &init) : Super(init.ctrl) { Super::iref(); }
-	~TPtr() { Super::divest(); }
+		Ref(Pointer::Memory &mem) : Super(&mem) {}
 
-	void operator~() {
-		Super::delPtr();
-	}
-	TPtr &operator=(const TPtr &other) {
-		Super::assing(other.ctrl);
-		return *this;
-	}
+	public:
+		Ref() : Super(nullptr) {}
+		Ref(const Ref &init) : Super(init.mem) {}
+		~Ref() = default;
 
-	template<class U>
-	const TPtr<T> &operator=(const TPtr<U> &other)
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		if (!other.castT<T>())
-			throw;
-		Super::assing(other.ctrl);
-		return *this;
-	}
+		Ref &operator=(const Ref &other) {
+			Super::reference(other.mem);
+			return *this;
+		}
+		const Ref<T> &operator=(Ref<T> &&other) {
+			Super::reference(other.mem);
+			return *this;
+		}
+	};
 
-	template<class U>
-	const TPtr<T> &operator=(TPtr<U> &&other)
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		if (!other.castT<T>())
-			throw;
-		Super::assing(other.ctrl);
-		return *this;
-	}
-};
 
-template<class T>
-class TRef : public PtrPad<T> {
-	template<class t> friend class PtrPad;
-	template<class t> friend class TRef;
-	friend class Ptr;
-	friend class Ref;
-	typedef PtrPad<T> Super;
+	template<>
+	class Ptr<void *> : public SmartPointer<void *> {
+		template<class T> friend class SmartPointer;
+		typedef SmartPointer<void *> Super;
 
-	TRef(PtrController &ctrl) : Super(&ctrl) {}
+		Ptr(Pointer::Memory &ctrl) : Super(&ctrl) { Super::iref(); }
+	public:
+		Ptr() : Super(new Pointer::Memory(static_cast<void *>(nullptr))) {}
+		Ptr(const Ptr &init) : Super(init.mem) { Super::iref(); }
+		~Ptr() { Super::divest(); }
 
-public:
-	TRef() : Super(nullptr) {}
-	TRef(const TRef &init) : Super(init.ctrl) {}
-	~TRef() = default;
+		template<class U> 
+		Ptr &operator=(const Ptr<U> &other)
+		{
+			Super::assing(other.mem);
+			return *this;
+		}
+	};
 
-	TRef &operator=(const TRef &other) {
-		Super::assing(other.ctrl);
-		return *this;
-	}
+	template<>
+	class Ref<void *> : public SmartPointer<void *> {
+		template<class T> friend class SmartPointer;
+		typedef SmartPointer<void *> Super;
 
-	template<class U>
-	const TRef<T> &operator=(const TRef<U> &other)
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		if (!other.castT<T>())
-			throw;
-		Super::ctrl = other.ctrl;
-		return *this;
-	}
+		Ref(Pointer::Memory &mem) : Super(&mem) { }
+	public:
+		Ref() : Super(nullptr) {}
+		Ref(const Ref &init) : Super(init.mem) { }
+		~Ref() = default;
 
-	template<class U>
-	const TRef<T> &operator=(TRef<U> &&other)
-		requires std::convertible_to<T, U> || std::convertible_to<U, T> {
-		if (!other.castT<T>())
-			throw;
-		Super::ctrl = other.ctrl;
-		return *this;
-	}
-};
+		Ref &operator=(const Ref &other) {
+			Super::reference(other.mem);
+			return *this;
+		}
 
-class Ptr : public PtrPad<void *> {
-	template<class T> friend class PtrPad;
-	typedef PtrPad<void *> Super;
-
-	Ptr(PtrController &ctrl) : Super(&ctrl) { Super::iref(); }
-public:
-	Ptr() : Super(new PtrController(static_cast<void*>(nullptr))) {}
-	Ptr(const Ptr &init) : Super(init.ctrl) { Super::iref(); }
-	~Ptr() { Super::divest(); }
-
-	Ptr &operator=(const Ptr &other) {
-		Super::assing(other.ctrl);
-		return *this;
-	}
-	void *operator*() { return ctrl->pw->operator void *(); }
-
-	template<class U>
-	TPtr<U> ptr() {
-		return TPtr<U>(*ctrl);
-	}
-
-	template<class U>
-	TRef<U> ref() {
-		return TRef<U>(*ctrl);
-	}
+		template<class U>
+		operator Ptr<U>() {
+			return Ptr<U>(*mem);
+		}
+		template<class U>
+		operator Ref<U>() {
+			return Ref<U>(*mem);
+		}
+	};
 };
 
-class Ref : public PtrPad<void *> {
-	template<class T> friend class PtrPad;
-	typedef PtrPad<void *> Super;
-
-	Ref(PtrController &ctrl) : Super(&ctrl) { Super::iref(); }
-public:
-	Ref() : Super(nullptr) {}
-	Ref(const Ref &init) : Super(init.ctrl) { Super::iref(); }
-	~Ref() = default;
-
-	Ref &operator=(const Ref &other) {
-		Super::assing(other.ctrl);
-		return *this;
-	}
-	void *operator*() { return ctrl->pw->operator void *(); }
-
-	template<class U>
-	TPtr<U> ptr() {
-		return TPtr<U>(*ctrl);
-	}
-
-	template<class U>
-	TRef<U> ref() {
-		return TRef<U>(*ctrl);
-	}
-};
-
-template<class T>
-auto PtrPad<T>::ptr() {
-	return Ptr(*ctrl);
-}
-template<class T>
-auto PtrPad<T>::ref() {
-	return Ref(*ctrl);
-}
+template<class T> using Ptr = Pointer::Ptr<T>;
+template<class T> using Ref = Pointer::Ref<T>;
+using PtrWeak = Ptr<void *>;
+using RefWeak = Ref<void *>;
 
 #endif // !__pointer

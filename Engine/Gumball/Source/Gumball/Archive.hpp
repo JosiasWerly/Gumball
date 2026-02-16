@@ -89,8 +89,8 @@ template<> Archive &Archive::operator<<<std::string>(std::string &val) {
 class GENGINE FileSerializer {
 public:
 	virtual ~FileSerializer() = default;
-	virtual void load(const FilePath &fp, Ptr &ptr) = 0;
-	virtual void save(const FilePath &fp, Ptr &ptr) = 0;
+	virtual void load(const FilePath &fp, PtrWeak &ptr) = 0;
+	virtual void save(const FilePath &fp, PtrWeak &ptr) = 0;
 	virtual bool supports(const FilePath &fp) const = 0;
 };
 
@@ -102,14 +102,14 @@ public:
 	virtual bool save(const FilePath &fp, T &val) = 0;
 	virtual bool supports(const FilePath &fp) const = 0;
 
-	void load(const FilePath &fp, Ptr &ptr) {
-		TPtr tptr(new T);
+	void load(const FilePath &fp, PtrWeak &ptr) {
+		Ptr<T> tptr(new T);
 		if (!load(fp, *tptr))
 			~tptr;
-		ptr = tptr.ptr();
+		ptr = tptr;
 	}
-	void save(const FilePath &fp, Ptr &ptr) {
-		TPtr<T> tptr = ptr.ptr<T>();
+	void save(const FilePath &fp, PtrWeak &ptr) {
+		Ptr<T> tptr = ptr;
 		if (!tptr)
 			return;
 		save(fp, *tptr);
