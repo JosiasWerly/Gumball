@@ -6,74 +6,86 @@
 #include <mutex>
 
 #include "../Flow/Dispatcher.hpp"
+#include "../Containers/Pointer.hpp"
 #include "Common.hpp"
 
 int main(int argc, char *argv[]);
 
 namespace Concurrent {
-	using namespace std;
+using namespace std;
 
-	struct GENGINE Task {
-		using Delegate = Signal<bool()>;
-		Delegate fn;
+class GENGINE Task {
+	friend class Scheduler;
+	using Delegate = Signal<bool()>;
+	
+	const char *name;
+	Delegate fn;
 
-		bool operator==(const Task &other) const { return this == &other; }
-	};
-
-	struct GENGINE Job {
-		using Delegate = Signal<void(Job *)>;
-		
-		void *data = nullptr;
-		Delegate begin, end;
-		std::list<Task> tasks;
-
-		Task *Add();
-		void Pop(Task *task);
-		void Clear();
-		bool operator==(const Job &other) const { return this == &other; }
-	};
-
-	struct GENGINE Work {
-		enum class eState { idle, schedule };
-
-		eState state = eState::idle;
-		Job *job = nullptr;
-		unsigned tasksMask = 0;
-		unsigned char tasksCompleted = 0;
-		bool taken = false;
-
-		Work() = default;
-		Work(Work &o);
-		void MarkStart();
-		void MarkTake();
-		void MarkRelease();
-		void MarkCompleted();
-
-		bool IsValid() const { return job && !job->tasks.empty(); }
-		bool CanStart() const { return state == eState::idle; }
-		bool CanTake() const { return !taken; }
-		bool operator==(const Work &o) const { return this == &o; }
-	};
-
-	class GENGINE Scheduler {
-		friend int ::main(int argc, char *argv[]);
-
-		std::atomic<bool> active;
-		vector<jthread> threads;
-
-		std::condition_variable cvjobs;
-		SharedList<Work> workPool;
-		SharedList<Job> jobPool;
-
-		void Run();
-		void RunMainThread() { while (true); }
-	public:
-		Scheduler() = default;
-		Job* Add();
-		void Pop(Job *job);
-		void Start(unsigned threadCount);
-		void Stop();
-	};
+public:
+	Task(const char *name) : name(name) {}
+	bool operator==(const Task &other) const { return this == &other; }
+	
+	Delegate &Fn() { return fn; }
+	const char *Name() const { return name; }
 };
 
+class GENGINE Job {
+	friend class Scheduler;
+	using Delegate = Signal<void(Job *)>;
+
+	Mutex m;
+	PtrWeak data;
+	Delegate begin, end;
+	std::list<Task> tasks;
+	std::unordered_map<const char *, Task *> taskCache;
+	unsigned tasksMask = 0;
+	unsigned char tasksCompleted = 0;
+
+public:
+	bool operator==(const Job &other) const { return this == &other; }
+
+	Task &Add(const char *name);
+	void Pop(const char *name);
+	Task *At(const char *name);
+	PtrWeak &Data() { return data; }
+	Delegate &Begin() { return begin; }
+	Delegate &End() { return end; }
+	bool HasConcluded() const { return tasksCompleted == tasks.size(); }
+};
+
+struct GENGINE Work {
+	enum class eState : char { idle, start, running, stall, end };
+
+	eState state = eState::idle;
+	Job *job = nullptr;
+
+	Work() = default;
+	Work(Work &o);
+	void Set(eState st) { state = st; }
+	bool Is(eState st) const { return state == st; }
+	bool operator==(const Work &o) const { return this == &o; }
+};
+
+class GENGINE Scheduler {
+	friend int ::main(int argc, char *argv[]);
+
+	std::atomic<bool> active;
+	vector<jthread> threads;
+
+	std::condition_variable cvjobs;
+	SharedList<Work> workPool;
+
+	void Run();
+	void RunMainThread() { while (true); }
+
+public:
+	Scheduler() = default;
+	void Add(Job &job);
+	void Pop(Job &job);
+
+	void Initialize(unsigned threadCount);
+	void Shutdown();
+};
+
+};
 #endif // __scheduler

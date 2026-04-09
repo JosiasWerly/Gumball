@@ -26,7 +26,6 @@ protected:
 	friend class Engine;
 
 	Module() = default;
-	virtual ~Module() = default;
 
 	virtual bool Load() { return true; }
 	virtual void Unload() {}
@@ -38,6 +37,7 @@ protected:
 	virtual eTick TickType() const { return eTick::none; }
 
 public:
+	virtual ~Module() = default;
 	virtual const char *Name() const = 0;
 	double getMsCost() const { return msCost; }
 };

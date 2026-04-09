@@ -18,7 +18,7 @@ private:
 	Codex codex;
 	std::list<Module *> modules;
 	std::list<Module *> editorTick, gameplayTick;
-	std::list<Module *> loadingJobs;
+	Concurrent::Job loadJob;
 
 	Controller();
 	void AddModule(Module *module);
@@ -44,7 +44,7 @@ public:
 	}
 	template<class T> T *ModuleAt() { return codex.Get<T>(); }
 	std::list<Module *> &Modules() { return modules; }
-	bool IsModuleLoading(const Module &trg) const { return std::find(loadingJobs.begin(), loadingJobs.end(), &trg) != loadingJobs.end(); }
+	bool IsModuleLoading(const Module &trg) const { return false; }
 };
 
 template<class T> class Singleton : public Module {

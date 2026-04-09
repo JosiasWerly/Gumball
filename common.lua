@@ -246,7 +246,7 @@ function Delc(projInfo)
 	filter("system:windows")
 	cppdialect "C++20"
 	systemversion "latest"
-	toolset "v143"
+	toolset "v145"
 	staticruntime "default"
 	symbols "on"
 	group("")
