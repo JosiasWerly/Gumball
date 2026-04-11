@@ -41,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\Binaries\Debug\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Debug\obj\GLFW\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\obj\GLFW\</IntDir>
     <TargetName>GLFW</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\Binaries\Release\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Release\obj\GLFW\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\obj\GLFW\</IntDir>
     <TargetName>GLFW</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -72,6 +72,8 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -99,6 +101,8 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="glfw3.h" />

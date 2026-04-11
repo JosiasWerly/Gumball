@@ -42,15 +42,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\..\..\Binaries\Debug\</OutDir>
-    <IntDir>..\..\..\..\Binaries\Debug\obj\Gumball\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\Binaries\Debug\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\Binaries\Debug\obj\Gumball\</IntDir>
     <TargetName>Gumball</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\..\Binaries\Release\</OutDir>
-    <IntDir>..\..\..\..\Binaries\Release\obj\Gumball\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\Binaries\Release\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\Binaries\Release\obj\Gumball\</IntDir>
     <TargetName>Gumball</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
@@ -60,8 +60,8 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>DEBUG;GENGINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>Definitions.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>.;..;..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>Global\Definitions.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -73,6 +73,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\..\..\..\Binaries\Debug\Gumball.lib</ImportLibrary>
     </Link>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -80,8 +82,8 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;CURL_STATICLIB;GENGINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>Definitions.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>.;..;..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>Global\Definitions.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -99,6 +101,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>..\..\..\..\Binaries\Release\Gumball.lib</ImportLibrary>
     </Link>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Archive.hpp" />
@@ -109,16 +113,15 @@
     <ClInclude Include="Containers\Pointer.hpp" />
     <ClInclude Include="Containers\Property.hpp" />
     <ClInclude Include="Containers\ShardMap.hpp" />
-    <ClInclude Include="Definitions.hpp" />
-    <ClInclude Include="Domain.hpp" />
+    <ClInclude Include="Core\Domain.hpp" />
+    <ClInclude Include="Core\Engine.hpp" />
     <ClInclude Include="DynamicLib.hpp" />
-    <ClInclude Include="Engine.hpp" />
     <ClInclude Include="Flow\ChainMachine.hpp" />
     <ClInclude Include="Flow\Common.hpp" />
     <ClInclude Include="Flow\Dispatcher.hpp" />
     <ClInclude Include="Flow\SignalPool.hpp" />
     <ClInclude Include="Flow\StateMachine.hpp" />
-    <ClInclude Include="Gumball.hpp" />
+    <ClInclude Include="Global\Definitions.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Plugin\Controller.hpp" />
     <ClInclude Include="Plugin\Module.hpp" />
@@ -134,9 +137,9 @@
     <ClCompile Include="Containers\Pointer.cpp" />
     <ClCompile Include="Containers\Property.cpp" />
     <ClCompile Include="Containers\ShardMap.cpp" />
-    <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="Core\Domain.cpp" />
+    <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="DynamicLib.cpp" />
-    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Flow\ChainMachine.cpp" />
     <ClCompile Include="Flow\Common.cpp" />
     <ClCompile Include="Flow\SignalPool.cpp" />

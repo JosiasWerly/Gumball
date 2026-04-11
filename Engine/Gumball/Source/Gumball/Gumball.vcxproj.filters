@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Concurrent">
@@ -7,8 +7,14 @@
     <Filter Include="Containers">
       <UniqueIdentifier>{DB5A0216-C712-4463-301A-1DBF1CF1DE53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Flow">
       <UniqueIdentifier>{3D4C857C-2983-860D-D26F-6C10BE85020F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{B62B5EB5-A2CD-888B-8B88-9CDF77C90FDC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugin">
       <UniqueIdentifier>{F4F95FCA-E09B-8AA0-C956-9EF4B59711F1}</UniqueIdentifier>
@@ -37,10 +43,13 @@
     <ClInclude Include="Containers\ShardMap.hpp">
       <Filter>Containers</Filter>
     </ClInclude>
-    <ClInclude Include="Definitions.hpp" />
-    <ClInclude Include="Domain.hpp" />
+    <ClInclude Include="Core\Domain.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Engine.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="DynamicLib.hpp" />
-    <ClInclude Include="Engine.hpp" />
     <ClInclude Include="Flow\ChainMachine.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
@@ -56,7 +65,9 @@
     <ClInclude Include="Flow\StateMachine.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
-    <ClInclude Include="Gumball.hpp" />
+    <ClInclude Include="Global\Definitions.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Plugin\Controller.hpp">
       <Filter>Plugin</Filter>
@@ -88,9 +99,13 @@
     <ClCompile Include="Containers\ShardMap.cpp">
       <Filter>Containers</Filter>
     </ClCompile>
-    <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="Core\Domain.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Engine.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="DynamicLib.cpp" />
-    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Flow\ChainMachine.cpp">
       <Filter>Flow</Filter>
     </ClCompile>

@@ -1,4 +1,5 @@
 #include "Controller.hpp"
+#include <Gumball/Core/Engine.hpp>
 
 using Plugin::Controller;
 using Plugin::Module;
@@ -23,7 +24,7 @@ void Controller::AddModule(Module *newModule) {
 void Controller::Callback_LoadCompleted(Concurrent::Job *job) {
 	const Module *m = job->Data().As<Module>();
 	if (job->HasConcluded()) {
-		Engine::instance()->Scheduler().Pop(*job);
+		//Engine::CoreCodex::instance()->Scheduler().Pop(*job);
 	}
 }
 void Controller::Startup() {
@@ -33,7 +34,7 @@ void Controller::Startup() {
 		loadJob.Add(m->Name()).Fn().bind({m, &Module::Load});
 	}
 	loadJob.End().bind({ this, &Controller::Callback_LoadCompleted });
-	Engine::instance()->Scheduler().Add(loadJob);
+	//Engine::instance()->Scheduler().Add(loadJob);
 }
 void Controller::Shutdown() {
 	for (auto &m : modules)

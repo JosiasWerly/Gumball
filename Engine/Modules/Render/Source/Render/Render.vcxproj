@@ -42,15 +42,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\..\..\..\Binaries\Debug\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Debug\obj\Render\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\obj\Render\</IntDir>
     <TargetName>Render</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\..\..\Binaries\Release\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Release\obj\Render\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\obj\Render\</IntDir>
     <TargetName>Render</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
@@ -60,8 +60,8 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>DEBUG;GMODULE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Asset\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Asset\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(SolutionDir)Engine\Gumball\Source\Gumball\Global\Definitions.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -74,6 +74,8 @@
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\..\..\..\Binaries\Debug\Render.lib</ImportLibrary>
     </Link>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -81,8 +83,8 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;CURL_STATICLIB;GMODULE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;$(SolutionDir)\Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Asset\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(SolutionDir)\Engine\Gumball\Source\Gumball\Gumball.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)Engine\Gumball\Source;..;..\..\..\..\External\GLAD\Source;..\..\..\..\External\GLFW\Source;..\..\..\..\External\ImGui\Source;..\..\..\Asset\Source;..\..\..\Gumball\Source;..\..\..\..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(SolutionDir)Engine\Gumball\Source\Gumball\Global\Definitions.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -101,6 +103,8 @@
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\..\..\..\Binaries\Release\Render.lib</ImportLibrary>
     </Link>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core\GLBuffer.hpp" />

@@ -3,19 +3,19 @@
 #define _plugin_controller_
 
 #include <list>
-#include <unordered_map>
-
-#include "Engine.hpp"
+#include <Gumball/Core/Engine.hpp>
 #include "Module.hpp"
 
-namespace Plugin {
-	//class Module;
+namespace Engine {
+	class Core;
+};
 
+namespace Plugin {
 class GENGINE Controller {
-	friend class Engine;
+	friend class ::Engine::Core;
 
 private:
-	Codex codex;
+	Containers::TypeCodex codex;
 	std::list<Module *> modules;
 	std::list<Module *> editorTick, gameplayTick;
 	Concurrent::Job loadJob;

@@ -41,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\Binaries\Debug\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Debug\obj\Misc\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\obj\Misc\</IntDir>
     <TargetName>Misc</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\Binaries\Release\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Release\obj\Misc\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\obj\Misc\</IntDir>
     <TargetName>Misc</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -72,6 +72,8 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -99,6 +101,8 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

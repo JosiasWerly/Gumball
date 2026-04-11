@@ -1,4 +1,5 @@
 ----------------- Module template -----------------
+-- enable = true,
 -- kind = "",
 -- links = {},
 -- defines = {},
@@ -15,6 +16,7 @@
 
 local moduleTemplate = [[
 return {
+	enable = true,
 	kind = "StaticLib",
 	links = {},
 	defines = {},
@@ -53,9 +55,9 @@ end
 
 function GetFilesByExtension(path, extension)
 	local files = {}
-	local handle = io.popen('dir "' .. path .. '" /b /a-d')
+	local handle = io.popen('dir "' .. path .. '" /b /a-d 2>nul') -- freaking "2>nul" is to not allow the FileNotFound warning
 	if handle then
-		for file in handle:lines() do
+		for file in handle:lines() do			
 			if file:match("%." .. extension .. "$") then
 				table.insert(files, file)
 			end
@@ -100,10 +102,16 @@ end
 
 function DelcValidation(trg)
 	--i'm not proud of this function, i'm tired and I would like to never see this again.
+	--I understand dear past-self, but here we are again... and the same distaste encompasses my soul.
 	local ls = {
 		"group", "name",
 		"path", "kind"
 	}
+	
+	if trg.enable == false then
+		return false
+	end
+	
 	for _, v in ipairs(ls) do
 		if not trg[v] then
 			print(trg.name .. " missing " .. v)
@@ -154,7 +162,7 @@ function DelcValidation(trg)
 end
 
 function Delc(projInfo)
-	-- {
+	-- projInfo: {
 	-- 	group = "",
 	-- 	name = "Gumball",
 	-- 	path = "./Engine/Gumball/",
@@ -171,17 +179,18 @@ function Delc(projInfo)
 	-- 		library = {}
 	-- 	}
 	-- }
+	
 	if DelcValidation(projInfo) == false then
 		print("not declared " .. projInfo.name)
 	end
-
+	
 	group(projInfo.group)
 	project(projInfo.name)
 	location(projInfo.path)
 	kind(projInfo.kind)
 	defines(projInfo.defines)
 	includedirs(projInfo.path)
-
+	
 	if #projInfo.files.absolute ~= 0 then
 		for _, i in pairs(projInfo.files.absolute) do
 			files(i)
@@ -242,7 +251,7 @@ function Delc(projInfo)
 	end
 	targetdir("%{wks.location}/Binaries/%{cfg.buildcfg}/")
 	objdir("%{wks.location}/Binaries/%{cfg.buildcfg}/obj/%{prj.name}!")
-
+	
 	filter("system:windows")
 	cppdialect "C++20"
 	systemversion "latest"
@@ -270,18 +279,18 @@ function GenerateModulesFile(trg)
 	local file = io.open(trg.path .. "runtime.gen.cpp", "w")
 	if file then
 		file:write("#include \"Runtime.hpp\"\n")
-		file:write("#include <Gumball/Engine.hpp>\n")
+		file:write("#include <Gumball/Plugin/Controller.hpp>\n")
 		for _, name in ipairs(engineModules) do
 			file:write("#include <" .. name .. "/" .. name .. ".module.hpp>\n")
 		end
-		file:write("void injectModules(Plugin::Controller *mCtrl) {\n")		
+		file:write("void injectModules(Plugin::Controller *ctrl) {\n")
 		for _, name in ipairs(engineModules) do
-			file:write("\tmCtrl->AddModule<".. name .. "Module>();\n")
+			file:write("\tctrl->AddModule<".. name .. "Module>();\n")
 		end
 		file:write("}\n")
 
-		file:write("const char* engineDir() {\n")
-		file:write("\treturn ".."\""..os.getcwd():gsub("/", "\\".."\\").."\\".."\\".."\";\n")
+		file:write("const char* engineDir() {")
+		file:write(" return ".."\""..os.getcwd():gsub("/", "\\".."\\").."\\".."\\".."\"; ")
 		file:write("}\n")
 		file:close()
 	end
@@ -300,10 +309,11 @@ function DelcModule(groupName, moduleInfo, isEngine)
 	moduleInfo.group = groupName
 	moduleInfo.path = moduleInfo.path .. "Source/" .. moduleInfo.name .. "/"
 
+	
 	if DelcValidation(moduleInfo) == false then
 		return
 	end
-
+	
 	if isEngine then
 		InjectGumball(moduleInfo)
 		table.insert(engineModules, moduleInfo.name)
@@ -312,10 +322,9 @@ function DelcModule(groupName, moduleInfo, isEngine)
 	else
 		table.insert(externalModules, moduleInfo.name)
 	end
-
 	table.insert(moduleInfo.directories.library, modPath .. "Libraries/")
 	table.insert(moduleInfo.directories.include, modPath .. "Source/")
-	Delc(moduleInfo)
+	Delc(moduleInfo)	
 end
 
 function DelcRuntime(trg)
@@ -337,8 +346,8 @@ function DelcGumballProject(projInfo)
 end
 
 function InjectGumball(trg)
-	table.insert(trg.directories.include, "$(SolutionDir)/Engine/Gumball/Source/")
-	table.insert(trg.files.force, "$(SolutionDir)/Engine/Gumball/Source/Gumball/Gumball.hpp")
+	table.insert(trg.directories.include, "$(SolutionDir)Engine/Gumball/Source/")
+	table.insert(trg.files.force, "$(SolutionDir)Engine/Gumball/Source/Gumball/Global/Definitions.hpp")
 	table.insert(trg.links, "Gumball")
 	table.insert(trg.links, "GLM")
 end

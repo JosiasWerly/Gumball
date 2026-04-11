@@ -3,8 +3,8 @@
 #define __thread
 
 #include <thread>
-#include <mutex>
-#include "Flow/Dispatcher.hpp"
+#include <Gumball/Flow/Dispatcher.hpp>
+
 namespace Concurrent {
 	class Thread {
 		using Delegate = Signal<void()>;

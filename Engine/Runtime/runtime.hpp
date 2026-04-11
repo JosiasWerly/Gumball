@@ -1,4 +1,4 @@
-#include <Gumball/Engine.hpp>
+#include <Gumball/Core/Engine.hpp>
 #include <Gumball/Concurrent/Scheduler.hpp>
 #include <Gumball/Containers/Pointer.hpp>
 Extern {
@@ -9,12 +9,14 @@ void injectModules(Plugin::Controller *mCtrl);
 const char* engineDir();
 
 int main(int argc, char *argv[]) {
-	Concurrent::Scheduler scheduler;
+	using namespace Engine;
+	using namespace Concurrent;
+	
+	Scheduler scheduler;
+	Core *core = new Core;
+	core->Initialize(Core::Init{ argc, argv, engineDir(), &scheduler, injectModules });
+	
 	scheduler.Initialize(0);
-	
-	Engine *engine = new Engine;
-	engine->initialize({ argc, argv, engineDir(), &scheduler, injectModules });
-	
 	scheduler.Run();
 	return 0;
 }

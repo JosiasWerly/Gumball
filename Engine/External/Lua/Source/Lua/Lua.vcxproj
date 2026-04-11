@@ -41,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\Binaries\Debug\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Debug\obj\Lua\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Debug\obj\Lua\</IntDir>
     <TargetName>Lua</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\Binaries\Release\</OutDir>
-    <IntDir>..\..\..\..\..\Binaries\Release\obj\Lua\</IntDir>
+    <OutDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\..\Binaries\Release\obj\Lua\</IntDir>
     <TargetName>Lua</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -73,6 +73,8 @@
       <AdditionalDependencies>lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -101,6 +103,8 @@
       <AdditionalDependencies>lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="LuaLanguage.hpp" />

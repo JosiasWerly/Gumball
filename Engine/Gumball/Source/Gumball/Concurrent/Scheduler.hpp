@@ -3,10 +3,9 @@
 #define __scheduler
 
 #include <thread>
-#include <mutex>
 
-#include "../Flow/Dispatcher.hpp"
-#include "../Containers/Pointer.hpp"
+#include <Gumball/Flow/Dispatcher.hpp>
+#include <Gumball/Containers/Pointer.hpp>
 #include "Common.hpp"
 
 int main(int argc, char *argv[]);
@@ -76,7 +75,6 @@ class GENGINE Scheduler {
 	SharedList<Work> workPool;
 
 	void Run();
-	void RunMainThread() { while (true); }
 
 public:
 	Scheduler() = default;

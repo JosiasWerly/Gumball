@@ -3,8 +3,7 @@
 #define __chainmachine
 
 #include "Common.hpp"
-#include "Dispatcher.hpp"
-
+#include <Flow/Dispatcher.hpp>
 #include <vector>
 
 namespace Flow {

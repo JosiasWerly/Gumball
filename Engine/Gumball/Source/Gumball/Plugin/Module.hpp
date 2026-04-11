@@ -5,10 +5,7 @@
 #include <list>
 #include <unordered_map>
 
-#include "Engine.hpp"
-
 namespace Plugin {
-class Controller;
 
 enum class eTick {
 	none,
