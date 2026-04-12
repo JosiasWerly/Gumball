@@ -1,10 +1,8 @@
 #include "Engine.hpp"
 
-#include "Plugin/Controller.hpp"
-#include "ProjectTarget.hpp"
+#include <Plugin/Controller.hpp>
+#include <Resource/Controller.hpp>
 #include "Domain.hpp"
-
-
 #include <iostream>
 #include <string>
 
@@ -12,8 +10,9 @@ using namespace std;
 namespace Engine {
 
 Core::Core() {
+	resourceCtrl = new Resource::Controller;
 	pluginCtrl = new Plugin::Controller;
-	projectTarget = new ProjectTarget;
+	project = new Plugin::ProjectLinker;
 }
 Core::~Core() {
 }
@@ -31,6 +30,10 @@ void Core::Initialize(Init init) {
 	{//add scheduler
 		CoreCodex::Add<Concurrent::Scheduler>(init.scheduler);
 	}
+
+	{//add resource
+		CoreCodex::Add<Resource::Controller>(resourceCtrl);
+	}
 	
 	{//bind states
 		fsm[eState::play].onEnter.bind([&]() {
@@ -44,10 +47,7 @@ void Core::Initialize(Init init) {
 			pluginCtrl->Tick<Plugin::eTick::gameplay>(deltaTime);
 		});
 		fsm[eState::hotreload].onEnter.bind([&]() {
-			pluginCtrl->BeginHotReload();
-			projectTarget->unload();
-			projectTarget->load();
-			pluginCtrl->EndHotReload();
+			pluginCtrl->Hotreload();
 			fsm.to(eState::idle);
 		});
 	}

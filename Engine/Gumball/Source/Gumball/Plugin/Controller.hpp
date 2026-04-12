@@ -5,6 +5,7 @@
 #include <list>
 #include <Gumball/Core/Engine.hpp>
 #include "Module.hpp"
+#include "Project.hpp"
 
 namespace Engine {
 	class Core;
@@ -19,6 +20,8 @@ private:
 	std::list<Module *> modules;
 	std::list<Module *> editorTick, gameplayTick;
 	Concurrent::Job loadJob;
+	
+	ProjectLinker project;
 
 	Controller();
 	void AddModule(Module *module);
@@ -27,8 +30,7 @@ private:
 protected:
 	void Startup();
 	void Shutdown();
-	void BeginHotReload();
-	void EndHotReload();
+	void Hotreload();
 	void BeginPlay();
 	void EndPlay();
 

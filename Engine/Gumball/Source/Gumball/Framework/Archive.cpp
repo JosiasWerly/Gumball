@@ -63,3 +63,12 @@ Archive &Archive::operator=(const string filePath) {
 bool Archive::operator==(const Archive &other) const {
 	return (fs && fs == other.fs);
 }
+
+template<> Archive &Archive::operator>><std::string>(std::string &val) {
+	val.assign(std::istreambuf_iterator<char>(*fs), std::istreambuf_iterator<char>());
+	return *this;
+}
+template<> Archive &Archive::operator<<<std::string>(std::string &val) {
+	fs->write(val.c_str(), val.size());
+	return *this;
+}

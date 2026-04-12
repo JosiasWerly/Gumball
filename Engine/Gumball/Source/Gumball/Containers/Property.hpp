@@ -2,7 +2,7 @@
 #ifndef __property
 #define __property
 
-#include <Gumball/Flow/Dispatcher.hpp>
+#include <Gumball/Containers/Dispatcher.hpp>
 
 template<class TOwner, class TObj>
 class TProperty {

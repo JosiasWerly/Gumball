@@ -3,13 +3,17 @@
 #define _engine_
 #include <list>
 
-#include <Gumball/Singleton.hpp>
+#include <Gumball/Containers/Singleton.hpp>
 #include <Gumball/Containers/Codex.hpp>
 #include <Gumball/Flow/StateMachine.hpp>
 #include <Gumball/Concurrent/Scheduler.hpp>
 
-class ProjectTarget;
 namespace Plugin {
+	class Controller;
+	class ProjectLinker;
+};
+
+namespace Resource {
 	class Controller;
 };
 
@@ -24,9 +28,9 @@ class GENGINE Core : public Singleton<Core> {
 		Concurrent::Scheduler *scheduler;
 		void (*fnInjectModules)(Plugin::Controller *mCtrl);
 	};
-
+	Resource::Controller *resourceCtrl;
 	Plugin::Controller *pluginCtrl;
-	ProjectTarget *projectTarget;
+	Plugin::ProjectLinker *project;
 	Flow::StateMachine::StateMachine fsm;
 	
 	Core();

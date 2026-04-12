@@ -347,7 +347,7 @@ end
 
 function InjectGumball(trg)
 	table.insert(trg.directories.include, "$(SolutionDir)Engine/Gumball/Source/")
-	table.insert(trg.files.force, "$(SolutionDir)Engine/Gumball/Source/Gumball/Global/Definitions.hpp")
+	table.insert(trg.files.force, "$(SolutionDir)Engine/Gumball/Source/Gumball/Framework/Definitions.hpp")
 	table.insert(trg.links, "Gumball")
 	table.insert(trg.links, "GLM")
 end

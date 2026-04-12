@@ -41,9 +41,9 @@ void Controller::Shutdown() {
 		m->Unload();
 }
 
-void Controller::BeginHotReload() {
-}
-void Controller::EndHotReload() {
+void Controller::Hotreload() {
+	project.Unload();
+	project.Load();
 }
 void Controller::BeginPlay() {
 	for (auto &s : modules)

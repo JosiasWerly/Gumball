@@ -38,10 +38,10 @@ DelcProject(
 		name = "Gumball",
 		path = "./Engine/Gumball/Source/Gumball",
 		kind = "SharedLib",
-		links = { "GLM" },
+		links = { "GLM", "Json" },
 		defines = { "GENGINE" },
 		files = {
-			force = { "%{prj.location}/Global/Definitions.hpp", }
+			force = { "%{prj.location}/Framework/Definitions.hpp", }
 		},
 		directories = {
 			include = { "./Engine/Gumball/Source/" }

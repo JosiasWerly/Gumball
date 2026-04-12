@@ -61,7 +61,7 @@
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;$(SolutionDir)Engine\Gumball\Source;..\Modules\Sandbox\Source;..\Modules\Gumball\Source;..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(SolutionDir)Engine\Gumball\Source\Gumball\Global\Definitions.hpp</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(SolutionDir)Engine\Gumball\Source\Gumball\Framework\Definitions.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -83,7 +83,7 @@
       <DisableSpecificWarnings>4251;4275;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;$(SolutionDir)Engine\Gumball\Source;..\Modules\Sandbox\Source;..\Modules\Gumball\Source;..\External\GLM\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(SolutionDir)Engine\Gumball\Source\Gumball\Global\Definitions.hpp</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(SolutionDir)Engine\Gumball\Source\Gumball\Framework\Definitions.hpp</ForcedIncludeFiles>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>

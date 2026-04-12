@@ -3,7 +3,7 @@
 #define __chainmachine
 
 #include "Common.hpp"
-#include <Flow/Dispatcher.hpp>
+#include <Gumball/Containers/Dispatcher.hpp>
 #include <vector>
 
 namespace Flow {

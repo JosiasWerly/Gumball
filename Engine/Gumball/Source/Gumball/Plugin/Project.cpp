@@ -1,4 +1,4 @@
-#include "ProjectTarget.hpp"
+#include "Project.hpp"
 #include <Gumball/Core/Domain.hpp>
 
 
@@ -9,11 +9,12 @@
 #include <chrono>
 
 using namespace std;
+using namespace Plugin;
 namespace fs = std::filesystem;
 using namespace std::chrono_literals;
 
 
-Project *ProjectTarget::load() {
+Project *ProjectLinker::Load() {
 	//auto d = Domain::instance();
 	//const string dllPath = d->getApplicationDir() + "Sandbox.dll";
 	//const string dllCopy = d->getApplicationDir() + "Target.dll";
@@ -39,16 +40,16 @@ Project *ProjectTarget::load() {
 	//}
 	return nullptr;
 }
-void ProjectTarget::unload() {
+void ProjectLinker::Unload() {
 	if (project) {
-		project->detached();
+		project->Detached();
 		delete project;
 	}
 	project = nullptr;
 	if (dll.isLoaded())
 		dll.unload();
 }
-bool ProjectTarget::hasNewVersion() {
+bool ProjectLinker::HasNewVersion() {
 	if (!dll.isLoaded())
 		return true;
 

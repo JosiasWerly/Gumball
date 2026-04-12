@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _archive
-#define _archive
+#ifndef __ARCHIVE
+#define __ARCHIVE
 
 #include <string>
 #include <fstream>
@@ -77,14 +77,7 @@ template<class T> Archive &Archive::operator>>(T &val) {
 	fs->operator>>(val);
 	return *this;
 }
-template<> Archive &Archive::operator>><std::string>(std::string &val) {
-	val.assign(std::istreambuf_iterator<char>(*fs), std::istreambuf_iterator<char>());
-	return *this;
-}
-template<> Archive &Archive::operator<<<std::string>(std::string &val) {
-	fs->write(val.c_str(), val.size());
-	return *this;
-}
+
 
 class GENGINE FileSerializer {
 public:
@@ -95,7 +88,7 @@ public:
 };
 
 template<class T>
-class TFileSerializer : public FileSerializer {
+class TFileSerializer : public FileSerializer { //TODO: I don't think we need the virtualization of this class.. CRT should fix this?
 public:
 	virtual ~TFileSerializer() = default;
 	virtual bool load(const FilePath &fp, T &val) = 0;
@@ -119,4 +112,4 @@ public:
 template<class T>
 class WFileSerializer : public TFileSerializer<T> {};
 
-#endif // !_archive
+#endif // !__ARCHIVE

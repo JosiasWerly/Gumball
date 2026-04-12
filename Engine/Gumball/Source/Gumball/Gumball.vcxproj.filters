@@ -13,15 +13,20 @@
     <Filter Include="Flow">
       <UniqueIdentifier>{3D4C857C-2983-860D-D26F-6C10BE85020F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Global">
-      <UniqueIdentifier>{B62B5EB5-A2CD-888B-8B88-9CDF77C90FDC}</UniqueIdentifier>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{1362EE31-7FCC-A2A8-C80A-544E34B480FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{AFF4887C-9B2B-8A0D-4418-7010302E060F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugin">
       <UniqueIdentifier>{F4F95FCA-E09B-8AA0-C956-9EF4B59711F1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{ED6CDF9B-D939-3AA7-0253-284FEE7E6F35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Archive.hpp" />
     <ClInclude Include="Concurrent\Common.hpp">
       <Filter>Concurrent</Filter>
     </ClInclude>
@@ -34,6 +39,9 @@
     <ClInclude Include="Containers\Codex.hpp">
       <Filter>Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Containers\Dispatcher.hpp">
+      <Filter>Containers</Filter>
+    </ClInclude>
     <ClInclude Include="Containers\Pointer.hpp">
       <Filter>Containers</Filter>
     </ClInclude>
@@ -43,20 +51,19 @@
     <ClInclude Include="Containers\ShardMap.hpp">
       <Filter>Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Containers\Singleton.hpp">
+      <Filter>Containers</Filter>
+    </ClInclude>
     <ClInclude Include="Core\Domain.hpp">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\Engine.hpp">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicLib.hpp" />
     <ClInclude Include="Flow\ChainMachine.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
     <ClInclude Include="Flow\Common.hpp">
-      <Filter>Flow</Filter>
-    </ClInclude>
-    <ClInclude Include="Flow\Dispatcher.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
     <ClInclude Include="Flow\SignalPool.hpp">
@@ -65,22 +72,41 @@
     <ClInclude Include="Flow\StateMachine.hpp">
       <Filter>Flow</Filter>
     </ClInclude>
-    <ClInclude Include="Global\Definitions.hpp">
-      <Filter>Global</Filter>
+    <ClInclude Include="Framework\Archive.hpp">
+      <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Math.hpp" />
+    <ClInclude Include="Framework\Definitions.hpp">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\DynamicLib.hpp">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Math.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Timer.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
     <ClInclude Include="Plugin\Controller.hpp">
       <Filter>Plugin</Filter>
     </ClInclude>
     <ClInclude Include="Plugin\Module.hpp">
       <Filter>Plugin</Filter>
     </ClInclude>
-    <ClInclude Include="ProjectTarget.hpp" />
-    <ClInclude Include="Singleton.hpp" />
-    <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="Plugin\Project.hpp">
+      <Filter>Plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Asset.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Controller.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Factory.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Archive.cpp" />
     <ClCompile Include="Concurrent\Scheduler.cpp">
       <Filter>Concurrent</Filter>
     </ClCompile>
@@ -99,13 +125,15 @@
     <ClCompile Include="Containers\ShardMap.cpp">
       <Filter>Containers</Filter>
     </ClCompile>
+    <ClCompile Include="Containers\Singleton.cpp">
+      <Filter>Containers</Filter>
+    </ClCompile>
     <ClCompile Include="Core\Domain.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\Engine.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicLib.cpp" />
     <ClCompile Include="Flow\ChainMachine.cpp">
       <Filter>Flow</Filter>
     </ClCompile>
@@ -118,15 +146,35 @@
     <ClCompile Include="Flow\StateMachine.cpp">
       <Filter>Flow</Filter>
     </ClCompile>
-    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Framework\Archive.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\DynamicLib.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Math.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Timer.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
     <ClCompile Include="Plugin\Controller.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
     <ClCompile Include="Plugin\Module.cpp">
       <Filter>Plugin</Filter>
     </ClCompile>
-    <ClCompile Include="ProjectTarget.cpp" />
-    <ClCompile Include="Singleton.cpp" />
-    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Plugin\Project.cpp">
+      <Filter>Plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Asset.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Controller.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Factory.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

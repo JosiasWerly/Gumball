@@ -4,7 +4,7 @@
 
 #include <thread>
 
-#include <Gumball/Flow/Dispatcher.hpp>
+#include <Gumball/Containers/Dispatcher.hpp>
 #include <Gumball/Containers/Pointer.hpp>
 #include "Common.hpp"
 
