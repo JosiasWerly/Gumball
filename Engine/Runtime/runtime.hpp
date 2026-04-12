@@ -12,11 +12,10 @@ int main(int argc, char *argv[]) {
 	using namespace Engine;
 	using namespace Concurrent;
 	
-	Scheduler scheduler;
-	Core *core = new Core;
-	core->Initialize(Core::Init{ argc, argv, engineDir(), &scheduler, injectModules });
-	
-	scheduler.Initialize(0);
-	scheduler.Run();
+	Scheduler *scheduler = nullptr;
+	Core core;
+	core.Initialize(Core::Init{ argc, argv, engineDir(), scheduler, injectModules });
+	scheduler->Initialize(0);
+	scheduler->Run();
 	return 0;
 }

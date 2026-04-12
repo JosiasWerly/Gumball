@@ -25,9 +25,10 @@ class GENGINE Core : public Singleton<Core> {
 		int argc;
 		char **argv;
 		const char *engineDir;
-		Concurrent::Scheduler *scheduler;
+		Concurrent::Scheduler *&scheduler;
 		void (*fnInjectModules)(Plugin::Controller *mCtrl);
 	};
+	Concurrent::Scheduler *scheduler;
 	Resource::Controller *resourceCtrl;
 	Plugin::Controller *pluginCtrl;
 	Plugin::ProjectLinker *project;
@@ -40,7 +41,6 @@ class GENGINE Core : public Singleton<Core> {
 
 public:
 	enum class eState { idle, play, hotreload, exit };
-
 	void signal(eState signal) { fsm.to(signal); }
 };
 

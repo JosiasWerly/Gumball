@@ -10,6 +10,7 @@ using namespace std;
 namespace Engine {
 
 Core::Core() {
+	scheduler = new Concurrent::Scheduler;
 	resourceCtrl = new Resource::Controller;
 	pluginCtrl = new Plugin::Controller;
 	project = new Plugin::ProjectLinker;
@@ -29,6 +30,7 @@ void Core::Initialize(Init init) {
 	
 	{//add scheduler
 		CoreCodex::Add<Concurrent::Scheduler>(init.scheduler);
+		init.scheduler = scheduler;
 	}
 
 	{//add resource
