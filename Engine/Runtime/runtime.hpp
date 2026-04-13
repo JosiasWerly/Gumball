@@ -1,6 +1,5 @@
 #include <Gumball/Core/Engine.hpp>
 #include <Gumball/Concurrent/Scheduler.hpp>
-#include <Gumball/Containers/Pointer.hpp>
 Extern {
 	Export unsigned int NvOptimusEnablement = 0x00000001;
 }

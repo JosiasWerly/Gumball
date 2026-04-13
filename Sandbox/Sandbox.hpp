@@ -1,8 +1,9 @@
-#include <Gumball/ProjectTarget.hpp>
+#include <Gumball/Plugin/Project.hpp>
 
-Extern GGAME void *EntryPoint();
+class GGAME MyProject : public Plugin::Project {
+public:
+	void Attached();
+	void Detached();
+};
 
-/* big'ol organizer
-- freaking fix the inclusion disparity, where files here have to use include "..\" if inside a folder
-- adjust signal/delegate to have a single dispatch
-*/
+Extern GGAME void *EntryPoint() { return new MyProject; }

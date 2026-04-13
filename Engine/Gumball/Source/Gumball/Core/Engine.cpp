@@ -20,21 +20,21 @@ Core::~Core() {
 void Core::Initialize(Init init) {
 	init.fnInjectModules(pluginCtrl);
 	
-	{//add domain
-		Domain *domain = CoreCodex::Add<Domain>();
-		domain->applicationPath = init.argv[0];
-		domain->applicationDir = domain->applicationPath.substr(0, domain->applicationPath.find_last_of("\\")) + "\\";
-		domain->engineDir = init.engineDir;
-		domain->contentPath = domain->engineDir + "Content\\";
+	{//add domain		
+		Domain &domain = codex.Add<Domain>();
+		domain.applicationPath = init.argv[0];
+		domain.applicationDir = domain.applicationPath.substr(0, domain.applicationPath.find_last_of("\\")) + "\\";
+		domain.engineDir = init.engineDir;
+		domain.contentPath = domain.engineDir + "Content\\";
 	}
 	
 	{//add scheduler
-		CoreCodex::Add<Concurrent::Scheduler>(init.scheduler);
+		codex.Add<Concurrent::Scheduler>(scheduler);
 		init.scheduler = scheduler;
 	}
 
 	{//add resource
-		CoreCodex::Add<Resource::Controller>(resourceCtrl);
+		codex.Add<Resource::Controller>(resourceCtrl);
 	}
 	
 	{//bind states
@@ -54,9 +54,13 @@ void Core::Initialize(Init init) {
 		});
 	}
 	pluginCtrl->Startup();
+	pluginCtrl->Hotreload();
+	
+	//tick.Begin().bind({ this, &Engine::Core::Tick });
+	//scheduler->Add(tick);
 }
-void Core::Tick() {
-	while (true);
+void Core::Tick(Concurrent::Job*) {
+	cout << "." << endl;
 	//moduleController->Startup();
 	//fsm.set(eState::hotreload);
 	//fsm.tick();

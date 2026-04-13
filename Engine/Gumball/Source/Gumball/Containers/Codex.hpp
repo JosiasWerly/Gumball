@@ -14,12 +14,12 @@ public:
 	void Add(size_t hash, void *ptr) {
 		data.insert({ hash, ptr });
 	}
-	template<class T> T* Add(T *ptr = new T) {
+	template<class T> T& Add(T *ptr = new T) {
 		data.insert({ typeid(T).hash_code(), ptr });
-		return ptr;
+		return *ptr;
 	}
-	template<class T> T *Get() {
-		return reinterpret_cast<T *>(data[typeid(T).hash_code()]);
+	template<class T> T &Get() {
+		return *reinterpret_cast<T *>(data[typeid(T).hash_code()]);
 	}
 };
 

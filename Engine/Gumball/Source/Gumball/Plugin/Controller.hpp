@@ -49,16 +49,5 @@ public:
 	bool IsModuleLoading(const Module &trg) const { return false; }
 };
 
-template<class T> class Singleton : public Module {
-protected:
-	Singleton() = default;
-	virtual ~Singleton() = default;
-
-public:
-	static T *instance() {
-		static T *inst = Engine::instance()->PluginController().ModuleAt<T>();
-		return inst;
-	}
-};
 };
 #endif // !_module

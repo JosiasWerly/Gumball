@@ -105,9 +105,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="OldStuff_reference.hpp" />
     <ClInclude Include="Sandbox.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OldStuff_reference.cpp" />
     <ClCompile Include="Sandbox.cpp" />
   </ItemGroup>
   <ItemGroup>

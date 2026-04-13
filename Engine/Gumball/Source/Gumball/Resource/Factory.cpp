@@ -7,8 +7,8 @@
 using namespace Resource;
 
 void AssetFactory::Entry(FilePath fp) {
-	Controller *rs = Engine::CoreCodex::Get<Controller>();
-	if (rs->GetAsset(fp.name()))
+	Controller &rs = Controller::Instance();
+	if (rs.GetAsset(fp.name()))
 		return;//loaded
 	
 	Asset *newAsset = new Asset();
@@ -26,9 +26,9 @@ void AssetFactory::Entry(FilePath fp) {
 		newAsset->dependencies = {};
 	}
 	
-	if (FileSerializer *fs = rs->GetSerializer(newAsset->type)) {
+	if (FileSerializer *fs = rs.GetSerializer(newAsset->type)) {
 		fs->load(fp, newAsset->content);
-		rs->AddAsset(newAsset);
+		rs.AddAsset(newAsset);
 	}
 
 	std::cout << newAsset->filepath.name() << "." << newAsset->filepath.extension() << " --- " << (newAsset->IsValid() ? "ok" : "fail") << std::endl;

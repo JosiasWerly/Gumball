@@ -25,7 +25,5 @@
     </Project>
     <Project Path="Engine\External\Lua\Source\Lua\Lua.vcxproj" Id="A705880B-130F-887C-9C8A-9E7C0893937C">
     </Project>
-    <Project Path="Engine\External\Misc\Source\Misc\Misc.vcxproj" Id="9116897C-7D4D-8A0D-263A-70101250060F">
-    </Project>
   </Folder>
 </Solution>

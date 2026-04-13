@@ -2,10 +2,12 @@
 #ifndef __domain
 #define __domain
 
+#include <Gumball/Core/Engine.hpp>
 #include <string>
 namespace Engine {
+class Core;
 
-class GENGINE Domain {
+class GENGINE Domain : public Core::Global<Domain> {
 	friend class Core;
 	std::string applicationPath;
 	std::string applicationDir;

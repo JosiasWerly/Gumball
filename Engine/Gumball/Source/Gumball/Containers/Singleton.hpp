@@ -1,10 +1,6 @@
 #pragma once
-#ifndef __singleton
-#define __singleton
-
-
-#include <unordered_map>
-using namespace std;
+#ifndef __SINGLETON
+#define __SINGLETON
 
 template<typename T>
 class Singleton {
@@ -21,7 +17,20 @@ protected:
 	void operator=(Singleton &other) = delete;
 
 public:
-	static T *instance() { return inst; }
+	static T &Instance() { return *inst; }
 };
 
-#endif // !__singleton
+template<class T, T& (*fn)(void)>
+class Global {
+protected:
+	Global() = default;
+	virtual ~Global() = default;
+
+public:
+	static T &Instance() {
+		static T *inst = &fn();
+		return *inst;
+	}
+};
+
+#endif // !__SINGLETON

@@ -2,9 +2,9 @@
 #ifndef __RESOURCE_CONTROLLER
 #define __RESOURCE_CONTROLLER
 
-#include <Resource/Factory.hpp>
-#include <Resource/Asset.hpp>
-#include <Framework/Archive.hpp>
+#include <Gumball/Resource/Asset.hpp>
+#include <Gumball/Framework/Archive.hpp>
+#include <Gumball/Core/Engine.hpp>
 
 #include <list>
 #include <unordered_map>
@@ -12,7 +12,7 @@
 
 namespace Resource {
 
-class GENGINE Controller {
+class GENGINE Controller : public Engine::Core::Global<Controller> {
 	friend class AssetFactory;
 
 	std::list<FileSerializer *> serializers;

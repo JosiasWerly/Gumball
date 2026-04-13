@@ -32,21 +32,21 @@ class GENGINE Core : public Singleton<Core> {
 	Resource::Controller *resourceCtrl;
 	Plugin::Controller *pluginCtrl;
 	Plugin::ProjectLinker *project;
+
+
+	Concurrent::Job tick;
+	Containers::TypeCodex codex;
 	Flow::StateMachine::StateMachine fsm;
 	
 	Core();
 	~Core();
 	void Initialize(Init init);
-	void Tick();
+	void Tick(Concurrent::Job *);
 
 public:
+	template<class T> using Global = Global<T, []()->T & { return Core::Instance().codex.Get<T>(); }>;
 	enum class eState { idle, play, hotreload, exit };
 	void signal(eState signal) { fsm.to(signal); }
-};
-
-struct GENGINE CoreCodex : public Containers::Codex {
-	friend class Core;
-	CoreCodex() = default;
 };
 
 };
