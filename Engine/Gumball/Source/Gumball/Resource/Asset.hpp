@@ -12,12 +12,12 @@ private:
 	FilePath filepath;
 	string type;
 	std::list<FilePath> dependencies;
-	PtrWeak content;
+	PtrVoid content;
 
 public:
 	Inline FilePath &Path() { return filepath; }
 	Inline std::list<FilePath> &Dependencies() { return dependencies; }
-	Inline PtrWeak &Content() { return content; }
+	Inline PtrVoid &Content() { return content; }
 	Inline bool IsLoaded() const { return content; }
 	Inline bool IsValid() const { return filepath && content; }
 };

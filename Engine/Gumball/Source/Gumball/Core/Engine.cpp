@@ -61,6 +61,12 @@ void Core::Initialize(Init init) {
 }
 void Core::Tick(Concurrent::Job*) {
 	cout << "." << endl;
+
+
+	UPtr<int> a = new int;
+	UPtr<int> b = a;
+	UPtr<int> c;
+	a = c;
 	//moduleController->Startup();
 	//fsm.set(eState::hotreload);
 	//fsm.tick();

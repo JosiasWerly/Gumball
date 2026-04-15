@@ -33,7 +33,7 @@ class GENGINE Job {
 	using Delegate = Signal<void(Job *)>;
 
 	Mutex m;
-	PtrWeak data;
+	PtrVoid data;
 	Delegate begin, end;
 	std::list<Task> tasks;
 	std::unordered_map<const char *, Task *> taskCache;
@@ -46,7 +46,7 @@ public:
 	Task &Add(const char *name);
 	void Pop(const char *name);
 	Task *At(const char *name);
-	PtrWeak &Data() { return data; }
+	PtrVoid &Data() { return data; }
 	Delegate &Begin() { return begin; }
 	Delegate &End() { return end; }
 	bool HasConcluded() const { return tasksCompleted == tasks.size(); }

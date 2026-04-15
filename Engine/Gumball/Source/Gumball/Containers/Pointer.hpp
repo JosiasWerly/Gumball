@@ -2,10 +2,10 @@
 #define __pointer
 #include <concepts>
 #include <type_traits>
-
+//#pragma optimize("t", on)
 namespace Pointer {
-	/*this is analogous to shared_ptr and weak_ptr, plus allows abstraction to void*, 
-	safety is not enforced, you better know what you are doing */
+	/* this is analogous to shared_ptr and weak_ptr, plus allows abstraction to void*, 
+	you better know what you are doing */
 
 	struct IMemory {
 		virtual ~IMemory() {}
@@ -22,7 +22,7 @@ namespace Pointer {
 	
 	class Memory {
 	public:
-		unsigned refs = 1;
+		unsigned WPtrs = 1;
 		IMemory *pw = nullptr;
 
 		template<class U> Memory(U *init) : pw(new TMemory<U>(init)) {}
@@ -30,7 +30,7 @@ namespace Pointer {
 	};
 
 	template<class T> class Ptr;
-	template<class T> class Ref;
+	template<class T> class WPtr;
 
 	template<class T, class U>
 	concept InterOp = requires {
@@ -48,14 +48,15 @@ namespace Pointer {
 	protected:
 		Memory *mem;
 
-		Inline void iref() { ++mem->refs; }
-		Inline void dref() { --mem->refs; }
+		Inline void iWPtr() { ++mem->WPtrs; }
+		Inline void dWPtr() { --mem->WPtrs; }
 		Inline void delMem() { delete mem; mem = nullptr; }
 		Inline void delPtr() { delete mem->pw; mem->pw = nullptr; }
 
-		Inline void reference(Memory *other) { mem = other; }
-		Inline void assing(Memory *other) { divest(); mem = other; iref(); }
-		Inline void divest() { dref(); if (!mem->refs) { delMem(); } }
+		Inline void move(Memory *&other) { if (mem) delMem(); mem = other; other = nullptr; }
+		Inline void set(Memory *other) { mem = other; }
+		Inline void assing(Memory *other) { divest(); mem = other; iWPtr(); }
+		Inline void divest() { dWPtr(); if (!mem->WPtrs) { delMem(); } }
 		SmartPointer(Memory *memInit = nullptr) : mem(memInit) {}
 
 	public:
@@ -101,22 +102,22 @@ namespace Pointer {
 		}
 		
 		template<class U>
-		operator Ref<U>() requires InterOp<T, U> {
-			return Ref<U>(*mem);
+		operator WPtr<U>() requires InterOp<T, U> {
+			return WPtr<U>(*mem);
 		}
 	};
 
 	template<class T>
-	class Ptr : public SmartPointer<T> {
+	class Ptr : public SmartPointer<T> { //analogous to shared pointer
 		template<class t> friend class SmartPointer;
 		template<class t> friend class Ptr;
 		typedef SmartPointer<T> Super;
 
-		Ptr(Memory &mem) : Super(&mem) { Super::iref(); }
+		Ptr(Memory &mem) : Super(&mem) { Super::iWPtr(); }
 	
 	public:
-		Ptr(T *pInit = nullptr) : Super(new Pointer::Memory(pInit)) {}
-		Ptr(const Ptr &init) : Super(init.mem) { Super::iref(); }
+		Ptr(T *pInit) : Super(new Pointer::Memory(pInit)) {}
+		Ptr(const Ptr &init) : Super(init.mem) { Super::iWPtr(); }
 		~Ptr() { Super::divest(); }
 
 		void operator~() {
@@ -133,25 +134,53 @@ namespace Pointer {
 	};
 
 	template<class T>
-	class Ref : public SmartPointer<T> {
+	class WPtr : public SmartPointer<T> { //analogous to weak pointer
 		template<class t> friend class SmartPointer;
-		template<class t> friend class Ref;
+		template<class t> friend class WPtr;
 		typedef SmartPointer<T> Super;
 
-		Ref(Pointer::Memory &mem) : Super(&mem) {}
+		WPtr(Pointer::Memory &mem) : Super(&mem) {}
 
 	public:
-		Ref() : Super(nullptr) {}
-		Ref(const Ref &init) : Super(init.mem) {}
-		~Ref() = default;
+		WPtr() : Super(nullptr) {}
+		WPtr(const WPtr &init) : Super(init.mem) {}
+		~WPtr() = default;
 
-		Ref &operator=(const Ref &other) {
-			Super::reference(other.mem);
+		WPtr &operator=(const WPtr &other) {
+			Super::set(other.mem);
 			return *this;
 		}
-		const Ref<T> &operator=(Ref<T> &&other) {
-			Super::reference(other.mem);
+		const WPtr<T> &operator=(WPtr<T> &&other) {
+			Super::set(other.mem);
 			return *this;
+		}
+	};
+
+	template<class T>
+	class UPtr : public SmartPointer<T> { //analogous to unique pointer
+		template<class t> friend class SmartPointer;
+		template<class t> friend class WPtr;
+		typedef SmartPointer<T> Super;
+
+		UPtr(Pointer::Memory &mem) : Super(&mem) {}
+
+	public:
+		UPtr() : Super(nullptr) {}
+		UPtr(T *pInit) : Super(new Pointer::Memory(pInit)) {}
+		UPtr(const UPtr &init) : Super(init.mem) { const_cast<UPtr&>(init).set(nullptr); }
+		~UPtr() { if (Super::mem) Super::delMem(); }
+
+		UPtr &operator=(UPtr &other) {
+			Super::move(other.mem);
+			return *this;
+		}
+
+		template<class U> operator WPtr<U>() = delete;
+		template<class U> requires InterOp<T, U>
+		operator Ptr<U>() {
+			Memory *m = Super::mem;
+			Super::set(nullptr);
+			return Ptr<U>(*m);
 		}
 	};
 
@@ -161,10 +190,10 @@ namespace Pointer {
 		template<class T> friend class SmartPointer;
 		typedef SmartPointer<void *> Super;
 
-		Ptr(Pointer::Memory &ctrl) : Super(&ctrl) { Super::iref(); }
+		Ptr(Pointer::Memory &ctrl) : Super(&ctrl) { Super::iWPtr(); }
 	public:
 		Ptr() : Super(new Pointer::Memory(static_cast<void *>(nullptr))) {}
-		Ptr(const Ptr &init) : Super(init.mem) { Super::iref(); }
+		Ptr(const Ptr &init) : Super(init.mem) { Super::iWPtr(); }
 		~Ptr() { Super::divest(); }
 
 		template<class U> 
@@ -176,18 +205,18 @@ namespace Pointer {
 	};
 
 	template<>
-	class Ref<void *> : public SmartPointer<void *> {
+	class WPtr<void *> : public SmartPointer<void *> {
 		template<class T> friend class SmartPointer;
 		typedef SmartPointer<void *> Super;
 
-		Ref(Pointer::Memory &mem) : Super(&mem) { }
+		WPtr(Pointer::Memory &mem) : Super(&mem) { }
 	public:
-		Ref() : Super(nullptr) {}
-		Ref(const Ref &init) : Super(init.mem) { }
-		~Ref() = default;
+		WPtr() : Super(nullptr) {}
+		WPtr(const WPtr &init) : Super(init.mem) { }
+		~WPtr() = default;
 
-		Ref &operator=(const Ref &other) {
-			Super::reference(other.mem);
+		WPtr &operator=(const WPtr &other) {
+			Super::set(other.mem);
 			return *this;
 		}
 
@@ -196,15 +225,17 @@ namespace Pointer {
 			return Ptr<U>(*mem);
 		}
 		template<class U>
-		operator Ref<U>() {
-			return Ref<U>(*mem);
+		operator WPtr<U>() {
+			return WPtr<U>(*mem);
 		}
 	};
 };
 
 template<class T> using Ptr = Pointer::Ptr<T>;
-template<class T> using Ref = Pointer::Ref<T>;
-using PtrWeak = Ptr<void *>;
-using RefWeak = Ref<void *>;
+template<class T> using WPtr = Pointer::WPtr<T>;
+template<class T> using UPtr = Pointer::UPtr<T>;
 
+using PtrVoid = Ptr<void *>;
+using WPtrVoid = WPtr<void *>;
+//#pragma optimize("", off)
 #endif // !__pointer
