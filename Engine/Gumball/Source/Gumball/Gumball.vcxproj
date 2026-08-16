@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClInclude Include="Concurrent\Common.hpp" />
     <ClInclude Include="Concurrent\Scheduler.hpp" />
+    <ClInclude Include="Concurrent\Task.hpp" />
     <ClInclude Include="Concurrent\Thread.hpp" />
     <ClInclude Include="Containers\Codex.hpp" />
     <ClInclude Include="Containers\Dispatcher.hpp" />
@@ -134,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Concurrent\Scheduler.cpp" />
+    <ClCompile Include="Concurrent\Task.cpp" />
     <ClCompile Include="Concurrent\Thread.cpp" />
     <ClCompile Include="Containers\Codex.cpp" />
     <ClCompile Include="Containers\Pointer.cpp" />

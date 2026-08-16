@@ -21,19 +21,21 @@ void Controller::AddModule(Module *newModule) {
 			break;
 	}
 }
-void Controller::Callback_LoadCompleted(Concurrent::Job *job) {
-	const Module *m = job->Data().As<Module>();
-	if (job->HasConcluded()) {
-		//Engine::CoreCodex::instance()->Scheduler().Pop(*job);
-	}
+void Controller::Callback_LoadCompleted(void *data) {
+	//const Module *m = job->Data().As<Module>();
+	//if (job->HasConcluded()) {
+	//	//Engine::CoreCodex::instance()->Scheduler().Pop(*job);
+	//}
 }
 void Controller::Startup() {
 	using namespace Concurrent;
 	
 	for (auto &m : modules) {
-		loadJob.Add(m->Name()).Fn().bind({m, &Module::Load});
+		//Task loadTask;
+		//loadTask.Run().bind([m](void *)->bool {  return m->Load(); });
+		//loadTask.End().bind({ this, Callback_LoadCompleted });
+		//loadTask.Data() = m;
 	}
-	loadJob.End().bind({ this, &Controller::Callback_LoadCompleted });
 	//Engine::instance()->Scheduler().Add(loadJob);
 }
 void Controller::Shutdown() {

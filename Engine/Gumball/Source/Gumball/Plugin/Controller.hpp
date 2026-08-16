@@ -19,13 +19,12 @@ private:
 	Containers::Codex codex;
 	std::list<Module *> modules;
 	std::list<Module *> editorTick, gameplayTick;
-	Concurrent::Job loadJob;
-	
+
 	ProjectLinker project;
 
 	Controller();
 	void AddModule(Module *module);
-	void Callback_LoadCompleted(Concurrent::Job *job);
+	void Callback_LoadCompleted(void* data);
 
 protected:
 	void Startup();

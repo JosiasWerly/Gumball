@@ -33,6 +33,9 @@
     <ClInclude Include="Concurrent\Scheduler.hpp">
       <Filter>Concurrent</Filter>
     </ClInclude>
+    <ClInclude Include="Concurrent\Task.hpp">
+      <Filter>Concurrent</Filter>
+    </ClInclude>
     <ClInclude Include="Concurrent\Thread.hpp">
       <Filter>Concurrent</Filter>
     </ClInclude>
@@ -108,6 +111,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Concurrent\Scheduler.cpp">
+      <Filter>Concurrent</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrent\Task.cpp">
       <Filter>Concurrent</Filter>
     </ClCompile>
     <ClCompile Include="Concurrent\Thread.cpp">

@@ -34,6 +34,7 @@ namespace Dispatcher {
 	template<class TChild, class TRet, class ...TArgs>
 	class TBase {
 		inline TChild &child() { return static_cast<TChild &>(*this); }
+		inline const TChild &child() const { return static_cast<const TChild &>(*this); }
 	public:
 		using TBind = TBind<TRet(TArgs...)>;
 		using TFunction = std::function<TRet(TArgs...)>;
@@ -63,6 +64,7 @@ namespace Dispatcher {
 		bool isBound() const {
 			return child()._isBound();
 		}
+		operator bool() const { isBound(); }
 	};
 
 	template<class TRet, class ...TArgs>
@@ -77,12 +79,12 @@ namespace Dispatcher {
 
 		void _bind(TFunction &&fn) { target = fn; }
 		void _unbind(TFunction &&fn) { target = nullptr; }
-		TRet _invoke(TArgs... args) {
+		TRet _invoke(TArgs... args) const {
 			if (target)
 				return target(args...);
 			return TRet();
 		}
-		bool _isBound() { return static_cast<bool>(target); }
+		bool _isBound() const { return static_cast<bool>(target); }
 
 	public:
 		TSignal() = default;

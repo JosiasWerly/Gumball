@@ -1,120 +1,59 @@
 #include "Scheduler.hpp"
-#include <string>
+#include "Task.hpp"
 using namespace Concurrent;
 
-Work::Work(Work &o) {
-	state = o.state;
-	job = o.job;
+Scheduler::Scheduler() {
 }
-
-Task &Job::Add(const char *name) {
-	return taskCache.contains(name) ?
-		*taskCache[name] :
-		*(taskCache[name] = &tasks.emplace_back(name));
+void Scheduler::Initialize(unsigned char thCount) {
+	for (unsigned i = 0; i < thCount; ++i)
+		threads.emplace_back(std::jthread(&Scheduler::ConsumerTick, this));
 }
-void Job::Pop(const char *name) {
-	if (taskCache.contains(name)) {
-		tasks.remove(*taskCache[name]);
-		taskCache.erase(name);
+void Scheduler::Shutdown() {}
+void Scheduler::Tick() {
+	while (true) {
+		{//tasks
+			Lock l(tasks.mrequest);
+			for (auto it = tasks.requests.begin(); it != tasks.requests.end();) {
+				ATask &tsk = *(*it);
+				const ATask::eState st = tsk.state.load(std::memory_order_acquire);
+				if (!tasks.queue.Full() && st == ATask::eState::Idle) {
+					tsk.state.store(ATask::eState::Scheduled);
+					tasks.queue.Push(&tsk);
+					cvthread.notify_one();
+				}
+				else if (st == ATask::eState::Done) {
+					it = tasks.requests.erase(it);
+					continue;
+				}
+				++it;
+			}
+		}
 	}
 }
-Task *Job::At(const char *name) {
-	return taskCache.contains(name) ?
-		taskCache[name] :
-		nullptr;
-}
-
-void Scheduler::Run() {
-	using eState = Work::eState;
+void Scheduler::ConsumerTick() {
 	while (true) {
 		{
-			GuardUnique lock(workPool.m);
-			cvjobs.wait(lock, [this]() { return !active || !workPool.isEmpty(); });
-			if (!active)
-				return;
+			ULock l(mthread);
+			cvthread.wait(l, [&]()->bool { return !tasks.queue.Empty(); });
 		}
 
-		Work *work = nullptr;
-		{
-			{
-				GuardUnique lock(workPool.m);
-				work = workPool.next();
-				if (!work)
-					continue;
+		while (ATask *tsk = tasks.queue.Pop()) {
+			using eState = ATask::eState;
+			if (tsk->Run()) {
+				tsk->state.store(eState::Done);
+				tsk->End();
 			}
-
-			if (!work->job) {
-				workPool.pop(*work);
-				work = nullptr;
-				continue;
-			}
-			else if (work->Is(eState::start)) {
-				work->Set(eState::running);
-				work->job->tasksMask = 0;
-				work->job->tasksCompleted = 0;
-				work->job->begin(work->job);
-			}
-			else if (work->Is(eState::stall)) {
-				work->Set(eState::running);
-			}
-			else {
-				work = nullptr;
-				continue;
-			}
-		}
-
-		if (work) {
-			Job *job = work->job;
-			list<Task> *tasks = &job->tasks;
-
-			unsigned char bitNum = 0;
-			for (list<Task>::iterator it = tasks->begin(); it != tasks->end(); ++it, ++bitNum) {
-				const bool completed = job->tasksMask & (1 << bitNum);
-				if (!completed && (*it).fn()) {
-					job->tasksMask |= 1 << bitNum;
-					job->tasksCompleted++;
-				}
-			}
-
-			{
-				GuardUnique lock(workPool.m);
-				if (job->tasksCompleted == tasks->size()) {
-					work->state = eState::start;
-					job->end(job);
-				}
-				else {
-					work->Set(eState::stall);
-				}
-			}
+			else
+				tsk->state.store(eState::Idle);
 		}
 	}
 }
-void Scheduler::Add(Job &job) {
-	GuardUnique lock(workPool.m);
-	Work &w = workPool.add();
-	w.job = &job;
-	w.state = Work::eState::start;
+void Scheduler::Add(Ptr<ATask> &task) {
+	Lock l(tasks.mrequest);
+	task->state.store(ATask::eState::Idle);
+	tasks.requests.push_back(task);
 }
-void Scheduler::Pop(Job &job) {
-	GuardUnique lock(workPool.m);
-	Work *work = nullptr;
-	{
-		for (auto &w : workPool.pool) {
-			if (w.job == &job) {
-				work = &w;
-				break;
-			}
-		}
-	}
-	if (!work)
-		return;
-	work->job = nullptr;
-}
-void Scheduler::Initialize(unsigned threadCount) {
-	active = true;
-	for (size_t i = 0; i < threadCount; i++)
-		threads.emplace_back(jthread(&Scheduler::Run, this));
-}
-void Scheduler::Shutdown() {
-	active = false;
+void Scheduler::Pop(Ptr<ATask> &task) {
+	Lock l(tasks.mrequest);
+	tasks.requests.remove(task);
 }

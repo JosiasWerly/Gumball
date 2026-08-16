@@ -35,13 +35,12 @@ class GENGINE Core : public Singleton<Core> {
 	Plugin::ProjectLinker *project;
 
 
-	Concurrent::Job tick;
 	Flow::StateMachine::StateMachine fsm;
 	
 	Core();
 	~Core();
 	void Initialize(Init init);
-	void Tick(Concurrent::Job *);
+	void Tick();
 
 public:
 	Containers::Codex codex;

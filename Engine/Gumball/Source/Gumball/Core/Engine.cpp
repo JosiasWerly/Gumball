@@ -59,7 +59,7 @@ void Core::Initialize(Init init) {
 	//tick.Begin().bind({ this, &Engine::Core::Tick });
 	//scheduler->Add(tick);
 }
-void Core::Tick(Concurrent::Job*) {
+void Core::Tick() {
 	cout << "." << endl;
 
 
