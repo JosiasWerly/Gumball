@@ -54,7 +54,7 @@ void Core::Initialize(Init init) {
 		});
 	}
 	pluginCtrl->Startup();
-	pluginCtrl->Hotreload();
+	//pluginCtrl->Hotreload(); TODO: something important?
 	
 	//tick.Begin().bind({ this, &Engine::Core::Tick });
 	//scheduler->Add(tick);

@@ -28,6 +28,7 @@ class GENGINE Core : public Singleton<Core> {
 		Concurrent::Scheduler *&scheduler;
 		void (*fnInjectModules)(Plugin::Controller *mCtrl);
 	};
+	
 	Concurrent::Scheduler *scheduler;
 	Resource::Controller *resourceCtrl;
 	Plugin::Controller *pluginCtrl;
@@ -35,7 +36,6 @@ class GENGINE Core : public Singleton<Core> {
 
 
 	Concurrent::Job tick;
-	Containers::TypeCodex codex;
 	Flow::StateMachine::StateMachine fsm;
 	
 	Core();
@@ -44,6 +44,8 @@ class GENGINE Core : public Singleton<Core> {
 	void Tick(Concurrent::Job *);
 
 public:
+	Containers::Codex codex;
+	
 	template<class T> using Global = Global<T, []()->T & { return Core::Instance().codex.Get<T>(); }>;
 	enum class eState { idle, play, hotreload, exit };
 	void signal(eState signal) { fsm.to(signal); }

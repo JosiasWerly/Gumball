@@ -20,7 +20,6 @@ Project *ProjectLinker::Load() {
 	auto d = Engine::Domain::Instance();
 	const string dllPath = d.ApplicationDir() + "Sandbox.dll";
 	const string dllCopy = d.ApplicationDir() + "Target.dll";
-
 	std::filesystem::copy(dllPath, dllCopy, std::filesystem::copy_options::overwrite_existing);
 	if (dll.load(dllCopy)) {
 		auto projectEntryPoint = dll.getFunc<FnxEntryPoint>("EntryPoint");

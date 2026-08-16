@@ -16,7 +16,7 @@ class GENGINE Controller {
 	friend class ::Engine::Core;
 
 private:
-	Containers::TypeCodex codex;
+	Containers::Codex codex;
 	std::list<Module *> modules;
 	std::list<Module *> editorTick, gameplayTick;
 	Concurrent::Job loadJob;

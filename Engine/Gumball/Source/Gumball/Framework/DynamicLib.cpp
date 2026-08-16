@@ -3,6 +3,7 @@
 #include <string>
 #include <tchar.h>
 #include <thread>
+#include <filesystem>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -19,10 +20,13 @@ DynamicLibrary::~DynamicLibrary() {
 		unload();
 }
 bool DynamicLibrary::load(string dllPath) {
+	if (!std::filesystem::exists(dllPath))
+		return false;
+	
 	if (instance)
 		unload();
-	if (dllPath != "")
-		this->dllPath = dllPath;
+	
+	dllPath = dllPath;
 	auto STRtoWSTR = [](string &from)->wstring {
 		wstring out;
 		for (size_t i = 0; i < from.length(); i++)
