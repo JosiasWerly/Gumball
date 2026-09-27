@@ -5,55 +5,112 @@ using namespace Concurrent;
 Scheduler::Scheduler() {
 }
 void Scheduler::Initialize(unsigned char thCount) {
-	for (unsigned i = 0; i < thCount; ++i)
+	for (unsigned i = 0; i < thCount; ++i) {
 		threads.emplace_back(std::jthread(&Scheduler::ConsumerTick, this));
+	}
 }
-void Scheduler::Shutdown() {}
-void Scheduler::Tick() {
-	while (true) {
+void Scheduler::Shutdown() {
+	active.store(false, std::memory_order_relaxed);
+	for (auto &th : threads) {
+		th.join();
+	}
+}
+void Scheduler::ProducerTick() {
+	while (active.load(std::memory_order_relaxed)) {
 		{//tasks
 			Lock l(tasks.mrequest);
-			for (auto it = tasks.requests.begin(); it != tasks.requests.end();) {
-				ATask &tsk = *(*it);
+			if (tasks.iterator == tasks.requests.end())
+				tasks.iterator = tasks.requests.begin();
+
+			while (tasks.iterator != tasks.requests.end()) {
+				ATask &tsk = *(*tasks.iterator);
 				const ATask::eState st = tsk.state.load(std::memory_order_acquire);
-				if (!tasks.queue.Full() && st == ATask::eState::Idle) {
-					tsk.state.store(ATask::eState::Scheduled);
-					tasks.queue.Push(&tsk);
-					cvthread.notify_one();
-				}
-				else if (st == ATask::eState::Done) {
-					it = tasks.requests.erase(it);
+				if (st == ATask::eState::Done) {
+					tasks.iterator = tasks.requests.erase(tasks.iterator);
 					continue;
 				}
-				++it;
+				else if (!tasks.queue.Full() && st == ATask::eState::Idle) {
+					if (tasks.queue.Push(&tsk)) {
+						tsk.state.store(ATask::eState::Scheduled, std::memory_order_release);
+						Lock cvl(mthread);
+						cvthread.notify_one();
+						++tasks.iterator;
+					}
+				}
+			}
+		}
+		{//jobs
+			Lock l(jobs.mrequest);
+			if (jobs.iterator == jobs.requests.end())
+				jobs.iterator = jobs.requests.begin();
+
+			while (jobs.iterator != jobs.requests.end()) {
+				AJob &jb = *(*jobs.iterator);
+				const AJob::eState st = jb.state.load(std::memory_order_acquire);
+				if (!jobs.queue.Full() && st == AJob::eState::Idle) {
+					if (jobs.queue.Push(&jb)) {
+						jb.state.store(AJob::eState::Scheduled, std::memory_order_release);
+						Lock cvl(mthread);
+						cvthread.notify_one();
+						++jobs.iterator;
+					}
+				}
 			}
 		}
 	}
 }
 void Scheduler::ConsumerTick() {
-	while (true) {
+	while (active.load(std::memory_order_relaxed)) {
 		{
 			ULock l(mthread);
-			cvthread.wait(l, [&]()->bool { return !tasks.queue.Empty(); });
+			cvthread.wait(l, [&]()->bool {
+				return
+					!tasks.queue.Empty() ||
+					!jobs.queue.Empty();
+			});
 		}
 
-		while (ATask *tsk = tasks.queue.Pop()) {
-			using eState = ATask::eState;
-			if (tsk->Run()) {
-				tsk->state.store(eState::Done);
-				tsk->End();
+		for (ATask *tsk = nullptr; tasks.queue.Pop(tsk); tsk = nullptr) {
+			using eTaskState = ATask::eState;
+			using eTaskResult = ATask::eResult;
+
+			tsk->run(*tsk);
+			const eTaskResult res = tsk->result;
+			if (res != eTaskResult::Continue) {
+				tsk->state.store(eTaskState::Done, std::memory_order_release);
+				if (tsk->end)
+					tsk->end(*tsk);
 			}
-			else
-				tsk->state.store(eState::Idle);
+			else {
+				tsk->state.store(eTaskState::Idle);
+			}
+		}
+
+		for (AJob *jb = nullptr; jobs.queue.Pop(jb); jb = nullptr) {
+			using eJobState = AJob::eState;
+			jb->Run();
+			jb->state.store(eJobState::Idle, std::memory_order_release);
 		}
 	}
 }
 void Scheduler::Add(Ptr<ATask> &task) {
 	Lock l(tasks.mrequest);
-	task->state.store(ATask::eState::Idle);
 	tasks.requests.push_back(task);
 }
 void Scheduler::Pop(Ptr<ATask> &task) {
 	Lock l(tasks.mrequest);
-	tasks.requests.remove(task);
+	auto it = std::find(tasks.requests.begin(), tasks.requests.end(), task);
+	if (tasks.iterator == it)
+		tasks.iterator = tasks.requests.erase(it);
+}
+void Scheduler::Add(Ptr<AJob> &job) {
+	Lock l(jobs.mrequest);
+	jobs.requests.push_back(job);
+}
+void Scheduler::Pop(Ptr<AJob> &job) {
+	Lock l(jobs.mrequest);
+	auto it = std::find(jobs.requests.begin(), jobs.requests.end(), job);
+	jobs.requests.remove(job);
+	if (jobs.iterator == it)
+		jobs.iterator = jobs.requests.erase(it);
 }

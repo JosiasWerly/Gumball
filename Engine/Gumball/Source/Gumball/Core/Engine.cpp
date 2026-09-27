@@ -38,17 +38,17 @@ void Core::Initialize(Init init) {
 	}
 	
 	{//bind states
-		fsm[eState::play].onEnter.bind([&]() {
+		fsm[eState::play].onEnter.Bind([&]() {
 			pluginCtrl->BeginPlay();
 		});
-		fsm[eState::play].onExit.bind([&]() {
+		fsm[eState::play].onExit.Bind([&]() {
 			pluginCtrl->EndPlay();
 		});
-		fsm[eState::play].onTick.bind([&]() {
+		fsm[eState::play].onTick.Bind([&]() {
 			const double deltaTime = 0.1;
 			pluginCtrl->Tick<Plugin::eTick::gameplay>(deltaTime);
 		});
-		fsm[eState::hotreload].onEnter.bind([&]() {
+		fsm[eState::hotreload].onEnter.Bind([&]() {
 			pluginCtrl->Hotreload();
 			fsm.to(eState::idle);
 		});

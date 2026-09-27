@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	Scheduler *scheduler = nullptr;
 	Core core;
 	core.Initialize(Core::Init{ argc, argv, engineDir(), scheduler, injectModules });
-	scheduler->Initialize(0);
-	scheduler->Tick();
+	scheduler->Initialize(1);
+	scheduler->ProducerTick();
 	return 0;
 }

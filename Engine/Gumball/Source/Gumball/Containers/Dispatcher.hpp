@@ -5,7 +5,7 @@
 #include <functional>
 
 namespace Dispatcher {
-	enum class ePolicy { single, multi };
+	enum class ePolicy : char { single, multi };
 
 	template<typename ...TSignature> struct TBind;
 	template<ePolicy, typename ...TSignature> class TSignal;
@@ -42,29 +42,14 @@ namespace Dispatcher {
 		TBase() = default;
 		~TBase() = default;
 
-		void bind(TBind &&bind) {
-			child()._bind(std::move(bind.fn));
-		}
-		void unbind(TBind &&bind) {
-			child()._unbind(std::move(bind.fn));
-		}
-		TRet invoke(TArgs... args) {
-			return child()._invoke(args...);
-		}
-		TRet operator()(TArgs... args) {
-			return child()._invoke(args...);
-		}
-		
-		TRet invoke(TArgs... args) const {
-			return child()._invoke(args...);
-		}
-		TRet operator()(TArgs... args) const {
-			return child()._invoke(args...);
-		}
-		bool isBound() const {
-			return child()._isBound();
-		}
-		operator bool() const { isBound(); }
+		void Bind(TBind &&bind) { child()._bind(std::move(bind.fn)); }
+		void Unbind(TBind &&bind) { child()._unbind(std::move(bind.fn)); }
+		TRet Invoke(TArgs... args) { return child()._invoke(args...); }
+		TRet Invoke(TArgs... args) const { return child()._invoke(args...); }
+		bool IsBound() const { return child()._isBound(); }
+		TRet operator()(TArgs... args) { return child()._invoke(args...); }
+		TRet operator()(TArgs... args) const { return child()._invoke(args...); }
+		operator bool() const { return IsBound(); }
 	};
 
 	template<class TRet, class ...TArgs>
@@ -103,7 +88,7 @@ namespace Dispatcher {
 
 		void _bind(TFunction &&fn) { targets.emplace_back(fn); }
 		void _unbind(TFunction &&fn) { targets.remove(fn); }
-		void _invoke(TArgs... args) {
+		void _invoke(TArgs... args) const {
 			for (auto &t : targets)
 				t(args...);
 		}

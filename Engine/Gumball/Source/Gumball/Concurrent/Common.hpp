@@ -3,7 +3,7 @@
 #define __concurrentcommon
 
 #include <mutex>
-#include <list>
+#include <atomic>
 #include <array>
 namespace Concurrent {
 	using Mutex = std::mutex;
@@ -12,52 +12,56 @@ namespace Concurrent {
 	using CVar = std::condition_variable;
 	template<class T> using Atomic = std::atomic<T>;
 
-	template <typename T, unsigned TCapacity>
-	class TRingBuffer {
+	template <typename T, unsigned Size>
+	class AsyncBuffer {
 		Atomic<unsigned> head{ 0 };
 		Atomic<unsigned> tail{ 0 };
-		std::array<T, TCapacity> buffer;
+		std::array<Atomic<short>, Size> seq;
+		std::array<T, Size> arr;
 
 	public:
-		bool Push(T value) {
-			const unsigned h = head.load(std::memory_order_acquire);
-			const unsigned t = tail.load(std::memory_order_relaxed);
-			const unsigned nt = (t + 1) % TCapacity;
-			if (nt == h)
-				return false;
+		AsyncBuffer() {
+			for (int j = 0; j < Size; ++j)
+				seq[j] = j;
+		}
+		bool Push(const T &value) {
+			const unsigned h = head.load(std::memory_order_relaxed);
+			const unsigned lh = h % Size;
 
-			buffer[t] = std::move(value);
-			tail.store(nt, std::memory_order_release);
+			const unsigned t = tail.load(std::memory_order_acquire);
+			if (seq[lh].load(std::memory_order_acquire) != h)
+				return false;
+			arr[lh] = std::move(value);
+			seq[lh].store(h + 1, std::memory_order_release);
+			head.fetch_add(1, std::memory_order_release);
 			return true;
 		}
-		T Pop() {
-			unsigned h = head.load(std::memory_order_relaxed);
+		bool Pop(T &value) {
+			const unsigned t = tail.load(std::memory_order_relaxed);
 			while (true) {
-				const unsigned t = tail.load(std::memory_order_acquire);
-				if (h == t)
-					return nullptr;
+				unsigned lt = t % Size;
+				const short s = seq[lt].load(std::memory_order_acquire);
+				if (t + 1 != s)
+					return false;
 
-				const unsigned nh = (h + 1) % TCapacity;
-				if (head.compare_exchange_weak(h, nh, std::memory_order_acquire, std::memory_order_relaxed))
-					return buffer[h];
+				unsigned nt = t;
+				if (tail.compare_exchange_weak(nt, nt + 1, std::memory_order_relaxed, std::memory_order_relaxed)) {
+					value = arr[lt];
+					seq[lt].store(t + Size, std::memory_order_release);
+					return true;
+				}
 			}
+			return false;
 		}
 		bool Full() const {
 			const unsigned h = head.load(std::memory_order_acquire);
 			const unsigned t = tail.load(std::memory_order_acquire);
-			const unsigned cap = TCapacity - 1;
+			const unsigned cap = Size - 1;
 			if (h == t)
 				return false;
-			return h < t ? (t - h) == cap : (TCapacity - h) + t == cap;
+			return t < h ? h - t == cap : (Size - t) + h == cap;
 		}
 		bool Empty() const { return head.load(std::memory_order_acquire) == tail.load(std::memory_order_acquire); }
-	};
-
-	template<class T>
-	struct TPool {
-		Mutex mrequest;
-		std::list<Ptr<T>> requests;
-		TRingBuffer<T *, 4> queue;
 	};
 };
 #endif // __concurrentcommon
