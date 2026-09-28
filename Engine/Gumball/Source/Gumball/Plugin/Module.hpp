@@ -2,12 +2,11 @@
 #ifndef _plugin_module
 #define _plugin_module
 
-#include <list>
-#include <unordered_map>
+#include <Gumball/Concurrent/Task.hpp>
 
 namespace Plugin {
 
-enum class eTick {
+enum class eTick : char {
 	none,
 	editor,
 	gameplay,
@@ -15,17 +14,14 @@ enum class eTick {
 };
 
 class GENGINE Module {
-private:
-	double msCost = 0.0;
-
-protected:
+	friend class Core;
 	friend class Controller;
-	friend class Engine;
+protected:
 
 	Module() = default;
 
-	virtual bool Load() { return true; }
-	virtual void Unload() {}
+	virtual Concurrent::Task Load() { return Concurrent::Task(); }
+	virtual Concurrent::Task Unload() { return Concurrent::Task(); }
 
 	virtual void BeginPlay() {}
 	virtual void EndPlay() {}
@@ -36,7 +32,6 @@ protected:
 public:
 	virtual ~Module() = default;
 	virtual const char *Name() const = 0;
-	double getMsCost() const { return msCost; }
 };
 
 };

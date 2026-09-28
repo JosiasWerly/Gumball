@@ -39,6 +39,8 @@ using s16 = short;
 using s32 = int;
 using s64 = long long;
 
+#define Error(strg, ...) throw std::runtime_error(std::format(strg,  __VA_ARGS__))
+
 #ifdef DEBUG
 #define DEBUG_ONLY(exp) exp;
 #else

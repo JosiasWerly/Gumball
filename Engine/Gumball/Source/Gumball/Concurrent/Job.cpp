@@ -6,10 +6,17 @@ using namespace Concurrent;
 using namespace Engine;
 
 
+
+Job::Job() : hjob(new AJob) {}
 void Job::Start() {
-	hjob->state.store(AJob::eState::Idle, std::memory_order_relaxed);
+	hjob->state.store(AJob::eState::Waiting, std::memory_order_relaxed);
 	Core::Instance().codex.Get<Scheduler>().Add(hjob);
 }
 void Job::Stop() {
 	Core::Instance().codex.Get<Scheduler>().Pop(hjob);
+	hjob->state.store(AJob::eState::Idle, std::memory_order_relaxed);
+}
+bool Job::Began() const {
+	const AJob::eState st = hjob->state.load(std::memory_order_relaxed);
+	return st == AJob::eState::Waiting || st == AJob::eState::Scheduled;
 }

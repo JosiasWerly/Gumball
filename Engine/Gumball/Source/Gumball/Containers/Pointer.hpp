@@ -93,7 +93,7 @@ namespace Pointer {
 		const T *const operator->() const { return To<T>(); }
 
 		operator bool() const { return mem && mem->pw && To<T>(); }
-		operator void *() const { return mem ? (*mem->pw) : nullptr; }
+		operator void *() const { return mem ? mem->pw : nullptr; }
 		
 		template<class U> requires InterOp<T, U>
 		operator Ptr<U>() 
@@ -130,7 +130,7 @@ namespace Pointer {
 		const Ptr<T> &operator=(Ptr<T> &&other) {
 			Super::assing(other.mem);
 			return *this;
-		}		
+		}
 	};
 
 	template<class T>

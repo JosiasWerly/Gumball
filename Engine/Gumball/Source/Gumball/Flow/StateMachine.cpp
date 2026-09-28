@@ -2,20 +2,20 @@
 
 using namespace Flow::StateMachine;
 
-void StateMachine::tick() {
+void StateMachine::Tick() {
 	switch (event) {
 		case Controller::eEvent::set:
 			currentState.first = next;
 			currentState.second = &states[next];
-			currentState.second->onEnter();
+			currentState.second->OnEnter();
 			event = Controller::eEvent::idle;
 			break;
 		case Controller::eEvent::move:
 		{
-			auto to = currentState.second->onExitTo.find(next);
-			if (to != currentState.second->onExitTo.end())
+			auto to = currentState.second->OnExitTo.find(next);
+			if (to != currentState.second->OnExitTo.end())
 				to->second();
-			currentState.second->onExit();
+			currentState.second->OnExit();
 		}
 		last = current;
 		current = next;
@@ -23,10 +23,10 @@ void StateMachine::tick() {
 		currentState.first = current;
 		currentState.second = &states[current];
 		{
-			currentState.second->onEnter();
+			currentState.second->OnEnter();
 		}
 		event = Controller::eEvent::idle;
 		break;
 	}
-	currentState.second->onTick();
+	currentState.second->OnTick();
 }

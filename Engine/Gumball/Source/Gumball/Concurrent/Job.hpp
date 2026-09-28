@@ -4,10 +4,7 @@
 
 #include <Gumball/Containers/Dispatcher.hpp>
 #include <Gumball/Containers/Pointer.hpp>
-
 #include "Common.hpp"
-
-int main(int argc, char *argv[]);
 
 namespace Concurrent {
 using namespace std;
@@ -16,7 +13,7 @@ class AJob {
 	friend class Job;
 	friend class Scheduler;
 	using FRun = Signal<void(AJob &)>;
-	enum class eState : char { Idle, Scheduled, Done };
+	enum class eState : char { Idle, Waiting, Scheduled, Done };
 
 	Atomic<eState> state{ eState::Idle };
 
@@ -29,10 +26,11 @@ class Job {
 	Ptr<AJob> hjob;
 
 public:
-	void Add(Job &other);
-	void Pop(Job &other);
+	Job();
 	void Start();
 	void Stop();
+	bool Began() const;
+	inline bool operator==(const AJob &h) const { return (void *)hjob == &h; }
 };
 
 struct JobPool {

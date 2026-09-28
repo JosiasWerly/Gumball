@@ -5,7 +5,6 @@
 
 #include <Gumball/Containers/Singleton.hpp>
 #include <Gumball/Containers/Codex.hpp>
-#include <Gumball/Flow/StateMachine.hpp>
 #include <Gumball/Concurrent/Scheduler.hpp>
 
 namespace Plugin {
@@ -34,20 +33,14 @@ class GENGINE Core : public Singleton<Core> {
 	Plugin::Controller *pluginCtrl;
 	Plugin::ProjectLinker *project;
 
-
-	Flow::StateMachine::StateMachine fsm;
-	
 	Core();
 	~Core();
 	void Initialize(Init init);
-	void Tick();
 
 public:
-	Containers::Codex codex;
-	
-	template<class T> using Global = Global<T, []()->T & { return Core::Instance().codex.Get<T>(); }>;
-	enum class eState { idle, play, hotreload, exit };
-	void signal(eState signal) { fsm.to(signal); }
+	Containers::Codex codex;	
+	template<class T> 
+	using Global = Global<T, []()->T & { return Core::Instance().codex.Get<T>(); }>;
 };
 
 };

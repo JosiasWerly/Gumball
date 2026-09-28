@@ -37,45 +37,5 @@ void Core::Initialize(Init init) {
 		codex.Add<Resource::Controller>(resourceCtrl);
 	}
 	
-	{//bind states
-		fsm[eState::play].onEnter.Bind([&]() {
-			pluginCtrl->BeginPlay();
-		});
-		fsm[eState::play].onExit.Bind([&]() {
-			pluginCtrl->EndPlay();
-		});
-		fsm[eState::play].onTick.Bind([&]() {
-			const double deltaTime = 0.1;
-			pluginCtrl->Tick<Plugin::eTick::gameplay>(deltaTime);
-		});
-		fsm[eState::hotreload].onEnter.Bind([&]() {
-			pluginCtrl->Hotreload();
-			fsm.to(eState::idle);
-		});
-	}
-	pluginCtrl->Startup();
-	//pluginCtrl->Hotreload(); TODO: something important?
-	
-	//tick.Begin().bind({ this, &Engine::Core::Tick });
-	//scheduler->Add(tick);
-}
-void Core::Tick() {
-	cout << "." << endl;
-
-
-	UPtr<int> a = new int;
-	UPtr<int> b = a;
-	UPtr<int> c;
-	a = c;
-	//moduleController->Startup();
-	//fsm.set(eState::hotreload);
-	//fsm.tick();
-	//scheduler.Start(1);
-	//while (fsm.now() != eState::exit) {
-	//	moduleController->Tick<EModuleTickType::editor>(deltaTime);
-	//	fsm.tick();
-	//}
-	//moduleController->Shutdown();
-}
-
+	pluginCtrl->State(Plugin::Controller::eState::startup);} //start the whole thing
 };

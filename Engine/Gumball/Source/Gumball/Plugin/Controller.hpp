@@ -2,50 +2,68 @@
 #ifndef _plugin_controller_
 #define _plugin_controller_
 
-#include <list>
-#include <Gumball/Core/Engine.hpp>
+#include <Gumball/Concurrent/Task.hpp>
+#include <Gumball/Concurrent/Job.hpp>
+#include <Gumball/Containers/Codex.hpp>
 #include "Module.hpp"
 #include "Project.hpp"
+
+#include <list>
 
 namespace Engine {
 	class Core;
 };
 
 namespace Plugin {
+
+struct ModuleEntry {
+	Module *module;
+	Concurrent::Job job;
+
+	ModuleEntry(Module *m) : module(m) {}
+};
+
 class GENGINE Controller {
-	friend class ::Engine::Core;
+public:	
+	enum class eState : char { startup, shutdown, idle, playing, hotreload };
 
 private:
-	Containers::Codex codex;
-	std::list<Module *> modules;
-	std::list<Module *> editorTick, gameplayTick;
+	friend class ::Engine::Core;
 
+	Containers::Codex codex;
+	std::list<ModuleEntry> entries;
 	ProjectLinker project;
+	eState state;
+
 
 	Controller();
-	void AddModule(Module *module);
-	void Callback_LoadCompleted(void* data);
-
-protected:
-	void Startup();
-	void Shutdown();
-	void Hotreload();
-	void BeginPlay();
-	void EndPlay();
-
-	template<Plugin::eTick> void Tick(const double &deltaTime) = delete;
-	template<> void Tick<eTick::editor>(const double &deltaTime);
-	template<> void Tick<eTick::gameplay>(const double &deltaTime);
+	void Startup_OnEnter();
+	void Startup_OnCompleted(const Concurrent::ATask &tsk);
+	void Shutdown_OnEnter();
+	void Shutdown_OnCompleted(const Concurrent::ATask &tsk);
+	
+	
+	void Editor_OnEnter();
+	void Editor_OnExit();
+	void Play_OnEnter();
+	void Play_OnExit();
+	void HotReload();
 
 public:
-	template<class T> void AddModule() {
+	
+	void State(eState st);
+	eState State() const { return state; }
+	
+	template<class T> 
+	void AddModule() {
 		T *newModule = new T;
 		codex.Add<T>(newModule);
-		AddModule(newModule);
+		entries.emplace_back().module = newModule;
 	}
-	template<class T> T *ModuleAt() { return codex.Get<T>(); }
-	std::list<Module *> &Modules() { return modules; }
-	bool IsModuleLoading(const Module &trg) const { return false; }
+	template<class T> 
+	T *ModuleAt() { return codex.Get<T>(); }
+	
+	std::list<Module *> Modules() const;
 };
 
 };

@@ -4,10 +4,7 @@
 
 #include <Gumball/Containers/Dispatcher.hpp>
 #include <Gumball/Containers/Pointer.hpp>
-
 #include "Common.hpp"
-
-int main(int argc, char *argv[]);
 
 namespace Concurrent {
 using namespace std;
@@ -17,23 +14,25 @@ class ATask {
 	friend class Scheduler;
 	using FRun = Signal<void(ATask &)>;
 	using FEnd = Signal<void(const ATask &)>;
-	enum class eState : char { Idle, Scheduled, Done };
+	enum class eState : char { Idle, Waiting, Scheduled, Done };
 	enum class eResult : char { Continue, Success, Failed };
 
 	Atomic<eState> state{ eState::Idle };
 	eResult result;
 	FRun run;
 	FEnd end;
-	void *data = nullptr;
+	PtrVoid data;
 
 public:
-	inline void *Data() { return data; }
+	inline PtrVoid &Data() { return data; }
+	inline const PtrVoid &Data() const { return data; }
 	inline void Complete(bool success) { result = success ? eResult::Success : eResult::Failed; }
 	inline bool IsSuccess() const { return result == eResult::Success; }
 	inline bool IsCompleted() const { return result != eResult::Continue; }
 };
 
 class Task {
+protected:
 	Ptr<ATask> htask;
 
 public:
@@ -45,12 +44,29 @@ public:
 
 	ATask::FRun &Run() { return htask->run; }
 	ATask::FEnd &End() { return htask->end; }
-	inline void *Data() { return htask->Data(); }
+	inline PtrVoid &Data() { return htask->Data(); }
+	inline const PtrVoid &Data() const { return htask->Data(); }
 	inline void Complete(bool success) { htask->Complete(success); }
 	inline bool IsSuccess() const { return htask->IsSuccess(); }
 	inline bool IsCompleted() const { return htask->IsCompleted(); }
+	bool Began() const;
 
-	bool operator==(const ATask &h) const { return (void*)htask == &h; }
+	inline bool operator==(const ATask &h) const { return (void*)htask == &h; }
+	operator bool() const { return htask->run || htask->end; }
+};
+
+class TaskSequence : public Task {
+	using Task::Stop;
+	using Task::Start;
+	using Task::Run;
+	using Task::Bind;
+	
+	std::list<Task> tasks;	
+	void OnTaskCompleted(const ATask &);
+public:
+	TaskSequence() = default;
+	void Start();	
+	void Push(const Task &entry) { tasks.push_back(entry); }
 };
 
 struct TaskPool {

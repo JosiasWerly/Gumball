@@ -29,7 +29,7 @@ void Scheduler::ProducerTick() {
 					tasks.iterator = tasks.requests.erase(tasks.iterator);
 					continue;
 				}
-				else if (!tasks.queue.Full() && st == ATask::eState::Idle) {
+				else if (!tasks.queue.Full() && st == ATask::eState::Waiting) {
 					if (tasks.queue.Push(&tsk)) {
 						tsk.state.store(ATask::eState::Scheduled, std::memory_order_release);
 						Lock cvl(mthread);
@@ -47,7 +47,7 @@ void Scheduler::ProducerTick() {
 			while (jobs.iterator != jobs.requests.end()) {
 				AJob &jb = *(*jobs.iterator);
 				const AJob::eState st = jb.state.load(std::memory_order_acquire);
-				if (!jobs.queue.Full() && st == AJob::eState::Idle) {
+				if (!jobs.queue.Full() && st == AJob::eState::Waiting) {
 					if (jobs.queue.Push(&jb)) {
 						jb.state.store(AJob::eState::Scheduled, std::memory_order_release);
 						Lock cvl(mthread);
@@ -82,14 +82,14 @@ void Scheduler::ConsumerTick() {
 					tsk->end(*tsk);
 			}
 			else {
-				tsk->state.store(eTaskState::Idle);
+				tsk->state.store(eTaskState::Waiting, std::memory_order_release);
 			}
 		}
 
 		for (AJob *jb = nullptr; jobs.queue.Pop(jb); jb = nullptr) {
 			using eJobState = AJob::eState;
 			jb->Run();
-			jb->state.store(eJobState::Idle, std::memory_order_release);
+			jb->state.store(eJobState::Waiting, std::memory_order_release);
 		}
 	}
 }

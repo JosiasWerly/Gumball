@@ -16,21 +16,21 @@ namespace Flow::StateMachine {
 
 	public:
 		Controller() : last(0), current(0), next(0) {}
-		void set(TInt next) { this->next = next; event = eEvent::set; };
-		void to(TInt next) { this->next = next; event = eEvent::move; }
-		TInt to() const { return next; }
-		TInt now() const { return current; }
-		TInt from() const { return last; }
+		void Set(TInt next) { this->next = next; event = eEvent::set; };
+		void To(TInt next) { this->next = next; event = eEvent::move; }
+		TInt To() const { return next; }
+		TInt Now() const { return current; }
+		TInt From() const { return last; }
 	};
 
 	struct State {
 		using Delegate = Signal<void()>;
 		using Delegates = std::unordered_map<TInt, Delegate, TIntOperators, TIntOperators>;
 
-		Delegate onEnter;
-		Delegate onTick;
-		Delegate onExit;
-		Delegates onExitTo;
+		Delegate OnEnter;
+		Delegate OnTick;
+		Delegate OnExit;
+		Delegates OnExitTo;
 	};
 
 	class StateMachine : public Controller {
@@ -40,10 +40,15 @@ namespace Flow::StateMachine {
 	
 	public:	
 		StateMachine() = default;
-		void tick();
+		void Tick();
 		
 		State &operator[](TInt key) { return states[key]; }
 		const State &operator[](TInt key) const { return states.at(key); }
 	};
+};
+
+namespace Flow {
+using Fsm = StateMachine::StateMachine;
+
 };
 #endif // !__statemachine
