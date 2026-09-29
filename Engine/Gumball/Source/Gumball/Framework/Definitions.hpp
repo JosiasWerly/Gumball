@@ -40,6 +40,7 @@ using s32 = int;
 using s64 = long long;
 
 #define Error(strg, ...) throw std::runtime_error(std::format(strg,  __VA_ARGS__))
+#define Assert(cond, strg, ...) if(!cond) throw std::runtime_error(std::format(strg,  __VA_ARGS__))
 
 #ifdef DEBUG
 #define DEBUG_ONLY(exp) exp;

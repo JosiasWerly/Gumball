@@ -39,6 +39,7 @@ class GENGINE Core : public Singleton<Core> {
 
 public:
 	Containers::Codex codex;	
+	
 	template<class T> 
 	using Global = Global<T, []()->T & { return Core::Instance().codex.Get<T>(); }>;
 };

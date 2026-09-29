@@ -5,6 +5,7 @@
 #include <Gumball/Concurrent/Task.hpp>
 #include <Gumball/Concurrent/Job.hpp>
 #include <Gumball/Containers/Codex.hpp>
+#include <Gumball/Flow/StateMachine.hpp>
 #include "Module.hpp"
 #include "Project.hpp"
 
@@ -16,55 +17,53 @@ namespace Engine {
 
 namespace Plugin {
 
-struct ModuleEntry {
-	Module *module;
+struct Module {
+	IModule *ptr;
 	Concurrent::Job job;
 
-	ModuleEntry(Module *m) : module(m) {}
+	Module(IModule *init) : ptr(init) {}
 };
 
 class GENGINE Controller {
-public:	
-	enum class eState : char { startup, shutdown, idle, playing, hotreload };
-
-private:
 	friend class ::Engine::Core;
 
 	Containers::Codex codex;
-	std::list<ModuleEntry> entries;
+	std::list<Module> modules;
 	ProjectLinker project;
-	eState state;
-
+	Flow::Fsm fsm;
 
 	Controller();
+	template<class T> 
+	void AddModule();
+
 	void Startup_OnEnter();
 	void Startup_OnCompleted(const Concurrent::ATask &tsk);
 	void Shutdown_OnEnter();
 	void Shutdown_OnCompleted(const Concurrent::ATask &tsk);
-	
-	
 	void Editor_OnEnter();
 	void Editor_OnExit();
 	void Play_OnEnter();
 	void Play_OnExit();
 	void HotReload();
 
-public:
+public:	
+	enum class eState : char { startup, shutdown, editor, playing, hotreload };
+	void State(eState st) { fsm.To(st); fsm.Tick(); }
+	eState State() const { return fsm.Now(); }
 	
-	void State(eState st);
-	eState State() const { return state; }
-	
-	template<class T> 
-	void AddModule() {
-		T *newModule = new T;
-		codex.Add<T>(newModule);
-		entries.emplace_back().module = newModule;
-	}
 	template<class T> 
 	T *ModuleAt() { return codex.Get<T>(); }
 	
-	std::list<Module *> Modules() const;
+	std::list<IModule *> Modules() const;
 };
+
+template<class T>
+inline void Controller::AddModule() {
+	IModule *newModule = new T;
+	codex.Add<T>(newModule);	
+	Module &entry = modules.emplace_back();
+	entry.ptr = newModule;
+}
 
 };
 #endif // !_module

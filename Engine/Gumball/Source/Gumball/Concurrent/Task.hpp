@@ -65,8 +65,9 @@ class TaskSequence : public Task {
 	void OnTaskCompleted(const ATask &);
 public:
 	TaskSequence() = default;
-	void Start();	
+	void Start();
 	void Push(const Task &entry) { tasks.push_back(entry); }
+	operator bool() const { return !tasks.empty(); }
 };
 
 struct TaskPool {

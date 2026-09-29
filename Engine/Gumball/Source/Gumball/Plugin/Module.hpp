@@ -13,12 +13,12 @@ enum class eTick : char {
 	all,
 };
 
-class GENGINE Module {
+class GENGINE IModule {
 	friend class Core;
 	friend class Controller;
 protected:
 
-	Module() = default;
+	IModule() = default;
 
 	virtual Concurrent::Task Load() { return Concurrent::Task(); }
 	virtual Concurrent::Task Unload() { return Concurrent::Task(); }
@@ -30,7 +30,7 @@ protected:
 	virtual eTick TickType() const { return eTick::none; }
 
 public:
-	virtual ~Module() = default;
+	virtual ~IModule() = default;
 	virtual const char *Name() const = 0;
 };
 

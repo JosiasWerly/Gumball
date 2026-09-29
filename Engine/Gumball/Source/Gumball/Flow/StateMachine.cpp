@@ -11,6 +11,7 @@ void StateMachine::Tick() {
 			event = Controller::eEvent::idle;
 			break;
 		case Controller::eEvent::move:
+		if(currentState.second)
 		{
 			auto to = currentState.second->OnExitTo.find(next);
 			if (to != currentState.second->OnExitTo.end())
