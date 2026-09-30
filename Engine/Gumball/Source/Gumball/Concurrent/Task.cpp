@@ -3,7 +3,7 @@
 #include <Gumball/Core/Engine.hpp>
 
 using namespace Concurrent;
-using namespace Engine;
+using namespace Core;
 
 Task::Task() : htask(new ATask) {}
 Task::Task(ATask::FRun frun, ATask::FEnd fend, void *data) : 
@@ -17,10 +17,10 @@ void Task::Bind(ATask::FRun frun, ATask::FEnd fend, void *data) {
 }
 void Task::Start() {
 	htask->state.store(ATask::eState::Waiting, std::memory_order_relaxed);
-	Core::Instance().codex.Get<Scheduler>().Add(htask);
+	Engine::Instance().codex.Get<Scheduler>().Add(htask);
 }
 void Task::Stop() {
-	Core::Instance().codex.Get<Scheduler>().Pop(htask);
+	Engine::Instance().codex.Get<Scheduler>().Pop(htask);
 	htask->state.store(ATask::eState::Idle, std::memory_order_relaxed);
 }
 bool Task::Began() const {
@@ -35,10 +35,10 @@ void TaskSequence::OnTaskCompleted(const ATask &) {
 	}
 	else {
 		Task &tsk = tasks.front();
-		tsk.End().Bind({ this, &TaskSequence::OnTaskCompleted });
+		tsk.End().Bind(this, &TaskSequence::OnTaskCompleted);
 	}
 }
 void TaskSequence::Start() {
 	Task &tsk = tasks.front();
-	tsk.End().Bind({ this, &TaskSequence::OnTaskCompleted });
+	tsk.End().Bind(this, &TaskSequence::OnTaskCompleted);
 }

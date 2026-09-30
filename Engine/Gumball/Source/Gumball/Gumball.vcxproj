@@ -111,14 +111,13 @@
     <ClInclude Include="Concurrent\Task.hpp" />
     <ClInclude Include="Concurrent\Thread.hpp" />
     <ClInclude Include="Containers\Codex.hpp" />
-    <ClInclude Include="Containers\Dispatcher.hpp" />
+    <ClInclude Include="Containers\Delegate.hpp" />
     <ClInclude Include="Containers\Pointer.hpp" />
     <ClInclude Include="Containers\Property.hpp" />
     <ClInclude Include="Containers\ShardMap.hpp" />
     <ClInclude Include="Containers\Singleton.hpp" />
     <ClInclude Include="Core\Domain.hpp" />
     <ClInclude Include="Core\Engine.hpp" />
-    <ClInclude Include="Flow\ChainMachine.hpp" />
     <ClInclude Include="Flow\Common.hpp" />
     <ClInclude Include="Flow\SignalPool.hpp" />
     <ClInclude Include="Flow\StateMachine.hpp" />
@@ -146,7 +145,6 @@
     <ClCompile Include="Containers\Singleton.cpp" />
     <ClCompile Include="Core\Domain.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
-    <ClCompile Include="Flow\ChainMachine.cpp" />
     <ClCompile Include="Flow\Common.cpp" />
     <ClCompile Include="Flow\SignalPool.cpp" />
     <ClCompile Include="Flow\StateMachine.cpp" />

@@ -2,7 +2,7 @@
 #ifndef __task
 #define __task
 
-#include <Gumball/Containers/Dispatcher.hpp>
+#include <Gumball/Containers/Delegate.hpp>
 #include <Gumball/Containers/Pointer.hpp>
 #include "Common.hpp"
 
@@ -12,8 +12,8 @@ using namespace std;
 class ATask {
 	friend class Task;
 	friend class Scheduler;
-	using FRun = Signal<void(ATask &)>;
-	using FEnd = Signal<void(const ATask &)>;
+	using FRun = Delegate<void(ATask &)>;
+	using FEnd = Delegate<void(const ATask &)>;
 	enum class eState : char { Idle, Waiting, Scheduled, Done };
 	enum class eResult : char { Continue, Success, Failed };
 

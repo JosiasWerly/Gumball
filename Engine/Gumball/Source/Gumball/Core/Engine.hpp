@@ -1,11 +1,11 @@
 #pragma once
-#ifndef _engine_
-#define _engine_
-#include <list>
-
+#ifndef __engine
+#define __engine
 #include <Gumball/Containers/Singleton.hpp>
 #include <Gumball/Containers/Codex.hpp>
 #include <Gumball/Concurrent/Scheduler.hpp>
+
+#include <list>
 
 namespace Plugin {
 	class Controller;
@@ -16,9 +16,9 @@ namespace Resource {
 	class Controller;
 };
 
-namespace Engine {
+namespace Core {
 
-class GENGINE Core : public Singleton<Core> {
+class GENGINE Engine : public Singleton<Engine> {
 	friend int ::main(int argc, char *argv[]);
 	struct Init {
 		int argc;
@@ -33,15 +33,15 @@ class GENGINE Core : public Singleton<Core> {
 	Plugin::Controller *pluginCtrl;
 	Plugin::ProjectLinker *project;
 
-	Core();
-	~Core();
+	Engine();
+	~Engine();
 	void Initialize(Init init);
 
 public:
 	Containers::Codex codex;	
 	
 	template<class T> 
-	using Global = Global<T, []()->T & { return Core::Instance().codex.Get<T>(); }>;
+	using Global = Global<T, []()->T & { return Instance().codex.Get<T>(); }>;
 };
 
 };

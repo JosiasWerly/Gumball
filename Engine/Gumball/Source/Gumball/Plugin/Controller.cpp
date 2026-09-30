@@ -5,13 +5,13 @@ using Plugin::Controller;
 using Plugin::Module;
 
 Controller::Controller() {
-	fsm[eState::startup].OnEnter.Bind({ this, &Controller::Startup_OnEnter });
-	fsm[eState::shutdown].OnEnter.Bind({ this, &Controller::Shutdown_OnEnter });
+	fsm[eState::startup].OnEnter.Bind(this, &Controller::Startup_OnEnter);
+	fsm[eState::shutdown].OnEnter.Bind(this, &Controller::Shutdown_OnEnter);
 
-	fsm[eState::editor].OnEnter.Bind({ this, &Controller::Editor_OnEnter });
-	fsm[eState::editor].OnExit.Bind({ this, &Controller::Editor_OnExit });
-	fsm[eState::playing].OnEnter.Bind({ this, &Controller::Play_OnEnter });
-	fsm[eState::playing].OnExit.Bind({ this, &Controller::Play_OnExit });
+	fsm[eState::editor].OnEnter.Bind(this, &Controller::Editor_OnEnter);
+	fsm[eState::editor].OnExit.Bind(this, &Controller::Editor_OnExit);
+	fsm[eState::playing].OnEnter.Bind(this, &Controller::Play_OnEnter);
+	fsm[eState::playing].OnExit.Bind(this, &Controller::Play_OnExit);
 }
 void Controller::Startup_OnEnter() {
 	Concurrent::TaskSequence loader;
@@ -22,7 +22,7 @@ void Controller::Startup_OnEnter() {
 		}
 	}
 	if (loader) {
-		loader.End().Bind({ this, &Controller::Startup_OnCompleted });
+		loader.End().Bind(this, &Controller::Startup_OnCompleted);
 		loader.Start();
 	}
 }
@@ -38,7 +38,7 @@ void Controller::Shutdown_OnEnter() {
 			unloader.Push(t);
 		}
 	}
-	unloader.End().Bind({ this, &Controller::Startup_OnCompleted });
+	unloader.End().Bind(this, &Controller::Startup_OnCompleted);
 	unloader.Start();
 }
 void Controller::Shutdown_OnCompleted(const Concurrent::ATask &tsk) {

@@ -7,17 +7,17 @@
 #include <string>
 
 using namespace std;
-namespace Engine {
+namespace Core {
 
-Core::Core() {
+Engine::Engine() {
 	scheduler = new Concurrent::Scheduler;
 	resourceCtrl = new Resource::Controller;
 	pluginCtrl = new Plugin::Controller;
 	project = new Plugin::ProjectLinker;
 }
-Core::~Core() {
+Engine::~Engine() {
 }
-void Core::Initialize(Init init) {
+void Engine::Initialize(Init init) {
 	init.fnInjectModules(pluginCtrl);
 	
 	{//add domain		

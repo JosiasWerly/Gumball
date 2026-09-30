@@ -11,8 +11,8 @@
 
 #include <list>
 
-namespace Engine {
-	class Core;
+namespace Core {
+	class Engine;
 };
 
 namespace Plugin {
@@ -25,7 +25,7 @@ struct Module {
 };
 
 class GENGINE Controller {
-	friend class ::Engine::Core;
+	friend class ::Core::Engine;
 
 	Containers::Codex codex;
 	std::list<Module> modules;

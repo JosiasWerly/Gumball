@@ -2,7 +2,7 @@
 #ifndef __job
 #define __job
 
-#include <Gumball/Containers/Dispatcher.hpp>
+#include <Gumball/Containers/Delegate.hpp>
 #include <Gumball/Containers/Pointer.hpp>
 #include "Common.hpp"
 
@@ -12,7 +12,7 @@ using namespace std;
 class AJob {
 	friend class Job;
 	friend class Scheduler;
-	using FRun = Signal<void(AJob &)>;
+	using FRun = Delegate<void(AJob &)>;
 	enum class eState : char { Idle, Waiting, Scheduled, Done };
 
 	Atomic<eState> state{ eState::Idle };

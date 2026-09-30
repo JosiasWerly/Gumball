@@ -3,17 +3,17 @@
 #include <Gumball/Core/Engine.hpp>
 
 using namespace Concurrent;
-using namespace Engine;
+using namespace Core;
 
 
 
 Job::Job() : hjob(new AJob) {}
 void Job::Start() {
 	hjob->state.store(AJob::eState::Waiting, std::memory_order_relaxed);
-	Core::Instance().codex.Get<Scheduler>().Add(hjob);
+	Engine::Instance().codex.Get<Scheduler>().Add(hjob);
 }
 void Job::Stop() {
-	Core::Instance().codex.Get<Scheduler>().Pop(hjob);
+	Engine::Instance().codex.Get<Scheduler>().Pop(hjob);
 	hjob->state.store(AJob::eState::Idle, std::memory_order_relaxed);
 }
 bool Job::Began() const {

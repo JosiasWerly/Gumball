@@ -2,8 +2,8 @@
 #ifndef __statemachine
 #define __statemachine
 
+#include <Gumball/Containers/Delegate.hpp>
 #include "Common.hpp"
-#include <Gumball/Containers/Dispatcher.hpp>
 #include <unordered_map>
 
 
@@ -24,7 +24,7 @@ namespace Flow::StateMachine {
 	};
 
 	struct State {
-		using Delegate = Signal<void()>;
+		using Delegate = Delegate<void()>;
 		using Delegates = std::unordered_map<TInt, Delegate, TIntOperators, TIntOperators>;
 
 		Delegate OnEnter;

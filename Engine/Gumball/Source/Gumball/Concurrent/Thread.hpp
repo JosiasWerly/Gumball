@@ -2,12 +2,11 @@
 #ifndef __thread
 #define __thread
 
+#include <Gumball/Containers/Delegate.hpp>
 #include <thread>
-#include <Gumball/Containers/Dispatcher.hpp>
-
 namespace Concurrent {
 	class Thread {
-		using Delegate = Signal<void()>;
+		using Delegate = Delegate<void()>;
 	
 	private:
 		static thread_local Thread *localThread;

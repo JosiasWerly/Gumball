@@ -4,11 +4,11 @@
 
 #include <Gumball/Core/Engine.hpp>
 #include <string>
-namespace Engine {
-class Core;
+namespace Core {
+class Engine;
 
-class GENGINE Domain : public Core::Global<Domain> {
-	friend class Core;
+class GENGINE Domain : public Engine::Global<Domain> {
+	friend class Engine;
 	std::string applicationPath;
 	std::string applicationDir;
 	std::string engineDir;
