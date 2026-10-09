@@ -12,7 +12,7 @@
 
 namespace Resource {
 
-class GENGINE Controller : public Core::Engine::Global<Controller> {
+class GENGINE Controller : public Core::Global<Controller> {
 	friend class AssetFactory;
 
 	std::list<FileSerializer *> serializers;

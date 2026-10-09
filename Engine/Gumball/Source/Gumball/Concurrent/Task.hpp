@@ -21,17 +21,17 @@ class ATask {
 	eResult result;
 	FRun run;
 	FEnd end;
-	PtrVoid data;
+	Void data;
 
 public:
-	inline PtrVoid &Data() { return data; }
-	inline const PtrVoid &Data() const { return data; }
+	inline Void &Data() { return data; }
+	inline const Void &Data() const { return data; }
 	inline void Complete(bool success) { result = success ? eResult::Success : eResult::Failed; }
 	inline bool IsSuccess() const { return result == eResult::Success; }
 	inline bool IsCompleted() const { return result != eResult::Continue; }
 };
 
-class Task {
+class GENGINE Task {
 protected:
 	Ptr<ATask> htask;
 
@@ -44,18 +44,18 @@ public:
 
 	ATask::FRun &Run() { return htask->run; }
 	ATask::FEnd &End() { return htask->end; }
-	inline PtrVoid &Data() { return htask->Data(); }
-	inline const PtrVoid &Data() const { return htask->Data(); }
+	inline Void &Data() { return htask->Data(); }
+	inline const Void &Data() const { return htask->Data(); }
 	inline void Complete(bool success) { htask->Complete(success); }
 	inline bool IsSuccess() const { return htask->IsSuccess(); }
 	inline bool IsCompleted() const { return htask->IsCompleted(); }
 	bool Began() const;
 
-	inline bool operator==(const ATask &h) const { return (void*)htask == &h; }
+	inline bool operator==(const ATask &h) const { return &(*htask) == &h; }
 	operator bool() const { return htask->run || htask->end; }
 };
 
-class TaskSequence : public Task {
+class GENGINE TaskSequence : public Task {
 	using Task::Stop;
 	using Task::Start;
 	using Task::Run;

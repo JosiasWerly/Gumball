@@ -1,8 +1,10 @@
 #include "Engine.hpp"
 
+#include <Concurrent/Scheduler.hpp>
 #include <Plugin/Controller.hpp>
 #include <Resource/Controller.hpp>
 #include "Domain.hpp"
+
 #include <iostream>
 #include <string>
 
@@ -18,7 +20,10 @@ Engine::Engine() {
 Engine::~Engine() {
 }
 void Engine::Initialize(Init init) {
-	init.fnInjectModules(pluginCtrl);
+	{
+		init.fnInjectModules(pluginCtrl);
+		codex.Add<Plugin::Controller>(pluginCtrl);
+	}
 	
 	{//add domain		
 		Domain &domain = codex.Add<Domain>();
@@ -38,4 +43,6 @@ void Engine::Initialize(Init init) {
 	}
 	
 	pluginCtrl->State(Plugin::Controller::eState::startup);} //start the whole thing
+
 };
+

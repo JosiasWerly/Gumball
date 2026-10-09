@@ -1,7 +1,6 @@
-#include "Project.hpp"
 #include <Gumball/Core/Engine.hpp>
 #include <Gumball/Core/Domain.hpp>
-
+#include "Project.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -17,7 +16,7 @@ using namespace std::chrono_literals;
 
 
 Project *ProjectLinker::Load() {
-	auto d = Core::Domain::Instance();
+	auto &d = Core::Domain::Instance();
 	const string dllPath = d.ApplicationDir() + "Sandbox.dll";
 	const string dllCopy = d.ApplicationDir() + "Target.dll";
 	std::filesystem::copy(dllPath, dllCopy, std::filesystem::copy_options::overwrite_existing);

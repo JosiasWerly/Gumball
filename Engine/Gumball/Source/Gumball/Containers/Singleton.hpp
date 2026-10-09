@@ -19,18 +19,4 @@ protected:
 public:
 	static T &Instance() { return *inst; }
 };
-
-template<class T, T& (*fn)(void)>
-class Global {
-protected:
-	Global() = default;
-	virtual ~Global() = default;
-
-public:
-	static T &Instance() {
-		static T *inst = &fn();
-		return *inst;
-	}
-};
-
 #endif // !__SINGLETON

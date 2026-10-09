@@ -1,19 +1,13 @@
 #pragma once
-#ifndef _plugin_controller_
-#define _plugin_controller_
+#ifndef __plugincontroller
+#define __plugincontroller
 
-#include <Gumball/Concurrent/Task.hpp>
 #include <Gumball/Concurrent/Job.hpp>
-#include <Gumball/Containers/Codex.hpp>
 #include <Gumball/Flow/StateMachine.hpp>
+#include <Gumball/Core/Engine.hpp>
 #include "Module.hpp"
 #include "Project.hpp"
-
 #include <list>
-
-namespace Core {
-	class Engine;
-};
 
 namespace Plugin {
 
@@ -24,17 +18,14 @@ struct Module {
 	Module(IModule *init) : ptr(init) {}
 };
 
-class GENGINE Controller {
+class GENGINE Controller : public ::Core::Global<Controller> {
 	friend class ::Core::Engine;
 
-	Containers::Codex codex;
 	std::list<Module> modules;
 	ProjectLinker project;
 	Flow::Fsm fsm;
 
 	Controller();
-	template<class T> 
-	void AddModule();
 
 	void Startup_OnEnter();
 	void Startup_OnCompleted(const Concurrent::ATask &tsk);
@@ -46,24 +37,21 @@ class GENGINE Controller {
 	void Play_OnExit();
 	void HotReload();
 
-public:	
+public:
+
 	enum class eState : char { startup, shutdown, editor, playing, hotreload };
 	void State(eState st) { fsm.To(st); fsm.Tick(); }
 	eState State() const { return fsm.Now(); }
 	
-	template<class T> 
-	T *ModuleAt() { return codex.Get<T>(); }
-	
+	template<class T> void Add();
 	std::list<IModule *> Modules() const;
 };
 
 template<class T>
-inline void Controller::AddModule() {
-	IModule *newModule = new T;
-	codex.Add<T>(newModule);	
-	Module &entry = modules.emplace_back();
-	entry.ptr = newModule;
+inline void Controller::Add() {
+	IModule *newModule = (IModule *) & ::Core::Engine::Instance().Codex().Add<T>();
+	Plugin::Module &entry = modules.emplace_back(newModule);
 }
 
 };
-#endif // !_module
+#endif // !__plugincontroller

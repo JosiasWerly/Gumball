@@ -7,7 +7,7 @@
 namespace Core {
 class Engine;
 
-class GENGINE Domain : public Engine::Global<Domain> {
+class GENGINE Domain : public Core::Global<Domain> {
 	friend class Engine;
 	std::string applicationPath;
 	std::string applicationDir;

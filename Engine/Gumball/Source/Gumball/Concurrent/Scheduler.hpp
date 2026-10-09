@@ -2,18 +2,19 @@
 #ifndef __scheduler
 #define __scheduler
 
-#include <thread>
 #include <Gumball/Containers/Pointer.hpp>
-#include <Gumball/Concurrent/Task.hpp>
-#include <Gumball/Concurrent/Job.hpp>
+#include <Gumball/Core/Engine.hpp>
 #include "Common.hpp"
+#include "Task.hpp"
+#include "Job.hpp"
+#include <thread>
 
 int main(int argc, char *argv[]);
 
 namespace Concurrent {
 using namespace std;
 
-class GENGINE Scheduler {
+class GENGINE Scheduler : public Core::Global<Scheduler> {
 	friend int ::main(int argc, char *argv[]);
 	
 	const unsigned threadCount = 3;

@@ -1,5 +1,6 @@
 #include "Controller.hpp"
 #include <Gumball/Core/Engine.hpp>
+#include <Gumball/Concurrent/Task.hpp>
 
 using Plugin::Controller;
 using Plugin::Module;
@@ -7,7 +8,6 @@ using Plugin::Module;
 Controller::Controller() {
 	fsm[eState::startup].OnEnter.Bind(this, &Controller::Startup_OnEnter);
 	fsm[eState::shutdown].OnEnter.Bind(this, &Controller::Shutdown_OnEnter);
-
 	fsm[eState::editor].OnEnter.Bind(this, &Controller::Editor_OnEnter);
 	fsm[eState::editor].OnExit.Bind(this, &Controller::Editor_OnExit);
 	fsm[eState::playing].OnEnter.Bind(this, &Controller::Play_OnEnter);
@@ -17,7 +17,7 @@ void Controller::Startup_OnEnter() {
 	Concurrent::TaskSequence loader;
 	for (auto &m : modules) {
 		if (Concurrent::Task t = m.ptr->Load()) {
-			*t.Data() = m.ptr;
+			t.Data() = Ptr<IModule>(m.ptr);
 			loader.Push(t);
 		}
 	}
@@ -25,9 +25,13 @@ void Controller::Startup_OnEnter() {
 		loader.End().Bind(this, &Controller::Startup_OnCompleted);
 		loader.Start();
 	}
+	else {
+		fsm.To(eState::editor);
+	}
 }
 void Controller::Startup_OnCompleted(const Concurrent::ATask &tsk) {
-	Assert(tsk.IsSuccess(), "module not loaded {}", tsk.Data().As<IModule>()->Name());
+	//tsk.Data().Is<int>();
+	Assert(tsk.IsSuccess(), "module not loaded {}", tsk.Data().To<IModule>()->Name());
 	fsm.To(eState::editor);
 }
 void Controller::Shutdown_OnEnter() {
@@ -42,7 +46,7 @@ void Controller::Shutdown_OnEnter() {
 	unloader.Start();
 }
 void Controller::Shutdown_OnCompleted(const Concurrent::ATask &tsk) {
-	Assert(tsk.IsSuccess(), "module not unloaded {}", tsk.Data().As<IModule>()->Name());
+	Assert(tsk.IsSuccess(), "module not unloaded {}", tsk.Data().To<IModule>()->Name());
 }
 void Controller::Editor_OnEnter() {
 	for (auto m : modules) {
@@ -86,10 +90,3 @@ std::list<Plugin::IModule *> Controller::Modules() const {
 		out.push_back(m.ptr);
 	return out;
 }
-
-//std::list<IModule *> Controller::Modules() const {
-//	std::list<IModule *> out;
-//	for (auto &m: modules)
-//		out.push_back(m.ptr);
-//	return out;
-//}

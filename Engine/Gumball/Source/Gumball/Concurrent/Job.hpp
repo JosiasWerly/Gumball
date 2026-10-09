@@ -22,7 +22,7 @@ class AJob {
 	inline void Run() { run(*this); }
 };
 
-class Job {
+class GENGINE Job {
 	Ptr<AJob> hjob;
 
 public:
@@ -30,7 +30,7 @@ public:
 	void Start();
 	void Stop();
 	bool Began() const;
-	inline bool operator==(const AJob &h) const { return (void *)hjob == &h; }
+	inline bool operator==(const AJob &h) const { return &(*hjob) == &h; }
 };
 
 struct JobPool {

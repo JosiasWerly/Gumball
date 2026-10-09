@@ -10,10 +10,10 @@ using namespace Core;
 Job::Job() : hjob(new AJob) {}
 void Job::Start() {
 	hjob->state.store(AJob::eState::Waiting, std::memory_order_relaxed);
-	Engine::Instance().codex.Get<Scheduler>().Add(hjob);
+	Scheduler::Instance().Add(hjob);
 }
 void Job::Stop() {
-	Engine::Instance().codex.Get<Scheduler>().Pop(hjob);
+	Scheduler::Instance().Pop(hjob);
 	hjob->state.store(AJob::eState::Idle, std::memory_order_relaxed);
 }
 bool Job::Began() const {

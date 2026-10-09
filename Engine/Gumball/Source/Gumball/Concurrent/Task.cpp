@@ -17,10 +17,10 @@ void Task::Bind(ATask::FRun frun, ATask::FEnd fend, void *data) {
 }
 void Task::Start() {
 	htask->state.store(ATask::eState::Waiting, std::memory_order_relaxed);
-	Engine::Instance().codex.Get<Scheduler>().Add(htask);
+	Scheduler::Instance().Add(htask);
 }
 void Task::Stop() {
-	Engine::Instance().codex.Get<Scheduler>().Pop(htask);
+	Scheduler::Instance().Pop(htask);
 	htask->state.store(ATask::eState::Idle, std::memory_order_relaxed);
 }
 bool Task::Began() const {
